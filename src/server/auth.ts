@@ -1,4 +1,5 @@
 import { MongoDBAdapter } from "@next-auth/mongodb-adapter";
+import CredentialsProvider from "next-auth/providers/credentials";
 import {
 	getServerSession,
 	type DefaultSession,
@@ -60,6 +61,26 @@ export const authOptions: NextAuthOptions = {
 		 *
 		 * @see https://next-auth.js.org/providers/github
 		 */
+		CredentialsProvider({
+			name: "Credentials",
+			credentials: {
+				username: { label: "Username", type: "text", placeholder: "jsmith" },
+				password: { label: "Password", type: "password" },
+			},
+			authorize(credentials, _req) {
+				// Add logic here to verify the credentials
+				const user = { id: "1", name: "John Doe" };
+
+				if (
+					credentials?.username === "john" &&
+					credentials?.password === "password"
+				) {
+					return user;
+				}
+
+				return null;
+			},
+		}),
 	],
 };
 
