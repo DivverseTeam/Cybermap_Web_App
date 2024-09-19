@@ -19,7 +19,7 @@ interface CreateContextOptions {
 	session: Session | null;
 }
 
-const createInnerTRPCContext = async (opts: CreateContextOptions) => {
+export const createInnerTRPCContext = async (opts: CreateContextOptions) => {
 	const db = await dbPromise;
 
 	return {
