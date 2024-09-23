@@ -46,7 +46,8 @@ export const authOptions: NextAuthOptions = {
 			},
 		}),
 	},
-	adapter: MongoDBAdapter(clientPromise),
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+	adapter: MongoDBAdapter(clientPromise as any),
 	providers: [
 		DiscordProvider({
 			clientId: env.DISCORD_CLIENT_ID,

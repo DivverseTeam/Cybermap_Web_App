@@ -1,11 +1,11 @@
 import Link from "next/link";
 
 import { getServerAuthSession } from "~/server/auth";
-import { api, HydrateClient } from "~/server/trpc/server";
+import { api, HydrateClient } from "~/trpc/server";
 
 export default async function Home() {
 	const hello = await api.post.hello({ text: "from tRPC" });
-	const res = await api.post.create({ name: "New post" });
+	const res = await api.post.create({ name: "Post from mongoose" });
 	const session = await getServerAuthSession();
 	// void api.post.getLatest.prefetch();
 

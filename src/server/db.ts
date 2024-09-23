@@ -1,45 +1,44 @@
-import { type Db, MongoClient, type MongoClientOptions } from "mongodb";
+import mongoose, { type MongooseOptions } from "mongoose";
 
 import { env } from "~/env.js";
 
 declare global {
-  var _clientPromise: Promise<MongoClient>;
-  var _dbPromise: Promise<Db>;
+	var _mongoosePromise: Promise<typeof mongoose>;
+	var _clientPromise: Promise<mongoose.mongo.MongoClient>;
 }
 
-const uri = env.DATABASE_URL;
-const options: MongoClientOptions = {};
+const uri = env.DATABASE_URI;
+const options: MongooseOptions = {};
 
-const getClient = () => {
-  const client = new MongoClient(uri, options);
-  return client.connect();
+const connectToDatabase = async () => {
+	if (mongoose.connection.readyState >= 1) {
+		return mongoose; // If already connected, return the existing connection
+	}
+
+	return await mongoose.connect(uri, options);
 };
 
-const getDb = async (clientPromise: Promise<MongoClient>) => {
-  const client = await clientPromise;
-  const connection = await client.connect();
-  return connection.db(env.DB_NAME);
-};
-
-export let clientPromise: Promise<MongoClient>;
-export let dbPromise: Promise<Db>;
+// Initialize connection promises based on environment
+export let mongoosePromise: Promise<typeof mongoose>;
+export let clientPromise: Promise<mongoose.mongo.MongoClient>;
 
 if (env.NODE_ENV === "development") {
-  // In development mode, use a global variable so that the value
-  // is preserved across module reloads caused by HMR (Hot Module Replacement).
-  if (!global._clientPromise) {
-    global._clientPromise = getClient();
-  }
+	// In development, reuse the connection across module reloads
+	if (!global._mongoosePromise) {
+		const mongooseConnection = connectToDatabase();
+		global._mongoosePromise = mongooseConnection;
+		global._clientPromise = mongooseConnection.then((mongoose) =>
+			mongoose.connection.getClient(),
+		);
+	}
 
-  clientPromise = global._clientPromise;
-
-  if (!global._dbPromise) {
-    global._dbPromise = getDb(clientPromise);
-  }
-
-  dbPromise = global._dbPromise;
+	mongoosePromise = global._mongoosePromise;
+	clientPromise = global._clientPromise;
 } else {
-  // In production mode, it's best to not use a global variable.
-  clientPromise = getClient();
-  dbPromise = getDb(clientPromise);
+	// In production, create a new connection
+	const mongooseConnection = connectToDatabase();
+	mongoosePromise = mongooseConnection;
+	clientPromise = mongooseConnection.then((mongoose) =>
+		mongoose.connection.getClient(),
+	);
 }

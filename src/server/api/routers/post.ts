@@ -5,6 +5,7 @@ import {
 	protectedProcedure,
 	publicProcedure,
 } from "~/server/api/trpc";
+import Post from "~/server/models/Post";
 
 export const postRouter = createTRPCRouter({
 	hello: publicProcedure
@@ -17,9 +18,10 @@ export const postRouter = createTRPCRouter({
 
 	create: publicProcedure
 		.input(z.object({ name: z.string() }))
-		.mutation(async ({ ctx, input }) => {
-			return await ctx.db.collection("posts").insertOne({
-				name: input.name,
+		.mutation(async ({ ctx: _, input }) => {
+			return await Post.create({
+				title: input.name,
+				content: input.name,
 			});
 		}),
 

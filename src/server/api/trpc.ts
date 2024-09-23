@@ -13,14 +13,14 @@ import superjson from "superjson";
 import { ZodError } from "zod";
 
 import { getServerAuthSession } from "~/server/auth";
-import { dbPromise } from "~/server/db";
+import { mongoosePromise } from "~/server/db";
 
 interface CreateContextOptions {
 	session: Session | null;
 }
 
 export const createInnerTRPCContext = async (opts: CreateContextOptions) => {
-	const db = await dbPromise;
+	const db = await mongoosePromise;
 
 	return {
 		session: opts.session,
