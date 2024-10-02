@@ -7,7 +7,7 @@ export interface User extends mongoose.Document {
 	role: UserRole;
 	email: string;
 	password: string;
-	organizationId?: string;
+	organisationId?: string;
 }
 
 const UserSchema = new mongoose.Schema<User>(
@@ -26,7 +26,7 @@ const UserSchema = new mongoose.Schema<User>(
 			type: String,
 			required: [true, "Please provide a password for this User"],
 		},
-		organizationId: {
+		organisationId: {
 			type: String,
 			required: false,
 		},
