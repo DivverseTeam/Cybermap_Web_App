@@ -11,7 +11,7 @@ export default function GoogleSignInButton({}: Props) {
   return (
     <Button
       onClick={loginWithGoogle}
-      className="border w-full flex "
+      className="border w-full flex bg-[#FFFFFF] hover:bg-[#f3f3f3] text-black gap-4 h-12"
     >
       <span className="font-semibold">Sign in with Google</span>
       <GoogleLogo />

@@ -8,7 +8,7 @@ export default function SignUpPage() {
       <Header />
       <AuthForm
         headerTitle="Sign Up"
-        headerSubtitle="Welcome back! Sign in to jump right back in"
+        headerSubtitle="Create an account with us to get started"
       />
     </div>
   );
