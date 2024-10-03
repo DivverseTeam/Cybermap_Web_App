@@ -52,19 +52,24 @@ export default function Integrations({
             ))}
           </div>
 
-          <div className="w-full flex justify-end items-center gap-4 ">
-            <button
-              onClick={() => changeStep(2)}
-              className="max-w-fit h-[36px] px-[20px] outline-none text-gray-1 bg-gray-1 rounded-sm font-semibold text-sm"
-            >
-              Back
-            </button>
-            <button
-              onClick={() => changeStep(4)}
-              className="max-w-fit h-[36px] px-[20px] outline-none text-white bg-[#305EFF] rounded-sm font-semibold text-sm"
-            >
-              Finish
-            </button>
+          <div className="w-full flex justify-between items-center gap-4">
+            <span className="font-semibold text-base text-[#305EFF] leading-8 cursor-pointer">
+              Skip this step
+            </span>
+            <div className="flex items-center gap-4 ">
+              <button
+                onClick={() => changeStep(2)}
+                className="max-w-fit h-[36px] px-[20px] outline-none text-gray-1 bg-gray-1 rounded-sm font-semibold text-sm"
+              >
+                Back
+              </button>
+              <button
+                onClick={() => changeStep(4)}
+                className="max-w-fit h-[36px] px-[20px] outline-none text-white bg-[#305EFF] rounded-sm font-semibold text-sm"
+              >
+                Finish
+              </button>
+            </div>
           </div>
         </div>
       </div>
