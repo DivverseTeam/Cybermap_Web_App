@@ -33,7 +33,11 @@ export function DropSelect({
       <DropdownOverlay>
         <ActionList>
           {list.map((item, index) => (
-            <ActionListItem key={index} title={item} value={item} />
+            <ActionListItem
+              key={item + String(index)}
+              title={item}
+              value={item.toLowerCase()}
+            />
           ))}
         </ActionList>
       </DropdownOverlay>

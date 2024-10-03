@@ -3,7 +3,7 @@ import { twMerge } from "tailwind-merge";
 import { DropSelect } from "~/components/DropSelect";
 import { UserAvatar } from "~/components/svgs/userAvatar";
 
-export default function OrganizationDetails() {
+export default function CompanyInfo({ changeStep }: { changeStep: (num: number) => void }) {
   return (
     <div className="pt-[4.5rem] pb-24 pr-24 w-full">
       <div className="w-full flex flex-col gap-16 px-36">
@@ -115,7 +115,10 @@ export default function OrganizationDetails() {
           <button className="max-w-fit h-[36px] px-[20px] outline-none text-gray-1 bg-gray-1 rounded-sm font-semibold text-sm">
             Back
           </button>
-          <button className="max-w-fit h-[36px] px-[20px] outline-none text-white bg-[#305EFF] rounded-sm font-semibold text-sm">
+          <button
+            onClick={() => changeStep(2)}
+            className="max-w-fit h-[36px] px-[20px] outline-none text-white bg-[#305EFF] rounded-sm font-semibold text-sm"
+          >
             Next step
           </button>
         </div>
