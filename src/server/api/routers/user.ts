@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { UserRole } from "~/lib/types";
+import {
+	OrganizationIndustry,
+	OrganizationKind,
+	OrganizationSize,
+	UserRole,
+} from "~/lib/types";
 import bcrypt from "bcrypt";
 
 import {
@@ -8,11 +13,7 @@ import {
 	publicProcedure,
 } from "~/server/api/trpc";
 import User from "~/server/models/User";
-import Organisation, {
-	OrganisationIndustry,
-	OrganisationKind,
-	OrganisationSize,
-} from "~/server/models/Organisation";
+import Organization from "~/server/models/Organization";
 import mongoose from "mongoose";
 
 export const userRouter = createTRPCRouter({
@@ -23,19 +24,19 @@ export const userRouter = createTRPCRouter({
 				email: z.string(),
 				password: z.string(),
 				role: UserRole.default("ADMIN"),
-				organisation: z.object({
-					logo: z.any(),
+				organization: z.object({
+					logoUrl: z.any(),
 					name: z.string(),
-					size: OrganisationSize,
-					kind: OrganisationKind,
-					industry: OrganisationIndustry,
+					size: OrganizationSize,
+					kind: OrganizationKind,
+					industry: OrganizationIndustry,
 					frameworks: z.array(z.string()).optional(),
 					integrations: z.array(z.string()).optional(),
 				}),
 			}),
 		)
 		.mutation(async ({ ctx: _, input }) => {
-			const { name, email, role, password, organisation } = input;
+			const { name, email, role, password, organization } = input;
 
 			const isEmailTaken = await User.findOne({ email });
 
@@ -43,30 +44,49 @@ export const userRouter = createTRPCRouter({
 				throw new Error("Email is already taken");
 			}
 
-			const { logo, ...restOrganisation } = organisation;
-
-			// TODO: Upload logo file to blob storage and get a publicly accessible logoUrl
-			const organisationId = new mongoose.Types.ObjectId().toString();
+			const organizationId = new mongoose.Types.ObjectId().toString();
 			const hashPassword = bcrypt.hashSync(password, 12);
 
-			let [user, _createdOrganisation] = await Promise.all([
+			let [user, _createdOrganization] = await Promise.all([
 				User.create({
 					name,
 					email,
 					role,
 					password: hashPassword,
-					organisationId,
+					organizationId,
 				}),
-				Organisation.create({
-					_id: organisationId,
-					...restOrganisation,
-					logoUrl: "",
+				Organization.create({
+					_id: organizationId,
+					...organization,
 				}),
 			]);
 
 			user = user.toObject();
 
 			return user;
+		}),
+
+	signIn: publicProcedure
+		.input(
+			z.object({
+				email: z.string(),
+				password: z.string(),
+			}),
+		)
+		.mutation(async ({ ctx: _, input }) => {
+			const { email, password } = input;
+
+			const user = await User.findOne({ email });
+
+			const isPasswordCorrect = user?.get("password")
+				? bcrypt.compareSync(password, user.get("password"))
+				: false;
+
+			if (!user || !isPasswordCorrect) {
+				throw new Error("Invalid email or password");
+			}
+
+			return user.toObject();
 		}),
 
 	getSecretMessage: protectedProcedure.query(() => {

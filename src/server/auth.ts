@@ -9,6 +9,8 @@ import DiscordProvider from "next-auth/providers/discord";
 
 import { env } from "~/env";
 import { clientPromise } from "~/server/db";
+import { api } from "~/trpc/server";
+import type { User } from "./models/User";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -18,11 +20,7 @@ import { clientPromise } from "~/server/db";
  */
 declare module "next-auth" {
 	interface Session extends DefaultSession {
-		user: {
-			id: string;
-			// ...other properties
-			// role: UserRole;
-		} & DefaultSession["user"];
+		user: User & DefaultSession["user"];
 	}
 
 	// interface User {
@@ -65,18 +63,16 @@ export const authOptions: NextAuthOptions = {
 		CredentialsProvider({
 			name: "Credentials",
 			credentials: {
-				username: { label: "Username", type: "text", placeholder: "jsmith" },
+				email: { label: "email", type: "email", placeholder: "jsmith" },
 				password: { label: "Password", type: "password" },
 			},
-			authorize(credentials, _req) {
-				// Add logic here to verify the credentials
-				const user = { id: "1", name: "John Doe" };
+			async authorize(credentials, _req) {
+				const { email = "", password = "" } = credentials ?? {};
+				const user = await api.user.signIn({ email, password });
 
-				if (
-					credentials?.username === "john" &&
-					credentials?.password === "password"
-				) {
-					return user;
+				if (user) {
+					// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+					return user as any;
 				}
 
 				return null;

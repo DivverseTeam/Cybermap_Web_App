@@ -3,15 +3,21 @@ import mongoose from "mongoose";
 import { USER_ROLES, type UserRole } from "~/lib/types";
 
 export interface User extends mongoose.Document {
+	id: string;
 	name: string;
 	role: UserRole;
 	email: string;
 	password: string;
-	organisationId?: string;
+	organizationId?: string;
 }
 
 const UserSchema = new mongoose.Schema<User>(
 	{
+		id: {
+			type: String,
+			required: true,
+			unique: true,
+		},
 		name: {
 			type: String,
 			required: [true, "Please provide a name for this User."],
@@ -26,7 +32,7 @@ const UserSchema = new mongoose.Schema<User>(
 			type: String,
 			required: [true, "Please provide a password for this User"],
 		},
-		organisationId: {
+		organizationId: {
 			type: String,
 			required: false,
 		},
