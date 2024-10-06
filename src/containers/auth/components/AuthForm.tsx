@@ -129,7 +129,7 @@ export default function AuthForm({
 								<p className="select-none flex items-end flex-row-reverse text-primary font-semibold cursor-pointer">
 									Forgot Password
 								</p>
-								<Button type="submit" size="lg" disabled={isLoading}>
+								<Button type="submit" size="lg" loading={isLoading}>
 									{headerTitle}
 								</Button>
 							</div>
