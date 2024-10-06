@@ -1,14 +1,10 @@
-import { MongoDBAdapter } from "@next-auth/mongodb-adapter";
 import CredentialsProvider from "next-auth/providers/credentials";
 import {
 	getServerSession,
 	type DefaultSession,
 	type NextAuthOptions,
 } from "next-auth";
-import DiscordProvider from "next-auth/providers/discord";
 
-import { env } from "~/env";
-import { clientPromise } from "~/server/db";
 import { api } from "~/trpc/server";
 import type { User } from "./models/User";
 
@@ -36,21 +32,38 @@ declare module "next-auth" {
  */
 export const authOptions: NextAuthOptions = {
 	callbacks: {
-		session: ({ session, user }) => ({
-			...session,
-			user: {
-				...session.user,
-				id: user.id,
-			},
-		}),
+		session: ({ session, token }) => {
+			return {
+				...session,
+				user: {
+					...session.user,
+					id: token.sub,
+					role: token.role,
+				},
+			};
+		},
+		jwt: ({ token, user, account }) => {
+			if (account && user) {
+				token.id = user.id;
+				token.sub = user.id;
+				token.email = user.email;
+				if ("role" in user) token.role = user.role;
+				if ("_id" in user) {
+					token.id = user._id;
+					token.sub = user._id as string;
+				}
+			}
+			return token;
+		},
 	},
-	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-	adapter: MongoDBAdapter(clientPromise as any),
+	session: {
+		strategy: "jwt",
+	},
 	providers: [
-		DiscordProvider({
-			clientId: env.DISCORD_CLIENT_ID,
-			clientSecret: env.DISCORD_CLIENT_SECRET,
-		}),
+		// DiscordProvider({
+		// 	clientId: env.DISCORD_CLIENT_ID,
+		// 	clientSecret: env.DISCORD_CLIENT_SECRET,
+		// }),
 		/**
 		 * ...add more providers here.
 		 *
@@ -67,18 +80,27 @@ export const authOptions: NextAuthOptions = {
 				password: { label: "Password", type: "password" },
 			},
 			async authorize(credentials, _req) {
-				const { email = "", password = "" } = credentials ?? {};
-				const user = await api.user.signIn({ email, password });
-
-				if (user) {
+				if (!credentials?.email || !credentials?.password) {
+					return null;
+				}
+				const { email, password } = credentials;
+				try {
+					const user = await api.user.signIn({
+						email,
+						password,
+					});
 					// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 					return user as any;
+				} catch (error) {
+					console.log(error);
+					return null;
 				}
-
-				return null;
 			},
 		}),
 	],
+	pages: {
+		signIn: "/signin",
+	},
 };
 
 /**

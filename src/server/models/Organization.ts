@@ -9,7 +9,6 @@ import {
 } from "~/lib/types";
 
 export interface Organization extends mongoose.Document {
-	id: string;
 	logoUrl?: string;
 	name: string;
 	size: OrganizationSize;
@@ -20,11 +19,6 @@ export interface Organization extends mongoose.Document {
 }
 
 const OrganizationSchema = new mongoose.Schema<Organization>({
-	id: {
-		type: String,
-		required: true,
-		unique: true,
-	},
 	logoUrl: { type: String, required: false },
 	name: { type: String, required: true },
 	size: { type: String, enum: ORGANIZATION_SIZES, required: true },
