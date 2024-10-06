@@ -32,9 +32,13 @@ const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputProps>(
             </span>
           )
         }
-        className={className}
+        className={cn(
+          "placeholder:text-gray-300 placeholder:text-[8px] placeholder:tracking-[0.4em] ",
+          className
+        )}
         {...props}
         ref={ref}
+        placeholder="&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;"
       />
     );
   }
