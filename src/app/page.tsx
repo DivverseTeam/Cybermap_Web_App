@@ -5,9 +5,20 @@ import { api, HydrateClient } from "~/trpc/server";
 
 export default async function Home() {
 	const hello = await api.post.hello({ text: "from tRPC" });
-	const res = await api.post.create({ name: "Post from mongoose" });
 	const session = await getServerAuthSession();
 	// void api.post.getLatest.prefetch();
+
+	// const res = await api.user.signUp({
+	// 	name: "John Doe",
+	// 	email: "cybermap@yopmail.com",
+	// 	password: "TestPassword01",
+	// 	organization: {
+	// 		name: "Test Organization",
+	// 		industry: "FINANCIAL_SERVICES",
+	// 		kind: "SOFTWARE_AND_DESIGN_AGENCY",
+	// 		size: "1-10_MICRO",
+	// 	},
+	// });
 
 	return (
 		<HydrateClient>
@@ -57,8 +68,6 @@ export default async function Home() {
 							</Link>
 						</div>
 					</div>
-
-					<pre>{JSON.stringify(res)}</pre>
 
 					{session?.user && <pre>{JSON.stringify(session.user)}</pre>}
 				</div>
