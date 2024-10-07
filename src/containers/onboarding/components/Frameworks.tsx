@@ -1,3 +1,4 @@
+import { AutoCompleteComp } from "~/components/AutoComplete";
 import { Info } from "~/components/svgs/Info";
 
 export default function Frameworks({
@@ -16,9 +17,13 @@ export default function Frameworks({
             Choose which framework you want to start working on first
           </span>
         </div>
-
+        <div className="flex flex-col gap-8 bgcolor-[red]">
+          <div>
+            <AutoCompleteComp />
+          </div>
+        </div>
         <div className="w-full flex flex-col gap-8">
-          <div className="bg-[#F8FAFC] flex items-center rounded-xl p-6">
+          <div className="bg-[#F8FAFC] flex items-center rounded-xl p-6 gap-4">
             <Info />
             <span className="font-normal text-sm text-[#40566D] leading-6">
               We would like to understand your top priority to help us decide
