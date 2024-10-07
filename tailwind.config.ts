@@ -7,7 +7,7 @@ export default {
 	theme: {
 		extend: {
 			boxShadow: {
-				all: "0 2px 8px 3px rgba(0, 0, 0, 0.05)",
+				all: "0 2px 8px 8px rgba(0, 0, 0, 0.05)",
 			},
 			fontFamily: {
 				sans: ["var(--font-geist-sans)", ...fontFamily.sans],
@@ -50,7 +50,7 @@ export default {
 				},
 				border: "hsl(var(--border))",
 				input: "hsl(var(--input))",
-				ring: "hsl(var(--ring))",
+				ring: "hsla(227, 100%, 59%, 1)",
 				chart: {
 					"1": "hsl(var(--chart-1))",
 					"2": "hsl(var(--chart-2))",

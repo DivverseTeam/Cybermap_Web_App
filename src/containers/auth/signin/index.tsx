@@ -1,22 +1,16 @@
 "use client";
 import React from "react";
 import Header from "../components/Header";
-import AuthForm from "../components/AuthForm";
+// import AuthForm from "../components/AuthForm";
+import SignInForm from "../components/signin-form";
 
-type Props = {
-	callbackUrl?: string;
-	error?: string;
-};
-
-export default function SignInPage({ callbackUrl, error }: Props) {
+export default function SignInPage() {
 	return (
 		<div className="w-full flex flex-col">
 			<Header />
-			<AuthForm
+			<SignInForm
 				headerTitle="Sign In"
 				headerSubtitle="Welcome back! Sign in to jump right back in"
-				callbackUrl={callbackUrl}
-				error={error}
 			/>
 		</div>
 	);

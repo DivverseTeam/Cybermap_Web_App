@@ -4,6 +4,7 @@ import * as React from "react";
 
 import { Input } from "./input";
 import { EyeIcon, EyeOffIcon } from "@razorpay/blade/components";
+import { cn } from "~/lib/utils";
 
 export interface PasswordInputProps
 	extends React.InputHTMLAttributes<HTMLInputElement> {}
@@ -31,9 +32,13 @@ const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputProps>(
 						</span>
 					)
 				}
-				className={className}
+				className={cn(
+					"placeholder:text-gray-300 placeholder:text-[8px] placeholder:tracking-[0.4em] ",
+					className,
+				)}
 				{...props}
 				ref={ref}
+				placeholder="&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;"
 			/>
 		);
 	},
