@@ -24,19 +24,10 @@ export const userRouter = createTRPCRouter({
 				email: z.string(),
 				password: z.string(),
 				role: UserRole.default("ADMIN"),
-				organization: z.object({
-					logoUrl: z.any(),
-					name: z.string(),
-					size: OrganizationSize,
-					kind: OrganizationKind,
-					industry: OrganizationIndustry,
-					frameworks: z.array(z.string()).optional(),
-					integrations: z.array(z.string()).optional(),
-				}),
 			}),
 		)
 		.mutation(async ({ ctx: _, input }) => {
-			const { name, email, role, password, organization } = input;
+			const { name, email, role, password } = input;
 
 			const isEmailTaken = await User.findOne({ email });
 
@@ -44,22 +35,14 @@ export const userRouter = createTRPCRouter({
 				throw new Error("Email is already taken");
 			}
 
-			const organizationId = new mongoose.Types.ObjectId().toString();
 			const hashPassword = bcrypt.hashSync(password, 12);
 
-			let [user, _createdOrganization] = await Promise.all([
-				User.create({
-					name,
-					email,
-					role,
-					password: hashPassword,
-					organizationId,
-				}),
-				Organization.create({
-					_id: organizationId,
-					...organization,
-				}),
-			]);
+			let user = await User.create({
+				name,
+				email,
+				role,
+				password: hashPassword,
+			});
 
 			user = user.toObject();
 
@@ -87,6 +70,38 @@ export const userRouter = createTRPCRouter({
 			}
 
 			return user.toObject();
+		}),
+
+	completeOnboarding: protectedProcedure
+		.input(
+			z.object({
+				logoUrl: z.any(),
+				name: z.string(),
+				size: OrganizationSize,
+				kind: OrganizationKind,
+				industry: OrganizationIndustry,
+				frameworks: z.array(z.string()).optional(),
+				integrations: z.array(z.string()).optional(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			const {
+				session: {
+					user: { id: userId },
+				},
+			} = ctx;
+
+			const organizationId = new mongoose.Types.ObjectId().toString();
+
+			const [_, updatedUser] = await Promise.all([
+				Organization.create({
+					_id: organizationId,
+					...input,
+				}),
+				User.findByIdAndUpdate(userId, { organizationId }, { new: true }),
+			]);
+
+			return updatedUser?.toObject();
 		}),
 
 	getSecretMessage: protectedProcedure.query(() => {

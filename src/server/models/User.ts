@@ -37,6 +37,7 @@ const UserSchema = new mongoose.Schema<User>(
 		},
 	},
 	{
+		timestamps: true,
 		toObject: {
 			transform: (_doc, ret, _options) => {
 				delete ret.password;
