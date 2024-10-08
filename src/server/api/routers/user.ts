@@ -15,6 +15,7 @@ import {
 import User from "~/server/models/User";
 import Organization from "~/server/models/Organization";
 import mongoose from "mongoose";
+import { signIn } from "./actions";
 
 export const userRouter = createTRPCRouter({
 	signUp: publicProcedure
@@ -32,7 +33,7 @@ export const userRouter = createTRPCRouter({
 			const isEmailTaken = await User.findOne({ email });
 
 			if (isEmailTaken) {
-				throw new Error("Email is already taken");
+				throw new Error("Email address is already taken");
 			}
 
 			const hashPassword = bcrypt.hashSync(password, 12);
@@ -59,17 +60,7 @@ export const userRouter = createTRPCRouter({
 		.mutation(async ({ ctx: _, input }) => {
 			const { email, password } = input;
 
-			const user = await User.findOne({ email });
-
-			const isPasswordCorrect = user?.get("password")
-				? bcrypt.compareSync(password, user.get("password"))
-				: false;
-
-			if (!user || !isPasswordCorrect) {
-				throw new Error("Invalid email or password");
-			}
-
-			return user.toObject();
+			return await signIn({ email, password });
 		}),
 
 	completeOnboarding: protectedProcedure

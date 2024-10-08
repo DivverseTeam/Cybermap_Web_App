@@ -18,6 +18,7 @@ import GoogleSignInButton from "~/components/GoogleSignInButton";
 import { PasswordInput } from "~/app/_components/ui/password-input";
 import { FormError } from "~/app/_components/form-error";
 import { SignUpSchema } from "../schemas";
+import { api } from "~/trpc/react";
 
 type Props = {
 	headerTitle: string;
@@ -25,6 +26,12 @@ type Props = {
 };
 
 export default function SignUpForm({ headerTitle, headerSubtitle }: Props) {
+	const {
+		mutate: signUpMutate,
+		isPending,
+		error,
+	} = api.user.signUp.useMutation();
+
 	const form = useForm<z.infer<typeof SignUpSchema>>({
 		resolver: zodResolver(SignUpSchema),
 		defaultValues: {
@@ -35,7 +42,24 @@ export default function SignUpForm({ headerTitle, headerSubtitle }: Props) {
 	});
 
 	const onSubmit = (values: z.infer<typeof SignUpSchema>) => {
-		console.log(values);
+		const { fullName, email, password } = values;
+
+		signUpMutate(
+			{
+				name: fullName,
+				email,
+				password,
+			},
+			{
+				onSuccess: () => {
+					form.reset();
+					// TODO: Update session manually and push to onboarding route
+				},
+				onError: (error) => {
+					console.error("Error signing up:", error);
+				},
+			},
+		);
 	};
 
 	return (
@@ -105,9 +129,9 @@ export default function SignUpForm({ headerTitle, headerSubtitle }: Props) {
 								)}
 							/>
 
-							{/* <FormError message={error} /> */}
+							<FormError message={error?.message} />
 
-							<Button size="lg" type="submit">
+							<Button size="lg" type="submit" loading={isPending}>
 								{headerTitle}
 							</Button>
 						</div>
