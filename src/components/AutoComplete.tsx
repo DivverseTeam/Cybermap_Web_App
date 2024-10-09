@@ -1,27 +1,28 @@
 import {
   ActionList,
   ActionListItem,
+  ActionListSection,
+  AutoComplete,
   Dropdown,
   DropdownOverlay,
-  SelectInput,
 } from "@razorpay/blade/components";
 import { Controller, FieldError } from "react-hook-form";
 
-export function DropSelect({
+export const AutoCompleteComp = ({
+  listData,
   label,
-  placeholder,
-  name,
-  list,
-  control,
   errors,
+  name,
+  placeholder,
+  control,
 }: {
+  listData: any[];
   label: string;
-  placeholder: string;
   name: string;
-  list: string[];
+  placeholder: string;
   control: any;
   errors?: FieldError;
-}): React.ReactElement {
+}): React.ReactElement => {
   return (
     <div className="flex flex-col gap-3">
       <span className="font-semibold text-base text-[#40566D]">{label}</span>
@@ -29,24 +30,33 @@ export function DropSelect({
         name={name}
         control={control}
         render={({ field: { onChange, value } }) => (
-          <Dropdown selectionType="single">
-            <SelectInput
+          <Dropdown selectionType="multiple">
+            <AutoComplete
               label=""
               placeholder={placeholder}
+              name="action"
               value={value}
               validationState={errors ? "error" : "none"}
-              onChange={({ values }) => {
-                onChange(values[0]);
+              onChange={({ name, values }) => {
+                console.log({ name, values });
+                onChange(values);
               }}
             />
             <DropdownOverlay>
               <ActionList>
-                {list.map((item, index) => (
-                  <ActionListItem
-                    key={item + String(index)}
-                    title={item.toLowerCase().replace(/_/g, " ")}
-                    value={item}
-                  />
+                {listData.map((item, index) => (
+                  <ActionListSection
+                    title={item.title}
+                    key={item.title + String(index)}
+                  >
+                    {item.list.map((subItem: string, subIndex: number) => (
+                      <ActionListItem
+                        key={subItem + String(subIndex)}
+                        title={subItem}
+                        value={subItem.toLowerCase()}
+                      />
+                    ))}
+                  </ActionListSection>
                 ))}
               </ActionList>
             </DropdownOverlay>
@@ -60,4 +70,4 @@ export function DropSelect({
       )}
     </div>
   );
-}
+};
