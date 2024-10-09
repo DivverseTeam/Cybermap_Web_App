@@ -19,7 +19,7 @@ export default function FormGroup() {
                   control={control}
                   errors={errors}
                   isPending={isPending}
-                  onImgChange={(img) => setValue("logo", img)}
+                  onImgChange={(img) => setValue("logoUrl", img)}
                 />
               );
             case 2:

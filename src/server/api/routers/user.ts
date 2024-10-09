@@ -12,7 +12,7 @@ import {
 	protectedProcedure,
 	publicProcedure,
 } from "~/server/api/trpc";
-import User from "~/server/models/User";
+import User, { User as UserSchema } from "~/server/models/User";
 import Organization from "~/server/models/Organization";
 import mongoose from "mongoose";
 import { signIn } from "./actions";
@@ -45,9 +45,9 @@ export const userRouter = createTRPCRouter({
 				password: hashPassword,
 			});
 
-			user = user.toObject();
+			user = user.toJSON();
 
-			return user;
+			return UserSchema.parse(user);
 		}),
 
 	signIn: publicProcedure

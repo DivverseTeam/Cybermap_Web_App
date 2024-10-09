@@ -21,7 +21,7 @@ const schema = z.object({
   frameworks: z.array(z.string()).optional(),
   integrations: z.array(z.string()).optional(),
   size: OrganizationSize,
-  logo: z.string().optional(),
+  logoUrl: z.string().optional(),
 });
 
 type FormData = z.infer<typeof schema>;
