@@ -1,10 +1,16 @@
 import { AutoCompleteComp } from "~/components/AutoComplete";
 import { Info } from "~/components/svgs/Info";
+import { FRAMEWORKS } from "../constants";
+import { BottomNav } from "./BottomNav";
 
 export default function Frameworks({
   changeStep,
+  control,
+  errors,
 }: {
   changeStep: (num: number) => void;
+  control: any;
+  errors: any;
 }) {
   return (
     <div className="pt-[4.5rem] pb-24 pr-24 w-full">
@@ -18,12 +24,17 @@ export default function Frameworks({
           </span>
         </div>
         <div className="flex flex-col gap-8 bgcolor-[red]">
-          <div>
-            <AutoCompleteComp />
-          </div>
+          <AutoCompleteComp
+            listData={FRAMEWORKS}
+            label="Find a framework"
+            placeholder="Select your frameworks"
+            name="frameworkIds"
+            control={control}
+            errors={errors?.frameworkIds}
+          />
         </div>
         <div className="w-full flex flex-col gap-8">
-          <div className="bg-[#F8FAFC] flex items-center rounded-xl p-6 gap-4">
+          <div className="bg-[#F8FAFC] flex rounded-xl p-6 gap-4">
             <Info />
             <span className="font-normal text-sm text-[#40566D] leading-6">
               We would like to understand your top priority to help us decide
@@ -31,21 +42,10 @@ export default function Frameworks({
               to other frameworks since they have overlap.
             </span>
           </div>
-
-          <div className="w-full flex justify-end items-center gap-4">
-            <button
-              onClick={() => changeStep(1)}
-              className="max-w-fit h-[36px] px-[20px] outline-none text-gray-1 bg-gray-1 rounded-sm font-semibold text-sm"
-            >
-              Back
-            </button>
-            <button
-              onClick={() => changeStep(3)}
-              className="max-w-fit h-[36px] px-[20px] outline-none text-white bg-[#305EFF] rounded-sm font-semibold text-sm"
-            >
-              Next step
-            </button>
-          </div>
+          <BottomNav
+            previousStep={() => changeStep(1)}
+            nextStep={() => changeStep(3)}
+          />
         </div>
       </div>
     </div>

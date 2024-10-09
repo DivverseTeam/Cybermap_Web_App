@@ -1,10 +1,17 @@
 import Image from "next/image";
 import { twMerge } from "tailwind-merge";
+import { BottomNav } from "./BottomNav";
+import { Controller } from "react-hook-form";
+import IntegrationSelect from "./IntegrationSelect";
 
 export default function Integrations({
   changeStep,
+  control,
+  errors,
 }: {
   changeStep: (num: number) => void;
+  control: any;
+  errors: any;
 }) {
   return (
     <div className="pt-[4.5rem] pb-24 pr-24 w-full">
@@ -18,59 +25,22 @@ export default function Integrations({
           </span>
         </div>
         <div className="w-full flex flex-col gap-16 max-w-[696px]">
-          <div className="flex flex-wrap items-center gap-8">
-            {[
-              "/integrations/vercel.svg",
-              "/integrations/supabase.svg",
-              "/integrations/gcp.svg",
-              "/integrations/heroku.svg",
-              "/integrations/aws.svg",
-              "/integrations/azure.svg",
-              "/integrations/digitalOcean.svg",
-              "/integrations/netlify.svg",
-            ].map((item, index) => (
-              <div
-                key={item + String(index)}
-                className={twMerge(
-                  "flex items-center justify-center h-[150px] w-[150px] rounded-[8px] cursor-pointer p-[10px] border-2 hover:border-2 hover:border-solid hover:border-[#305EFF]",
-                  index === 4
-                    ? "border-solid border-[#305EFF]"
-                    : "border-solid border-[#CBD5E2]"
-                )}
-              >
-                <div className="relative block h-[90px] w-[150px] bg-white">
-                  <Image
-                    src={item}
-                    alt="image"
-                    fill={true}
-                    objectFit="contain"
-                    objectPosition="center"
-                    priority={true}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="w-full flex justify-between items-center gap-4">
-            <span className="font-semibold text-base text-[#305EFF] leading-8 cursor-pointer">
-              Skip this step
-            </span>
-            <div className="flex items-center gap-4 ">
-              <button
-                onClick={() => changeStep(2)}
-                className="max-w-fit h-[36px] px-[20px] outline-none text-gray-1 bg-gray-1 rounded-sm font-semibold text-sm"
-              >
-                Back
-              </button>
-              <button
-                onClick={() => changeStep(4)}
-                className="max-w-fit h-[36px] px-[20px] outline-none text-white bg-[#305EFF] rounded-sm font-semibold text-sm"
-              >
-                Finish
-              </button>
-            </div>
-          </div>
+          <Controller
+            name="integrationIds"
+            control={control}
+            render={({ field }) => (
+              <IntegrationSelect
+                value={field.value}
+                onChange={field.onChange}
+                errors={errors.integrationIds}
+              />
+            )}
+          />
+          <BottomNav
+            previousStep={() => changeStep(2)}
+            nextStep={() => changeStep(4)}
+            showSkip={true}
+          />
         </div>
       </div>
     </div>

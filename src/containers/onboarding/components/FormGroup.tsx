@@ -1,29 +1,49 @@
-import { useState } from "react";
+import useOnboarding from "../hook/useOnboarding";
 import CompanyInfo from "./CompanyInfo";
 import Frameworks from "./Frameworks";
 import Integrations from "./Integrations";
 
-export default function FormGroup({
-  changeStep,
-  step,
-}: {
-  changeStep: (num: number) => void;
-  step: number;
-}) {
+export default function FormGroup() {
+  const {
+    handleSubmit,
+    onSubmit,
+    control,
+    errors,
+    changeStep,
+    step,
+  } = useOnboarding();
   return (
-    <div className="w-full">
+    <form className="w-full">
       {(() => {
         switch (step) {
           case 1:
-            return <CompanyInfo changeStep={changeStep} />;
+            return (
+              <CompanyInfo
+                changeStep={changeStep}
+                control={control}
+                errors={errors}
+              />
+            );
           case 2:
-            return <Frameworks changeStep={changeStep} />;
+            return (
+              <Frameworks
+                changeStep={changeStep}
+                control={control}
+                errors={errors}
+              />
+            );
           case 3:
-            return <Integrations changeStep={changeStep} />;
+            return (
+              <Integrations
+                changeStep={changeStep}
+                control={control}
+                errors={errors}
+              />
+            );
           default:
-            return <CompanyInfo changeStep={changeStep} />;
+            return <></>;
         }
       })()}
-    </div>
+    </form>
   );
 }

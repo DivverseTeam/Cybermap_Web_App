@@ -1,46 +1,63 @@
 import {
+  ActionList,
+  ActionListItem,
   Dropdown,
   DropdownOverlay,
   SelectInput,
-  ActionList,
-  ActionListItem,
 } from "@razorpay/blade/components";
+import { Controller, FieldError } from "react-hook-form";
 
 export function DropSelect({
   label,
   placeholder,
   name,
-  onChange,
   list,
+  control,
+  errors,
 }: {
   label: string;
   placeholder: string;
   name: string;
-  onChange: (data: any) => void;
-  list: Array<string>;
+  list: string[];
+  control: any;
+  errors?: FieldError;
 }): React.ReactElement {
   return (
-    <Dropdown selectionType="single">
-      <SelectInput
-        label={label}
-        placeholder={placeholder}
+    <div className="flex flex-col gap-3">
+      <span className="font-semibold text-base text-[#40566D]">{label}</span>
+      <Controller
         name={name}
-        onChange={({ name, values }) => {
-          console.log({ name, values });
-          onChange({ name, values });
-        }}
-      />
-      <DropdownOverlay>
-        <ActionList>
-          {list.map((item, index) => (
-            <ActionListItem
-              key={item + String(index)}
-              title={item}
-              value={item.toLowerCase()}
+        control={control}
+        render={({ field: { onChange, value } }) => (
+          <Dropdown selectionType="single">
+            <SelectInput
+              label=""
+              placeholder={placeholder}
+              value={value}
+              validationState={errors ? "error" : "none"}
+              onChange={({ values }) => {
+                onChange(values[0]);
+              }}
             />
-          ))}
-        </ActionList>
-      </DropdownOverlay>
-    </Dropdown>
+            <DropdownOverlay>
+              <ActionList>
+                {list.map((item, index) => (
+                  <ActionListItem
+                    key={item + String(index)}
+                    title={item.toLowerCase().replace(/_/g, " ")}
+                    value={item}
+                  />
+                ))}
+              </ActionList>
+            </DropdownOverlay>
+          </Dropdown>
+        )}
+      />
+      {errors && (
+        <p style={{ color: "red", fontSize: "12px", marginTop: "4px" }}>
+          {errors.message}
+        </p>
+      )}
+    </div>
   );
 }
