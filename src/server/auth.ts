@@ -5,7 +5,7 @@ import {
 	type NextAuthOptions,
 } from "next-auth";
 
-import type { User } from "./models/User";
+import { User } from "./models/User";
 import { signIn } from "./api/routers/actions";
 
 /**
@@ -33,12 +33,14 @@ declare module "next-auth" {
 export const authOptions: NextAuthOptions = {
 	callbacks: {
 		session: ({ session, token }) => {
+			const { id, role, organizationId } = token;
 			return {
 				...session,
 				user: {
 					...session.user,
-					id: token.sub,
-					role: token.role,
+					id,
+					role,
+					organizationId,
 				},
 			};
 		},
@@ -46,11 +48,14 @@ export const authOptions: NextAuthOptions = {
 			if (account && user) {
 				token.id = user.id;
 				token.sub = user.id;
-				token.email = user.email;
-				if ("role" in user) token.role = user.role;
-				if ("_id" in user) {
-					token.id = user._id;
-					token.sub = user._id as string;
+
+				const parsedUser = User.safeParse(user);
+
+				if (parsedUser.success) {
+					const { id, role, organizationId } = parsedUser.data;
+					token.id = id;
+					token.role = role;
+					token.organizationId = organizationId;
 				}
 			}
 			return token;
@@ -87,8 +92,7 @@ export const authOptions: NextAuthOptions = {
 				try {
 					const user = await signIn({ email, password });
 
-					// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-					return user as any;
+					return user;
 				} catch (error) {
 					console.log(error);
 					return null;

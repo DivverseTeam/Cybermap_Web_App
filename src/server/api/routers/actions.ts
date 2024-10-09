@@ -1,11 +1,11 @@
 import bcrypt from "bcrypt";
-import User from "~/server/models/User";
+import User, { User as UserSchema } from "~/server/models/User";
 
 export const signIn = async ({
 	email,
 	password,
 }: { email: string; password: string }) => {
-	const user = await User.findOne({ email });
+	let user = await User.findOne({ email });
 
 	const isPasswordCorrect = user?.get("password")
 		? bcrypt.compareSync(password, user.get("password"))
@@ -15,5 +15,7 @@ export const signIn = async ({
 		throw new Error("Invalid email or password");
 	}
 
-	return user.toObject();
+	user = user.toJSON();
+
+	return UserSchema.parse(user);
 };
