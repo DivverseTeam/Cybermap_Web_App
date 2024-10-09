@@ -5,8 +5,8 @@ import {
 	type NextAuthOptions,
 } from "next-auth";
 
-import { api } from "~/trpc/server";
 import type { User } from "./models/User";
+import { signIn } from "./api/routers/actions";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -85,10 +85,8 @@ export const authOptions: NextAuthOptions = {
 				}
 				const { email, password } = credentials;
 				try {
-					const user = await api.user.signIn({
-						email,
-						password,
-					});
+					const user = await signIn({ email, password });
+
 					// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 					return user as any;
 				} catch (error) {

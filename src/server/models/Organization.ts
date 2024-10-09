@@ -18,31 +18,34 @@ export interface Organization extends mongoose.Document {
 	integrationIds: Array<string>;
 }
 
-const OrganizationSchema = new mongoose.Schema<Organization>({
-	logoUrl: { type: String, required: false },
-	name: { type: String, required: true },
-	size: { type: String, enum: ORGANIZATION_SIZES, required: true },
-	kind: {
-		type: String,
-		enum: ORGANIZATION_KINDS,
-		required: true,
+const OrganizationSchema = new mongoose.Schema<Organization>(
+	{
+		logoUrl: { type: String, required: false },
+		name: { type: String, required: true },
+		size: { type: String, enum: ORGANIZATION_SIZES, required: true },
+		kind: {
+			type: String,
+			enum: ORGANIZATION_KINDS,
+			required: true,
+		},
+		industry: {
+			type: String,
+			enum: ORGANIZATION_INDUSTRIES,
+			required: true,
+		},
+		frameworkIds: {
+			type: [{ type: String }],
+			required: false,
+			default: [],
+		},
+		integrationIds: {
+			type: [{ type: String }],
+			required: false,
+			default: [],
+		},
 	},
-	industry: {
-		type: String,
-		enum: ORGANIZATION_INDUSTRIES,
-		required: true,
-	},
-	frameworkIds: {
-		type: [{ type: String }],
-		required: false,
-		default: [],
-	},
-	integrationIds: {
-		type: [{ type: String }],
-		required: false,
-		default: [],
-	},
-});
+	{ timestamps: true },
+);
 
 export default (mongoose.models.Organization as mongoose.Model<Organization>) ||
 	mongoose.model("Organization", OrganizationSchema);
