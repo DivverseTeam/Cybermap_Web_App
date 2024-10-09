@@ -7,10 +7,12 @@ export default function Frameworks({
   changeStep,
   control,
   errors,
+  isPending,
 }: {
   changeStep: (num: number) => void;
   control: any;
   errors: any;
+  isPending: boolean;
 }) {
   return (
     <div className="pt-[4.5rem] pb-24 pr-24 w-full">
@@ -28,9 +30,9 @@ export default function Frameworks({
             listData={FRAMEWORKS}
             label="Find a framework"
             placeholder="Select your frameworks"
-            name="frameworkIds"
+            name="frameworks"
             control={control}
-            errors={errors?.frameworkIds}
+            errors={errors?.frameworks}
           />
         </div>
         <div className="w-full flex flex-col gap-8">
@@ -45,6 +47,7 @@ export default function Frameworks({
           <BottomNav
             previousStep={() => changeStep(1)}
             nextStep={() => changeStep(3)}
+            isPending={isPending}
           />
         </div>
       </div>

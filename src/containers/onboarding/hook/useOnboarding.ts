@@ -1,26 +1,39 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import {
+  OrganizationIndustry,
+  OrganizationKind,
+  OrganizationSize,
+} from "~/lib/types";
+import { api } from "~/trpc/react";
 
 const schema = z.object({
-  orgName: z
+  name: z
     .string()
     .min(3, {
       message: "Organization name must be at least 3 characters long",
     })
     .max(50, { message: "Organization name cannot exceed 50 characters" }),
-  kind: z.string(),
-  industry: z.string(),
-  frameworkIds: z.array(z.string()),
-  integrationIds: z.array(z.string()),
-  size: z.string(),
+  kind: OrganizationKind,
+  industry: OrganizationIndustry,
+  frameworks: z.array(z.string()).optional(),
+  integrations: z.array(z.string()).optional(),
+  size: OrganizationSize,
+  logo: z.string().optional(),
 });
 
 type FormData = z.infer<typeof schema>;
 
 export default function useOnboarding() {
   const [step, setStep] = useState(1);
+  const {
+    mutate: onboardingMutate,
+    isPending,
+    error,
+  } = api.user.completeOnboarding.useMutation();
+
   const {
     control,
     setValue,
@@ -35,6 +48,19 @@ export default function useOnboarding() {
 
   const onSubmit = (data: FormData) => {
     console.log("Form submitted successfully:", data, step);
+    onboardingMutate(
+      {
+        ...data,
+      },
+      {
+        onSuccess: () => {
+          // form.reset();
+        },
+        onError: (error: any) => {
+          console.error("Error signing up:", error);
+        },
+      }
+    );
   };
 
   async function changeStep(num: number) {
@@ -43,20 +69,28 @@ export default function useOnboarding() {
       return;
     } else {
       if (step === 1) {
-        const valid = await trigger(["orgName", "kind", "industry", "size"]);
+        const valid = await trigger(["name", "kind", "industry", "size"]);
         console.log("step one:", errors, getValues(), valid, num);
         if (valid) setStep(num);
       }
       if (step === 2) {
-        const valid = await trigger(["frameworkIds"]);
+        const valid = await trigger(["integrations"]);
         console.log("step two:", errors, getValues(), valid, num);
         if (valid) setStep(num);
       }
+      if (step === 3) {
+        const valid = await trigger(["frameworks"]);
+        console.log("step three:", errors, getValues(), valid, num);
+        if (valid) {
+          onSubmit(getValues());
+          // setStep(num);
+        }
+      }
     }
-    console.log("step two:", errors, getValues(), num);
   }
 
   return {
+    isPending,
     step,
     control,
     errors,

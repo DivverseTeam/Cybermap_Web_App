@@ -8,10 +8,12 @@ export default function Integrations({
   changeStep,
   control,
   errors,
+  isPending,
 }: {
   changeStep: (num: number) => void;
   control: any;
   errors: any;
+  isPending: boolean;
 }) {
   return (
     <div className="pt-[4.5rem] pb-24 pr-24 w-full">
@@ -26,13 +28,13 @@ export default function Integrations({
         </div>
         <div className="w-full flex flex-col gap-16 max-w-[696px]">
           <Controller
-            name="integrationIds"
+            name="integrations"
             control={control}
             render={({ field }) => (
               <IntegrationSelect
                 value={field.value}
                 onChange={field.onChange}
-                errors={errors.integrationIds}
+                errors={errors.integrations}
               />
             )}
           />
@@ -40,6 +42,7 @@ export default function Integrations({
             previousStep={() => changeStep(2)}
             nextStep={() => changeStep(4)}
             showSkip={true}
+            isPending={isPending}
           />
         </div>
       </div>

@@ -1,10 +1,8 @@
 import { twMerge } from "tailwind-merge";
 import { CompletedIcon } from "~/components/svgs/Completed";
 import { CyberMapLogo } from "~/components/svgs/CyberMapLogo";
-import useOnboarding from "../hook/useOnboarding";
 
-export default function SideBar() {
-  const { step } = useOnboarding();
+export default function SideBar({ step }: { step: number }) {
   return (
     <div className="w-[28.563rem] min-h-screen pt-12 pr-8 pb-20 pl-12 bg-[#192839] flex flex-col justify-between">
       <div className="flex flex-col gap-20">
@@ -36,7 +34,10 @@ export default function SideBar() {
                 const active = step === index + 1;
                 const completed = step > index + 1;
                 return (
-                  <div className="flex gap-[1.188rem]" key={title + String(index)}>
+                  <div
+                    className="flex gap-[1.188rem]"
+                    key={title + String(index)}
+                  >
                     <div className="flex flex-col items-center gap-[4px]">
                       <div
                         className={twMerge(

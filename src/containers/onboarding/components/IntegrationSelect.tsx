@@ -4,7 +4,7 @@ import { FieldError } from "react-hook-form";
 import { twMerge } from "tailwind-merge";
 
 type IntegrationSelectProps = {
-  value: string;
+  value: string[];
   onChange: (value: string[]) => void;
   errors?: FieldError;
 };
@@ -14,17 +14,18 @@ export default function IntegrationSelect({
   onChange,
   errors,
 }: IntegrationSelectProps) {
-  const [selectedIds, setSelectedIds] = React.useState<string[]>([]);
+  console.log("IntegrationSelect", value);
+  const [selectedIds, setSelectedIds] = React.useState<string[]>(value || []);
 
   const handleSelect = (id: string) => {
     if (selectedIds.includes(id)) {
-      setSelectedIds(selectedIds.filter((item) => item !== id));
+      setSelectedIds(selectedIds.filter((item: any) => item !== id));
     } else {
       setSelectedIds([...selectedIds, id]);
     }
   };
 
-  const isSelected = (id: string) => selectedIds.includes(id);
+  const isSelected = (id: string) => selectedIds?.includes(id) || false;
 
   React.useEffect(() => {
     onChange(selectedIds);
@@ -47,7 +48,7 @@ export default function IntegrationSelect({
           onClick={() => handleSelect(`${index}`)}
           className={twMerge(
             "flex items-center justify-center h-[150px] w-[150px] rounded-[8px] cursor-pointer p-[10px] border-2 hover:border-2 hover:border-solid hover:border-[#305EFF]",
-            isSelected(item)
+            isSelected(index.toString())
               ? "border-solid border-[#305EFF]"
               : "border-solid border-[#CBD5E2]"
           )}
