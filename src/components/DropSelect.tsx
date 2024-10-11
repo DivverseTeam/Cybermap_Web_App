@@ -5,7 +5,7 @@ import {
   DropdownOverlay,
   SelectInput,
 } from "@razorpay/blade/components";
-import { Controller, FieldError } from "react-hook-form";
+import { Controller, type FieldError } from "react-hook-form";
 
 export function DropSelect({
   label,
