@@ -1,14 +1,12 @@
-import { MongoDBAdapter } from "@next-auth/mongodb-adapter";
 import CredentialsProvider from "next-auth/providers/credentials";
 import {
 	getServerSession,
 	type DefaultSession,
 	type NextAuthOptions,
 } from "next-auth";
-import DiscordProvider from "next-auth/providers/discord";
 
-import { env } from "~/env";
-import { clientPromise } from "~/server/db";
+import { User } from "./models/User";
+import { signIn } from "./api/routers/actions";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -18,11 +16,7 @@ import { clientPromise } from "~/server/db";
  */
 declare module "next-auth" {
 	interface Session extends DefaultSession {
-		user: {
-			id: string;
-			// ...other properties
-			// role: UserRole;
-		} & DefaultSession["user"];
+		user: User & DefaultSession["user"];
 	}
 
 	// interface User {
@@ -38,21 +32,43 @@ declare module "next-auth" {
  */
 export const authOptions: NextAuthOptions = {
 	callbacks: {
-		session: ({ session, user }) => ({
-			...session,
-			user: {
-				...session.user,
-				id: user.id,
-			},
-		}),
+		session: ({ session, token }) => {
+			const { id, role, organizationId } = token;
+			return {
+				...session,
+				user: {
+					...session.user,
+					id,
+					role,
+					organizationId,
+				},
+			};
+		},
+		jwt: ({ token, user, account }) => {
+			if (account && user) {
+				token.id = user.id;
+				token.sub = user.id;
+
+				const parsedUser = User.safeParse(user);
+
+				if (parsedUser.success) {
+					const { id, role, organizationId } = parsedUser.data;
+					token.id = id;
+					token.role = role;
+					token.organizationId = organizationId;
+				}
+			}
+			return token;
+		},
 	},
-	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-	adapter: MongoDBAdapter(clientPromise as any),
+	session: {
+		strategy: "jwt",
+	},
 	providers: [
-		DiscordProvider({
-			clientId: env.DISCORD_CLIENT_ID,
-			clientSecret: env.DISCORD_CLIENT_SECRET,
-		}),
+		// DiscordProvider({
+		// 	clientId: env.DISCORD_CLIENT_ID,
+		// 	clientSecret: env.DISCORD_CLIENT_SECRET,
+		// }),
 		/**
 		 * ...add more providers here.
 		 *
@@ -65,24 +81,28 @@ export const authOptions: NextAuthOptions = {
 		CredentialsProvider({
 			name: "Credentials",
 			credentials: {
-				username: { label: "Username", type: "text", placeholder: "jsmith" },
+				email: { label: "email", type: "email", placeholder: "jsmith" },
 				password: { label: "Password", type: "password" },
 			},
-			authorize(credentials, _req) {
-				// Add logic here to verify the credentials
-				const user = { id: "1", name: "John Doe" };
-
-				if (
-					credentials?.username === "john" &&
-					credentials?.password === "password"
-				) {
-					return user;
+			async authorize(credentials, _req) {
+				if (!credentials?.email || !credentials?.password) {
+					return null;
 				}
+				const { email, password } = credentials;
+				try {
+					const user = await signIn({ email, password });
 
-				return null;
+					return user;
+				} catch (error) {
+					console.log(error);
+					return null;
+				}
 			},
 		}),
 	],
+	pages: {
+		signIn: "/signin",
+	},
 };
 
 /**

@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { UserRole } from "~/lib/types";
+import {
+	OrganizationIndustry,
+	OrganizationKind,
+	OrganizationSize,
+	UserRole,
+} from "~/lib/types";
 import bcrypt from "bcrypt";
 
 import {
@@ -7,13 +12,10 @@ import {
 	protectedProcedure,
 	publicProcedure,
 } from "~/server/api/trpc";
-import User from "~/server/models/User";
-import Organisation, {
-	OrganisationIndustry,
-	OrganisationKind,
-	OrganisationSize,
-} from "~/server/models/Organisation";
+import User, { User as UserSchema } from "~/server/models/User";
+import Organization from "~/server/models/Organization";
 import mongoose from "mongoose";
+import { signIn } from "./actions";
 
 export const userRouter = createTRPCRouter({
 	signUp: publicProcedure
@@ -23,50 +25,74 @@ export const userRouter = createTRPCRouter({
 				email: z.string(),
 				password: z.string(),
 				role: UserRole.default("ADMIN"),
-				organisation: z.object({
-					logo: z.any(),
-					name: z.string(),
-					size: OrganisationSize,
-					kind: OrganisationKind,
-					industry: OrganisationIndustry,
-					frameworks: z.array(z.string()).optional(),
-					integrations: z.array(z.string()).optional(),
-				}),
 			}),
 		)
 		.mutation(async ({ ctx: _, input }) => {
-			const { name, email, role, password, organisation } = input;
+			const { name, email, role, password } = input;
 
 			const isEmailTaken = await User.findOne({ email });
 
 			if (isEmailTaken) {
-				throw new Error("Email is already taken");
+				throw new Error("Email address is already taken");
 			}
 
-			const { logo, ...restOrganisation } = organisation;
-
-			// TODO: Upload logo file to blob storage and get a publicly accessible logoUrl
-			const organisationId = new mongoose.Types.ObjectId().toString();
 			const hashPassword = bcrypt.hashSync(password, 12);
 
-			let [user, _createdOrganisation] = await Promise.all([
-				User.create({
-					name,
-					email,
-					role,
-					password: hashPassword,
-					organisationId,
+			let user = await User.create({
+				name,
+				email,
+				role,
+				password: hashPassword,
+			});
+
+			user = user.toJSON();
+
+			return UserSchema.parse(user);
+		}),
+
+	signIn: publicProcedure
+		.input(
+			z.object({
+				email: z.string(),
+				password: z.string(),
+			}),
+		)
+		.mutation(async ({ ctx: _, input }) => {
+			const { email, password } = input;
+
+			return await signIn({ email, password });
+		}),
+
+	completeOnboarding: protectedProcedure
+		.input(
+			z.object({
+				logoUrl: z.any(),
+				name: z.string(),
+				size: OrganizationSize,
+				kind: OrganizationKind,
+				industry: OrganizationIndustry,
+				frameworks: z.array(z.string()).optional(),
+				integrations: z.array(z.string()).optional(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			const {
+				session: {
+					user: { id: userId },
+				},
+			} = ctx;
+
+			const organizationId = new mongoose.Types.ObjectId().toString();
+
+			const [_, updatedUser] = await Promise.all([
+				Organization.create({
+					_id: organizationId,
+					...input,
 				}),
-				Organisation.create({
-					_id: organisationId,
-					...restOrganisation,
-					logoUrl: "",
-				}),
+				User.findByIdAndUpdate(userId, { organizationId }, { new: true }),
 			]);
 
-			user = user.toObject();
-
-			return user;
+			return updatedUser?.toObject();
 		}),
 
 	getSecretMessage: protectedProcedure.query(() => {

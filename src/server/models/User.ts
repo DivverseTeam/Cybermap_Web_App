@@ -1,56 +1,46 @@
 import mongoose from "mongoose";
+import { z } from "zod";
 
-import { USER_ROLES, type UserRole } from "~/lib/types";
+import { USER_ROLES, UserRole } from "~/lib/types";
+import { BaseSchema } from "./base";
 
-export interface User extends mongoose.Document {
-	name: string;
-	role: UserRole;
-	email: string;
-	password: string;
-	organisationId?: string;
-}
+export const User = z.object({
+	id: z.string(),
+	name: z.string(),
+	role: UserRole,
+	email: z.string(),
+	organizationId: z.string().optional(),
+});
 
-const UserSchema = new mongoose.Schema<User>(
-	{
-		name: {
-			type: String,
-			required: [true, "Please provide a name for this User."],
-			maxlength: [60, "Name cannot be more than 60 characters"],
-		},
-		email: {
-			type: String,
-			required: [true, "Please provide an email this User"],
-			unique: true,
-		},
-		password: {
-			type: String,
-			required: [true, "Please provide a password for this User"],
-		},
-		organisationId: {
-			type: String,
-			required: false,
-		},
-		role: {
-			type: String,
-			role: USER_ROLES,
-			default: "AUDITOR",
-		},
+export type User = z.infer<typeof User>;
+
+type UserWithDocument = User & mongoose.Document & { password: string };
+
+const UserSchema = new BaseSchema<UserWithDocument>({
+	name: {
+		type: String,
+		required: [true, "Please provide a name for this User."],
+		maxlength: [60, "Name cannot be more than 60 characters"],
 	},
-	{
-		toObject: {
-			transform: (_doc, ret, _options) => {
-				delete ret.password;
-				return ret;
-			},
-		},
-		toJSON: {
-			transform: function (_doc, ret, _options) {
-				delete ret.password;
-				return ret;
-			},
-		},
+	email: {
+		type: String,
+		required: [true, "Please provide an email this User"],
+		unique: true,
 	},
-);
+	password: {
+		type: String,
+		required: [true, "Please provide a password for this User"],
+	},
+	organizationId: {
+		type: String,
+		required: false,
+	},
+	role: {
+		type: String,
+		role: USER_ROLES,
+		default: "AUDITOR",
+	},
+});
 
-export default (mongoose.models.User as mongoose.Model<User>) ||
+export default (mongoose.models.User as mongoose.Model<UserWithDocument>) ||
 	mongoose.model("User", UserSchema);

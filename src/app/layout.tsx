@@ -2,9 +2,9 @@ import "~/styles/globals.css";
 
 import { GeistSans } from "geist/font/sans";
 import type { Metadata } from "next";
-
+import { Inter, Public_Sans } from "next/font/google";
 import { TRPCReactProvider } from "~/trpc/react";
-import { BladeWrapper } from "./_blade-wrapper";
+import { Wrapper } from "./_wrapper";
 
 export const metadata: Metadata = {
 	title: "Create T3 App",
@@ -12,14 +12,20 @@ export const metadata: Metadata = {
 	icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+const publicSans = Public_Sans({
+	subsets: ["latin"],
+	variable: "--font-public-sans",
+});
+
 export default function RootLayout({
 	children,
 }: Readonly<{ children: React.ReactNode }>) {
 	return (
 		<html lang="en" className={`${GeistSans.variable}`}>
-			<body>
+			<body className={`${inter.variable} ${publicSans.variable} font-sans`}>
 				<TRPCReactProvider>
-					<BladeWrapper>{children}</BladeWrapper>
+					<Wrapper>{children}</Wrapper>
 				</TRPCReactProvider>
 			</body>
 		</html>
