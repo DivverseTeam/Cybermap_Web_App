@@ -6,7 +6,7 @@ import {
   Dropdown,
   DropdownOverlay,
 } from "@razorpay/blade/components";
-import { Controller, FieldError } from "react-hook-form";
+import { Controller, type FieldError } from "react-hook-form";
 
 export const AutoCompleteComp = ({
   listData,

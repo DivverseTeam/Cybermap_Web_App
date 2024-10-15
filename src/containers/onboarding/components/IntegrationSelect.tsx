@@ -1,6 +1,6 @@
 import Image from "next/image";
 import React from "react";
-import { FieldError } from "react-hook-form";
+import type { FieldError } from "react-hook-form";
 import { twMerge } from "tailwind-merge";
 
 type IntegrationSelectProps = {
