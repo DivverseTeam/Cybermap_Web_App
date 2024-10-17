@@ -12,6 +12,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "~/app/_components/ui/tooltip";
+import { usePathname } from "next/navigation";
 
 interface NavProps {
   isCollapsed: boolean;
@@ -27,55 +28,42 @@ interface NavProps {
 }
 
 export function Nav({ links, groupName, isCollapsed }: NavProps) {
+  const pathname = usePathname();
   return (
     <div
       data-collapsed={isCollapsed}
-      className="group flex flex-col gap-0 py-2 data-[collapsed=true]:py-2 text-sm"
+      className="group flex flex-col gap-2 py-2 data-[collapsed=true]:py-2 text-sm text-[#80828D] "
     >
       {!["home", "actions"].includes(groupName.toLocaleLowerCase()) && (
-        <span className="uppercase font-semibold text-[#B9BBC6] text-sm">
+        <span className="uppercase font-[500] text-[#B9BBC6] text-sm mt-[-10px]">
           {groupName}
         </span>
       )}
-      <nav className="grid gap-1 px-2 group-[[data-collapsed=true]]:justify-center group-[[data-collapsed=true]]:px-2">
-        {links.map((link: any, index) =>
-          isCollapsed ? (
-            <Tooltip key={index} delayDuration={0}>
-              <TooltipTrigger asChild>
-                <Link
-                  href={`${link.href}`}
-                  className={cn(
-                    buttonVariants({ variant: link.variant, size: "icon" }),
-                    "h-9 w-9",
-                    link.variant === "default" &&
-                      "dark:bg-muted dark:text-muted-foreground dark:hover:bg-muted dark:hover:text-white"
-                  )}
-                >
-                  <link.icon className="h-4 w-4" />
-                  <span className="sr-only">{link.title}</span>
-                </Link>
-              </TooltipTrigger>
-              <TooltipContent side="right" className="flex items-center gap-4">
-                {link.title}
-                {link.label && (
-                  <span className="ml-auto text-muted-foreground">
-                    {link.label}
-                  </span>
-                )}
-              </TooltipContent>
-            </Tooltip>
-          ) : (
+      <nav className=" grid gap-1 group-[[data-collapsed=true]]:justify-center group-[[data-collapsed=true]]:px-2">
+        {links.map((link: any, index) => (
+          <div className="flex items-center relative">
+            {link.href === pathname && (
+              <div className="h-9 w-1 absolute left-[-25] bg-primary"></div>
+            )}
             <Link
               key={index}
               href={`${link.href}`}
               className={cn(
-                buttonVariants({ variant: link.variant, size: "sm" }),
+                buttonVariants({
+                  variant: link.href === pathname ? "lightBlue" : "ghost",
+                  size: "sm",
+                }),
                 link.variant === "default" &&
-                  "dark:bg-muted dark:text-white dark:hover:bg-muted dark:hover:text-white",
+                  "dark:bg-muted dark:text-white dark:hover:bg-muted  dark:hover:text-white",
+                link.variant === "lightBlue" && "text-black",
                 "justify-start"
               )}
             >
-              <link.icon className="mr-2 h-4 w-4" />
+              <link.icon
+                className={`${
+                  link.href === pathname && "text-primary"
+                } "mr-2 h-4 w-4"`}
+              />
               {link.title}
               {link.label && (
                 <span
@@ -89,8 +77,8 @@ export function Nav({ links, groupName, isCollapsed }: NavProps) {
                 </span>
               )}
             </Link>
-          )
-        )}
+          </div>
+        ))}
       </nav>
     </div>
   );

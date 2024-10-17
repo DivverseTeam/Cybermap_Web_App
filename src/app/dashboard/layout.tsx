@@ -1,3 +1,5 @@
+"use client";
+
 import "~/styles/globals.css";
 
 import { GeistSans } from "geist/font/sans";
@@ -5,7 +7,6 @@ import type { Metadata } from "next";
 import { Inter, Public_Sans } from "next/font/google";
 import { TRPCReactProvider } from "~/trpc/react";
 import { Wrapper } from "../_wrapper";
-import Header from "~/components/layout/header";
 import {
   Analytics01Icon,
   Audit02Icon,
@@ -19,12 +20,16 @@ import {
 } from "hugeicons-react";
 import { cn } from "~/lib/utils";
 import SideNavbar from "~/containers/dashboard/components/SideNavbar";
+import DashboardHeader from "~/containers/dashboard/components/DashboardHeader";
 
-export const metadata: Metadata = {
-  title: "CYBERMAP",
-  description: "Cybermap",
-  icons: [{ rel: "icon", url: "/favicon.ico" }],
-};
+import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
+
+// export const metadata: Metadata = {
+//   title: "CYBERMAP",
+//   description: "Cybermap",
+//   icons: [{ rel: "icon", url: "/favicon.ico" }],
+// };
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const publicSans = Public_Sans({
@@ -35,88 +40,28 @@ const publicSans = Public_Sans({
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const pathname = usePathname(); // Get the current pathname
+  const [loading, setLoading] = useState(false);
+  const [prevPath, setPrevPath] = useState(pathname); // Keep track of the previous path
+
+  useEffect(() => {
+    // If the path changes, show the loading state
+    if (pathname !== prevPath) {
+      setLoading(true);
+      setTimeout(() => {
+        setLoading(false); // Simulate a short delay for loading state
+      }, 500); // You can adjust the delay time as needed
+      setPrevPath(pathname); // Update the previous path
+    }
+  }, [pathname, prevPath]);
+
   return (
     <html lang="en" className={`${GeistSans.variable}`}>
-      {/* <body className={`${inter.variable} ${publicSans.variable} font-sans`}>
-        <TRPCReactProvider>
-          <Wrapper>
-            <SidebarNav
-							items={[
-								{
-									title: "Dashboard",
-									icon: <Analytics01Icon />,
-									href: "/dashboard",
-								},
-								{
-									title: "Starter guide",
-									icon: <CurvyRightDirectionIcon />,
-									href: "/starter-guide",
-								},
-								{
-									title: "COMPLIANCE",
-									submenu: [
-										{
-											title: "Frameworks",
-											icon: <FrameworksIcon />,
-											href: "/frameworks",
-										},
-										{
-											title: "Controls",
-											icon: <FileValidationIcon />,
-											href: "/controls",
-										},
-										{
-											title: "Evidence Library",
-											icon: <LibraryIcon />,
-											href: "/evidence-library",
-										},
-										{
-											title: "Polices",
-											icon: <PolicyIcon />,
-											href: "/policies",
-										},
-									],
-								},
-								{
-									title: "MANAGEMENT",
-									submenu: [
-										{
-											title: "Personnel",
-											icon: <UserMultipleIcon />,
-											href: "/personnel",
-										},
-										{
-											title: "Integration",
-											icon: <CurvyRightDirectionIcon />,
-											href: "/integration",
-										},
-										{
-											title: "Training modules",
-											icon: <OnlineLearning01Icon />,
-											href: "/training-modules",
-										},
-										{
-											title: "Audit center",
-											icon: <Audit02Icon />,
-											href: "/audit-center",
-										},
-									],
-								},
-							]}
-						/>
-						<Header />
-						<div className="ml-64 h-[calc(100vh-58px)] bg-[#E7E8EC] px-4">
-							{children}
-						</div>
-           
-          </Wrapper>
-        </TRPCReactProvider>
-      </body> */}
       <TRPCReactProvider>
         <Wrapper>
           <body
             className={cn(
-              "min-h-screen w-full bg-white text-black flex",
+              "min-h-screen  w-full bg-white text-black flex m-0",
               inter.className,
               {
                 "debug-screens": process.env.NODE_ENV === "development",
@@ -125,8 +70,41 @@ export default function RootLayout({
           >
             {/* Sidebar */}
             <div className="flex">
-              <SideNavbar />
-              <div className="p-8 w-full">{children}</div>
+              <div className="fixed z-10 bg-white">
+                <SideNavbar />
+              </div>
+              <main className="w-full min-h-[100vh] bg-[#F9F9FB] scroll ml-[280px] ">
+                <DashboardHeader />
+
+                <div className="px-8 h-full bg-[#F9F9FB] main-content ">
+                  {loading && (
+                    <div className="loading-overlay">
+                      <div className="w-40 h-40 border-4 border-t-4 border-gray-200 rounded-full animate-spin border-t-blue-500"></div>
+                    </div>
+                  )}
+                  {children}
+                </div>
+              </main>
+              <style jsx>{`
+                .main-content {
+                  position: relative;
+                  height: 100%;
+                }
+                .loading-overlay {
+                  position: absolute;
+                  top: 0;
+                  left: 0;
+                  right: 0;
+                  bottom: 0;
+                  display: flex;
+                  justify-content: center;
+                  background: rgba(255, 255, 255, 0.8);
+                  font-size: 24px;
+                  color: #000;
+                  z-index: 10;
+                  padding-top: 100px;
+                }
+              `}</style>
             </div>
           </body>
         </Wrapper>

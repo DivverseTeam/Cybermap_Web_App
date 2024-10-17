@@ -32,6 +32,7 @@ import {
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { Nav } from "~/app/_components/ui/nav";
+import { CyberMapBrand } from "~/components/svgs/CyberMapBrand";
 
 type Props = {};
 
@@ -50,17 +51,19 @@ export default function SideNavbar({}: Props) {
       items: [
         {
           title: "Dashboard",
-          href: "/",
+          href: "/dashboard",
 
           icon: Analytics01Icon,
-          variant: "default",
+          variant: `${pathname === "/dashboard" ? "lightBlue" : "ghost"}`,
         },
         {
           title: "Starter guide",
-          href: "/starter-guide",
+          href: "/dashboard/starter-guide",
 
           icon: CurvyRightDirectionIcon,
-          variant: "ghost",
+          variant: `${
+            pathname === "/dashboard/starter-guide" ? "lightBlue" : "ghost"
+          }`,
         },
       ],
     },
@@ -70,26 +73,34 @@ export default function SideNavbar({}: Props) {
         {
           title: "Frameworks",
           icon: FrameworksIcon,
-          href: "/frameworks",
-          variant: "ghost",
+          href: "/dashboard/frameworks",
+          variant: `${
+            pathname === "/dashboard/frameworks" ? "lightBlue" : "ghost"
+          }`,
         },
         {
           title: "Controls",
           icon: FileValidationIcon,
-          href: "/controls",
-          variant: "ghost",
+          href: "/dashboard/controls",
+          variant: `${
+            pathname === "/dashboard/controls" ? "lightBlue" : "ghost"
+          }`,
         },
         {
           title: "Evidence Library",
           icon: LibraryIcon,
-          href: "/evidence-library",
-          variant: "ghost",
+          href: "/dashboard/evidence-library",
+          variant: `${
+            pathname === "/dashboard/evidence-library" ? "lightBlue" : "ghost"
+          }`,
         },
         {
           title: "Polices",
           icon: PolicyIcon,
-          href: "/policies",
-          variant: "ghost",
+          href: "/dashboard/policies",
+          variant: `${
+            pathname === "/dashboard/policies" ? "lightBlue" : "ghost"
+          }`,
         },
       ],
     },
@@ -99,26 +110,34 @@ export default function SideNavbar({}: Props) {
         {
           title: "Personnel",
           icon: UserMultipleIcon,
-          href: "/personnel",
-          variant: "ghost",
+          href: "/dashboard/personnel",
+          variant: `${
+            pathname === "/dashboard/personnel" ? "lightBlue" : "ghost"
+          }`,
         },
         {
-          title: "Integration",
+          title: "Integrations",
           icon: CurvyRightDirectionIcon,
-          href: "/integration",
-          variant: "ghost",
+          href: "/dashboard/integrations",
+          variant: `${
+            pathname === "/dashboard/integrations" ? "lightBlue" : "ghost"
+          }`,
         },
         {
           title: "Training modules",
           icon: OnlineLearning01Icon,
-          href: "/training-modules",
-          variant: "ghost",
+          href: "/dashboard/training-modules",
+          variant: `${
+            pathname === "/dashboard/training-modules" ? "lightBlue" : "ghost"
+          }`,
         },
         {
           title: "Audit center",
           icon: Audit02Icon,
-          href: "/audit-center",
-          variant: "ghost",
+          href: "/dashboard/audit-center",
+          variant: `${
+            pathname === "/dashboard/audit-center" ? "lightBlue" : "ghost"
+          }`,
         },
       ],
     },
@@ -128,9 +147,11 @@ export default function SideNavbar({}: Props) {
         {
           title: "Settings",
           icon: AccountSetting02Icon,
-          href: "/settings",
+          href: "/dashboard/settings",
 
-          variant: "ghost",
+          variant: `${
+            pathname === "/dashboard/settings" ? "lightBlue" : "ghost"
+          }`,
         },
         {
           title: "Logout",
@@ -143,15 +164,20 @@ export default function SideNavbar({}: Props) {
   ];
 
   return (
-    <div className="border">
-      {menuList.map((menu: any, key: any) => (
-        <Nav
-          isCollapsed={false}
-          key={menu.groupName}
-          groupName={menu.groupName}
-          links={menu.items}
-        />
-      ))}
+    <div className=" border min-w-[280px] text-[14px] leading-4  flex flex-col justify-start flex-grow min-h-screen">
+      <div className="border-b  py-6 px-6 ">
+        <CyberMapBrand />
+      </div>
+      <div className="text-[14px] leading-4  flex flex-col justify-between flex-grow pt-20 gap-[16px] max-h-[700px] px-6 ">
+        {menuList.map((menu: any, key: any) => (
+          <Nav
+            isCollapsed={false}
+            key={menu.groupName}
+            groupName={menu.groupName}
+            links={menu.items}
+          />
+        ))}
+      </div>
     </div>
   );
 }
