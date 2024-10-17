@@ -3,13 +3,14 @@ import { DataTable } from "~/app/(main)/policies/_data-table";
 import { DownArrow } from "~/components/svgs/DownArrow";
 import ComplianceChart from "./components/ComplianceChart";
 import FrameComplianceList from "./components/FrameComplianceList";
-import { frameworkdata, frameworkdataColumns } from "./constants";
 import ProgressChart from "./components/ProgressChart";
+import { frameworkdata, frameworkdataColumns } from "./constants";
 
 export default function DashboardPage() {
   return (
     <div className="flex flex-col pb-6">
-      <div className="flex flex-row h-24 w-full items-end justify-between pb-2 px-6">
+      {/* px-6 */}
+      <div className="flex flex-row h-24 w-full items-end justify-between pb-2">
         <div className="flex flex-col gap-1">
           <p className="text-xl font-semibold text-neutral-12">Dashboard</p>
           <p className="text-base text-neutral-11">
@@ -20,7 +21,8 @@ export default function DashboardPage() {
           Customize widgets
         </div>
       </div>
-      <div className="p-6 flex flex-col gap-6">
+      {/* py-6 */}
+      <div className="py-6 flex flex-col gap-6">
         <div className="flex items-center gap-6">
           <div className="min-w-[378px] h-[367.93px] border border-solid border-neutral-2 bg-white rounded-[8px]">
             <div className="flex items-center px-5 justify-between h-[72px] w-full">
