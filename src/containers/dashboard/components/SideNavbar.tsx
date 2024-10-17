@@ -29,6 +29,7 @@ import {
   Trash2,
   Users2,
 } from "lucide-react";
+
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { Nav } from "~/app/_components/ui/nav";
@@ -158,6 +159,7 @@ export default function SideNavbar({}: Props) {
           icon: Logout02Icon,
           variant: "ghost",
           onClick: { onLogout },
+          href: "/signin",
         },
       ],
     },
@@ -168,7 +170,7 @@ export default function SideNavbar({}: Props) {
       <div className="border-b  py-6 px-6 ">
         <CyberMapBrand />
       </div>
-      <div className="text-[14px] leading-4  flex flex-col justify-between flex-grow pt-20 gap-[16px] max-h-[700px] px-6 ">
+      <div className="text-[14px] leading-4  flex flex-col justify-start flex-grow pt-20 gap-[12px] max-h-[700px] px-6 ">
         {menuList.map((menu: any, key: any) => (
           <Nav
             isCollapsed={false}
