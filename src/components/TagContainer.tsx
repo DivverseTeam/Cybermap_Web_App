@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef, type ElementRef } from "react";
-import { Badge } from "~/app/_components/ui/badge";
 
 const TagsContainer = ({ tags }: { tags: Array<string> }) => {
 	const containerRef = useRef<ElementRef<"div">>(null); // Reference to the container
@@ -39,7 +38,7 @@ const TagsContainer = ({ tags }: { tags: Array<string> }) => {
 	}, [tags]);
 
 	return (
-		<div className="flex overflow-hidden" ref={containerRef}>
+		<div className="flex overflow-hidden gap-2" ref={containerRef}>
 			{tags.slice(0, visibleTags).map((tag, index) => (
 				<span
 					key={index}

@@ -105,7 +105,7 @@ export default function RootLayout({
 						/>
 						<Header />
 						{/* #E7E8EC */}
-						<div className="ml-64 h-[calc(100vh-58px)] bg-[#E7E8EC] px-4">
+						<div className="ml-64 bg-[#E7E8EC] px-4">
 							{children}
 						</div>
 					</Wrapper>
