@@ -51,7 +51,7 @@ export default function SignInForm({
 		signIn("credentials", {
 			email,
 			password,
-			callbackUrl: callbackUrl || "/",
+			callbackUrl: "/policies",
 		});
 	};
 
@@ -111,7 +111,12 @@ export default function SignInForm({
 								message={error ? "Email or password is incorrect" : ""}
 							/>
 
-							<Button size="lg" type="submit" loading={loading}>
+							<Button
+								size="lg"
+								type="submit"
+								loading={loading}
+								className="w-full"
+							>
 								{headerTitle}
 							</Button>
 						</div>

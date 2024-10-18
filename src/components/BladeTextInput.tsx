@@ -1,5 +1,5 @@
-import { TextInput, TextInputProps } from "@razorpay/blade/components";
-import { Controller, FieldError, UseControllerProps } from "react-hook-form";
+import { TextInput, type TextInputProps } from "@razorpay/blade/components";
+import { Controller, type FieldError, type UseControllerProps } from "react-hook-form";
 
 type InputProps = UseControllerProps<any> & {
   name: string;

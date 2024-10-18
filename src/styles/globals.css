@@ -68,3 +68,16 @@
 button {
   text-transform: capitalize;
 }
+
+.custom-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.custom-scroll {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+body {
+  background-color: #F9F9FB;
+}
