@@ -122,7 +122,7 @@ export default function CategoryCard({ frameworkCategory }: Props) {
                     <Table className="w-full">
                       <TableHeader>
                         <TableRow className="font-extrabold text-muted text-xs">
-                          <TableHead className="w-3/5">CONTROL</TableHead>
+                          <TableHead className="w-3/5 ">CONTROL</TableHead>
                           <TableHead>STATUS</TableHead>
                           <TableHead>ASSIGNED TO</TableHead>
                         </TableRow>
@@ -147,7 +147,7 @@ export default function CategoryCard({ frameworkCategory }: Props) {
                                 {control.evidencesCollected > 0 &&
                                   control.evidencesCollected <
                                     control.evidencesExpected && (
-                                    <span className="text-[#C65C10] bg-[#C65C10]/20 font-semibold h-4 rounded-full text-[10px] flex items-center justify-center">
+                                    <span className="text-[#C65C10] px-1 bg-[#C65C10]/20 font-semibold h-4 rounded-full text-[10px] flex items-center justify-center">
                                       Partially Implemented
                                     </span>
                                   )}
