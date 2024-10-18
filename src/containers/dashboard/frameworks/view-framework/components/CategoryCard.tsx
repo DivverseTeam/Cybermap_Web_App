@@ -30,7 +30,7 @@ type Props = {
 const controlDetailsData = [
   [
     <span className="text-secondary w-24 ">Name</span>,
-    <span className="text-secondary-foreground">
+    <span className="text-secondary-foreground font-semibold">
       Risk management program established
     </span>,
   ],
@@ -45,7 +45,7 @@ const controlDetailsData = [
   ],
   [
     <span className="text-secondary w-24">ID</span>,
-    <span className="text-secondary-foreground">RSK-3</span>,
+    <span className="text-secondary-foreground font-semibold">RSK-3</span>,
   ],
   [
     <span className="text-secondary w-24">Assigned To</span>,
@@ -59,7 +59,7 @@ const controlDetailsData = [
   ],
   [
     <span className="text-secondary w-24">Control Status</span>,
-    <span className="rounded-xl px-2 flex items-center h-4 bg-orange-800/20 text-orange-800">
+    <span className="rounded-xl px-2 font-semibold flex items-center h-4 bg-[#C65C10]/20 text-[#C65C10]">
       Partially Implemented
     </span>,
   ],
@@ -108,7 +108,7 @@ export default function CategoryCard({ frameworkCategory }: Props) {
           </AccordionTrigger>
           {frameworkCategory.controlGroup.map((group: any, key: any) => (
             <AccordionContent key={group.name}>
-              <div className="p-4 flex flex-col bg-white rounded-sm">
+              <div className="py-5 px-4 flex flex-col bg-white rounded-sm">
                 <div className="flex flex-col">
                   <div className="flex justify-between items-center">
                     <h5 className="font-bold text-secondary-foreground">
@@ -118,43 +118,61 @@ export default function CategoryCard({ frameworkCategory }: Props) {
                       Add control
                     </Button>
                   </div>
-                  <Table className="w-full">
-                    <TableHeader>
-                      <TableRow className="font-extrabold text-muted text-xs">
-                        <TableHead className="w-3/5">CONTROL</TableHead>
-                        <TableHead>PROGRESS</TableHead>
-                        <TableHead>ASSIGNED TO</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody className="text-xs font-normal">
-                      {group.controls.map((control: any, key: any) => (
-                        <TableRow key={control.name}>
-                          <TableCell className="font-medium flex flex-col ">
-                            <span>{control.name}</span>
-                            <span className="text-secondary">
-                              {control.description}
-                            </span>
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex flex-col">
-                              <span>
-                                {control.evidencesCollected}/
-                                {control.evidencesExpected}
+                  <div className="p-3">
+                    <Table className="w-full">
+                      <TableHeader>
+                        <TableRow className="font-extrabold text-muted text-xs">
+                          <TableHead className="w-3/5">CONTROL</TableHead>
+                          <TableHead>STATUS</TableHead>
+                          <TableHead>ASSIGNED TO</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody className="text-xs font-normal">
+                        {group.controls.map((control: any, key: any) => (
+                          <TableRow key={control.name}>
+                            <TableCell className="font-medium flex flex-col ">
+                              <span>{control.name}</span>
+                              <span className="text-secondary">
+                                {control.description}
                               </span>
-                              <Progress
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex flex-col">
+                                {control.evidencesCollected ===
+                                  control.evidencesExpected && (
+                                  <span className="text-[#008743] bg-[#008743]/20 font-semibold h-4 rounded-full text-[10px] flex items-center justify-center">
+                                    Fully Implemented
+                                  </span>
+                                )}
+                                {control.evidencesCollected > 0 &&
+                                  control.evidencesCollected <
+                                    control.evidencesExpected && (
+                                    <span className="text-[#C65C10] bg-[#C65C10]/20 font-semibold h-4 rounded-full text-[10px] flex items-center justify-center">
+                                      Partially Implemented
+                                    </span>
+                                  )}
+                                {control.evidencesCollected === 0 && (
+                                  <span className="text-destructive bg-destructive/20 font-semibold h-4 rounded-full text-[10px] flex items-center justify-center">
+                                    Not Implemented
+                                  </span>
+                                )}
+                                {/* <Progress
                                 value={
                                   (+control.evidencesCollected /
                                     +control.evidencesExpected) *
                                   100
                                 }
-                              />
-                            </div>
-                          </TableCell>
-                          <TableCell>{control.assignedTo}</TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
+                              /> */}
+                              </div>
+                            </TableCell>
+                            <TableCell className="font-semibold ">
+                              {control.assignedTo}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
                 </div>
               </div>
             </AccordionContent>

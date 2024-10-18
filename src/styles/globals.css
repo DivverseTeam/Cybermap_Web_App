@@ -27,7 +27,7 @@
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
-    --radius: 0.5rem
+    --radius: 0.5rem;
   }
   .dark {
     --background: 0 0% 3.9%;
@@ -53,7 +53,7 @@
     --chart-2: 160 60% 45%;
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%
+    --chart-5: 340 75% 55%;
   }
 }
 @layer base {
@@ -67,4 +67,39 @@
 
 button {
   text-transform: capitalize;
+}
+
+/* Disappear scrollbar when not scrolling */
+body::-webkit-scrollbar {
+  display: none; /* Hide scrollbar */
+}
+
+/* For Chrome, Edge, and Safari */
+::-webkit-scrollbar {
+  width: 10px; /* Slim scrollbar */
+}
+
+::-webkit-scrollbar-track {
+  background: transparent; /* Track background */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.1); /* Darker thumb */
+  border: 2px solid transparent; /* Space between thumb and edge */
+  border-radius: 20px !important; /* Rounded edges */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.4); /* Slightly darker on hover */
+}
+
+/* For Firefox */
+* {
+  scrollbar-width: thin; /* Slim scrollbar */
+  scrollbar-color: rgba(0, 0, 0, 0.3) transparent; /* Color of thumb and track */
+}
+
+body {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
