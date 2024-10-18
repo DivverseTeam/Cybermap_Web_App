@@ -41,7 +41,7 @@ export function SidebarNav({ items }: SidebarNavProps) {
 							icon: <AccountSetting02Icon />,
 						}}
 						pathname={pathname}
-						className="absolute bottom-32 w-11/12"
+						className="fixed bottom-32 w-11/12"
 					/>
 					<SidebarMenuItem
 						key="logout"
@@ -50,7 +50,7 @@ export function SidebarNav({ items }: SidebarNavProps) {
 							icon: <Logout02Icon />,
 						}}
 						pathname={pathname}
-						className="absolute bottom-20 w-11/12"
+						className="fixed bottom-20 w-11/12"
 						onClick={onLogout}
 					/>
 				</ul>
@@ -96,14 +96,24 @@ export function SidebarMenuItem({
 
 	const WrapperComponent = !item.disabled && item.href ? Link : "span"; // Use Link if href is defined
 
+	const isCurrentPath = item.href && pathname?.includes(item.href);
+
 	return (
-		<li>
+		<li
+			className={cn("relative", {
+				"flex items-center": !item.submenu?.length,
+			})}
+		>
+			{isCurrentPath ? (
+				<div className="absolute left-[-12] h-8 w-1 bg-primary"></div>
+			) : null}
+
 			<WrapperComponent
 				href={item?.href || ""}
 				className={cn(
-					"flex items-center rounded-lg px-3 py-2 text-slate-600 hover:bg-[#0047F112] dark:text-white dark:hover:bg-slate-700",
+					"flex w-full items-center rounded-lg px-3 py-2 text-slate-600 hover:bg-[#0047F112] dark:text-white dark:hover:bg-slate-700",
 					{
-						"bg-[#0047F112]": item.href && pathname?.includes(item.href),
+						"bg-[#0047F112]": isCurrentPath,
 						"-ml-8 mt-2 cursor-pointer text-xs": item.submenu?.length,
 						"cursor-pointer": item.submenu?.length || onClick,
 					},
@@ -117,7 +127,7 @@ export function SidebarMenuItem({
 			>
 				<span
 					className={cn("text-xs", {
-						"text-[#305EFF]": item.href && pathname?.includes(item.href),
+						"text-[#305EFF]": isCurrentPath,
 					})}
 				>
 					{item?.icon || null}

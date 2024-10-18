@@ -7,6 +7,7 @@ import { useState } from "react";
 import { Popover, PopoverTrigger } from "~/app/_components/ui/popover";
 import AddPolicyPopover from "./components/AddPolicyPopover";
 import { DataTable } from "~/app/_components/table/data-table";
+import PageTitle from "~/components/PageTitle";
 
 export default function Policies() {
 	const [isPopoverOpen, setIsPopoverOpen] = useState<boolean>(false);
@@ -78,28 +79,25 @@ export default function Policies() {
 	];
 
 	return (
-		<>
-			<div className="mb-10 flex items-end justify-between">
-				<div>
-					<h2 className="mb-2 text-2xl">Policies</h2>
-					<span className="text-[#757575]">View and edit your policies</span>
-				</div>
-
-				<div>
+		<div className="flex flex-col gap-6">
+			<PageTitle
+				title="Policies"
+				subtitle="View and edit your policies"
+				action={
 					<Popover onOpenChange={setIsPopoverOpen}>
 						<PopoverTrigger asChild>
 							<Button>Add Custom Policy</Button>
 						</PopoverTrigger>
 						<AddPolicyPopover />
 					</Popover>
-				</div>
-			</div>
+				}
+			/>
 
 			{isPopoverOpen ? (
 				<div className="fixed inset-0 z-30 bg-black bg-opacity-60"></div>
 			) : null}
 
 			<DataTable columns={columns} data={data} />
-		</>
+		</div>
 	);
 }

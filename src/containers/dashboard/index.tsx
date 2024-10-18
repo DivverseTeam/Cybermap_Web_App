@@ -6,22 +6,18 @@ import FrameComplianceList from "./components/FrameComplianceList";
 import ProgressChart from "./components/ProgressChart";
 import { frameworkdata, frameworkdataColumns } from "./constants";
 import { DataTable } from "~/app/_components/table/data-table";
+import PageTitle from "~/components/PageTitle";
+import { Button } from "~/app/_components/ui/button";
 
 export default function DashboardPage() {
 	return (
 		<div className="flex flex-col pb-6">
 			{/* px-6 */}
-			<div className="flex flex-row h-24 w-full items-end justify-between pb-2">
-				<div className="flex flex-col gap-1">
-					<p className="text-xl font-semibold text-neutral-12">Dashboard</p>
-					<p className="text-base text-neutral-11">
-						Get a overview of your compliance and perfomance
-					</p>
-				</div>
-				<div className="h-8 w-[153px] bg-white rounded-sm border border-solid flex items-center justify-center border-neutral-5 font-medium text-sm text-neutral-11">
-					Customize widgets
-				</div>
-			</div>
+			<PageTitle
+				title="Dashboard"
+				subtitle="Get a overview of your compliance and performance"
+				action={<Button variant="outline">Customize widgets</Button>}
+			/>
 			{/* py-6 */}
 			<div className="py-6 flex flex-col gap-6">
 				<div className="flex items-center gap-6">
