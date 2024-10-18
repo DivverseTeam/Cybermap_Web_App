@@ -95,7 +95,7 @@ export default function CategoryCard({ frameworkCategory }: Props) {
   };
 
   return (
-    <div className="rounded-md bg-muted p-4 w-[736px] mb-3 text-secondary-foreground">
+    <div className="rounded-md bg-muted p-4  mb-3 text-secondary-foreground">
       <Accordion
         type="single"
         collapsible

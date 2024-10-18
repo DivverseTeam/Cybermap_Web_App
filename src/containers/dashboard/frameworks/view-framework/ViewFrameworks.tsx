@@ -247,9 +247,9 @@ const frameworkCategories = [
 
 export default function ViewFrameworks() {
   return (
-    <div className="flex justify-between py-3 mx-auto">
+    <div className="flex justify-between py-3 mx-auto gap-5">
       {/* framework info */}
-      <div className="flex flex-col gap-8 w-[261px]">
+      <div className="flex flex-col gap-8 w-[261px] min-w-[28%]">
         {/* progress */}
         <ControlCompletionCard />
 
@@ -258,7 +258,7 @@ export default function ViewFrameworks() {
       </div>
 
       {/* framework categories details  */}
-      <div className="flex flex-col">
+      <div className="flex flex-col w-[736px] min-w-[69%]">
         {frameworkCategories.map((category: any, key: any) => (
           <CategoryCard frameworkCategory={category} key={category.name} />
         ))}

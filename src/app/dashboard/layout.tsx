@@ -76,7 +76,7 @@ export default function RootLayout({
               <main className="w-full min-h-[100vh] bg-[#F9F9FB] scroll ml-[280px] ">
                 <DashboardHeader />
 
-                <div className="px-8 h-full bg-[#F9F9FB] main-content ">
+                <div className="px-6 2xl:px-10 h-full bg-[#F9F9FB] main-content ">
                   {loading && (
                     <div className="loading-overlay">
                       <div className="w-40 h-40 border-4 border-t-4 border-gray-200 rounded-full animate-spin border-t-blue-500"></div>
