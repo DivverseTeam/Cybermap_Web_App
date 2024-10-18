@@ -18,9 +18,9 @@ export default function FrameworksPage() {
 					</div>
 				}
 			/>
-			<div className="p-6 flex gap-6 flex-wrap">
-				{frameworklist.map((item) => (
-					<FrameworkMonitorCard {...item} />
+			<div className="flex flex-wrap gap-6 p-6">
+				{frameworklist.map((item, idx) => (
+					<FrameworkMonitorCard key={idx} {...item} />
 				))}
 			</div>
 		</div>
