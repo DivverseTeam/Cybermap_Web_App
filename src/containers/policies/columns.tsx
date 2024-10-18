@@ -7,11 +7,14 @@ import { format, formatDistanceToNow } from "date-fns";
 import { Badge, type badgeVariants } from "~/app/_components/ui/badge";
 import type { VariantProps } from "class-variance-authority";
 import { Button } from "~/app/_components/ui/button";
+import Link from "next/link";
+import { slugify } from "~/lib/utils";
 
 const PolicyStatus = z.enum(["PENDING", "APPROVED", "DRAFT"]);
 type PolicyStatus = z.infer<typeof PolicyStatus>;
 
 const Policy = z.object({
+	id: z.string(),
 	name: z.string(),
 	frameworks: z.string().array(),
 	lastApprovedOn: z.string().datetime().nullable(),
@@ -78,11 +81,15 @@ export const columns: ColumnDef<Policy>[] = [
 	{
 		accessorKey: "id",
 		header: "",
-		cell: ({ getValue: _ }) => {
+		cell: ({ getValue: _, row }) => {
+			const slug = slugify(row.original.name);
+
 			return (
-				<Button variant="outline" size="sm">
-					Edit Policy
-				</Button>
+				<Link href={`/policies/${slug}`}>
+					<Button variant="outline" size="sm">
+						Edit Policy
+					</Button>
+				</Link>
 			);
 		},
 	},

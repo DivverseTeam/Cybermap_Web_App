@@ -24,7 +24,7 @@ export function SidebarNav({ items }: SidebarNavProps) {
 	return items.length ? (
 		<aside
 			id="sidebar"
-			className="-translate-x-full fixed top-0 left-0 z-40 h-screen w-64 border-slate-200 border-r transition-transform sm:translate-x-0 dark:border-slate-700"
+			className="-translate-x-full fixed top-0 left-0 h-screen w-64 border-slate-200 border-r bg-white transition-transform sm:translate-x-0 dark:border-slate-700"
 			aria-label="Sidebar"
 		>
 			<div className="mt-24 flex h-full flex-col overflow-y-auto px-3 py-4">
@@ -41,7 +41,7 @@ export function SidebarNav({ items }: SidebarNavProps) {
 							icon: <AccountSetting02Icon />,
 						}}
 						pathname={pathname}
-						className="absolute bottom-32 w-11/12"
+						className="fixed bottom-32 w-11/12"
 					/>
 					<SidebarMenuItem
 						key="logout"
@@ -50,7 +50,7 @@ export function SidebarNav({ items }: SidebarNavProps) {
 							icon: <Logout02Icon />,
 						}}
 						pathname={pathname}
-						className="absolute bottom-20 w-11/12"
+						className="fixed bottom-20 w-11/12"
 						onClick={onLogout}
 					/>
 				</ul>
@@ -96,14 +96,24 @@ export function SidebarMenuItem({
 
 	const WrapperComponent = !item.disabled && item.href ? Link : "span"; // Use Link if href is defined
 
+	const isCurrentPath = item.href && pathname?.includes(item.href);
+
 	return (
-		<li>
+		<li
+			className={cn("relative", {
+				"flex items-center": !item.submenu?.length,
+			})}
+		>
+			{isCurrentPath ? (
+				<div className="absolute left-[-12] h-8 w-1 bg-primary"></div>
+			) : null}
+
 			<WrapperComponent
 				href={item?.href || ""}
 				className={cn(
-					"flex items-center rounded-lg px-3 py-2 text-slate-600 hover:bg-slate-100 dark:text-white dark:hover:bg-slate-700",
+					"flex w-full items-center rounded-lg px-3 py-2 text-slate-600 hover:bg-[#0047F112] dark:text-white dark:hover:bg-slate-700",
 					{
-						"bg-muted": item.href && pathname?.includes(item.href),
+						"bg-[#0047F112]": isCurrentPath,
 						"-ml-8 mt-2 cursor-pointer text-xs": item.submenu?.length,
 						"cursor-pointer": item.submenu?.length || onClick,
 					},
@@ -115,7 +125,13 @@ export function SidebarMenuItem({
 					item.submenu?.length ? toggleSubmenu : onClick ? onClick : undefined
 				}
 			>
-				{item?.icon || null}
+				<span
+					className={cn("text-xs", {
+						"text-[#305EFF]": isCurrentPath,
+					})}
+				>
+					{item?.icon || null}
+				</span>
 				<span
 					className={cn("ml-3 flex-1 whitespace-nowrap", {
 						"ml-9": !item.icon,
