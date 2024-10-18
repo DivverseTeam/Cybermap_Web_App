@@ -1,4 +1,4 @@
-import Image from "next/image";
+import Image from "next/legacy/image";
 import FrameworkComplianceProgress from "./FrameworkComplianceProgress";
 import { frameworkIcons } from "./constants";
 import { Button } from "~/app/_components/ui/button";

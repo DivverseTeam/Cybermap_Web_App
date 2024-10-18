@@ -1,4 +1,4 @@
-import Image from "next/image";
+import Image from "next/legacy/image";
 import React, { useState } from "react";
 import Dropzone from "react-dropzone";
 import { Controller } from "react-hook-form";
