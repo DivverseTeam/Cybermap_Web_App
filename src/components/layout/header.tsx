@@ -13,7 +13,7 @@ import { CyberMapBrand } from "../svgs/CyberMapBrand";
 export default function Header() {
 	const { data } = useSession();
 	return (
-		<header className="sticky inset-x-0 top-0 w-full border-b-2 border-b-[#E8E8EC] px-4 py-2">
+		<header className="sticky inset-x-0 top-0 z-10 w-full border-b-2 border-b-[#E8E8EC] bg-white px-4 py-2">
 			<nav className="flex items-center">
 				<div className="w-64 px-3">
 					<CyberMapBrand />

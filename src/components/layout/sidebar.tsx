@@ -24,7 +24,7 @@ export function SidebarNav({ items }: SidebarNavProps) {
 	return items.length ? (
 		<aside
 			id="sidebar"
-			className="-translate-x-full fixed top-0 left-0 h-screen w-64 border-slate-200 border-r transition-transform sm:translate-x-0 dark:border-slate-700"
+			className="-translate-x-full fixed top-0 left-0 h-screen w-64 border-slate-200 border-r bg-white transition-transform sm:translate-x-0 dark:border-slate-700"
 			aria-label="Sidebar"
 		>
 			<div className="mt-24 flex h-full flex-col overflow-y-auto px-3 py-4">

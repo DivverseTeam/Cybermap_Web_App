@@ -23,7 +23,7 @@ const BreadCrumbs: FunctionComponent<BreadCrumbsProps> = () => {
 	}
 
 	return (
-		<Breadcrumb className="mb-6">
+		<Breadcrumb className="-mt-6">
 			<BreadcrumbList>
 				{pathNames.map((path, index) => {
 					const fullPath = pathNames.slice(0, index + 1).join("/");

@@ -3,57 +3,54 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation"; // Use useParams from next/navigation
 import Link from "next/link";
-import PageTitle from "~/containers/dashboard/components/PageTitle";
+
 import { Button } from "~/app/_components/ui/button";
 import ViewFrameworks from "~/containers/dashboard/frameworks/view-framework/ViewFrameworks";
+import PageTitle from "~/components/PageTitle";
 // import ViewFramework from "~/containers/dashboard/frameworks/view-frameworks/ViewFramework";
 
 const frameworkData: any = {
-  1: {
-    name: "React",
-    description: "A JavaScript library for building user interfaces.",
-  },
-  2: {
-    name: "Vue",
-    description: "A progressive framework for building user interfaces.",
-  },
-  3: {
-    name: "Angular",
-    description: "A platform for building mobile and desktop web applications.",
-  },
+	1: {
+		name: "React",
+		description: "A JavaScript library for building user interfaces.",
+	},
+	2: {
+		name: "Vue",
+		description: "A progressive framework for building user interfaces.",
+	},
+	3: {
+		name: "Angular",
+		description: "A platform for building mobile and desktop web applications.",
+	},
 };
 
 export default function ViewFramework() {
-  const { id }: any = useParams(); // Get the dynamic route parameter
-  const [framework, setFramework] = useState<any>(null);
+	const { id } = useParams(); // Get the dynamic route parameter
+	const [framework, setFramework] = useState(null);
 
-  useEffect(() => {
-    // Simulate fetching data from an API or database
-    if (id) {
-      const frameworkDetails = frameworkData[id];
-      setFramework(frameworkDetails);
-    }
-  }, [id]);
+	// useEffect(() => {
+	// 	// Simulate fetching data from an API or database
+	// 	if (id) {
+	// 		const frameworkDetails = frameworkData[id];
+	// 		setFramework(frameworkDetails);
+	// 	}
+	// }, [id]);
 
-  if (!framework) return <div>Loading...</div>;
+	// if (!framework) return <div>Loading...</div>;
 
-  return (
-    <div>
-      <PageTitle
-        title="Frameworks"
-        subtitle={framework.name}
-        description={framework.description}
-      />
-      <div className="flex justify-between items-center mt-[-28px] text-secondary">
-        <span className="text-sm">{framework.description}</span>
-        <Button variant="outline">Add new category</Button>
-      </div>
-      {/* Content */}
-      <ViewFrameworks />
+	return (
+		<div>
+			<PageTitle
+				title="Frameworks"
+				action={<Button variant="outline">Add new category</Button>}
+			/>
 
-      <Link href="/dashboard/frameworks">
-        <p className="text-blue-600 hover:underline">Back to Frameworks</p>
-      </Link>
-    </div>
-  );
+			{/* Content */}
+			<ViewFrameworks />
+
+			{/* <Link href="/dashboard/frameworks">
+				<p className="text-blue-600 hover:underline">Back to Frameworks</p>
+			</Link> */}
+		</div>
+	);
 }

@@ -105,8 +105,8 @@ export default function RootLayout({
 							]}
 						/>
 						<Header />
-						<div className="ml-64 h-[calc(100vh-58px)] bg-[#E7E8EC] px-8 py-16">
-							<div className="container mx-auto">
+						<div className="ml-64 h-[calc(100vh-58px)] px-8 py-16">
+							<div className="container mx-auto flex flex-col gap-6">
 								<BreadCrumbs />
 								{children}
 							</div>
