@@ -13,6 +13,8 @@ import {
   TooltipTrigger,
 } from "~/app/_components/ui/tooltip";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+import path from "path";
 
 interface NavProps {
   isCollapsed: boolean;
@@ -29,6 +31,7 @@ interface NavProps {
 
 export function Nav({ links, groupName, isCollapsed }: NavProps) {
   const pathname = usePathname();
+
   return (
     <div
       data-collapsed={isCollapsed}
@@ -41,17 +44,26 @@ export function Nav({ links, groupName, isCollapsed }: NavProps) {
       )}
       <nav className=" grid gap-1 group-[[data-collapsed=true]]:justify-center group-[[data-collapsed=true]]:px-2">
         {links.map((link: any, index) => (
-          <div className="flex items-center relative">
-            {link.href === pathname && (
-              <div className="h-9 w-1 absolute left-[-25] bg-primary"></div>
-            )}
+          <div className="flex items-center relative" key={index}>
+            {pathname.startsWith(`${link.href}`) &&
+              pathname.includes(
+                `${link.href}`.split("/").slice(2).join("/")
+              ) && (
+                <div className="h-9 w-1 absolute left-[-25] bg-primary"></div>
+              )}
             <Link
               key={index}
               href={`${link.href}`}
               className={cn(
                 buttonVariants({
-                  variant: link.href === pathname ? "lightBlue" : "ghost",
-                  size: "sm",
+                  variant:
+                    pathname.startsWith(`${link.href}`) &&
+                    pathname.includes(
+                      `${link.href}`.split("/").slice(2).join("/")
+                    )
+                      ? "lightBlue"
+                      : "ghost",
+                  size: "xs",
                 }),
                 link.variant === "default" &&
                   "dark:bg-muted dark:text-white dark:hover:bg-muted  dark:hover:text-white",
@@ -61,7 +73,7 @@ export function Nav({ links, groupName, isCollapsed }: NavProps) {
             >
               <link.icon
                 className={`${
-                  link.href === pathname && "text-primary"
+                  pathname.startsWith(`${link.href}`) && "text-primary"
                 } "mr-2 h-4 w-4"`}
               />
               {link.title}

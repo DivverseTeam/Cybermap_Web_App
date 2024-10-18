@@ -5,6 +5,8 @@ import { useParams } from "next/navigation"; // Use useParams from next/navigati
 import Link from "next/link";
 import PageTitle from "~/containers/dashboard/components/PageTitle";
 import { Button } from "~/app/_components/ui/button";
+import ViewFrameworks from "~/containers/dashboard/frameworks/view-framework/ViewFrameworks";
+// import ViewFramework from "~/containers/dashboard/frameworks/view-frameworks/ViewFramework";
 
 const frameworkData: any = {
   1: {
@@ -47,6 +49,7 @@ export default function ViewFramework() {
         <Button variant="outline">Add new category</Button>
       </div>
       {/* Content */}
+      <ViewFrameworks />
 
       <Link href="/dashboard/frameworks">
         <p className="text-blue-600 hover:underline">Back to Frameworks</p>
