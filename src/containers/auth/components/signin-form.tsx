@@ -51,7 +51,7 @@ export default function SignInForm({
 		signIn("credentials", {
 			email,
 			password,
-			callbackUrl: "/policies",
+			callbackUrl: "/dashboard",
 		});
 	};
 

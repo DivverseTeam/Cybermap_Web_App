@@ -1,4 +1,4 @@
-import Image from "next/legacy/image";
+import Image from "next/image";
 import { twMerge } from "tailwind-merge";
 import { BottomNav } from "./BottomNav";
 import { Controller } from "react-hook-form";
