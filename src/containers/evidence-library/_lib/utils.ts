@@ -1,46 +1,48 @@
 import {
-  evidences,
-  type Evidence,
+	evidences,
+	type Evidence,
 } from "~/containers/evidence-library/db/schema";
 import { faker } from "@faker-js/faker";
 import {
-  ArrowDownIcon,
-  ArrowRightIcon,
-  ArrowUpIcon,
-  CheckCircledIcon,
-  CircleIcon,
-  CrossCircledIcon,
-  QuestionMarkCircledIcon,
-  StopwatchIcon,
+	ArrowDownIcon,
+	ArrowRightIcon,
+	ArrowUpIcon,
+	CheckCircledIcon,
+	CircleIcon,
+	CrossCircledIcon,
+	QuestionMarkCircledIcon,
+	StopwatchIcon,
 } from "@radix-ui/react-icons";
 import { customAlphabet } from "nanoid";
 
 import { generateId } from "~/lib/id";
 
 export function generateRandomEvidence(): Evidence {
-  return {
-    id: generateId(),
-    // code: `EVIDENCE-${customAlphabet("0123456789", 4)()}`,
-    name: faker.hacker.phrase().replace(/^./, (letter) => letter.toUpperCase()),
-    owner: faker.name.fullName(), // Random name for the owner
-    description: faker.lorem.sentences(2), // Generate 2 random sentences for the description
-    implementationGuide: faker.lorem.sentences(4), // Generate 2 random sentences for the description
+	return {
+		id: generateId(),
+		// code: `EVIDENCE-${customAlphabet("0123456789", 4)()}`,
+		name: faker.hacker
+			.phrase()
+			.replace(/^./, (letter: string) => letter.toUpperCase()),
+		owner: faker.name.fullName(), // Random name for the owner
+		description: faker.lorem.sentences(2), // Generate 2 random sentences for the description
+		implementationGuide: faker.lorem.sentences(4), // Generate 2 random sentences for the description
 
-    status:
-      faker.helpers.shuffle(evidences.status.enumValues)[0] ?? "Needs artifact",
-    // label: faker.helpers.shuffle(evidences.label.enumValues)[0] ?? "bug",
-    // priority: faker.helpers.shuffle(evidences.priority.enumValues)[0] ?? "low",
-    // Add linkedControls as an array of random strings
-    linkedControls: JSON.stringify(
-      faker.helpers.arrayElements(
-        Array.from({ length: 5 }, () => faker.lorem.word()), // Generate 5 random words
-        Math.floor(Math.random() * 3) + 1 // Random number between 1 and 5
-      )
-    ),
-    renewalDate: new Date(),
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  };
+		status:
+			faker.helpers.shuffle(evidences.status.enumValues)[0] ?? "Needs artifact",
+		// label: faker.helpers.shuffle(evidences.label.enumValues)[0] ?? "bug",
+		// priority: faker.helpers.shuffle(evidences.priority.enumValues)[0] ?? "low",
+		// Add linkedControls as an array of random strings
+		linkedControls: JSON.stringify(
+			faker.helpers.arrayElements(
+				Array.from({ length: 5 }, () => faker.lorem.word()), // Generate 5 random words
+				Math.floor(Math.random() * 3) + 1, // Random number between 1 and 5
+			),
+		),
+		renewalDate: new Date(),
+		createdAt: new Date(),
+		updatedAt: new Date(),
+	};
 }
 
 /**

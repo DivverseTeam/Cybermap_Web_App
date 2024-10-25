@@ -1,158 +1,155 @@
-import "server-only";
+import { isAfter, isBefore } from "date-fns";
+import { evidences } from "./constant";
 
-import { unstable_noStore as noStore } from "next/cache";
-import { db } from "~/containers/evidence-library/db";
-import {
-  evidences,
-  type Evidence,
-} from "~/containers/evidence-library/db/schema";
-import { type DrizzleWhere } from "~/types";
-import { and, asc, count, desc, gte, lte, or, type SQL } from "drizzle-orm";
+// Types for Evidence and the response
+export interface Evidence {
+	id: string;
+	name: string;
+	owner: string;
+	description: string;
+	implementationGuide: string;
+	status: string;
+	linkedControls: string[];
+	renewalDate: string;
+	createdAt: string;
+	updatedAt: string;
+}
 
-import { filterColumn } from "~/lib/filter-column";
-
-import { type GetEvidencesSchema } from "./validations";
+interface GetEvidencesSchema {
+	page: number;
+	per_page: number;
+	sort?: string;
+	name?: string;
+	status?: string;
+	linkedControls?: string[]; // Array of linked control strings
+	renewalDate?: Date;
+	operator?: string;
+	from?: string;
+	to?: string;
+}
 
 interface EvidenceResponse {
-  data: Evidence[];
-  totalRows: number;
-  pageCount: number;
+	data: Evidence[];
+	totalRows: number;
+	pageCount: number;
 }
 
-interface EvidenceCount {
-  status?: string;
-  // priority?: string;
-  count: number;
+// Filter evidences based on the provided filters
+function filterEvidences(
+	evidences: Evidence[],
+	filters: Partial<GetEvidencesSchema>,
+): Evidence[] {
+	const { name, status, from, to, linkedControls } = filters;
+
+	return evidences.filter((evidence) => {
+		let isValid = true;
+
+		// Filter by name
+		if (name && !evidence.name.toLowerCase().includes(name.toLowerCase())) {
+			isValid = false;
+		}
+
+		// Filter by status
+		if (status && evidence.status !== status) {
+			isValid = false;
+		}
+
+		// Filter by linkedControls array (check if any linked control matches)
+		if (linkedControls && linkedControls.length > 0) {
+			const evidenceControls = evidence.linkedControls;
+			const matches = linkedControls.some((control) =>
+				evidenceControls.includes(control),
+			);
+			if (!matches) {
+				isValid = false;
+			}
+		}
+
+		// Filter by date range
+		if (from || to) {
+			const fromDate = from ? new Date(from) : undefined;
+			const toDate = to ? new Date(to) : undefined;
+
+			const createdAt = new Date(evidence.createdAt);
+
+			if (fromDate && isBefore(createdAt, fromDate)) {
+				isValid = false;
+			}
+
+			if (toDate && isAfter(createdAt, toDate)) {
+				isValid = false;
+			}
+		}
+
+		return isValid;
+	});
 }
 
-export async function getEvidences(
-  input: GetEvidencesSchema
-): Promise<EvidenceResponse> {
-  noStore();
-  const {
-    page,
-    per_page,
-    sort,
-    name,
-    status,
-    linkedControls,
-    renewalDate,
-    operator,
-    from,
-    to,
-  } = input;
+// Sort evidences based on the provided column and order
+function sortEvidences(evidences: Evidence[], sort?: string): Evidence[] {
+	const [column = "createdAt", order = "desc"] = sort?.split(".") ?? [
+		"createdAt",
+		"desc",
+	];
 
-  try {
-    // Calculate offset for pagination
-    const offset = (page - 1) * per_page;
-    // Split the sort string to determine column and order (e.g., "title.desc" => ["title", "desc"])
-    const [column, order] = (sort?.split(".").filter(Boolean) ?? [
-      "createdAt",
-      "desc",
-    ]) as [keyof Evidence | undefined, "asc" | "desc" | undefined];
+	return evidences.sort((a, b) => {
+		const aValue = a[column as keyof Evidence];
+		const bValue = b[column as keyof Evidence];
 
-    // Convert date strings to Date objects for date filtering
-    const fromDay = from ? new Date(from) : undefined;
-    const toDay = to ? new Date(to) : undefined;
-
-    const expressions: (SQL<unknown> | undefined)[] = [
-      // Apply title filter if provided
-      name
-        ? filterColumn({
-            column: evidences.name,
-            value: name,
-          })
-        : undefined,
-      // Apply status filter if provided
-      !!status
-        ? filterColumn({
-            column: evidences.status,
-            value: status,
-            isSelectable: true,
-          })
-        : undefined,
-      // Apply date range filter if both dates are provided
-      fromDay && toDay
-        ? and(
-            gte(evidences.createdAt, fromDay),
-            lte(evidences.createdAt, toDay)
-          )
-        : undefined,
-    ];
-
-    // Combine filters using "and" or "or" based on the operator
-    const where: DrizzleWhere<Evidence> =
-      !operator || operator === "and"
-        ? and(...expressions)
-        : or(...expressions);
-
-    // Execute queries within a transaction for consistency
-    const { data, totalRows } = await db.transaction(async (tx: any) => {
-      const data = await tx
-        .select()
-        .from(evidences)
-        .limit(per_page)
-        .offset(offset)
-        .where(where)
-        .orderBy(
-          column && column in evidences
-            ? order === "asc"
-              ? asc(evidences[column])
-              : desc(evidences[column])
-            : desc(evidences.id)
-        );
-
-      const totalRows = await tx
-        .select({ count: count() })
-        .from(evidences)
-        .where(where)
-        .execute()
-        .then((res: any) => res[0]?.count ?? 0);
-
-      return {
-        data,
-        totalRows,
-      };
-    });
-
-    // Calculate the total number of pages
-    const pageCount = Math.ceil(totalRows / per_page);
-    return { data, totalRows, pageCount };
-  } catch (err) {
-    // Log error for debugging
-    console.error(err);
-    return { data: [], totalRows: 0, pageCount: 0 };
-  }
+		if (order === "asc") {
+			return aValue > bValue ? 1 : -1;
+		} else {
+			return aValue < bValue ? 1 : -1;
+		}
+	});
 }
 
-export async function getEvidenceCountByStatus(): Promise<EvidenceCount[]> {
-  noStore();
-  try {
-    return await db
-      .select({
-        status: evidences.status,
-        count: count(),
-      })
-      .from(evidences)
-      .groupBy(evidences.status)
-      .execute();
-  } catch (err) {
-    return [];
-  }
+// Paginate evidences using skip (offset) and take (limit)
+function paginateEvidences(
+	evidences: Evidence[],
+	page: number,
+	per_page: number,
+): Evidence[] {
+	const offset = (page - 1) * per_page;
+	return evidences.slice(offset, offset + per_page);
 }
 
-// export async function getTaskCountByPriority(): Promise<TaskCount[]> {
-//   noStore();
-//   try {
-//     return await db
-//       .select({
-//         priority: evidences.priority,
-//         count: count(),
-//       })
-//       .from(evidences)
-//       .groupBy(evidences.priority)
-//       .execute();
-//   } catch (err) {
-//     return [];
-//   }
-// }
+// Main function to get evidences with pagination, filters, and sorting
+export function getEvidences(input: GetEvidencesSchema): EvidenceResponse {
+	const { page, per_page, sort, name, status, linkedControls, from, to } =
+		input;
+
+	try {
+		console.log(page, per_page, sort);
+
+		// Apply filters
+		let filteredEvidences = filterEvidences(evidences, {
+			name,
+			status,
+			linkedControls,
+			from,
+			to,
+		});
+
+		// Apply sorting
+		filteredEvidences = sortEvidences(filteredEvidences, sort);
+
+		// Get total number of filtered rows
+		const totalRows = filteredEvidences.length;
+
+		// Apply pagination
+		const paginatedEvidences = paginateEvidences(
+			filteredEvidences,
+			page,
+			per_page,
+		);
+
+		// Calculate the total number of pages
+		const pageCount = Math.ceil(totalRows / per_page);
+
+		return { data: paginatedEvidences, totalRows, pageCount };
+	} catch (err) {
+		console.error(err);
+		return { data: [], totalRows: 0, pageCount: 0 };
+	}
+}
