@@ -2,32 +2,32 @@
 "use memo";
 
 import * as React from "react";
-import { type DataTableFilterField } from "~/types";
+import type { DataTableFilterField } from "~/types";
 
 import { useDataTable } from "~/hooks/use-data-table";
 import { DataTableAdvancedToolbar } from "~/components/data-table/advanced/data-table-advanced-toolbar";
 import { DataTable } from "~/components/data-table/data-table";
 import { DataTableToolbar } from "~/components/data-table/data-table-toolbar";
 
-import { Evidence, type getEvidences } from "../_lib/queries";
+import type { Evidence, EvidenceResponse } from "../_lib/queries";
 // import { getPriorityIcon, getStatusIcon } from "../_lib/utils";
 import { getColumns } from "./evidences-table-columns";
 // import { EvidencesTableFloatingBar } from "./evidences-table-floating-bar";
 import { useEvidencesTable } from "./evidences-table-provider";
 import { EvidencesTableToolbarActions } from "./evidences-table-toolbar-actions";
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
-import { EVIDENCE_STATUSES, EvidenceStatus } from "../_lib/validations";
+import { EVIDENCE_STATUSES } from "../_lib/validations";
 
 interface EvidencesTableProps {
-	evidencesPromise: ReturnType<typeof getEvidences>;
+	evidencesPromise: React.Usable<EvidenceResponse>;
 }
 
 export function EvidencesTable({ evidencesPromise }: EvidencesTableProps) {
 	// Feature flags for showcasing some additional features. Feel free to remove them.
 	const { featureFlags } = useEvidencesTable();
 
-	const { data, pageCount, totalRows } = React.use(evidencesPromise);
-	console.log("data-", data);
+	const { data, pageCount, totalRows } =
+		React.use<EvidenceResponse>(evidencesPromise);
 
 	// Memoize the columns so they don't re-render on every render
 	const columns = React.useMemo(() => getColumns(), []);
@@ -54,7 +54,6 @@ export function EvidencesTable({ evidencesPromise }: EvidencesTableProps) {
 			label: "Status",
 			value: "status",
 			options: EVIDENCE_STATUSES.map((status) => {
-				console.log("status-", status);
 				return {
 					label: status[0]?.toUpperCase() + status.slice(1),
 					value: status,

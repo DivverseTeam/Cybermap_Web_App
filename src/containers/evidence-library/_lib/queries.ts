@@ -28,7 +28,7 @@ interface GetEvidencesSchema {
 	to?: string;
 }
 
-interface EvidenceResponse {
+export interface EvidenceResponse {
 	data: Evidence[];
 	totalRows: number;
 	pageCount: number;
@@ -120,8 +120,6 @@ export function getEvidences(input: GetEvidencesSchema): EvidenceResponse {
 		input;
 
 	try {
-		console.log(page, per_page, sort);
-
 		// Apply filters
 		let filteredEvidences = filterEvidences(evidences, {
 			name,

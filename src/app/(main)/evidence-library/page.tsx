@@ -1,7 +1,12 @@
 import React from "react";
-import PageTitle from "~/containers/dashboard/components/PageTitle";
 import EvidenceLibraryPage from "~/containers/evidence-library/EvidenceLibraryPage";
+import type { SearchParams } from "~/types";
 
-export default function page() {
-  return <EvidenceLibraryPage />;
+interface PageProps {
+	searchParams: Promise<SearchParams>;
+}
+
+export default async function page(props: PageProps) {
+	const searchParams = await props.searchParams;
+	return <EvidenceLibraryPage searchParams={searchParams} />;
 }

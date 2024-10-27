@@ -12,7 +12,7 @@ export const searchParamsSchema = z
 	.object({
 		page: z.coerce.number().default(1),
 		per_page: z.coerce.number().default(10),
-		sort: z.coerce.string().optional(),
+		sort: z.coerce.string(),
 		name: z.string().optional(),
 		status: z.string().optional(),
 		linkedControls: z.array(z.string()).optional(),

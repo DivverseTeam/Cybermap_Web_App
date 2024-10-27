@@ -52,7 +52,6 @@ export function UpdateEvidenceSheet({
 	...props
 }: UpdateEvidenceSheetProps) {
 	const [isUpdatePending, startUpdateTransition] = React.useTransition();
-	console.log("evidence", evidence);
 
 	const form = useForm<UpdateEvidenceSchema>({
 		resolver: zodResolver(updateEvidenceSchema),
