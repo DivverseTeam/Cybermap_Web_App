@@ -4,7 +4,7 @@
 import { Toaster } from "sonner";
 import { Button } from "~/app/_components/ui/button";
 import PageTitle from "~/components/PageTitle";
-import { SearchParams } from "~/types";
+import type { SearchParams } from "~/types";
 import { searchParamsSchema } from "./_lib/validations";
 import { getEvidences } from "./_lib/queries";
 import { Shell } from "~/components/shell";
@@ -14,16 +14,13 @@ import { Skeleton } from "~/app/_components/ui/skeleton";
 import { DateRangePicker } from "~/components/date-range-picker";
 import { DataTableSkeleton } from "~/components/data-table/data-table-skeleton";
 import { EvidencesTable } from "./components/evidences-table";
-// import EvidenceList from "./components/EvidenceList";
-// import EvidenceList from "./components/EvidenceList";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-export default function EvidenceLibraryPage() {
-	// const router = useRouter();
-	// const pathname = usePathname();
-	const searchParams = useSearchParams();
+interface EvidenceLibraryProps {
+	searchParams: SearchParams;
+}
 
-	// const searchParamsObj = Object.fromEntries(searchParams.entries());
+export default function EvidenceLibraryPage(props: EvidenceLibraryProps) {
+	const { searchParams } = props;
 
 	const search = searchParamsSchema.parse(searchParams);
 
