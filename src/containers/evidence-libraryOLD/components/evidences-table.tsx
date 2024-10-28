@@ -75,26 +75,26 @@ export function EvidencesTable({ evidencesPromise }: EvidencesTableProps) {
 		// },
 	];
 
-	const { table } = useDataTable({
-		data,
-		columns,
-		pageCount,
-		/* optional props */
-		filterFields,
-		enableAdvancedFilter: featureFlags.includes("advancedFilter"),
-		state: {
-			sorting: [{ id: "createdAt", desc: true }],
-			pagination: { pageIndex: 0, pageSize: 10 },
-			columnPinning: { right: ["actions"] },
-		},
+	// const { table } = useDataTable({
+	// 	data,
+	// 	columns,
+	// 	pageCount,
+	// 	/* optional props */
+	// 	filterFields,
+	// 	enableAdvancedFilter: featureFlags.includes("advancedFilter"),
+	// 	state: {
+	// 		sorting: [{ id: "createdAt", desc: true }],
+	// 		pagination: { pageIndex: 0, pageSize: 10 },
+	// 		columnPinning: { right: ["actions"] },
+	// 	},
 
-		/* */
-	});
+	// 	/* */
+	// });
 
 	return (
 		<DataTable
-			totalRows={totalRows}
-			table={table}
+			// totalRows={totalRows}
+			// table={table}
 			// floatingBar={
 			//   featureFlags.includes("floatingBar") ? (
 			//     <TasksTableFloatingBar table={table} />

@@ -1,13 +1,13 @@
 "use server";
 
 import { unstable_noStore as noStore, revalidatePath } from "next/cache";
-import { db } from "~/containers/evidence-library/db/index";
-import {
-  evidences,
-  type Evidence,
-} from "~/containers/evidence-library/db/schema";
-import { takeFirstOrThrow } from "~/containers/evidence-library/db/utils";
-import { count, eq, inArray } from "drizzle-orm";
+// import { db } from "~/containers/evidence-library/db/index";
+// import {
+//   evidences,
+//   type Evidence,
+// } from "~/containers/evidence-library/db/schema";
+// import { takeFirstOrThrow } from "~/containers/evidence-library/db/utils";
+// import { count, eq, inArray } from "drizzle-orm";
 import { customAlphabet } from "nanoid";
 
 import { getErrorMessage } from "~/lib/handle-error";
@@ -19,17 +19,17 @@ export async function seedEvidences(input: { count: number }) {
   const count = input.count ?? 100;
 
   try {
-    const allEvidences: Evidence[] = [];
+    const allEvidences: any = [];
 
     for (let i = 0; i < count; i++) {
       allEvidences.push(generateRandomEvidence());
     }
 
-    await db.delete(evidences);
+    // await db.delete(evidences);
 
     console.log("📝 Inserting Evidences", allEvidences.length);
 
-    await db.insert(evidences).values(allEvidences).onConflictDoNothing();
+    // await db.insert(evidences).values(allEvidences).onConflictDoNothing();
   } catch (err) {
     console.error(err);
   }
