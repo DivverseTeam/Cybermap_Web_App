@@ -2,7 +2,7 @@ import { ColumnDef, createColumnHelper } from "@tanstack/react-table";
 import { useState, useEffect, useTransition } from "react";
 import { IEvidence } from "../types";
 
-import { DeleteEvidenceDialog } from "../components/delete-evidence-dialog";
+import { DeleteEvidenceDialog } from "./delete-evidence-dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
