@@ -41,9 +41,9 @@ import { Textarea } from "~/app/_components/ui/textarea";
 // } from "../_lib/validations";
 // import { Evidence } from "../_lib/queries";
 import { useEffect, useTransition } from "react";
-import { IEvidence } from "../types";
 import { type Row } from "@tanstack/react-table";
 import { User } from "lucide-react";
+import { IEvidence } from "../types";
 
 interface ViewEvidenceSheetProps
   extends React.ComponentPropsWithRef<typeof Sheet> {
