@@ -34,7 +34,7 @@ const integrationsList = [
 export default function AvailableIntegrationsContainer({}: Props) {
   return (
     <div className="flex flex-col grow">
-      <div className="flex justify-between p-4 rounded-2xl rounded-b-none border w-full mx-auto">
+      <div className="flex justify-between p-4 2xl:p-5 rounded-2xl rounded-b-none border w-full mx-auto">
         <Input
           type="text"
           placeholder="Search for available integrations"
@@ -56,7 +56,7 @@ export default function AvailableIntegrationsContainer({}: Props) {
                 className="flex size-8 p-0 data-[state=open]:bg-muted mx-auto"
               >
                 <DotsHorizontalIcon
-                  className="size-4 font-bold text-secondary"
+                  className="size-6 font-bold text-secondary"
                   aria-hidden="true"
                 />
               </Button>
@@ -79,7 +79,7 @@ export default function AvailableIntegrationsContainer({}: Props) {
           </DropdownMenu>
         </div>
       </div>
-      <div className="px-5 py-8 border">
+      <div className="px-5 2xl:px-8 py-8 2xl:py-9 border">
         <div className=" mb-6">
           <h2 className="text-xl font-semibold">All integrations</h2>
           <p className="text-gray-600 text-sm">

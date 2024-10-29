@@ -22,12 +22,12 @@ import {
 
 export function ConnectedIntegrationCard({ integration }: any) {
   return (
-    <Card className="h-[210px] w-[250px] ">
+    <Card className="h-[210px] w-[250px] 2xl:h-[220px] 2xl:w-[260px]">
       {/* <CardHeader>
         <CardTitle>Create project</CardTitle>
         <CardDescription>Deploy your new project in one-click.</CardDescription>
       </CardHeader> */}
-      <div className="flex flex-col justify-between p-3 px-0  mx-auto my-auto h-[230px]">
+      <div className="flex flex-col justify-between p-3 px-0  mx-auto my-auto h-[230px] 2xl:w-[260px]">
         <CardContent>
           <div className="flex flex-col gap-3 w-full">
             <div className="flex gap-3 justify-between items-start ">
@@ -47,19 +47,24 @@ export function ConnectedIntegrationCard({ integration }: any) {
             <div className="flex flex-col text-xs">
               <span className="text-secondary">
                 Account ID:{" "}
-                <span className="text-secondary-foreground">
+                <span className="text-secondary-foreground font-semibold">
                   CybermapProd23
                 </span>
               </span>
               <span className="text-secondary">
                 Workspace:{" "}
-                <span className="text-secondary-foreground">Cybermap</span>
+                <span className="text-secondary-foreground font-semibold">
+                  Cybermap
+                </span>
               </span>
             </div>
           </div>
         </CardContent>
         <CardFooter className="w-full mx-auto flex justify-center">
-          <Button variant="outline" className="h-8 w-[234px]">
+          <Button
+            variant="outline"
+            className="h-8 w-[234px] 2xl:h-9 2xl:w-[244px]"
+          >
             View details
           </Button>
         </CardFooter>

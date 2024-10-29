@@ -20,6 +20,8 @@ type Props = {};
 
 const columnHelper = createColumnHelper();
 
+// const row: Row<IEvidence> =
+
 export const columns: any = [
   columnHelper.accessor("name", {
     header: () => <span>File name</span>, // Wrap in span
@@ -84,12 +86,12 @@ export const columns: any = [
           <ViewEvidenceSheet
             open={showUpdateEvidenceSheet}
             onOpenChange={setShowUpdateEvidenceSheet}
-            evidence={row.original}
+            evidence={row.original as IEvidence}
           />
           <DeleteEvidenceDialog
             open={showDeleteEvidenceDialog}
             onOpenChange={setShowDeleteEvidenceDialog}
-            evidence={row.original}
+            evidence={row.original as IEvidence}
             showTrigger={false}
             onSuccess={() => row.toggleSelected(false)}
           />

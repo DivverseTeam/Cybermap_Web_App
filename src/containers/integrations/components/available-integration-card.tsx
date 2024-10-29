@@ -22,12 +22,12 @@ import {
 
 export function AvailableIntegrationCard({ integration }: any) {
   return (
-    <Card className="h-[200px] w-[250px]">
+    <Card className="h-[210px] w-[250px] 2xl:h-[220px] 2xl:w-[260px]">
       {/* <CardHeader>
         <CardTitle>Create project</CardTitle>
         <CardDescription>Deploy your new project in one-click.</CardDescription>
       </CardHeader> */}
-      <div className=" gap-4 flex flex-col justify-between items-center mx-auto p-3 h-[220px]">
+      <div className="flex flex-col justify-between p-3 px-0  mx-auto my-auto h-[230px]">
         <CardContent>
           <Image
             src={integration.icon}
@@ -39,7 +39,7 @@ export function AvailableIntegrationCard({ integration }: any) {
             objectPosition="center"
           />
         </CardContent>
-        <CardFooter className="flex justify-between gap-2">
+        <CardFooter className="flex justify-between gap-2 2xl:gap-3">
           <Button variant="outline" className="h-8 w-[108px]">
             See details
           </Button>
