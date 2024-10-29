@@ -16,15 +16,24 @@ import {
   TabsTrigger,
 } from "~/app/_components/ui/tabs";
 
-export function IntegrationTabs() {
+export function IntegrationTabs({ setActiveList }: any) {
   return (
-    <Tabs
-      defaultValue="connected"
-      className="w-[266px] 2xl:w-[25%] rounded-t-none"
-    >
-      <TabsList className="grid w-full grid-cols-2 border z-10 rounded-b-none ">
-        <TabsTrigger value="connected">Connected ({4})</TabsTrigger>
-        <TabsTrigger value="available">Available ({200})</TabsTrigger>
+    <Tabs defaultValue="connected" className="w-[266px] h-[886px] 2xl:w-[22%]">
+      <TabsList className="grid w-full grid-cols-2 border z-10 rounded-2xl rounded-b-none ">
+        <TabsTrigger
+          value="connected"
+          className="rounded-2xl rounded-b-none"
+          onClick={() => setActiveList("connected")}
+        >
+          Connected ({4})
+        </TabsTrigger>
+        <TabsTrigger
+          value="available"
+          className="rounded-2xl rounded-b-none"
+          onClick={() => setActiveList("available")}
+        >
+          Available ({200})
+        </TabsTrigger>
       </TabsList>
 
       <TabsContent value="connected">
@@ -45,9 +54,6 @@ export function IntegrationTabs() {
               <Input id="username" defaultValue="@peduarte" />
             </div>
           </CardContent>
-          <CardFooter>
-            <Button>Save changes</Button>
-          </CardFooter>
         </Card>
       </TabsContent>
 
@@ -69,9 +75,6 @@ export function IntegrationTabs() {
               <Input id="new" type="password" />
             </div>
           </CardContent>
-          <CardFooter>
-            <Button>Save password</Button>
-          </CardFooter>
         </Card>
       </TabsContent>
     </Tabs>

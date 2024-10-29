@@ -112,40 +112,7 @@ export const columns: any = [
               >
                 View
               </DropdownMenuItem>
-              {/* <DropdownMenuSub>
-                <DropdownMenuSubTrigger>Labels</DropdownMenuSubTrigger>
-                <DropdownMenuSubContent>
-                  <DropdownMenuRadioGroup
-                    value={row.original.label}
-                    onValueChange={(value) => {
-                      startUpdateTransition(() => {
-                        toast.promise(
-                          updateEvidence({
-                            id: row.original.id,
-                            label: value as Evidence["label"],
-                          }),
-                          {
-                            loading: "Updating...",
-                            success: "Label updated",
-                            error: (err) => getErrorMessage(err),
-                          }
-                        );
-                      });
-                    }}
-                  >
-                    {tasks.label.enumValues.map((label) => (
-                      <DropdownMenuRadioItem
-                        key={label}
-                        value={label}
-                        className="capitalize"
-                        disabled={isUpdatePending}
-                      >
-                        {label}
-                      </DropdownMenuRadioItem>
-                    ))}
-                  </DropdownMenuRadioGroup>
-                </DropdownMenuSubContent>
-              </DropdownMenuSub> */}
+
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 onSelect={() => setShowDeleteEvidenceDialog(true)}
