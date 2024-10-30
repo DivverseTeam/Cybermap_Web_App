@@ -27,7 +27,7 @@ export function ConnectedIntegrationCard({ integration }: any) {
         <CardTitle>Create project</CardTitle>
         <CardDescription>Deploy your new project in one-click.</CardDescription>
       </CardHeader> */}
-      <div className="flex flex-col justify-between p-0 px-0 gap-0  mx-auto my-auto h-[210px] 2xl:w-[260px]">
+      <div className="flex flex-col justify-between p-0 px-0 gap-0  mx-auto my-auto h-[200px] 2xl:w-[266px]">
         <CardContent className="p-0 my-auto">
           <div className="flex flex-col gap-2 w-full">
             <div className="flex gap-1 justify-between px-4 items-start ">

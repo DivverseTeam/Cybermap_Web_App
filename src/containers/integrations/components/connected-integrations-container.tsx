@@ -39,7 +39,7 @@ const integrationsList = [
 export default function ConnectedIntegrationsContainer({}: Props) {
   return (
     <div className="flex flex-col grow">
-      <div className="flex justify-between p-4 2xl:p-5 rounded-2xl rounded-b-none border w-full mx-auto">
+      <div className="flex justify-between p-4 2xl:p-5 bg-muted rounded-2xl rounded-b-none border w-full mx-auto">
         <Input
           type="text"
           placeholder="Search for available integrations"

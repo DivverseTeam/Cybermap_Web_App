@@ -27,7 +27,7 @@ export function AvailableIntegrationCard({ integration }: any) {
         <CardTitle>Create project</CardTitle>
         <CardDescription>Deploy your new project in one-click.</CardDescription>
       </CardHeader> */}
-      <div className="flex flex-col justify-between px-0  mx-auto my-auto h-[210px]">
+      <div className="flex flex-col justify-between px-0  mx-auto my-auto h-[200px] 2xl:w-[266px]">
         <CardContent className="p-0 my-auto">
           <div className="flex flex-col items-center gap-2 justify-center ">
             <Image

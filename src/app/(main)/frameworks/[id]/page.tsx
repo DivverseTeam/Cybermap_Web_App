@@ -24,7 +24,7 @@ const frameworkData: any = {
 	},
 };
 
-export default function ViewFramework() {
+export default function page() {
 	const { id } = useParams(); // Get the dynamic route parameter
 	const [framework, setFramework] = useState(null);
 

@@ -35,7 +35,9 @@ interface EvidencesTableProps {
   searchParams: { [key: string]: string | undefined };
 }
 
-export default function EvidenceTable({ searchParams }: EvidencesTableProps) {
+export default function EvidenceLibraryPage({
+  searchParams,
+}: EvidencesTableProps) {
   // const searchParams = useSearchParams();
   const currentPage = parseInt((searchParams.page as string) || "1");
   const itemsPerPage = parseInt((searchParams.pageSize as string) || "10");
