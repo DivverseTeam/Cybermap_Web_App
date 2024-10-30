@@ -36,7 +36,7 @@ export const columns: any = [
             linkedControls.map((control, idx) => (
               <span
                 key={idx}
-                className="px-2 py-1 text-xs font-medium bg-gray-200 rounded-md"
+                className="px-2 py-1 text-xs text-[#0F78AD] font-semibold bg-[#0F78AD]/20 rounded-xl"
               >
                 {control}
               </span>
@@ -48,6 +48,12 @@ export const columns: any = [
       );
     },
   }),
+  columnHelper.accessor("renewalDate", {
+    header: () => <span className="">Renewal Date</span>, // Wrap in span
+    cell: ({ cell }) => (
+      <span className="text-sm "> {formatDate(cell.getValue() as Date)}</span>
+    ),
+  }),
   columnHelper.accessor("status", {
     header: () => (
       <span className="w-[110px] flex items-center text-center justify-center">
@@ -56,7 +62,7 @@ export const columns: any = [
     ), // Wrap in span
     cell: ({ cell }) => (
       <span
-        className={`rounded-lg font-semibold text-xs flex items-center justify-center py-[2px] px-2 ${
+        className={`rounded-xl font-semibold text-xs flex items-center justify-center py-[2px] px-2 ${
           cell.getValue() === "Needs artifact"
             ? "bg-destructive/20 text-destructive"
             : "bg-green-700/20 text-green-700 "
@@ -66,10 +72,7 @@ export const columns: any = [
       </span>
     ),
   }),
-  columnHelper.accessor("renewalDate", {
-    header: () => <span>Renewal Date</span>, // Wrap in span
-    cell: ({ cell }) => formatDate(cell.getValue() as Date),
-  }),
+
   columnHelper.accessor("actions", {
     header: () => <span></span>, // Wrap in span
     cell: function Cell({ row }) {

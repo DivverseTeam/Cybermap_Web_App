@@ -22,29 +22,39 @@ import {
 
 export function ConnectedIntegrationCard({ integration }: any) {
   return (
-    <Card className="h-[210px] w-[250px] 2xl:h-[220px] 2xl:w-[260px]">
+    <Card className="p-1">
       {/* <CardHeader>
         <CardTitle>Create project</CardTitle>
         <CardDescription>Deploy your new project in one-click.</CardDescription>
       </CardHeader> */}
-      <div className="flex flex-col justify-between p-3 px-0  mx-auto my-auto h-[230px] 2xl:w-[260px]">
-        <CardContent>
-          <div className="flex flex-col gap-3 w-full">
-            <div className="flex gap-3 justify-between items-start ">
-              <Image
-                src={integration.icon}
-                alt="image"
-                width={80}
-                height={80}
-                //   fill={true}
-                //   objectFit="contain"
-                //   objectPosition="center"
-              />
+      <div className="flex flex-col justify-between p-0 px-0 gap-0  mx-auto my-auto h-[210px] 2xl:w-[260px]">
+        <CardContent className="p-0 my-auto">
+          <div className="flex flex-col gap-2 w-full">
+            <div className="flex gap-1 justify-between px-4 items-start ">
+              <div className="flex flex-col items-start gap-2 justify-center ">
+                <Image
+                  src={integration.icon}
+                  alt="image"
+                  width={70}
+                  height={70}
+                  //   fill={true}
+                  // objectFit="contain"
+                  // objectPosition="center"
+                  className="flex items-center justify-center "
+                />
+                {["Github", "Github Enterprise Server"].includes(
+                  integration.name
+                ) && (
+                  <span className="text-xs font-semibold">
+                    {integration.name}
+                  </span>
+                )}
+              </div>
               <span className="p-[2px] px-2 font-semibold text-xs rounded-lg text-green-700 bg-green-700/20">
                 Active
               </span>
             </div>
-            <div className="flex flex-col text-xs">
+            <div className="flex flex-col text-xs px-3">
               <span className="text-secondary">
                 Account ID:{" "}
                 <span className="text-secondary-foreground font-semibold">
@@ -60,7 +70,7 @@ export function ConnectedIntegrationCard({ integration }: any) {
             </div>
           </div>
         </CardContent>
-        <CardFooter className="w-full mx-auto flex justify-center">
+        <CardFooter className="flex items-center justify-between gap-2 p-3 2xl:gap-3 ">
           <Button
             variant="outline"
             className="h-8 w-[234px] 2xl:h-9 2xl:w-[244px]"

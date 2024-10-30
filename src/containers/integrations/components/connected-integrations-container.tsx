@@ -18,18 +18,22 @@ import { ConnectedIntegrationCard } from "./connected-integration-card";
 type Props = {};
 
 const integrationsList = [
-  { id: 1, name: "AWS", icon: "/integrations/aws.svg" },
-  { id: 2, name: "Heroku", icon: "/integrations/heroku.svg" },
-  { id: 3, name: "Netlify", icon: "/integrations/netlify.svg" },
-  { id: 4, name: "Digital Ocean", icon: "/integrations/digitalOcean.svg" },
-  { id: 5, name: "Vercel", icon: "/integrations/vercel.svg" },
-  { id: 6, name: "Supabase", icon: "/integrations/supabase.svg" },
-  { id: 7, name: "GCP", icon: "/integrations/gcp.svg" },
-  { id: 8, name: "Azure", icon: "/integrations/azure.svg" },
-  { id: 9, name: "Vercel", icon: "/integrations/vercel.svg" },
-  { id: 10, name: "Supabase", icon: "/integrations/supabase.svg" },
-  { id: 11, name: "GCP", icon: "/integrations/gcp.svg" },
-  { id: 12, name: "Digital Ocean", icon: "/integrations/digitalOcean.svg" },
+  { id: 1, name: "Github", icon: "/integrations/githubLogo.png" },
+  {
+    id: 2,
+    name: "Github Enterprise Server",
+    icon: "/integrations/githubLogo.png",
+  },
+  { id: 3, name: "Gitlab", icon: "/integrations/gitlabLogo.png" },
+  { id: 4, name: "GCP", icon: "/integrations/gcpLogo.png" },
+  { id: 5, name: "Digital Ocean", icon: "/integrations/digitalOceanLogo.png" },
+  { id: 6, name: "Vercel", icon: "/integrations/vercelLogo.png" },
+  { id: 7, name: "Supabase", icon: "/integrations/supabaseLogo.png" },
+  { id: 8, name: "GCP", icon: "/integrations/gcpLogo.png" },
+  { id: 9, name: "Vercel", icon: "/integrations/vercelLogo.png" },
+  { id: 10, name: "Supabase", icon: "/integrations/supabaseLogo.png" },
+  { id: 11, name: "GCP", icon: "/integrations/gcpLogo.png" },
+  { id: 12, name: "Digital Ocean", icon: "/integrations/digitalOceanLogo.png" },
 ];
 
 export default function ConnectedIntegrationsContainer({}: Props) {

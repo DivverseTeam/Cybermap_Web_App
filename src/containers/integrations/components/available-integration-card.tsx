@@ -22,28 +22,36 @@ import {
 
 export function AvailableIntegrationCard({ integration }: any) {
   return (
-    <Card className="h-[210px] w-[250px] 2xl:h-[220px] 2xl:w-[260px]">
+    <Card className="">
       {/* <CardHeader>
         <CardTitle>Create project</CardTitle>
         <CardDescription>Deploy your new project in one-click.</CardDescription>
       </CardHeader> */}
-      <div className="flex flex-col justify-between p-3 px-0  mx-auto my-auto h-[230px]">
-        <CardContent>
-          <Image
-            src={integration.icon}
-            alt="image"
-            width={100}
-            height={100}
-            //   fill={true}
-            objectFit="contain"
-            objectPosition="center"
-          />
+      <div className="flex flex-col justify-between px-0  mx-auto my-auto h-[210px]">
+        <CardContent className="p-0 my-auto">
+          <div className="flex flex-col items-center gap-2 justify-center ">
+            <Image
+              src={integration.icon}
+              alt="image"
+              width={80}
+              height={80}
+              //   fill={true}
+              // objectFit="contain"
+              // objectPosition="center"
+              className="flex items-center justify-center "
+            />
+            {["Github", "Github Enterprise Server"].includes(
+              integration.name
+            ) && (
+              <span className="text-sm font-semibold">{integration.name}</span>
+            )}
+          </div>
         </CardContent>
-        <CardFooter className="flex justify-between gap-2 2xl:gap-3">
-          <Button variant="outline" className="h-8 w-[108px]">
+        <CardFooter className="flex items-center justify-between gap-2 p-3 2xl:gap-3 ">
+          <Button variant="outline" className="h-9 w-[110px]">
             See details
           </Button>
-          <Button className="h-8 w-[108px]">Connect</Button>
+          <Button className="h-9 w-[110px]">Connect</Button>
         </CardFooter>
       </div>
     </Card>

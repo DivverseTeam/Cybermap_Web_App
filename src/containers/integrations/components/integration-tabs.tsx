@@ -40,19 +40,13 @@ export function IntegrationTabs({ setActiveList }: any) {
         <Card className="rounded-t-none">
           <CardHeader>
             <CardTitle>Connected</CardTitle>
-            <CardDescription>
+            {/* <CardDescription>
               Make changes to your account here. Click save when you're done.
-            </CardDescription>
+            </CardDescription> */}
           </CardHeader>
           <CardContent className="space-y-2">
-            <div className="space-y-1">
-              <Label htmlFor="name">Name</Label>
-              <Input id="name" defaultValue="Pedro Duarte" />
-            </div>
-            <div className="space-y-1">
-              <Label htmlFor="username">Username</Label>
-              <Input id="username" defaultValue="@peduarte" />
-            </div>
+            {/* Display list of connected integrations */}
+            <div>List of Connected integrations...</div>
           </CardContent>
         </Card>
       </TabsContent>
@@ -61,19 +55,13 @@ export function IntegrationTabs({ setActiveList }: any) {
         <Card className="rounded-t-none">
           <CardHeader>
             <CardTitle>Available</CardTitle>
-            <CardDescription>
+            {/* <CardDescription>
               Change your password here. After saving, you'll be logged out.
-            </CardDescription>
+            </CardDescription> */}
           </CardHeader>
           <CardContent className="space-y-2">
-            <div className="space-y-1">
-              <Label htmlFor="current">Current password</Label>
-              <Input id="current" type="password" />
-            </div>
-            <div className="space-y-1">
-              <Label htmlFor="new">New password</Label>
-              <Input id="new" type="password" />
-            </div>
+            {/* Display list of all available integrations */}
+            <div>List of Available integrations...</div>
           </CardContent>
         </Card>
       </TabsContent>
