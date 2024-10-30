@@ -73,7 +73,7 @@ export function NewControlSheet() {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button>Create new evidence</Button>
+        <Button>Create new control</Button>
       </SheetTrigger>
       <SheetContent className="overflow-y-auto h-full flex flex-col gap-6">
         <SheetHeader>
