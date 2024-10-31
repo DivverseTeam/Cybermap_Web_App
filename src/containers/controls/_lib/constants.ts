@@ -32,7 +32,7 @@ export const controls = [
     name: "Levin",
     description:
       "Proin leo odio, porttitor id, consequat in, consequat ut, nulla. Sed accumsan felis. Ut at dolor quis odio consequat varius.",
-    mappedControls: ["HIPAA", "SOC 2 II", "ISO 27001"],
+    mappedControls: [],
     status: "Partially implemented",
     createdAt: "10/2/2024",
     updatedAt: "9/10/2024",
@@ -70,7 +70,7 @@ export const controls = [
     name: "Levin",
     description:
       "Proin leo odio, porttitor id, consequat in, consequat ut, nulla. Sed accumsan felis. Ut at dolor quis odio consequat varius.",
-    mappedControls: ["HIPAA", "SOC 2 II", "ISO 27001"],
+    mappedControls: [],
     status: "Partially implemented",
     createdAt: "10/2/2024",
     updatedAt: "9/10/2024",
@@ -136,7 +136,7 @@ export const controls = [
     id: "aodsjdinfigiuydg",
     name: "Wilek",
     description: "Ut tellus.",
-    mappedControls: ["SOC 2 II", "PCI DSS", "ISO 27001"],
+    mappedControls: [],
     status: "Not implemented",
     createdAt: "6/5/2024",
     updatedAt: "6/30/2024",
@@ -184,7 +184,7 @@ export const controls = [
     name: "Levin",
     description:
       "Proin leo odio, porttitor id, consequat in, consequat ut, nulla. Sed accumsan felis. Ut at dolor quis odio consequat varius.",
-    mappedControls: ["HIPAA", "SOC 2 II", "ISO 27001"],
+    mappedControls: [],
     status: "Partially implemented",
     createdAt: "10/2/2024",
     updatedAt: "9/10/2024",

@@ -31,7 +31,7 @@ const frameworksList = [
   { name: "hipaa", label: "HIPAA" },
   { name: "gdpr", label: "GDPR" },
   { name: "iso27001", label: "ISO 27001" },
-  { name: "soc2i", label: "SOC 2 I" },
+  { name: "soc2i", label: "SOC 2 II" },
   { name: "pcidss", label: "PCI DSS" },
   { name: "nist", label: "NIST" },
 ];
@@ -110,6 +110,19 @@ export default function ControlsPage({}) {
   //   );
   // };
 
+  // Frameworks checked options
+  const [checkedItems, setCheckedItems] = useState(["All frameworks"]);
+
+  // Handle checkbox change
+  const handleCheckboxChange = (event: any) => {
+    const { value, checked } = event.target;
+
+    // Add or remove checked items based on their status
+    setCheckedItems((prev: any) =>
+      checked ? [...prev, value] : prev.filter((item: any) => item !== value)
+    );
+  };
+
   return (
     <div className="flex flex-col gap-6">
       <PageTitle
@@ -122,7 +135,12 @@ export default function ControlsPage({}) {
           <h5 className="mb-3">Frameworks</h5>
 
           <div className="flex items-center space-x-2 text-xs">
-            <Checkbox id="allFrameworks" />
+            <Checkbox
+              id="allFrameworks"
+              value="All frameworks"
+              onChange={handleCheckboxChange}
+              checked={checkedItems.includes("All frameworks")}
+            />
             <label
               htmlFor="allFrameworks"
               className="text-xs leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -132,7 +150,12 @@ export default function ControlsPage({}) {
           </div>
           {frameworksList.map((framework, index) => (
             <div className="flex items-center space-x-2 text-xs" key={index}>
-              <Checkbox id={framework.name} />
+              <Checkbox
+                id={framework.name}
+                value={framework.label}
+                onChange={handleCheckboxChange}
+                checked={checkedItems.includes(framework.label)}
+              />
               <label
                 htmlFor={framework.name}
                 className="text-xs leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -142,7 +165,12 @@ export default function ControlsPage({}) {
             </div>
           ))}
           <div className="flex items-center space-x-2 text-xs">
-            <Checkbox id="noFrameworks" />
+            <Checkbox
+              id="noFrameworks"
+              value="No frameworks"
+              onChange={handleCheckboxChange}
+              checked={checkedItems.includes("No frameworks")}
+            />
             <label
               htmlFor="noFrameworks"
               className="text-xs leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
