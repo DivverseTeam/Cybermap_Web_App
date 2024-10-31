@@ -24,7 +24,7 @@ export const columns: any = [
     cell: ({ cell }) => <span className="">{cell.getValue()}</span>,
   }),
   columnHelper.accessor("mappedControls", {
-    header: () => <span>Linked Controls</span>, // Wrap in span
+    header: () => <span>LINKED CONTROLS</span>, // Wrap in span
     cell: ({ row }) => {
       const mappedControls = row.getValue("mappedControls") as string[];
       return (
@@ -48,7 +48,7 @@ export const columns: any = [
   columnHelper.accessor("status", {
     header: () => (
       <span className="w-[60px] flex items-center text-center justify-center">
-        Status
+        STATUS
       </span>
     ), // Wrap in span
     cell: ({ cell }) => (
