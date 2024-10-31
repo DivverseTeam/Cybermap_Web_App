@@ -62,7 +62,7 @@ export const columns: any = [
     ), // Wrap in span
     cell: ({ cell }) => (
       <span
-        className={`rounded-xl font-semibold text-xs flex items-center justify-center py-[2px] px-2 ${
+        className={`rounded-xl font-medium text-xs flex items-center justify-center py-[2px] px-2 ${
           cell.getValue() === "Needs artifact"
             ? "bg-destructive/20 text-destructive"
             : "bg-green-700/20 text-green-700 "
