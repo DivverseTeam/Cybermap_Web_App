@@ -53,7 +53,7 @@ export const columns: any = [
     ), // Wrap in span
     cell: ({ cell }) => (
       <span
-        className={`w-[150px] rounded-xl font-semibold text-xs flex items-center justify-center py-[2px] px-2 ${
+        className={`w-[150px] rounded-xl font-medium text-xs flex items-center justify-center py-[2px] px-2 ${
           cell.getValue() === "Not implemented"
             ? "bg-destructive/20 text-destructive"
             : cell.getValue() === "Partially implemented"
