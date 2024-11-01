@@ -1,6 +1,10 @@
 import React from "react";
-import ControlsPage from "~/containers/controls/ControlsPage";
+import PageTitle from "~/containers/dashboard/components/PageTitle";
 
-export default function page() {
-  return <ControlsPage />;
+export default function ControlsPage() {
+  return (
+    <div className="h-full">
+      <PageTitle title="Controls" description="" />
+    </div>
+  );
 }

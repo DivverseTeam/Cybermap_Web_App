@@ -1,10 +1,11 @@
 import React from "react";
-import EvidenceLibraryPage from "~/containers/evidence-library/EvidenceLibraryPage";
+import PageTitle from "~/containers/dashboard/components/PageTitle";
 
-interface HomeProps {
-  searchParams: { [key: string]: string | undefined };
-}
-
-export default function page({ searchParams }: HomeProps) {
-  return <EvidenceLibraryPage searchParams={searchParams} />;
+export default function EvidenceLibraryPage() {
+  return (
+    <div className="h-full">
+      <PageTitle title="Evidence Library" description="" />
+      EvidenceLibraryPage
+    </div>
+  );
 }
