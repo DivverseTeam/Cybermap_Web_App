@@ -24,6 +24,7 @@ import {
   TableRow,
 } from "~/app/_components/ui/table";
 import { Checkbox } from "~/app/_components/ui/checkbox";
+import { Check } from "lucide-react";
 
 type Props = {};
 
@@ -164,36 +165,45 @@ export default function ControlsPage({}) {
         <div className="w-[142px] 2xl:w-[200px] flex flex-col gap-1">
           <h5 className="mb-3">Frameworks</h5>
 
-          <label className="text-sm">
+          <label className="text-sm flex items-center">
             <input
               type="checkbox"
               value="All frameworks"
               onChange={handleCheckboxChange}
               checked={selectedFrameworks.length === frameworks.length}
-              className="mr-[6px] "
+              className="mr-[6px] cursor-pointer appearance-none border border-primary rounded-sm w-4 h-4 checked:bg-primary checked:border-transparent focus:outline-none "
             />
+            {selectedFrameworks.length === frameworks.length && (
+              <Check className="absolute w-4 h-4 text-white pointer-events-none" />
+            )}
             All frameworks
           </label>
           {frameworks.map((framework: any, index) => (
-            <label key={framework} className="text-sm">
+            <label key={framework} className="text-sm flex items-center">
               <input
                 type="checkbox"
                 value={framework}
                 onChange={handleCheckboxChange}
                 checked={selectedFrameworks.includes(framework)}
-                className="mr-[6px] "
+                className="mr-[6px] cursor-pointer appearance-none border border-primary rounded-sm w-4 h-4 checked:bg-primary checked:border-transparent focus:outline-none "
               />
+              {selectedFrameworks.includes(framework) && (
+                <Check className="absolute w-4 h-4 text-white pointer-events-none" />
+              )}
               {framework}
             </label>
           ))}
-          <label className="text-sm">
+          <label className="text-sm flex items-center">
             <input
               type="checkbox"
               value="No framework"
               onChange={handleCheckboxChange}
               checked={selectedFrameworks.includes("No framework")}
-              className="mr-[6px] "
+              className="mr-[6px] cursor-pointer appearance-none border border-primary rounded-sm w-4 h-4 checked:bg-primary checked:border-transparent focus:outline-none "
             />
+            {selectedFrameworks.includes("No framework") && (
+              <Check className="absolute w-4 h-4 text-white pointer-events-none" />
+            )}
             No framework
           </label>
         </div>
