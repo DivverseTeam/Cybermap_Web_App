@@ -31,7 +31,7 @@ const frameworksList = [
   { name: "hipaa", label: "HIPAA" },
   { name: "gdpr", label: "GDPR" },
   { name: "iso27001", label: "ISO 27001" },
-  { name: "soc2i", label: "SOC 2 II" },
+  { name: "soc2ii", label: "SOC 2 II" },
   { name: "pcidss", label: "PCI DSS" },
   { name: "nist", label: "NIST" },
 ];
@@ -50,6 +50,32 @@ export default function ControlsPage({}) {
 
   // Status filter goes here
   const [statusFilter, setStatusFilter] = useState<any>(null);
+
+  const [selectedFrameworks, setSelectedFrameworks] = useState<string[]>([]);
+
+  // Unique list of frameworks
+  const frameworks = Array.from(
+    new Set(controls.flatMap((control) => control.mappedControls))
+  );
+
+  const handleCheckboxChange = (event: any) => {
+    const { value, checked } = event.target;
+
+    if (value === "All frameworks") {
+      // Select all frameworks
+      setSelectedFrameworks(checked ? frameworks : []);
+    } else if (value === "No framework") {
+      // Select "No framework" only if checked, otherwise clear it
+      setSelectedFrameworks(checked ? ["No framework"] : []);
+    } else {
+      // Toggle individual frameworks
+      setSelectedFrameworks((prev) =>
+        checked
+          ? [...prev, value]
+          : prev.filter((framework) => framework !== value)
+      );
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -71,12 +97,27 @@ export default function ControlsPage({}) {
           )
         : controls;
 
-      setData(filteredData);
+      // Filter controls based on selected frameworks
+      const filteredControlsData = filteredData.filter((control) => {
+        if (selectedFrameworks.includes("No framework")) {
+          return control.mappedControls.length === 0;
+        }
+        if (
+          selectedFrameworks.length === 0 ||
+          selectedFrameworks.includes("All frameworks")
+        ) {
+          return true; // Show all controls if no specific filter is applied
+        }
+        return selectedFrameworks.some((framework) =>
+          control.mappedControls.includes(framework)
+        );
+      });
+      setData(filteredControlsData);
       // setTotal(total);
       console.log(statusFilter);
     };
     fetchData();
-  }, [statusFilter]);
+  }, [statusFilter, selectedFrameworks]);
 
   const table = useReactTable({
     data,
@@ -111,17 +152,6 @@ export default function ControlsPage({}) {
   // };
 
   // Frameworks checked options
-  const [checkedItems, setCheckedItems] = useState(["All frameworks"]);
-
-  // Handle checkbox change
-  const handleCheckboxChange = (event: any) => {
-    const { value, checked } = event.target;
-
-    // Add or remove checked items based on their status
-    setCheckedItems((prev: any) =>
-      checked ? [...prev, value] : prev.filter((item: any) => item !== value)
-    );
-  };
 
   return (
     <div className="flex flex-col gap-6">
@@ -134,50 +164,38 @@ export default function ControlsPage({}) {
         <div className="w-[142px] 2xl:w-[200px] flex flex-col gap-1">
           <h5 className="mb-3">Frameworks</h5>
 
-          <div className="flex items-center space-x-2 text-xs">
-            <Checkbox
-              id="allFrameworks"
+          <label className="text-sm">
+            <input
+              type="checkbox"
               value="All frameworks"
               onChange={handleCheckboxChange}
-              checked={checkedItems.includes("All frameworks")}
+              checked={selectedFrameworks.length === frameworks.length}
+              className="mr-[6px] "
             />
-            <label
-              htmlFor="allFrameworks"
-              className="text-xs leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-            >
-              All frameworks
-            </label>
-          </div>
-          {frameworksList.map((framework, index) => (
-            <div className="flex items-center space-x-2 text-xs" key={index}>
-              <Checkbox
-                id={framework.name}
-                value={framework.label}
+            All frameworks
+          </label>
+          {frameworks.map((framework: any, index) => (
+            <label key={framework} className="text-sm">
+              <input
+                type="checkbox"
+                value={framework}
                 onChange={handleCheckboxChange}
-                checked={checkedItems.includes(framework.label)}
+                checked={selectedFrameworks.includes(framework)}
+                className="mr-[6px] "
               />
-              <label
-                htmlFor={framework.name}
-                className="text-xs leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-              >
-                {framework.label}
-              </label>
-            </div>
-          ))}
-          <div className="flex items-center space-x-2 text-xs">
-            <Checkbox
-              id="noFrameworks"
-              value="No frameworks"
-              onChange={handleCheckboxChange}
-              checked={checkedItems.includes("No frameworks")}
-            />
-            <label
-              htmlFor="noFrameworks"
-              className="text-xs leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-            >
-              No frameworks
+              {framework}
             </label>
-          </div>
+          ))}
+          <label className="text-sm">
+            <input
+              type="checkbox"
+              value="No framework"
+              onChange={handleCheckboxChange}
+              checked={selectedFrameworks.includes("No framework")}
+              className="mr-[6px] "
+            />
+            No framework
+          </label>
         </div>
 
         <div className="container flex flex-col gap-6 bg-white p-4 py-6">
