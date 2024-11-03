@@ -28,10 +28,13 @@ export default function FrameworkMonitorCard({
 							src={frameworkIcons[keyVal]}
 							alt="headerImage"
 							fill={true}
-							objectFit="cover"
-							objectPosition="center"
 							priority={true}
-							style={{ borderRadius: "50%" }}
+							style={{
+								borderRadius: "50%",
+								maxWidth: "100%",
+								objectFit: "cover",
+								objectPosition: "center",
+							}}
 						/>
 					</div>
 					<p className="text-base text-gray-12 font-semibold">{framework}</p>
