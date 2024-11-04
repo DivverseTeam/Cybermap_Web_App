@@ -15,7 +15,7 @@ const frameworkCategories = [
             name: "Risk management program established",
             description:
               "The employee performs background checks on new employees",
-            evidencesCollected: 0,
+            evidencesCollected: 3,
             evidencesExpected: 4,
             assignedTo: "John Doe",
           },
@@ -23,7 +23,7 @@ const frameworkCategories = [
             name: "Employee background checks performed",
             description:
               "The employee performs background checks on new employees",
-            evidencesCollected: 5,
+            evidencesCollected: 2,
             evidencesExpected: 5,
             assignedTo: "John Doe",
           },
@@ -65,7 +65,7 @@ const frameworkCategories = [
             name: "Office equipments checked ",
             description:
               "The employee performs background checks on new employees",
-            evidencesCollected: 8,
+            evidencesCollected: 7,
             evidencesExpected: 8,
             assignedTo: "John Doe",
           },
@@ -159,7 +159,7 @@ const frameworkCategories = [
             name: "Employee background checks performed",
             description:
               "The employee performs background checks on new employees",
-            evidencesCollected: 0,
+            evidencesCollected: 2,
             evidencesExpected: 5,
             assignedTo: "John Doe",
           },
@@ -167,7 +167,7 @@ const frameworkCategories = [
             name: "Office equipments checked ",
             description:
               "The employee performs background checks on new employees",
-            evidencesCollected: 8,
+            evidencesCollected: 7,
             evidencesExpected: 8,
             assignedTo: "John Doe",
           },
@@ -185,7 +185,7 @@ const frameworkCategories = [
             name: "Risk management program established",
             description:
               "The employee performs background checks on new employees",
-            evidencesCollected: 0,
+            evidencesCollected: 3,
             evidencesExpected: 4,
             assignedTo: "John Doe",
           },
@@ -201,7 +201,7 @@ const frameworkCategories = [
             name: "Office equipments checked ",
             description:
               "The employee performs background checks on new employees",
-            evidencesCollected: 8,
+            evidencesCollected: 7,
             evidencesExpected: 8,
             assignedTo: "John Doe",
           },
@@ -247,7 +247,7 @@ const frameworkCategories = [
 
 export default function ViewFrameworks() {
   return (
-    <div className="flex justify-between py-3 mx-auto gap-5">
+    <div className="mx-auto flex justify-between gap-5 py-3">
       {/* framework info */}
       <div className="flex flex-col gap-8 w-[261px] min-w-[28%]">
         {/* progress */}

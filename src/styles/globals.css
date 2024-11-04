@@ -38,6 +38,8 @@
     --popover-foreground: 0 0% 98%;
     --primary: 0 0% 98%;
     --primary-foreground: 0 0% 9%;
+    --primary2: 200, 84%, 37%, 1;
+    --primary2-foreground: 200, 84%, 9%, 1;
     --secondary: 0 0% 14.9%;
     --secondary-foreground: 0 0% 98%;
     --muted: 0 0% 14.9%;
@@ -69,37 +71,15 @@ button {
   text-transform: capitalize;
 }
 
-/* Disappear scrollbar when not scrolling */
-body::-webkit-scrollbar {
-  display: none; /* Hide scrollbar */
+.custom-scroll::-webkit-scrollbar {
+  display: none;
 }
 
-/* For Chrome, Edge, and Safari */
-::-webkit-scrollbar {
-  width: 10px; /* Slim scrollbar */
-}
-
-::-webkit-scrollbar-track {
-  background: transparent; /* Track background */
-}
-
-::-webkit-scrollbar-thumb {
-  background-color: rgba(0, 0, 0, 0.1); /* Darker thumb */
-  border: 2px solid transparent; /* Space between thumb and edge */
-  border-radius: 20px !important; /* Rounded edges */
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(0, 0, 0, 0.4); /* Slightly darker on hover */
-}
-
-/* For Firefox */
-* {
-  scrollbar-width: thin; /* Slim scrollbar */
-  scrollbar-color: rgba(0, 0, 0, 0.3) transparent; /* Color of thumb and track */
+.custom-scroll {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
 
 body {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
+  background-color: #f9f9fb;
 }

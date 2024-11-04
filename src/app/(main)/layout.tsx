@@ -18,6 +18,7 @@ import {
   UserMultipleIcon,
 } from "hugeicons-react";
 import { SidebarNav } from "~/components/layout/sidebar";
+import BreadCrumbs from "~/components/layout/breadcrumbs";
 
 export const metadata: Metadata = {
   title: "CYBERMAP",
@@ -85,9 +86,9 @@ export default function RootLayout({
                       href: "/personnel",
                     },
                     {
-                      title: "Integration",
+                      title: "Integrations",
                       icon: <CurvyRightDirectionIcon />,
-                      href: "/integration",
+                      href: "/integrations",
                     },
                     {
                       title: "Training modules",
@@ -104,9 +105,11 @@ export default function RootLayout({
               ]}
             />
             <Header />
-            {/* #E7E8EC */}
-            <div className="ml-64 h-[calc(100vh-58px)] bg-[#E7E8EC] px-4">
-              {children}
+            <div className="ml-64 h-[calc(100vh-58px)] px-6 2xl:px-8 py-10 2xl:py-16">
+              <div className="container mx-auto flex flex-col gap-6">
+                <BreadCrumbs />
+                {children}
+              </div>
             </div>
           </Wrapper>
         </TRPCReactProvider>
