@@ -19,6 +19,7 @@ import {
 } from "hugeicons-react";
 import { SidebarNav } from "~/components/layout/sidebar";
 import BreadCrumbs from "~/components/layout/breadcrumbs";
+import SideNavbar from "~/components/layout/SideNavbar";
 
 export const metadata: Metadata = {
   title: "CYBERMAP",
@@ -40,7 +41,7 @@ export default function RootLayout({
       <body className={`${inter.variable} ${publicSans.variable} font-sans`}>
         <TRPCReactProvider>
           <Wrapper>
-            <SidebarNav
+            {/* <SidebarNav
               items={[
                 {
                   title: "Dashboard",
@@ -103,12 +104,15 @@ export default function RootLayout({
                   ],
                 },
               ]}
-            />
-            <Header />
-            <div className="ml-64 h-[calc(100vh-58px)] px-6 2xl:px-8 py-10 2xl:py-16">
-              <div className="container mx-auto flex flex-col gap-6">
-                <BreadCrumbs />
-                {children}
+            /> */}
+            <div className="flex">
+              <SideNavbar />
+              <div className="ml-[280px] w-full h-[calc(100vh-72px)] ">
+                <Header />
+                <div className="container mx-auto flex flex-col gap-6 px-6 2xl:px-8 py-10 2xl:py-16">
+                  <BreadCrumbs />
+                  {children}
+                </div>
               </div>
             </div>
           </Wrapper>

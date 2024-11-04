@@ -24,7 +24,7 @@ export const columns: any = [
     cell: ({ cell }) => <span className="">{cell.getValue()}</span>,
   }),
   columnHelper.accessor("mappedControls", {
-    header: () => <span>LINKED CONTROLS</span>, // Wrap in span
+    header: () => <span>MAPPED</span>, // Wrap in span
     cell: ({ row }) => {
       const mappedControls = row.getValue("mappedControls") as string[];
       return (

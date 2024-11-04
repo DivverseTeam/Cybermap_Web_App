@@ -162,7 +162,7 @@ export default function ControlsPage({}) {
         action={<NewControlSheet />}
       />
       <div className="flex gap-10">
-        <div className="w-[142px] 2xl:w-[200px] flex flex-col gap-1">
+        <div className="w-[142px] 2xl:w-[200px] flex flex-col gap-2">
           <h5 className="mb-3">Frameworks</h5>
 
           <label className="text-sm flex items-center">
