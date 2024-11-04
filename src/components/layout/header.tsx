@@ -9,6 +9,8 @@ import {
 } from "~/app/_components/ui/avatar";
 import { Input } from "~/app/_components/ui/input";
 import { CyberMapBrand } from "../svgs/CyberMapBrand";
+import { SeparatorVerticalIcon } from "lucide-react";
+import { Separator } from "~/app/_components/ui/seperator";
 
 export default function Header() {
   const { data } = useSession();
@@ -33,10 +35,11 @@ export default function Header() {
 
             <span className="flex items-center gap-2">
               {" "}
-              <span className="mr-4 text-gray-500">
+              <span className="mr-0 text-gray-500">
                 <HelpSquareIcon />
               </span>
-              <Avatar className="h-6 w-6 rounded-xs">
+              <Separator orientation="vertical" className="mx-1 2xl:mx-2" />
+              <Avatar className="h-7 w-7 rounded-xs">
                 <AvatarImage src="" />
                 <AvatarFallback>TU</AvatarFallback>
               </Avatar>
