@@ -93,6 +93,8 @@ const controlDetailsData = [
 interface ViewControlSheetProps
   extends React.ComponentPropsWithRef<typeof Sheet> {
   control: any;
+  open: any;
+  onOpenChange: any;
 }
 
 export function ViewControlSheet({

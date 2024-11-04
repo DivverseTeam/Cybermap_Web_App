@@ -165,7 +165,7 @@ export default function ControlsPage({}) {
         <div className="w-[142px] 2xl:w-[200px] flex flex-col gap-2">
           <h5 className="mb-3">Frameworks</h5>
 
-          <label className="text-sm flex items-center">
+          <label className="text-xs 2xl:text-sm flex items-center">
             <input
               type="checkbox"
               value="All frameworks"
@@ -179,7 +179,10 @@ export default function ControlsPage({}) {
             All frameworks
           </label>
           {frameworks.map((framework: any, index) => (
-            <label key={framework} className="text-sm flex items-center">
+            <label
+              key={framework}
+              className="text-xs 2xl:text-sm flex items-center"
+            >
               <input
                 type="checkbox"
                 value={framework}
@@ -193,7 +196,7 @@ export default function ControlsPage({}) {
               {framework}
             </label>
           ))}
-          <label className="text-sm flex items-center">
+          <label className="text-xs 2xl:text-sm flex items-center">
             <input
               type="checkbox"
               value="No framework"
