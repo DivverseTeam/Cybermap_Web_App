@@ -66,6 +66,7 @@
     "recharts": "^2.13.0",
     "server-only": "^0.0.1",
     "sonner": "^1.5.0",
+    "sst": "3.2.73",
     "styled-components": "5.3.11",
     "superjson": "^2.2.1",
     "tailwind-merge": "^2.5.2",

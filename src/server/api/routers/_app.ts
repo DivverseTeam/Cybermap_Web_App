@@ -1,3 +1,4 @@
+import { Resource } from "sst";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { postRouter } from "~/server/api/routers/post";
@@ -33,13 +34,7 @@ export const appRouter = createTRPCRouter({
 
 				const id = input?.id || mongoose.mongo.ObjectId.toString();
 
-				const client = new S3Client({
-					region: env.S3_REGION,
-					credentials: {
-						accessKeyId: env.S3_ACCESS_KEY,
-						secretAccessKey: env.S3_SECRET_KEY,
-					},
-				});
+				const client = new S3Client({});
 
 				let key: string = id;
 
@@ -48,7 +43,7 @@ export const appRouter = createTRPCRouter({
 				}
 
 				const command = new PutObjectCommand({
-					Bucket: env.S3_BUCKET_NAME,
+					Bucket: Resource.images.name,
 					Key: key,
 					...(fileType && {
 						Metadata: {
