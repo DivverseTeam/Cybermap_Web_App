@@ -43,54 +43,57 @@ export function Nav({ links, groupName, isCollapsed }: NavProps) {
         </span>
       )}
       <nav className=" grid gap-1 group-[[data-collapsed=true]]:justify-center group-[[data-collapsed=true]]:px-2">
-        {links.map((link: any, index) => (
-          <div className="flex items-center relative" key={index}>
-            {pathname.startsWith(`${link.href}`) &&
-              pathname.includes(
-                `${link.href}`.split("/").slice(2).join("/")
-              ) && (
-                <div className="h-9 w-1 absolute left-[-25] bg-primary"></div>
+        {links.map((link: any, index) => {
+          let isActive = false;
+
+          if (link.href === "/dashboard") {
+            isActive = pathname === "/dashboard"; // Only active if exactly on /dashboard
+          } else {
+            // For other routes like /dashboard/frameworks and /settings
+            isActive = pathname.startsWith(link.href);
+          }
+          return (
+            <div className="flex items-center relative" key={index}>
+              {isActive && (
+                <div className="h-9 w-1 2xl:w-1.5 rounded-md absolute left-[-25] bg-primary"></div>
               )}
-            <Link
-              key={index}
-              href={`${link.href}`}
-              className={cn(
-                buttonVariants({
-                  variant:
-                    pathname.startsWith(`${link.href}`) &&
-                    pathname.includes(
-                      `${link.href}`.split("/").slice(2).join("/")
-                    )
-                      ? "lightBlue"
-                      : "ghost",
-                  size: "xs",
-                }),
-                link.variant === "default" &&
-                  "dark:bg-muted dark:text-white dark:hover:bg-muted  dark:hover:text-white",
-                link.variant === "lightBlue" && "text-black",
-                "justify-start"
-              )}
-            >
-              <link.icon
-                className={`${
-                  pathname.startsWith(`${link.href}`) && "text-primary"
-                } "mr-2 h-4 w-4"`}
-              />
-              {link.title}
-              {link.label && (
-                <span
-                  className={cn(
-                    "ml-auto",
-                    link.variant === "default" &&
-                      "text-background dark:text-white"
-                  )}
-                >
-                  {link.label}
-                </span>
-              )}
-            </Link>
-          </div>
-        ))}
+              <Link
+                key={index}
+                href={`${link.href}`}
+                className={cn(
+                  "w-[220px]",
+                  isActive && "text-black",
+                  buttonVariants({
+                    variant: isActive ? "lightBlue" : "ghost",
+                    size: "sm",
+                  }),
+                  link.variant === "default" &&
+                    "dark:bg-muted dark:text-white dark:hover:bg-muted  dark:hover:text-white",
+                  link.variant === "lightBlue" && "text-black",
+                  "justify-start"
+                )}
+              >
+                <link.icon
+                  className={`${
+                    isActive && "text-primary"
+                  } "mr-2 pr-2 h-4 w-4"`}
+                />
+                {link.title}
+                {link.label && (
+                  <span
+                    className={cn(
+                      "ml-auto",
+                      link.variant === "default" &&
+                        "text-background dark:text-white"
+                    )}
+                  >
+                    {link.label}
+                  </span>
+                )}
+              </Link>
+            </div>
+          );
+        })}
       </nav>
     </div>
   );
