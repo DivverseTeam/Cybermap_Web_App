@@ -8,10 +8,10 @@ export default $config({
 			home: "aws",
 			providers: {
 				aws: {
-					profile:
-						input?.stage === "production"
-							? "cybermap-production"
-							: "cybermap-dev",
+					profile: "Shegezzy",
+					// input?.stage === "production"
+					// 	? "cybermap-production"
+					// 	: "cybermap-dev",
 				},
 			},
 		};

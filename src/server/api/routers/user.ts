@@ -5,7 +5,8 @@ import {
 	OrganizationSize,
 	UserRole,
 } from "~/lib/types";
-import bcrypt from "bcrypt";
+// import argon2 from "argon2";
+import bcryptjs from "bcryptjs";
 
 import {
 	createTRPCRouter,
@@ -36,7 +37,7 @@ export const userRouter = createTRPCRouter({
 				throw new Error("Email address is already taken");
 			}
 
-			const hashPassword = bcrypt.hashSync(password, 12);
+			const hashPassword = bcryptjs.hashSync(password, 12);
 
 			let user = await User.create({
 				name,
