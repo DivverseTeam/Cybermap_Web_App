@@ -1,6 +1,10 @@
 import React from "react";
-import IntegrationsPage from "~/containers/integrations/IntegrationsPage";
+import PageTitle from "~/containers/dashboard/components/PageTitle";
 
-export default function page() {
-  return <IntegrationsPage />;
+export default function IntegrationsPage() {
+  return (
+    <div className="h-full">
+      <PageTitle title="Integrations" description="" />
+    </div>
+  );
 }
