@@ -1,12 +1,12 @@
 "use client";
 
-import { type ReactNode, useState } from "react";
-import { cn } from "~/lib/utils";
+import { AccountSetting02Icon, Logout02Icon } from "hugeicons-react";
+import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { AccountSetting02Icon, Logout02Icon } from "hugeicons-react";
+import { type ReactNode, useState } from "react";
 import React from "react";
-import { signOut } from "next-auth/react";
+import { cn } from "~/lib/utils";
 
 export interface SidebarNavProps {
 	items: SidebarNavItem[];

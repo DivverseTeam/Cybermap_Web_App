@@ -1,9 +1,9 @@
 "use client";
 
+import { Button } from "~/app/_components/ui/button";
 import PageTitle from "~/components/PageTitle";
 import FrameworkMonitorCard from "./FrameworkMonitorCard";
 import { frameworklist } from "./constants";
-import { Button } from "~/app/_components/ui/button";
 
 export default function FrameworksPage() {
 	return (

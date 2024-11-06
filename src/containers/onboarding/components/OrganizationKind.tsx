@@ -1,6 +1,6 @@
+import type { FieldError } from "react-hook-form";
 import { twMerge } from "tailwind-merge";
 import { ORGANIZATION_KINDS } from "~/lib/types";
-import type { FieldError } from "react-hook-form";
 
 type OrganizationSelectorProps = {
 	value: string;
@@ -14,7 +14,7 @@ export function OrganizationKind({
 	errors,
 }: OrganizationSelectorProps) {
 	return (
-        <div className="flex flex-col gap-3">
+		<div className="flex flex-col gap-3">
 			<span className="font-semibold text-[#40566D] text-base">
 				What kind of organisation are you?
 			</span>
@@ -40,5 +40,5 @@ export function OrganizationKind({
 				</p>
 			)}
 		</div>
-    );
+	);
 }

@@ -60,7 +60,7 @@ export default function SideBar({ step }: { step: number }) {
 												)}
 											</div>
 											{Boolean(index + 1 !== arr.length) && (
-												<div className="border-l-2 border-solid border-[#6C849D2E] h-10"></div>
+												<div className="h-10 border-[#6C849D2E] border-l-2 border-solid"></div>
 											)}
 										</div>
 										<div className="flex flex-col">
@@ -68,7 +68,7 @@ export default function SideBar({ step }: { step: number }) {
 												className={
 													active
 														? "font-semibold text-base text-white leading-8"
-														: "font-semibold text-base text-[#40566D] leading-8"
+														: "font-semibold text-[#40566D] text-base leading-8"
 												}
 											>
 												{title}
@@ -77,7 +77,7 @@ export default function SideBar({ step }: { step: number }) {
 												className={
 													active
 														? "font-normal text-base text-white leading-8 opacity-40"
-														: "font-normal text-base text-[#6C849D52] leading-8 "
+														: "font-normal text-[#6C849D52] text-base leading-8 "
 												}
 											>
 												{subtitle}
@@ -102,7 +102,7 @@ export default function SideBar({ step }: { step: number }) {
 							process
 						</span>
 					</div>
-					<button className="w-[5.5rem] h-8 outline-none border border-solid border-white text-white rounded-sm font-semibold text-xs">
+					<button className="h-8 w-[5.5rem] rounded-sm border border-white border-solid font-semibold text-white text-xs outline-none">
 						Contact us
 					</button>
 				</div>
