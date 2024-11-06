@@ -27,9 +27,9 @@ export function AvailableIntegrationCard({ integration }: any) {
         <CardTitle>Create project</CardTitle>
         <CardDescription>Deploy your new project in one-click.</CardDescription>
       </CardHeader> */}
-			<div className="flex flex-col justify-between px-0  mx-auto my-auto h-[200px] 2xl:w-[266px]">
-				<CardContent className="p-0 my-auto">
-					<div className="flex flex-col items-center gap-2 justify-center ">
+			<div className="mx-auto my-auto flex h-[200px] flex-col justify-between px-0 2xl:w-[266px]">
+				<CardContent className="my-auto p-0">
+					<div className="flex flex-col items-center justify-center gap-2 ">
 						<Image
 							src={integration.icon}
 							alt="image"
@@ -43,7 +43,7 @@ export function AvailableIntegrationCard({ integration }: any) {
 						{["Github", "Github Enterprise Server"].includes(
 							integration.name,
 						) && (
-							<span className="text-sm font-semibold">{integration.name}</span>
+							<span className="font-semibold text-sm">{integration.name}</span>
 						)}
 					</div>
 				</CardContent>

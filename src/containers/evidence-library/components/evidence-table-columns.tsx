@@ -36,13 +36,13 @@ export const columns: any = [
 						linkedControls.map((control, idx) => (
 							<span
 								key={idx}
-								className="px-2 py-1 text-xs text-[#0F78AD] font-semibold bg-[#0F78AD]/20 rounded-xl"
+								className="rounded-xl bg-[#0F78AD]/20 px-2 py-1 font-semibold text-[#0F78AD] text-xs"
 							>
 								{control}
 							</span>
 						))
 					) : (
-						<span className="text-sm text-gray-500">No controls</span>
+						<span className="text-gray-500 text-sm">No controls</span>
 					)}
 				</div>
 			);
@@ -56,13 +56,13 @@ export const columns: any = [
 	}),
 	columnHelper.accessor("status", {
 		header: () => (
-			<span className="w-[110px] flex items-center text-center justify-center">
+			<span className="flex w-[110px] items-center justify-center text-center">
 				Status
 			</span>
 		), // Wrap in span
 		cell: ({ cell }) => (
 			<span
-				className={`rounded-xl font-medium text-xs flex items-center justify-center py-[2px] px-2 ${
+				className={`flex items-center justify-center rounded-xl px-2 py-[2px] font-medium text-xs ${
 					cell.getValue() === "Needs artifact"
 						? "bg-destructive/20 text-destructive"
 						: "bg-green-700/20 text-green-700 "
@@ -76,7 +76,7 @@ export const columns: any = [
 	columnHelper.accessor("actions", {
 		header: () => <span></span>, // Wrap in span
 		cell: function Cell({ row }) {
-			const [isUpdatePending, startUpdateTransition] = useTransition();
+			const [_isUpdatePending, _startUpdateTransition] = useTransition();
 			const [showUpdateEvidenceSheet, setShowUpdateEvidenceSheet] =
 				useState(false);
 			const [showDeleteEvidenceDialog, setShowDeleteEvidenceDialog] =
@@ -103,7 +103,7 @@ export const columns: any = [
 							<Button
 								aria-label="Open menu"
 								variant="ghost"
-								className="flex size-8 p-0 data-[state=open]:bg-muted mx-auto"
+								className="mx-auto flex size-8 p-0 data-[state=open]:bg-muted"
 							>
 								<DotsVerticalIcon
 									className="size-4 font-bold text-secondary"

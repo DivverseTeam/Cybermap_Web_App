@@ -38,14 +38,14 @@ const integrationsList = [
 
 export default function ConnectedIntegrationsContainer({}: Props) {
 	return (
-		<div className="flex flex-col grow">
-			<div className="flex justify-between p-4 2xl:p-5 bg-muted rounded-2xl rounded-b-none border w-full mx-auto">
+		<div className="flex grow flex-col">
+			<div className="mx-auto flex w-full justify-between rounded-2xl rounded-b-none border bg-muted p-4 2xl:p-5">
 				<Input
 					type="text"
 					placeholder="Search for available integrations"
 					// onChange={handleSearch}
 					// defaultValue={search}
-					className="bg-[#F9F9FB] w-72 rounded-md"
+					className="w-72 rounded-md bg-[#F9F9FB]"
 					suffix={
 						<span className="cursor-pointer">
 							<Search01Icon size="12" />
@@ -58,7 +58,7 @@ export default function ConnectedIntegrationsContainer({}: Props) {
 							<Button
 								aria-label="Open menu"
 								variant="ghost"
-								className="flex size-8 p-0 data-[state=open]:bg-muted mx-auto"
+								className="mx-auto flex size-8 p-0 data-[state=open]:bg-muted"
 							>
 								<DotsHorizontalIcon
 									className="size-6 font-bold text-secondary"
@@ -84,9 +84,9 @@ export default function ConnectedIntegrationsContainer({}: Props) {
 					</DropdownMenu>
 				</div>
 			</div>
-			<div className="px-5 2xl:px-8 py-8 2xl:py-9 border">
+			<div className="border px-5 py-8 2xl:px-8 2xl:py-9">
 				<div className=" mb-6">
-					<h2 className="text-xl font-semibold">All integrations</h2>
+					<h2 className="font-semibold text-xl">All integrations</h2>
 					<p className="text-gray-600 text-sm">
 						Go through and access all available integrations in here
 					</p>

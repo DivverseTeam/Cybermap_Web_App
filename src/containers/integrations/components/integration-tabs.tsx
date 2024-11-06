@@ -18,18 +18,18 @@ import {
 
 export function IntegrationTabs({ setActiveList }: any) {
 	return (
-		<Tabs defaultValue="connected" className="w-[266px] h-[886px] 2xl:w-[22%]">
-			<TabsList className="grid w-full grid-cols-2 border z-10 rounded-2xl rounded-b-none bg-muted">
+		<Tabs defaultValue="connected" className="h-[886px] w-[266px] 2xl:w-[22%]">
+			<TabsList className="z-10 grid w-full grid-cols-2 rounded-2xl rounded-b-none border bg-muted">
 				<TabsTrigger
 					value="connected"
-					className="rounded-2xl rounded-tr-none rounded-b-none"
+					className="rounded-2xl rounded-b-none rounded-tr-none"
 					onClick={() => setActiveList("connected")}
 				>
 					Connected ({4})
 				</TabsTrigger>
 				<TabsTrigger
 					value="available"
-					className="rounded-2xl rounded-tl-none rounded-b-none"
+					className="rounded-2xl rounded-b-none rounded-tl-none"
 					onClick={() => setActiveList("available")}
 				>
 					Available ({200})

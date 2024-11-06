@@ -249,7 +249,7 @@ export default function ViewFrameworks() {
 	return (
 		<div className="mx-auto flex justify-between gap-5 py-3">
 			{/* framework info */}
-			<div className="flex flex-col gap-8 w-[261px] min-w-[28%]">
+			<div className="flex w-[261px] min-w-[28%] flex-col gap-8">
 				{/* progress */}
 				<ControlCompletionCard />
 
@@ -258,8 +258,8 @@ export default function ViewFrameworks() {
 			</div>
 
 			{/* framework categories details  */}
-			<div className="flex flex-col w-[736px] min-w-[69%]">
-				{frameworkCategories.map((category: any, key: any) => (
+			<div className="flex w-[736px] min-w-[69%] flex-col">
+				{frameworkCategories.map((category: any, _key: any) => (
 					<CategoryCard frameworkCategory={category} key={category.name} />
 				))}
 			</div>

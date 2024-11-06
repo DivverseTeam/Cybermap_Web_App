@@ -49,13 +49,13 @@ import { Input } from "~/app/_components/ui/input";
 
 const controlDetailsData = [
 	[
-		<span className="text-secondary w-24 ">Name</span>,
-		<span className="text-secondary-foreground font-semibold">
+		<span className="w-24 text-secondary ">Name</span>,
+		<span className="font-semibold text-secondary-foreground">
 			Risk management program established
 		</span>,
 	],
 	[
-		<span className="text-secondary w-24">Description</span>,
+		<span className="w-24 text-secondary">Description</span>,
 		<span className="text-secondary ">
 			The company has a documented risk management program in place that
 			includes guidance on the identification of potential threats, rating the
@@ -64,27 +64,27 @@ const controlDetailsData = [
 		</span>,
 	],
 	[
-		<span className="text-secondary w-24">ID</span>,
-		<span className="text-secondary-foreground font-semibold">RSK-3</span>,
+		<span className="w-24 text-secondary">ID</span>,
+		<span className="font-semibold text-secondary-foreground">RSK-3</span>,
 	],
 	[
-		<span className="text-secondary w-24">Assigned To</span>,
+		<span className="w-24 text-secondary">Assigned To</span>,
 		<Button
 			variant="outline"
-			className="flex items-center justify-between h-6 font-semibold text-xs gap-2 text-secondary"
+			className="flex h-6 items-center justify-between gap-2 font-semibold text-secondary text-xs"
 		>
 			<User size={14} />
 			Assign owner
 		</Button>,
 	],
 	[
-		<span className="text-secondary w-24">Control Status</span>,
-		<span className="rounded-xl px-2 font-semibold flex items-center h-4 bg-[#C65C10]/20 text-[#C65C10]">
+		<span className="w-24 text-secondary">Control Status</span>,
+		<span className="flex h-4 items-center rounded-xl bg-[#C65C10]/20 px-2 font-semibold text-[#C65C10]">
 			Partially Implemented
 		</span>,
 	],
 	[
-		<span className="text-secondary w-24">Note</span>,
+		<span className="w-24 text-secondary">Note</span>,
 		,
 		<span className="text-secondary">Add a note...</span>,
 	],
@@ -93,6 +93,8 @@ const controlDetailsData = [
 interface ViewControlSheetProps
 	extends React.ComponentPropsWithRef<typeof Sheet> {
 	control: any;
+	open: any;
+	onOpenChange: any;
 }
 
 export function ViewControlSheet({
@@ -101,7 +103,7 @@ export function ViewControlSheet({
 	onOpenChange,
 	...props
 }: ViewControlSheetProps) {
-	const [isUpdatePending, startUpdateTransition] = useTransition();
+	const [_isUpdatePending, _startUpdateTransition] = useTransition();
 	// console.log("control", control);
 
 	const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -125,7 +127,7 @@ export function ViewControlSheet({
 			<SheetTrigger asChild>
 				<Button variant="outline">View Control</Button>
 			</SheetTrigger>
-			<SheetContent className="flex flex-col gap-6 overflow-y-auto h-full">
+			<SheetContent className="flex h-full flex-col gap-6 overflow-y-auto">
 				<SheetHeader className="text-left">
 					<SheetTitle>View Control {control.id}</SheetTitle>
 					{/* <SheetDescription>
@@ -142,9 +144,9 @@ export function ViewControlSheet({
 						<table className=" w-full">
 							<tbody>
 								{controlDetailsData.map((row, index) => (
-									<tr key={index} className="flex text-left gap-3">
+									<tr key={index} className="flex gap-3 text-left">
 										{row.map((cell, cellIndex) => (
-											<td key={cellIndex} className="p-2 px-0 flex text-left">
+											<td key={cellIndex} className="flex p-2 px-0 text-left">
 												{cell}
 											</td>
 										))}
@@ -154,9 +156,9 @@ export function ViewControlSheet({
 						</table>
 					</div>
 				</div>
-				<div className="flex flex-col rounded-md gap-4 border text-xs">
+				<div className="flex flex-col gap-4 rounded-md border text-xs">
 					{/* control evidences */}
-					<div className="flex justify-between items-center bg-muted px-4 py-2 rounded-md border-none">
+					<div className="flex items-center justify-between rounded-md border-none bg-muted px-4 py-2">
 						<h4 className="font-semibold">Control Evidence</h4>
 						<Input
 							type="file"
@@ -166,14 +168,14 @@ export function ViewControlSheet({
 						/>
 						<Button
 							variant="outline"
-							className="hover:bg-white text-xs h-8"
+							className="h-8 text-xs hover:bg-white"
 							onClick={triggerEvidenceUpload}
 						>
 							Upload Evidence
 						</Button>
 					</div>
-					<div className="flex flex-col gap-4 text-xs py-4 ">
-						<div className="flex justify-between items-center px-4">
+					<div className="flex flex-col gap-4 py-4 text-xs ">
+						<div className="flex items-center justify-between px-4">
 							<p>Control Evidence 123.pdf</p>
 							<div className="flex gap-2">
 								<Button variant="outline" className="h-7 text-xs">
@@ -184,7 +186,7 @@ export function ViewControlSheet({
 								</Button>
 							</div>
 						</div>
-						<div className="flex justify-between items-center px-4">
+						<div className="flex items-center justify-between px-4">
 							<p>Control Evidence 123.pdf</p>
 							<div className="flex gap-2">
 								<Button variant="outline" className="h-7 text-xs">
@@ -195,7 +197,7 @@ export function ViewControlSheet({
 								</Button>
 							</div>
 						</div>
-						<div className="flex justify-between items-center px-4">
+						<div className="flex items-center justify-between px-4">
 							<p>Control Evidence 123.pdf</p>
 							<div className="flex gap-2">
 								<Button variant="outline" className="h-7 text-xs">
@@ -208,25 +210,25 @@ export function ViewControlSheet({
 						</div>
 					</div>
 				</div>
-				<div className=" flex flex-col rounded-md gap-4 border text-xs mb-20">
+				<div className=" mb-20 flex flex-col gap-4 rounded-md border text-xs">
 					{/* mapped controls */}
-					<div className="flex justify-between items-center bg-muted px-4 py-2 rounded-md border-none">
+					<div className="flex items-center justify-between rounded-md border-none bg-muted px-4 py-2">
 						<h4 className="font-semibold">Mapped Controls</h4>
-						<Button variant="outline" className="hover:bg-white text-xs h-8">
+						<Button variant="outline" className="h-8 text-xs hover:bg-white">
 							Add new
 						</Button>
 					</div>
-					<div className="flex flex-wrap p-5 gap-2">
-						<p className="rounded-md bg-muted px-2 py-1 flex items-center gap-1">
+					<div className="flex flex-wrap gap-2 p-5">
+						<p className="flex items-center gap-1 rounded-md bg-muted px-2 py-1">
 							SDC 2 - CC1.2 <X size={14} />
 						</p>
-						<p className="rounded-md bg-muted px-2 py-1  flex items-center gap-1">
+						<p className="flex items-center gap-1 rounded-md bg-muted px-2 py-1">
 							SDC 2 - CC1.2 <X size={14} />
 						</p>
-						<p className="rounded-md bg-muted px-2 py-1 flex items-center gap-1">
+						<p className="flex items-center gap-1 rounded-md bg-muted px-2 py-1">
 							SDC 2 - CC1.2 <X size={14} />
 						</p>
-						<p className="rounded-md bg-muted px-2 py-1 flex items-center gap-1">
+						<p className="flex items-center gap-1 rounded-md bg-muted px-2 py-1">
 							SDC 2 - CC1.2 <X size={14} />
 						</p>
 					</div>

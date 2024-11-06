@@ -16,17 +16,17 @@ export default function Integrations({
 	isPending: boolean;
 }) {
 	return (
-		<div className="pt-[4.5rem] pb-24 pr-24 w-full">
-			<div className="w-full flex flex-col gap-16 px-36">
+		<div className="w-full pt-[4.5rem] pr-24 pb-24">
+			<div className="flex w-full flex-col gap-16 px-36">
 				<div className="flex flex-col gap-1">
-					<span className="font-semibold text-[24px] text-[#192839] leading-8">
+					<span className="font-semibold text-[#192839] text-[24px] leading-8">
 						Integrations
 					</span>
-					<span className="font-normal text-base text-[#40566D] leading-8">
+					<span className="font-normal text-[#40566D] text-base leading-8">
 						Select your cloud provider for integration
 					</span>
 				</div>
-				<div className="w-full flex flex-col gap-16 max-w-[696px]">
+				<div className="flex w-full max-w-[696px] flex-col gap-16">
 					<Controller
 						name="integrations"
 						control={control}

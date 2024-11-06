@@ -119,7 +119,7 @@ const SinglePolicy: FunctionComponent<SinglePolicyProps> = () => {
 									1/3 Completed
 								</span>
 							</CardHeader>
-							<CardContent className="flex gap-4 flex-col">
+							<CardContent className="flex flex-col gap-4">
 								<p className="text-gray-500 text-sm">
 									Describes the organization's documentation process for
 									security events and incidents.
@@ -129,7 +129,7 @@ const SinglePolicy: FunctionComponent<SinglePolicyProps> = () => {
 								<div>
 									<label
 										htmlFor="documentation"
-										className="block text-sm font-medium text-gray-700 mb-2"
+										className="mb-2 block font-medium text-gray-700 text-sm"
 									>
 										Where are security events, incidents and response
 										documented?
@@ -143,7 +143,7 @@ const SinglePolicy: FunctionComponent<SinglePolicyProps> = () => {
 
 								{/* Checkbox Group */}
 								<div>
-									<span className="block text-sm font-medium text-gray-700 mb-2">
+									<span className="mb-2 block font-medium text-gray-700 text-sm">
 										Which level of priority do you perform analysis on?
 									</span>
 									<div className="gap-2">
@@ -172,7 +172,7 @@ const SinglePolicy: FunctionComponent<SinglePolicyProps> = () => {
 								<div>
 									<label
 										htmlFor="root-cause"
-										className="block text-sm font-medium text-gray-700 mb-2"
+										className="mb-2 block font-medium text-gray-700 text-sm"
 									>
 										Who reviews root cause analysis?
 									</label>

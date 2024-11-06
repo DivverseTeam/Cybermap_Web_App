@@ -8,7 +8,7 @@ export default function FormGroup() {
 	const { control, errors, changeStep, step, isPending, setValue } =
 		useOnboarding();
 	return (
-		<div className="w-full flex">
+		<div className="flex w-full">
 			<SideBar step={step} />
 			<form className="w-full">
 				{(() => {

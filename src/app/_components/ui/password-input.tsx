@@ -33,7 +33,7 @@ const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputProps>(
 					)
 				}
 				className={cn(
-					"placeholder:text-gray-300 placeholder:text-[8px] placeholder:tracking-[0.4em] ",
+					"placeholder:text-[8px] placeholder:text-gray-300 placeholder:tracking-[0.4em] ",
 					className,
 				)}
 				{...props}

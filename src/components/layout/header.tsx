@@ -1,6 +1,7 @@
 "use client";
 
 import { HelpSquareIcon, Search01Icon } from "hugeicons-react";
+import { SeparatorVerticalIcon } from "lucide-react";
 import { useSession } from "next-auth/react";
 import {
 	Avatar,
@@ -8,22 +9,23 @@ import {
 	AvatarImage,
 } from "~/app/_components/ui/avatar";
 import { Input } from "~/app/_components/ui/input";
+import { Separator } from "~/app/_components/ui/seperator";
 import { CyberMapBrand } from "../svgs/CyberMapBrand";
 
 export default function Header() {
 	const { data } = useSession();
 	return (
-		<header className="sticky inset-x-0 top-0 z-10 w-full border-b-2 border-b-[#E8E8EC] bg-white px-4 py-2">
+		<header className="sticky inset-x-0 top-0 z-10 w-full border-b-2 border-b-[#E8E8EC] bg-white px-6 py-4">
 			<nav className="flex items-center">
-				<div className="w-64 px-3">
+				{/* <div className="w-64 px-3">
 					<CyberMapBrand />
-				</div>
+				</div> */}
 
 				<div className="flex-grow">
 					<div className="flex justify-between">
 						<Input
 							placeholder="Search for anything..."
-							className="bg-[#F9F9FB] w-72"
+							className="w-72 bg-[#F9F9FB]"
 							suffix={
 								<span className="cursor-pointer">
 									<Search01Icon size="12" />
@@ -33,10 +35,11 @@ export default function Header() {
 
 						<span className="flex items-center gap-2">
 							{" "}
-							<span className="mr-4 text-gray-500">
+							<span className="mr-0 text-gray-500">
 								<HelpSquareIcon />
 							</span>
-							<Avatar className="h-6 w-6 rounded-xs">
+							<Separator orientation="vertical" className="mx-1 2xl:mx-2" />
+							<Avatar className="h-7 w-7 rounded-xs">
 								<AvatarImage src="" />
 								<AvatarFallback>TU</AvatarFallback>
 							</Avatar>

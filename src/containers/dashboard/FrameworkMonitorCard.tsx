@@ -20,8 +20,8 @@ export default function FrameworkMonitorCard({
 	keyVal: FrameworkKey;
 }) {
 	return (
-		<div className="min-w-[217.6px] h-[228.35] border border-solid border-neutral-2 bg-white rounded-[8px] p-4 flex flex-col gap-2">
-			<div className="flex items-center justify-between w-full">
+		<div className="flex h-[228.35] min-w-[217.6px] flex-col gap-2 rounded-[8px] border border-neutral-2 border-solid bg-white p-4">
+			<div className="flex w-full items-center justify-between">
 				<div className="flex items-center gap-2">
 					<div className="relative block h-5 w-5 rounded-[50%]">
 						<Image
@@ -37,15 +37,15 @@ export default function FrameworkMonitorCard({
 							}}
 						/>
 					</div>
-					<p className="text-base text-gray-12 font-semibold">{framework}</p>
+					<p className="font-semibold text-base text-gray-12">{framework}</p>
 				</div>
-				<p className="text-xs text-gray-11 font-medium">{score}</p>
+				<p className="font-medium text-gray-11 text-xs">{score}</p>
 			</div>
-			<div className="flex justify-center h-[128px] relative">
+			<div className="relative flex h-[128px] justify-center">
 				<FrameworkComplianceProgress progress={progress} />
-				<div className="flex flex-col items-center gap-[18px] absolute top-[4.5rem]">
+				<div className="absolute top-[4.5rem] flex flex-col items-center gap-[18px]">
 					<div className="flex flex-col items-center gap-2 ">
-						<p className="text-[25.84px] text-[#1E1B39] font-bold">
+						<p className="font-bold text-[#1E1B39] text-[25.84px]">
 							{progress}%
 						</p>
 					</div>

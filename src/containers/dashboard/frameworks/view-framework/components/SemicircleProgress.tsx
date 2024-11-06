@@ -28,7 +28,7 @@ export default function SemicircleProgress({ percentage }: Props) {
 	}, [percentage]);
 
 	return (
-		<div className="relative scale-125 2xl:scale-150 2xl:h-[150px]">
+		<div className="relative scale-125 2xl:h-[150px] 2xl:scale-150">
 			<svg
 				width="187.83px"
 				height="140px"
@@ -59,7 +59,7 @@ export default function SemicircleProgress({ percentage }: Props) {
 					fill="#3b82f6"
 				/>
 			</svg>
-			<div className="absolute inset-0 top-4 right-0 flex items-center justify-center text-2xl font-bold">
+			<div className="absolute inset-0 top-4 right-0 flex items-center justify-center font-bold text-2xl">
 				{percentage}%
 			</div>
 		</div>

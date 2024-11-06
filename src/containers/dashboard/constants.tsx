@@ -134,7 +134,7 @@ export const frameworkdataColumns: ColumnDef<FrameComplianceType>[] = [
 		cell: ({ getValue: _ }) => {
 			return (
 				<Button variant="outline" size="sm">
-					<p className="text-xs text-neutral-12 font-medium">View control</p>
+					<p className="font-medium text-neutral-12 text-xs">View control</p>
 				</Button>
 			);
 		},

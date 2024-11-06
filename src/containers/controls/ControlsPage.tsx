@@ -28,7 +28,7 @@ import type { IControl } from "./types";
 
 type Props = {};
 
-const frameworksList = [
+const _frameworksList = [
 	{ name: "hipaa", label: "HIPAA" },
 	{ name: "gdpr", label: "GDPR" },
 	{ name: "iso27001", label: "ISO 27001" },
@@ -43,7 +43,7 @@ export default function ControlsPage({}) {
 	// const sortColumn = searchParams.get("sortColumn") || "title";
 	// const sortOrder = searchParams.get("sortOrder") || "asc";
 
-	const router = useRouter();
+	const _router = useRouter();
 	const [data, setData] = useState<IControl[]>([]);
 	// const [total, setTotal] = useState(0);
 	// const [currentPage, setCurrentPage] = useState(1);
@@ -85,7 +85,7 @@ export default function ControlsPage({}) {
 			//   { cache: "no-store" }
 			// );
 			// const { evidences, total } = await res.json();
-			const data = controls;
+			const _data = controls;
 			const filteredData = [
 				"partially implemented",
 				"fully implemented",
@@ -162,47 +162,50 @@ export default function ControlsPage({}) {
 				action={<NewControlSheet />}
 			/>
 			<div className="flex gap-10">
-				<div className="w-[142px] 2xl:w-[200px] flex flex-col gap-1">
+				<div className="flex w-[142px] flex-col gap-2 2xl:w-[200px]">
 					<h5 className="mb-3">Frameworks</h5>
 
-					<label className="text-sm flex items-center">
+					<label className="flex items-center text-xs 2xl:text-sm">
 						<input
 							type="checkbox"
 							value="All frameworks"
 							onChange={handleCheckboxChange}
 							checked={selectedFrameworks.length === frameworks.length}
-							className="mr-[6px] cursor-pointer appearance-none border border-primary rounded-sm w-4 h-4 checked:bg-primary checked:border-transparent focus:outline-none "
+							className="mr-[6px] h-4 w-4 cursor-pointer appearance-none rounded-sm border border-primary checked:border-transparent checked:bg-primary focus:outline-none "
 						/>
 						{selectedFrameworks.length === frameworks.length && (
-							<Check className="absolute w-4 h-4 text-white pointer-events-none" />
+							<Check className="pointer-events-none absolute h-4 w-4 text-white" />
 						)}
 						All frameworks
 					</label>
-					{frameworks.map((framework: any, index) => (
-						<label key={framework} className="text-sm flex items-center">
+					{frameworks.map((framework: any, _index) => (
+						<label
+							key={framework}
+							className="flex items-center text-xs 2xl:text-sm"
+						>
 							<input
 								type="checkbox"
 								value={framework}
 								onChange={handleCheckboxChange}
 								checked={selectedFrameworks.includes(framework)}
-								className="mr-[6px] cursor-pointer appearance-none border border-primary rounded-sm w-4 h-4 checked:bg-primary checked:border-transparent focus:outline-none "
+								className="mr-[6px] h-4 w-4 cursor-pointer appearance-none rounded-sm border border-primary checked:border-transparent checked:bg-primary focus:outline-none "
 							/>
 							{selectedFrameworks.includes(framework) && (
-								<Check className="absolute w-4 h-4 text-white pointer-events-none" />
+								<Check className="pointer-events-none absolute h-4 w-4 text-white" />
 							)}
 							{framework}
 						</label>
 					))}
-					<label className="text-sm flex items-center">
+					<label className="flex items-center text-xs 2xl:text-sm">
 						<input
 							type="checkbox"
 							value="No framework"
 							onChange={handleCheckboxChange}
 							checked={selectedFrameworks.includes("No framework")}
-							className="mr-[6px] cursor-pointer appearance-none border border-primary rounded-sm w-4 h-4 checked:bg-primary checked:border-transparent focus:outline-none "
+							className="mr-[6px] h-4 w-4 cursor-pointer appearance-none rounded-sm border border-primary checked:border-transparent checked:bg-primary focus:outline-none "
 						/>
 						{selectedFrameworks.includes("No framework") && (
-							<Check className="absolute w-4 h-4 text-white pointer-events-none" />
+							<Check className="pointer-events-none absolute h-4 w-4 text-white" />
 						)}
 						No framework
 					</label>
@@ -237,7 +240,7 @@ export default function ControlsPage({}) {
 							placeholder="Search for a file"
 							// onChange={handleSearch}
 							// defaultValue={search}
-							className="bg-[#F9F9FB] w-72"
+							className="w-72 bg-[#F9F9FB]"
 							suffix={
 								<span className="cursor-pointer">
 									<Search01Icon size="12" />

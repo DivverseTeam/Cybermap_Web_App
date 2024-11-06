@@ -46,7 +46,7 @@ export function DeleteEvidenceDialog({
 	onOpenChange,
 	...props
 }: DeleteEvidenceDialogProps) {
-	const [isDeletePending, startDeleteTransition] = React.useTransition();
+	const [isDeletePending, _startDeleteTransition] = React.useTransition();
 	const isDesktop = useMediaQuery("(min-width: 640px)");
 
 	function onDelete() {

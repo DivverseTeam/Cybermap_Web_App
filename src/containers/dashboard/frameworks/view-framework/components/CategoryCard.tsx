@@ -32,7 +32,7 @@ export default function CategoryCard({ frameworkCategory }: Props) {
 	const [showViewControlSheet, setShowViewControlSheet] = useState(false);
 
 	return (
-		<div className="rounded-md bg-muted p-4  mb-3 text-secondary-foreground">
+		<div className="mb-3 rounded-md bg-muted p-4 text-secondary-foreground">
 			<Accordion
 				type="single"
 				collapsible
@@ -43,11 +43,11 @@ export default function CategoryCard({ frameworkCategory }: Props) {
 					<AccordionTrigger className="hover:no-underline">
 						{frameworkCategory.name}
 					</AccordionTrigger>
-					{frameworkCategory.controlGroup.map((group: any, key: any) => (
+					{frameworkCategory.controlGroup.map((group: any, _key: any) => (
 						<AccordionContent key={group.name}>
-							<div className="py-5 px-4 flex flex-col bg-white rounded-sm">
+							<div className="flex flex-col rounded-sm bg-white px-4 py-5">
 								<div className="flex flex-col">
-									<div className="flex justify-between items-center">
+									<div className="flex items-center justify-between">
 										<h5 className="font-bold text-secondary-foreground">
 											{group.name}
 										</h5>
@@ -66,10 +66,10 @@ export default function CategoryCard({ frameworkCategory }: Props) {
 													<TableHead>ASSIGNED TO</TableHead>
 												</TableRow>
 											</TableHeader>
-											<TableBody className="text-xs font-normal">
-												{group.controls.map((control: any, key: any) => (
+											<TableBody className="font-normal text-xs">
+												{group.controls.map((control: any, _key: any) => (
 													<TableRow key={control.name}>
-														<TableCell className="font-medium flex flex-col ">
+														<TableCell className="flex flex-col font-medium ">
 															<span>{control.name}</span>
 															<span className="text-secondary">
 																{control.description}
@@ -79,19 +79,19 @@ export default function CategoryCard({ frameworkCategory }: Props) {
 															<div className="flex flex-col">
 																{control.evidencesCollected ===
 																	control.evidencesExpected && (
-																	<span className="text-[#008743] bg-[#008743]/20 font-semibold h-4 rounded-full text-[10px] flex items-center justify-center">
+																	<span className="flex h-4 items-center justify-center rounded-full bg-[#008743]/20 font-semibold text-[#008743] text-[10px]">
 																		Fully Implemented
 																	</span>
 																)}
 																{control.evidencesCollected > 0 &&
 																	control.evidencesCollected <
 																		control.evidencesExpected && (
-																		<span className="text-[#C65C10] px-1 bg-[#C65C10]/20 font-semibold h-4 rounded-full text-[10px] flex items-center justify-center">
+																		<span className="flex h-4 items-center justify-center rounded-full bg-[#C65C10]/20 px-1 font-semibold text-[#C65C10] text-[10px]">
 																			Partially Implemented
 																		</span>
 																	)}
 																{control.evidencesCollected === 0 && (
-																	<span className="text-destructive bg-destructive/20 font-semibold h-4 rounded-full text-[10px] flex items-center justify-center">
+																	<span className="flex h-4 items-center justify-center rounded-full bg-destructive/20 font-semibold text-[10px] text-destructive">
 																		Not Implemented
 																	</span>
 																)}

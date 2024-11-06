@@ -12,13 +12,13 @@ import { Input } from "~/app/_components/ui/input";
 export default function DashboardHeader() {
 	const { data } = useSession();
 	return (
-		<header className="sticky inset-x-0 top-0 z-10 w-full border-b-2 bg-white border-b-[#E8E8EC] px-6 py-4">
+		<header className="sticky inset-x-0 top-0 z-10 w-full border-b-2 border-b-[#E8E8EC] bg-white px-6 py-4">
 			<nav className="flex items-center">
-				<div className="flex-grow flex justify-between gap-3">
-					<div className="flex justify-between items-center border-r-2 w-full">
+				<div className="flex flex-grow justify-between gap-3">
+					<div className="flex w-full items-center justify-between border-r-2">
 						<Input
 							placeholder="Search for anything..."
-							className="bg-[#F9F9FB] w-72"
+							className="w-72 bg-[#F9F9FB]"
 							suffix={
 								<span className="cursor-pointer">
 									<Search01Icon size="12" />

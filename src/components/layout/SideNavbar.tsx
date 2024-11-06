@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { type ReactNode } from "react";
 // import { Nav } from "~/app/_components/ui/nav";
 
 import {
@@ -37,6 +37,17 @@ import { CyberMapBrand } from "~/components/svgs/CyberMapBrand";
 
 type Props = {};
 
+interface SidebarMenuItem {
+	groupName: string;
+	items: {
+		title: string;
+		href?: string;
+		icon?: ReactNode;
+		variant: string;
+		onClick?: () => void;
+	};
+}
+
 export default function SideNavbar({}: Props) {
 	const onLogout = () => {
 		signOut({
@@ -59,12 +70,10 @@ export default function SideNavbar({}: Props) {
 				},
 				{
 					title: "Starter guide",
-					href: "/dashboard/starter-guide",
+					href: "/starter-guide",
 
 					icon: CurvyRightDirectionIcon,
-					variant: `${
-						pathname === "/dashboard/starter-guide" ? "lightBlue" : "ghost"
-					}`,
+					variant: `${pathname === "/starter-guide" ? "lightBlue" : "ghost"}`,
 				},
 			],
 		},
@@ -74,34 +83,28 @@ export default function SideNavbar({}: Props) {
 				{
 					title: "Frameworks",
 					icon: FrameworksIcon,
-					href: "/dashboard/frameworks",
-					variant: `${
-						pathname === "/dashboard/frameworks" ? "lightBlue" : "ghost"
-					}`,
+					href: "/frameworks",
+					variant: `${pathname === "/frameworks" ? "lightBlue" : "ghost"}`,
 				},
 				{
 					title: "Controls",
 					icon: FileValidationIcon,
-					href: "/dashboard/controls",
-					variant: `${
-						pathname === "/dashboard/controls" ? "lightBlue" : "ghost"
-					}`,
+					href: "/controls",
+					variant: `${pathname === "/controls" ? "lightBlue" : "ghost"}`,
 				},
 				{
 					title: "Evidence Library",
 					icon: LibraryIcon,
-					href: "/dashboard/evidence-library",
+					href: "/evidence-library",
 					variant: `${
-						pathname === "/dashboard/evidence-library" ? "lightBlue" : "ghost"
+						pathname === "/evidence-library" ? "lightBlue" : "ghost"
 					}`,
 				},
 				{
 					title: "Polices",
 					icon: PolicyIcon,
-					href: "/dashboard/policies",
-					variant: `${
-						pathname === "/dashboard/policies" ? "lightBlue" : "ghost"
-					}`,
+					href: "/policies",
+					variant: `${pathname === "/policies" ? "lightBlue" : "ghost"}`,
 				},
 			],
 		},
@@ -111,34 +114,28 @@ export default function SideNavbar({}: Props) {
 				{
 					title: "Personnel",
 					icon: UserMultipleIcon,
-					href: "/dashboard/personnel",
-					variant: `${
-						pathname === "/dashboard/personnel" ? "lightBlue" : "ghost"
-					}`,
+					href: "/personnel",
+					variant: `${pathname === "/personnel" ? "lightBlue" : "ghost"}`,
 				},
 				{
 					title: "Integrations",
 					icon: CurvyRightDirectionIcon,
-					href: "/dashboard/integrations",
-					variant: `${
-						pathname === "/dashboard/integrations" ? "lightBlue" : "ghost"
-					}`,
+					href: "/integrations",
+					variant: `${pathname === "/integrations" ? "lightBlue" : "ghost"}`,
 				},
 				{
 					title: "Training modules",
 					icon: OnlineLearning01Icon,
-					href: "/dashboard/training-modules",
+					href: "/training-modules",
 					variant: `${
-						pathname === "/dashboard/training-modules" ? "lightBlue" : "ghost"
+						pathname === "/training-modules" ? "lightBlue" : "ghost"
 					}`,
 				},
 				{
 					title: "Audit center",
 					icon: Audit02Icon,
-					href: "/dashboard/audit-center",
-					variant: `${
-						pathname === "/dashboard/audit-center" ? "lightBlue" : "ghost"
-					}`,
+					href: "/audit-center",
+					variant: `${pathname === "/audit-center" ? "lightBlue" : "ghost"}`,
 				},
 			],
 		},
@@ -148,11 +145,9 @@ export default function SideNavbar({}: Props) {
 				{
 					title: "Settings",
 					icon: AccountSetting02Icon,
-					href: "/dashboard/settings",
+					href: "/settings",
 
-					variant: `${
-						pathname === "/dashboard/settings" ? "lightBlue" : "ghost"
-					}`,
+					variant: `${pathname === "/settings" ? "lightBlue" : "ghost"}`,
 				},
 				{
 					title: "Logout",
@@ -166,12 +161,12 @@ export default function SideNavbar({}: Props) {
 	];
 
 	return (
-		<div className=" border min-w-[280px] text-[14px] leading-4  flex flex-col justify-start flex-grow min-h-screen">
-			<div className="border-b  py-6 px-6 ">
+		<aside className="fixed top-0 left-0 flex min-h-screen min-w-[280px] flex-grow flex-col justify-start border text-[14px] leading-4">
+			<div className="border-b px-6 py-6 ">
 				<CyberMapBrand />
 			</div>
-			<div className="text-[14px] leading-4  flex flex-col justify-start flex-grow pt-20 gap-[12px] max-h-[700px] px-6 ">
-				{menuList.map((menu: any, key: any) => (
+			<div className="flex max-h-[700px] flex-grow flex-col justify-start gap-[12px] px-6 pt-20 text-[14px] leading-4 ">
+				{menuList.map((menu: any, _key: any) => (
 					<Nav
 						isCollapsed={false}
 						key={menu.groupName}
@@ -180,6 +175,6 @@ export default function SideNavbar({}: Props) {
 					/>
 				))}
 			</div>
-		</div>
+		</aside>
 	);
 }

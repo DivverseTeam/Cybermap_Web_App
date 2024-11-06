@@ -27,11 +27,11 @@ export function ConnectedIntegrationCard({ integration }: any) {
         <CardTitle>Create project</CardTitle>
         <CardDescription>Deploy your new project in one-click.</CardDescription>
       </CardHeader> */}
-			<div className="flex flex-col justify-between p-0 px-0 gap-0  mx-auto my-auto h-[200px] 2xl:w-[266px]">
-				<CardContent className="p-0 my-auto">
-					<div className="flex flex-col gap-2 w-full">
-						<div className="flex gap-1 justify-between px-4 items-start ">
-							<div className="flex flex-col items-start gap-2 justify-center ">
+			<div className="mx-auto my-auto flex h-[200px] flex-col justify-between gap-0 p-0 px-0 2xl:w-[266px]">
+				<CardContent className="my-auto p-0">
+					<div className="flex w-full flex-col gap-2">
+						<div className="flex items-start justify-between gap-1 px-4 ">
+							<div className="flex flex-col items-start justify-center gap-2 ">
 								<Image
 									src={integration.icon}
 									alt="image"
@@ -45,25 +45,25 @@ export function ConnectedIntegrationCard({ integration }: any) {
 								{["Github", "Github Enterprise Server"].includes(
 									integration.name,
 								) && (
-									<span className="text-xs font-semibold">
+									<span className="font-semibold text-xs">
 										{integration.name}
 									</span>
 								)}
 							</div>
-							<span className="p-[2px] px-2 font-semibold text-xs rounded-lg text-green-700 bg-green-700/20">
+							<span className="rounded-lg bg-green-700/20 p-[2px] px-2 font-semibold text-green-700 text-xs">
 								Active
 							</span>
 						</div>
-						<div className="flex flex-col text-xs px-3">
+						<div className="flex flex-col px-3 text-xs">
 							<span className="text-secondary">
 								Account ID:{" "}
-								<span className="text-secondary-foreground font-semibold">
+								<span className="font-semibold text-secondary-foreground">
 									CybermapProd23
 								</span>
 							</span>
 							<span className="text-secondary">
 								Workspace:{" "}
-								<span className="text-secondary-foreground font-semibold">
+								<span className="font-semibold text-secondary-foreground">
 									Cybermap
 								</span>
 							</span>

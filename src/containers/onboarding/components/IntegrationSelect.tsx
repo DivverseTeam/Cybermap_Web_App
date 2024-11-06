@@ -47,10 +47,10 @@ export default function IntegrationSelect({
 					key={item + String(index)}
 					onClick={() => handleSelect(`${index}`)}
 					className={twMerge(
-						"flex items-center justify-center h-[150px] w-[150px] rounded-[8px] cursor-pointer p-[10px] border-2 hover:border-2 hover:border-solid hover:border-[#305EFF]",
+						"flex h-[150px] w-[150px] cursor-pointer items-center justify-center rounded-[8px] border-2 p-[10px] hover:border-2 hover:border-[#305EFF] hover:border-solid",
 						isSelected(index.toString())
-							? "border-solid border-[#305EFF]"
-							: "border-solid border-[#CBD5E2]",
+							? "border-[#305EFF] border-solid"
+							: "border-[#CBD5E2] border-solid",
 					)}
 				>
 					<div className="relative block h-[90px] w-[150px] bg-white">

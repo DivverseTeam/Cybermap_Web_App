@@ -29,7 +29,7 @@ type Props = {
 };
 
 export default function SignUpForm({ headerTitle, headerSubtitle }: Props) {
-	const router = useRouter();
+	const _router = useRouter();
 	const {
 		mutate: signUpMutate,
 		isPending,
@@ -71,16 +71,16 @@ export default function SignUpForm({ headerTitle, headerSubtitle }: Props) {
 	};
 
 	return (
-		<div className="flex flex-col shadow-all items-center justify-between rounded-lg w-[516px] mx-auto pt-8 pr-8 pb-12 pl-8 gap-10">
-			<div className="flex flex-col items-start w-full gap-1 select-none">
+		<div className="mx-auto flex w-[516px] flex-col items-center justify-between gap-10 rounded-lg pt-8 pr-8 pb-12 pl-8 shadow-all">
+			<div className="flex w-full select-none flex-col items-start gap-1">
 				<h3 className="font-bold text-2xl ">{headerTitle}</h3>
 				<p className="font-medium text-secondary">{headerSubtitle}</p>
 			</div>
 
 			<Form {...form}>
-				<div className="flex flex-col gap-[1rem] w-full max-h-[735px]">
+				<div className="flex max-h-[735px] w-full flex-col gap-[1rem]">
 					<GoogleSignInButton />
-					<div className=" mx-auto flex w-full items-center justify-evenly before:mr-4 before:block before:h-px before:flex-grow before:bg-[#CBD5E2] after:ml-4 after:block after:h-px after:flex-grow after:bg-[#CBD5E2] text-[#CBD5E2]">
+					<div className=" mx-auto flex w-full items-center justify-evenly text-[#CBD5E2] before:mr-4 before:block before:h-px before:flex-grow before:bg-[#CBD5E2] after:ml-4 after:block after:h-px after:flex-grow after:bg-[#CBD5E2]">
 						OR
 					</div>
 					<form onSubmit={form.handleSubmit(onSubmit)} className=" w-full">
@@ -149,10 +149,10 @@ export default function SignUpForm({ headerTitle, headerSubtitle }: Props) {
 							</Button>
 						</div>
 					</form>
-					<p className="text-secondary mx-auto select-none">
+					<p className="mx-auto select-none text-secondary">
 						Already have an account?{" "}
 						<Link
-							className="text-primary hover:underline font-semibold"
+							className="font-semibold text-primary hover:underline"
 							href={"/signin"}
 						>
 							Sign In

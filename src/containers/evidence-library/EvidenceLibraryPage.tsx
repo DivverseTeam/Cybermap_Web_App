@@ -61,7 +61,7 @@ export default function EvidenceLibraryPage({
 			//   { cache: "no-store" }
 			// );
 			// const { evidences, total } = await res.json();
-			const data = evidences;
+			const _data = evidences;
 			const filteredData = ["needs artifact", "updated"].includes(
 				statusFilter?.toLocaleLowerCase(),
 			)
@@ -151,7 +151,7 @@ export default function EvidenceLibraryPage({
 						placeholder="Search for a file"
 						// onChange={handleSearch}
 						// defaultValue={search}
-						className="bg-[#F9F9FB] w-72"
+						className="w-72 bg-[#F9F9FB]"
 						suffix={
 							<span className="cursor-pointer">
 								<Search01Icon size="12" />
