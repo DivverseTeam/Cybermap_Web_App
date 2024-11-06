@@ -1,8 +1,8 @@
 import type { FunctionComponent, ReactNode } from "react";
-import { Card, CardContent, CardHeader } from "~/app/_components/ui/card";
 import { Button } from "~/app/_components/ui/button";
-import { Input } from "~/app/_components/ui/input";
+import { Card, CardContent, CardHeader } from "~/app/_components/ui/card";
 import { Checkbox } from "~/app/_components/ui/checkbox";
+import { Input } from "~/app/_components/ui/input";
 import { ProgressCircle } from "../components/ProgressCircle";
 
 interface SinglePolicyProps {}

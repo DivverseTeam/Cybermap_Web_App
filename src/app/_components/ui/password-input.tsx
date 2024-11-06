@@ -2,9 +2,9 @@
 
 import * as React from "react";
 
-import { Input } from "./input";
 import { EyeIcon, EyeOffIcon } from "@razorpay/blade/components";
 import { cn } from "~/lib/utils";
+import { Input } from "./input";
 
 export interface PasswordInputProps
 	extends React.InputHTMLAttributes<HTMLInputElement> {}

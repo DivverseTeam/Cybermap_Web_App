@@ -1,1 +1,1 @@
-declare module 'react-progressbar-semicircle';
+declare module "react-progressbar-semicircle";

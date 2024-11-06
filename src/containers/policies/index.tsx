@@ -1,13 +1,13 @@
 "use client";
 
 import { Button } from "~/app/_components/ui/button";
-import { columns, type Policy } from "./columns";
+import { type Policy, columns } from "./columns";
 
 import { useState } from "react";
-import { Popover, PopoverTrigger } from "~/app/_components/ui/popover";
-import AddPolicyPopover from "./components/AddPolicyPopover";
 import { DataTable } from "~/app/_components/table/data-table";
+import { Popover, PopoverTrigger } from "~/app/_components/ui/popover";
 import PageTitle from "~/components/PageTitle";
+import AddPolicyPopover from "./components/AddPolicyPopover";
 
 export default function Policies() {
 	const [isPopoverOpen, setIsPopoverOpen] = useState<boolean>(false);

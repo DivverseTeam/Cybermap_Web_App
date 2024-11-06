@@ -1,6 +1,13 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import { signIn } from "next-auth/react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
+import type z from "zod";
+import { FormError } from "~/app/_components/form-error";
+import { Button } from "~/app/_components/ui/button";
 import {
 	Form,
 	FormControl,
@@ -9,19 +16,12 @@ import {
 	FormLabel,
 	FormMessage,
 } from "~/app/_components/ui/form";
-import type z from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "~/app/_components/ui/input";
-import { Button } from "~/app/_components/ui/button";
-import Link from "next/link";
-import GoogleSignInButton from "~/components/GoogleSignInButton";
 import { PasswordInput } from "~/app/_components/ui/password-input";
-import { FormError } from "~/app/_components/form-error";
-import { SignUpSchema } from "../schemas";
-import { api } from "~/trpc/react";
-import { useRouter } from "next/navigation";
+import GoogleSignInButton from "~/components/GoogleSignInButton";
 import { AppRoutes } from "~/routes";
-import { signIn } from "next-auth/react";
+import { api } from "~/trpc/react";
+import { SignUpSchema } from "../schemas";
 
 type Props = {
 	headerTitle: string;

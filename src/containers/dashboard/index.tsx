@@ -1,13 +1,13 @@
 "use client";
 
+import { DataTable } from "~/app/_components/table/data-table";
+import { Button } from "~/app/_components/ui/button";
+import PageTitle from "~/components/PageTitle";
 import { DownArrow } from "~/components/svgs/DownArrow";
 import ComplianceChart from "./components/ComplianceChart";
 import FrameComplianceList from "./components/FrameComplianceList";
 import ProgressChart from "./components/ProgressChart";
 import { frameworkdata, frameworkdataColumns } from "./constants";
-import { DataTable } from "~/app/_components/table/data-table";
-import PageTitle from "~/components/PageTitle";
-import { Button } from "~/app/_components/ui/button";
 
 export default function DashboardPage() {
 	return (

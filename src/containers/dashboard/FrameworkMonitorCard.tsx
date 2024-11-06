@@ -1,8 +1,8 @@
 import Image from "next/image";
+import Link from "next/link";
+import { Button } from "~/app/_components/ui/button";
 import FrameworkComplianceProgress from "./FrameworkComplianceProgress";
 import { frameworkIcons } from "./constants";
-import { Button } from "~/app/_components/ui/button";
-import Link from "next/link";
 
 type FrameworkKey = keyof typeof frameworkIcons;
 

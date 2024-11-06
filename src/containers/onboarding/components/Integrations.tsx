@@ -1,7 +1,7 @@
 import Image from "next/image";
+import { Controller } from "react-hook-form";
 import { twMerge } from "tailwind-merge";
 import { BottomNav } from "./BottomNav";
-import { Controller } from "react-hook-form";
 import IntegrationSelect from "./IntegrationSelect";
 
 export default function Integrations({

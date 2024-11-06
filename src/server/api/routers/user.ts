@@ -1,3 +1,5 @@
+// import argon2 from "argon2";
+import bcryptjs from "bcryptjs";
 import { z } from "zod";
 import {
 	OrganizationIndustry,
@@ -5,17 +7,15 @@ import {
 	OrganizationSize,
 	UserRole,
 } from "~/lib/types";
-// import argon2 from "argon2";
-import bcryptjs from "bcryptjs";
 
+import mongoose from "mongoose";
 import {
 	createTRPCRouter,
 	protectedProcedure,
 	publicProcedure,
 } from "~/server/api/trpc";
-import User, { User as UserSchema } from "~/server/models/User";
 import Organization from "~/server/models/Organization";
-import mongoose from "mongoose";
+import User, { User as UserSchema } from "~/server/models/User";
 import { signIn } from "./actions";
 
 export const userRouter = createTRPCRouter({
