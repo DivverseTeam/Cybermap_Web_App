@@ -11,7 +11,7 @@ import {
   SortByDown01Icon,
   UserMultipleIcon,
 } from "hugeicons-react";
-import { ChevronRight, ListFilter, Star } from "lucide-react";
+import { ArrowUpToLine, ChevronRight, ListFilter, Star, X } from "lucide-react";
 import PersonnelContainer from "./components/personnel-container";
 
 type Props = {};
@@ -25,8 +25,54 @@ employeesData.forEach((employee: IEmployee) => {
   });
 });
 
+const complianceList = Array.from(allCompliances);
+
 export default function PersonnelPage({}: Props) {
   const [data, setData] = useState<IEmployee[]>([]);
+
+  // Scroll to top button logic
+  const [isVisible, setIsVisible] = useState(false);
+
+  // Show button when page is scrolled down
+  useEffect(() => {
+    const toggleVisibility = () => {
+      if (window.scrollY > 300) {
+        setIsVisible(true);
+      } else {
+        setIsVisible(false);
+      }
+    };
+
+    window.addEventListener("scroll", toggleVisibility);
+    return () => window.removeEventListener("scroll", toggleVisibility);
+  }, []);
+
+  // Scroll to top function
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
+  // FILTER LOGIC
+  const [selectedCompliances, setSelectedCompliances] = useState<string[]>([]);
+
+  // Function to remove a compliance from selectedCompliances
+  const addSelectedCompliance = (compliance: string) => {
+    setSelectedCompliances((prev) =>
+      prev.includes(compliance)
+        ? prev.filter((item) => item !== compliance)
+        : [...prev, compliance]
+    );
+  };
+
+  // Function to remove a compliance from selectedCompliances
+  const removeSelectedCompliance = (compliance: string) => {
+    setSelectedCompliances((prevCompliances) =>
+      prevCompliances.filter((item) => item !== compliance)
+    );
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -51,10 +97,33 @@ export default function PersonnelPage({}: Props) {
           return cleanedCompliance;
         }),
       }));
-      setData(employeeData);
+      const filteredData = employeeData.filter((employee) => {
+        // Check if "compliant" is selected in the list
+        if (selectedCompliances.includes("Compliant")) {
+          return employee.complianceList.every(
+            (compliance) => Object.values(compliance)[0] === true
+          );
+        }
+
+        // Check if "non-compliant" is selected in the list
+        if (selectedCompliances.includes("Non-compliant")) {
+          return employee.complianceList.some((compliance) =>
+            Object.values(compliance).some((value) => value === false)
+          );
+        }
+
+        // General case for specific compliance selections
+        return selectedCompliances.every((compliance) =>
+          employee.complianceList.some(
+            (complianceObj) => complianceObj[compliance] === true
+          )
+        );
+      });
+      setData(filteredData);
     };
     fetchData();
-  }, []);
+    console.log(selectedCompliances);
+  }, [selectedCompliances]);
 
   return (
     <div className="flex flex-col gap-6">
@@ -63,7 +132,7 @@ export default function PersonnelPage({}: Props) {
         subtitle="Assign roles, track responsibilities, and keep your team audit-ready with real-time monitoring, collaborative tools, and automated reminders."
         // action={<NewControlSheet />}
       />
-      {data.length > 0 ? (
+      {data ? (
         <div className="flex gap-10">
           {/* FILTERS */}
           <div className="flex flex-col rounded-lg min-w-[260px]">
@@ -77,40 +146,39 @@ export default function PersonnelPage({}: Props) {
               <ChevronRight className="w-5" />
             </div>
             {/* Selected compliances */}
-            <div className="flex text-xs 2xl:text-sm items-center h-[46px] pl-3  border border-t-0 border-b-2">
-              <div className="rounded-3xl flex justify-between items-center px-2 gap-2 bg-primary/20 h-7 2xl:h-8">
+            <div className="flex text-xs 2xl:text-sm items-center py-2 pl-3 flex-wrap border border-t-0 border-b-2">
+              <div className="rounded-3xl flex justify-between items-center px-2 gap-2 bg-primary/20 h-5 mb-1 2xl:h-8">
                 All <Star className="w-4" />
               </div>
+              {selectedCompliances.map((selectedCompliance: string) => (
+                <div
+                  key={selectedCompliance}
+                  className="rounded-3xl font-semibold ml-1 flex justify-between items-center px-2 gap-1 bg-primary/20 h-5 mb-1 2xl:h-8"
+                >
+                  {selectedCompliance}
+                  <X
+                    className="w-3 cursor-pointer hover:w-4"
+                    onClick={() => removeSelectedCompliance(selectedCompliance)}
+                    aria-label={`Remove ${selectedCompliance}`}
+                  />
+                </div>
+              ))}
             </div>
             {/* List of all compliances */}
             <div className="flex flex-col text-sm 2xl:text-md border rounded-2xl rounded-t-none border-t-0">
-              <div className="px-2.5 py-2.5 hover:bg-muted cursor-pointer last:rounded-b-2xl">
-                Compliant
-              </div>
-              <div className="px-2.5 py-2.5 hover:bg-muted cursor-pointer last:rounded-b-2xl">
-                Non-compliant
-              </div>
-              <div className="px-2.5 py-2.5 hover:bg-muted cursor-pointer last:rounded-b-2xl">
-                Background Check
-              </div>
-              <div className="px-2.5 py-2.5 hover:bg-muted cursor-pointer last:rounded-b-2xl">
-                Identity MFA
-              </div>
-              <div className="px-2.5 py-2.5 hover:bg-muted cursor-pointer last:rounded-b-2xl">
-                Policies
-              </div>
-              <div className="px-2.5 py-2.5 hover:bg-muted cursor-pointer last:rounded-b-2xl">
-                Security Training
-              </div>
-              <div className="px-2.5 py-2.5 hover:bg-muted cursor-pointer last:rounded-b-2xl">
-                HIPAA Training
-              </div>
-              <div className="px-2.5 py-2.5 hover:bg-muted cursor-pointer last:rounded-b-2xl">
-                AI Awareness Training
-              </div>
-              <div className="px-2.5 py-2.5 hover:bg-muted cursor-pointer last:rounded-b-2xl">
-                Device Compliance
-              </div>
+              {[
+                "Compliant",
+                "Non-compliant",
+                ...((complianceList as string[]) || []),
+              ].map((compliance) => (
+                <div
+                  key={compliance}
+                  className="px-2.5 py-2.5 hover:bg-muted cursor-pointer last:rounded-b-2xl"
+                  onClick={() => addSelectedCompliance(compliance)}
+                >
+                  {compliance}
+                </div>
+              ))}
             </div>
           </div>
 
@@ -131,6 +199,16 @@ export default function PersonnelPage({}: Props) {
           </div>
         </div>
       )}
+      <Button
+        variant="outline"
+        onClick={scrollToTop}
+        className={`fixed bottom-4 right-4 bg-muted hover:bg-gray-200 p-2 rounded-full  shadow-lg  transition ${
+          isVisible ? "opacity-100" : "opacity-0"
+        }`}
+        aria-label="Scroll to top"
+      >
+        <ArrowUpToLine />
+      </Button>
     </div>
   );
 }

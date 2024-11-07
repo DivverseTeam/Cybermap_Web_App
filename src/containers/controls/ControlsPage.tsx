@@ -24,7 +24,8 @@ import {
   TableRow,
 } from "~/app/_components/ui/table";
 import { Checkbox } from "~/app/_components/ui/checkbox";
-import { Check } from "lucide-react";
+import { ArrowUpToLine, Check } from "lucide-react";
+import { Button } from "~/app/_components/ui/button";
 
 type Props = {};
 
@@ -38,6 +39,31 @@ const frameworksList = [
 ];
 
 export default function ControlsPage({}) {
+  // Scroll to top button logic
+  const [isVisible, setIsVisible] = useState(false);
+
+  // Show button when page is scrolled down
+  useEffect(() => {
+    const toggleVisibility = () => {
+      if (window.scrollY > 300) {
+        setIsVisible(true);
+      } else {
+        setIsVisible(false);
+      }
+    };
+
+    window.addEventListener("scroll", toggleVisibility);
+    return () => window.removeEventListener("scroll", toggleVisibility);
+  }, []);
+
+  // Scroll to top function
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
   // const searchParams = useSearchParams();
   // const search = searchParams.get("search") || "";
   // const sortColumn = searchParams.get("sortColumn") || "title";
@@ -85,7 +111,6 @@ export default function ControlsPage({}) {
       //   { cache: "no-store" }
       // );
       // const { evidences, total } = await res.json();
-      const data = controls;
       const filteredData = [
         "partially implemented",
         "fully implemented",
@@ -178,7 +203,7 @@ export default function ControlsPage({}) {
             )}
             All frameworks
           </label>
-          {frameworks.map((framework: any, index) => (
+          {frameworks.map((framework: string) => (
             <label
               key={framework}
               className="text-xs 2xl:text-sm flex items-center"
@@ -296,6 +321,16 @@ export default function ControlsPage({}) {
           </Table>
         </div>
       </div>
+      <Button
+        variant="outline"
+        onClick={scrollToTop}
+        className={`fixed bottom-4 right-4 bg-muted hover:bg-gray-200 p-2 rounded-full  shadow-lg  transition ${
+          isVisible ? "opacity-100" : "opacity-0"
+        }`}
+        aria-label="Scroll to top"
+      >
+        <ArrowUpToLine />
+      </Button>
     </div>
   );
 }

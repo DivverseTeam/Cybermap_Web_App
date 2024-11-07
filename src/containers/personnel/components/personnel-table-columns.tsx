@@ -159,7 +159,11 @@ export const columns: ColumnDef<IEmployee>[] = [
       const terminationDate = cell.getValue() as Date | null;
       return (
         <span className="text-sm whitespace-nowrap text-center">
-          {terminationDate ? formatDate(terminationDate) : "-"}
+          {terminationDate ? (
+            formatDate(terminationDate)
+          ) : (
+            <div className="h-[2px] w-4 bg-secondary"></div>
+          )}
         </span>
       );
     },

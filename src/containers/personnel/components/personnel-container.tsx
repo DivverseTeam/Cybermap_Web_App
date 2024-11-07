@@ -75,12 +75,12 @@ export default function PersonnelContainer({ data }: Props) {
       </div>
       <div className="border">
         <Table className="rounded-none">
-          <TableHeader className="bg-gray-100 text-[#40566D]">
+          <TableHeader className="bg-gray-100 text-[#40566D] ">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
                   <TableHead key={header.id}>
-                    <button>
+                    <button className="rounded-none">
                       {header.isPlaceholder
                         ? null
                         : typeof header.column.columnDef.header === "function"
@@ -116,6 +116,11 @@ export default function PersonnelContainer({ data }: Props) {
             ))}
           </TableBody>
         </Table>
+        {data.length === 0 && (
+          <span className="flex justify-center mt-20 2xl:mt-30 h-[400px] text-2xl text-secondary font-semibold">
+            No employee matches your filter query
+          </span>
+        )}
       </div>
     </div>
   );
