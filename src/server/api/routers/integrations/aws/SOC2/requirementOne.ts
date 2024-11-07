@@ -1,16 +1,18 @@
+// Logical Access Controls (Security)
+
+import { LookupEventsCommand } from "@aws-sdk/client-cloudtrail";
 import {
   ListAttachedRolePoliciesCommand,
   ListAttachedUserPoliciesCommand,
   ListMFADevicesCommand,
-  ListRolePoliciesCommand,
   ListRolesCommand,
   ListUserPoliciesCommand,
   ListUsersCommand,
 } from "@aws-sdk/client-iam";
-import { iamClient } from "./init";
+import { getCloudTrailEvents } from "../common";
+import { cloudTrailClient, iamClient } from "../init";
 
-// IAM configurations and policies
-
+// IAM configurations and policies:
 async function listIAMUsers() {
   try {
     const listUsersCommand = new ListUsersCommand();
@@ -33,6 +35,7 @@ async function listIAMUsers() {
   }
 }
 
+// IAM configurations and policies:
 async function listIAMRoles() {
   try {
     const listRolesCommand = new ListRolesCommand();
@@ -56,6 +59,7 @@ async function listIAMRoles() {
   }
 }
 
+// IAM configurations and policies:
 async function listUserInlinePolicies(userName: string) {
   const listUserPoliciesCommand = new ListUserPoliciesCommand({
     UserName: userName,
@@ -67,18 +71,8 @@ async function listUserInlinePolicies(userName: string) {
   );
 }
 
-async function listRoleInlinePolicies(roleName: string) {
-  const listRolePoliciesCommand = new ListRolePoliciesCommand({
-    RoleName: roleName,
-  });
-  const inlinePolicies = await iamClient.send(listRolePoliciesCommand);
-  console.log(
-    `Inline Policies for Role ${roleName}:`,
-    inlinePolicies.PolicyNames
-  );
-}
-
-async function fetchAndStoreIAMConfigurations() {
+// IAM configurations and policies: A record of which users have access to specific resources, their roles, and the permissions assigned to them
+async function getIAMConfigurations() {
   const iamData = { users: [], roles: [] };
   const listUsersCommand = new ListUsersCommand();
   const response = await iamClient.send(listUsersCommand);
@@ -114,9 +108,8 @@ async function fetchAndStoreIAMConfigurations() {
   }
 }
 
-// MFA enforcement
-
-async function checkMFAForCriticalAccounts() {
+// MFA enforcement: Proof that multi-factor authentication is enabled for all critical accounts.
+export async function checkMFAForCriticalAccounts() {
   try {
     const listUsersCommand = new ListUsersCommand();
     const response = await iamClient.send(listUsersCommand);
@@ -139,5 +132,78 @@ async function checkMFAForCriticalAccounts() {
     }
   } catch (error) {
     console.error("Error checking MFA status:", error);
+  }
+}
+
+// Login and activity logs:  failed login attempts
+async function fetchLoginAttempts() {
+  try {
+    const response = await getCloudTrailEvents({
+      lookupAttributes: [
+        {
+          AttributeKey: "EventName",
+          AttributeValue: "ConsoleLogin",
+        },
+      ],
+      startTime: new Date(Date.now() - 24 * 60 * 60 * 1000),
+      endTime: new Date(),
+      maxResults: 50,
+    });
+    const events = response?.events;
+    if (!events) return [];
+    events.forEach((event: any) => {
+      const loginStatus = event.responseElements.ConsoleLogin;
+      console.log(`Login Attempt by ${event.username}: ${loginStatus}`, event);
+    });
+  } catch (error) {
+    console.error("Error fetching login attempts:", error);
+  }
+}
+//  Login and activity logs:  failed login attempts,
+async function fetchUserLoginAttempts(username: string) {
+  try {
+    const response = await getCloudTrailEvents({
+      lookupAttributes: [
+        {
+          AttributeKey: "EventName",
+          AttributeValue: "ConsoleLogin",
+        },
+        {
+          AttributeKey: "Username",
+          AttributeValue: username,
+        },
+      ],
+      startTime: new Date(Date.now() - 24 * 60 * 60 * 1000),
+      endTime: new Date(),
+      maxResults: 50,
+    });
+    const events = response?.events;
+
+    if (!events) return [];
+    events.forEach((event: any) => {
+      const loginStatus = event.responseElements.ConsoleLogin;
+      console.log(`Login Attempt by ${event.username}: ${loginStatus}`, event);
+    });
+  } catch (error) {
+    console.error("Error fetching login attempts for user:", error);
+  }
+}
+
+// Login and activity logs: role changes and unauthorized access attempts
+export async function getActivityLogs() {
+  try {
+    const command = new LookupEventsCommand({
+      LookupAttributes: [
+        { AttributeKey: "EventName", AttributeValue: "AssumeRole" }, // Role changes
+        { AttributeKey: "EventName", AttributeValue: "UnauthorizedAccess" }, // Unauthorized access attempts (if custom)
+      ],
+      StartTime: new Date(new Date().setDate(new Date().getDate() - 7)), // Last 7 days
+      EndTime: new Date(),
+    });
+    const response = await cloudTrailClient.send(command);
+    return response.Events;
+  } catch (error) {
+    console.error("Error fetching activity logs:", error);
+    return null;
   }
 }
