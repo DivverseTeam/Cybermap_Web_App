@@ -15,7 +15,7 @@ import { Separator } from "~/app/_components/ui/seperator";
 export default function Header() {
   const { data } = useSession();
   return (
-    <header className="sticky inset-x-0 top-0 z-10 w-full border-b-2 border-b-[#E8E8EC] bg-white px-6 py-4">
+    <header className="fixed inset-x-0 top-0 ml-[280px] z-10 w-[calc(100vw-280px)] border-b-2 border-b-[#E8E8EC] bg-white px-6 py-4">
       <nav className="flex items-center">
         {/* <div className="w-64 px-3">
 					<CyberMapBrand />

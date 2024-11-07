@@ -93,15 +93,6 @@ export default function PersonnelContainer({ data }: Props) {
             ))}
           </TableHeader>
           <TableBody className="bg-white">
-            {/* {table.getRowModel().rows.map((row) => (
-            <tr key={row.id}>
-              {row.getVisibleCells().map((cell) => (
-                <td key={cell.id} className="px-4 py-2">
-                  {cell.renderCell()}
-                </td>
-              ))}
-            </tr>
-          ))} */}
             {table.getRowModel().rows.map((row) => (
               <TableRow
                 key={row.id}
