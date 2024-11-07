@@ -161,7 +161,7 @@ export default function SideNavbar({}: Props) {
   ];
 
   return (
-    <aside className="fixed top-0 left-0 border min-w-[280px] text-[14px] leading-4  flex flex-col justify-start flex-grow min-h-screen">
+    <aside className="fixed z-20 bg-muted top-0 left-0 border min-w-[280px] text-[14px] leading-4  flex flex-col justify-start flex-grow min-h-screen">
       <div className="border-b  py-6 px-6 ">
         <CyberMapBrand />
       </div>

@@ -12,18 +12,21 @@ import {
 import { formatDate } from "~/lib/utils";
 import { Button } from "~/app/_components/ui/button";
 
-type Props = {};
+interface RowData {
+  name: string;
+  mappedControls: string[];
+  status: string;
+}
+// const columnHelper = createColumnHelper<RowData>();
 
-const columnHelper = createColumnHelper();
-
-// const row: Row<IEvidence> =
-
-export const columns: any = [
-  columnHelper.accessor("name", {
+export const columns: ColumnDef<RowData>[] = [
+  {
+    accessorKey: "name",
     header: () => <span>CONTROL</span>, // Wrap in span
-    cell: ({ cell }) => <span className="">{cell.getValue()}</span>,
-  }),
-  columnHelper.accessor("mappedControls", {
+    cell: ({ cell }) => <span className="">{cell.getValue() as string}</span>,
+  },
+  {
+    accessorKey: "mappedControls",
     header: () => <span>MAPPED</span>, // Wrap in span
     cell: ({ row }) => {
       const mappedControls = row.getValue("mappedControls") as string[];
@@ -44,8 +47,9 @@ export const columns: any = [
         </div>
       );
     },
-  }),
-  columnHelper.accessor("status", {
+  },
+  {
+    accessorKey: "status",
     header: () => (
       <span className="w-[60px] flex items-center text-center justify-center">
         STATUS
@@ -61,8 +65,8 @@ export const columns: any = [
             : "bg-green-700/20 text-green-700 "
         }`}
       >
-        {cell.getValue()}
+        {cell.getValue() as string}
       </span>
     ),
-  }),
+  },
 ];

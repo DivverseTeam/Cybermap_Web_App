@@ -13,19 +13,20 @@ import {
   TooltipTrigger,
 } from "~/app/_components/ui/tooltip";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { MouseEvent, ElementType } from "react";
 import path from "path";
 
+interface LinkProp {
+  title: string;
+  label?: string;
+  icon?: ElementType; // Icon as a React element
+  onClick?: (event: MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => void; // Typing for onClick event handler
+  variant?: "default" | "ghost" | "lightBlue";
+  href?: string | undefined;
+}
 interface NavProps {
   isCollapsed: boolean;
-  links: {
-    title: string;
-    label?: string;
-    icon?: any;
-    onClick?: any;
-    variant?: "default" | "ghost";
-    href?: string;
-  }[];
+  links: LinkProp[];
   groupName: string;
 }
 
@@ -42,15 +43,18 @@ export function Nav({ links, groupName, isCollapsed }: NavProps) {
           {groupName}
         </span>
       )}
+      {groupName.toLocaleLowerCase() === "actions" && (
+        <div className="mt-8 2xl:mt-11"></div>
+      )}
       <nav className=" grid gap-1 group-[[data-collapsed=true]]:justify-center group-[[data-collapsed=true]]:px-2">
-        {links.map((link: any, index) => {
+        {links.map((link: LinkProp, index) => {
           let isActive = false;
 
           if (link.href === "/dashboard") {
             isActive = pathname === "/dashboard"; // Only active if exactly on /dashboard
           } else {
             // For other routes like /dashboard/frameworks and /settings
-            isActive = pathname.startsWith(link.href);
+            isActive = pathname.startsWith(link.href!);
           }
           return (
             <div className="flex items-center relative" key={index}>
@@ -73,11 +77,13 @@ export function Nav({ links, groupName, isCollapsed }: NavProps) {
                   "justify-start"
                 )}
               >
-                <link.icon
-                  className={`${
-                    isActive && "text-primary"
-                  } "mr-2 pr-2 h-4 w-4"`}
-                />
+                {link.icon && (
+                  <link.icon
+                    className={`${
+                      isActive && "text-primary"
+                    } "mr-2 pr-2 h-4 w-4"`}
+                  />
+                )}
                 {link.title}
                 {link.label && (
                   <span

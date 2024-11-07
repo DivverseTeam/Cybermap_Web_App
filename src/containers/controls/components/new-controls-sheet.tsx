@@ -121,7 +121,7 @@ export function NewControlSheet() {
             ) : (
               <div className="flex items-center justify-between gap-20">
                 <div className="flex items-center justify-between gap-3">
-                  <CloudUpload className="w-20 h-20 text-secondary" />
+                  <CloudUpload className="w-20 h-20 text-[#E0E1E6]" />
                   <div className="text-gray-500 flex flex-col gap-2 text-xs">
                     <span>Select a file or drag and drop here</span>
                     <span>CSV o XLSX file no more than 10mb</span>

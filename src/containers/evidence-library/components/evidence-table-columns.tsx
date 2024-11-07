@@ -1,6 +1,6 @@
-import { ColumnDef, createColumnHelper } from "@tanstack/react-table";
+import type { ColumnDef, createColumnHelper } from "@tanstack/react-table";
 import { useState, useEffect, useTransition } from "react";
-import { IEvidence } from "../types";
+import type { IEvidence } from "../types";
 
 import { DeleteEvidenceDialog } from "./delete-evidence-dialog";
 import {
@@ -16,17 +16,22 @@ import { Button } from "~/app/_components/ui/button";
 import { DotsHorizontalIcon, DotsVerticalIcon } from "@radix-ui/react-icons";
 import { ViewEvidenceSheet } from "./view-evidence-sheet";
 
-type Props = {};
+// interface RowData {
+//   name: string;
+//   linkedControls: string[];
+//   status: string;
+//   renewalDate: Date;
+//   actions?: never;
+// }
 
-const columnHelper = createColumnHelper();
-
-// const row: Row<IEvidence> =
-
-export const columns: any = [
-  columnHelper.accessor("name", {
+// type RowData = IEvidence;
+export const columns: ColumnDef<IEvidence>[] = [
+  {
+    accessorKey: "name",
     header: () => <span>File name</span>, // Wrap in span
-  }),
-  columnHelper.accessor("linkedControls", {
+  },
+  {
+    accessorKey: "linkedControls",
     header: () => <span>Linked Controls</span>, // Wrap in span
     cell: ({ row }) => {
       const linkedControls = row.getValue("linkedControls") as string[];
@@ -47,14 +52,16 @@ export const columns: any = [
         </div>
       );
     },
-  }),
-  columnHelper.accessor("renewalDate", {
+  },
+  {
+    accessorKey: "renewalDate",
     header: () => <span className="">Renewal Date</span>, // Wrap in span
     cell: ({ cell }) => (
       <span className="text-sm "> {formatDate(cell.getValue() as Date)}</span>
     ),
-  }),
-  columnHelper.accessor("status", {
+  },
+  {
+    accessorKey: "status",
     header: () => (
       <span className="w-[110px] flex items-center text-center justify-center">
         Status
@@ -68,15 +75,15 @@ export const columns: any = [
             : "bg-green-700/20 text-green-700 "
         }`}
       >
-        {cell.getValue()}
+        {cell.getValue() as string}
       </span>
     ),
-  }),
+  },
 
-  columnHelper.accessor("actions", {
+  {
+    accessorKey: "actions",
     header: () => <span></span>, // Wrap in span
     cell: function Cell({ row }) {
-      const [isUpdatePending, startUpdateTransition] = useTransition();
       const [showUpdateEvidenceSheet, setShowUpdateEvidenceSheet] =
         useState(false);
       const [showDeleteEvidenceDialog, setShowDeleteEvidenceDialog] =
@@ -89,12 +96,12 @@ export const columns: any = [
           <ViewEvidenceSheet
             open={showUpdateEvidenceSheet}
             onOpenChange={setShowUpdateEvidenceSheet}
-            evidence={row.original as IEvidence}
+            evidence={row.original as unknown as IEvidence}
           />
           <DeleteEvidenceDialog
             open={showDeleteEvidenceDialog}
             onOpenChange={setShowDeleteEvidenceDialog}
-            evidence={row.original as IEvidence}
+            evidence={row.original as unknown as IEvidence}
             showTrigger={false}
             onSuccess={() => row.toggleSelected(false)}
           />
@@ -130,5 +137,5 @@ export const columns: any = [
         </>
       );
     },
-  }),
+  },
 ];

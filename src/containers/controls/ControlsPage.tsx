@@ -43,7 +43,7 @@ export default function ControlsPage({}) {
   // const sortColumn = searchParams.get("sortColumn") || "title";
   // const sortOrder = searchParams.get("sortOrder") || "asc";
 
-  const router = useRouter();
+  // const router = useRouter();
   const [data, setData] = useState<IControl[]>([]);
   // const [total, setTotal] = useState(0);
   // const [currentPage, setCurrentPage] = useState(1);
@@ -163,7 +163,7 @@ export default function ControlsPage({}) {
       />
       <div className="flex gap-10">
         <div className="w-[142px] 2xl:w-[200px] flex flex-col gap-2">
-          <h5 className="mb-3">Frameworks</h5>
+          <h5 className="mb-3 font-semibold">Frameworks</h5>
 
           <label className="text-xs 2xl:text-sm flex items-center">
             <input

@@ -24,7 +24,7 @@ import { formatDate } from "~/lib/utils";
 import { Search01Icon } from "hugeicons-react";
 import { NewEvidenceSheet } from "./components/new-evidence-sheet";
 import PageTitle from "~/components/PageTitle";
-import { IEvidence } from "./types";
+import type { IEvidence } from "./types";
 
 import { columns } from "./components/evidence-table-columns";
 import { PaginationWithLinks } from "~/app/_components/ui/pagination-with-links";
@@ -52,7 +52,7 @@ export default function EvidenceLibraryPage({
   // const [itemsPerPage, setItemsPerPage] = useState(10);
 
   // Status filter goes here
-  const [statusFilter, setStatusFilter] = useState<any>(null);
+  const [statusFilter, setStatusFilter] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -61,16 +61,18 @@ export default function EvidenceLibraryPage({
       //   { cache: "no-store" }
       // );
       // const { evidences, total } = await res.json();
-      const data = evidences;
-      const filteredData = ["needs artifact", "updated"].includes(
-        statusFilter?.toLocaleLowerCase()
-      )
-        ? evidences.filter(
-            (evidence) =>
-              evidence.status.toLocaleLowerCase() ===
-              statusFilter.toLocaleLowerCase()
-          )
-        : evidences;
+      // const data = evidences;
+      const filteredData =
+        statusFilter &&
+        ["needs artifact", "updated"].includes(
+          statusFilter?.toLocaleLowerCase()
+        )
+          ? evidences.filter(
+              (evidence) =>
+                evidence.status.toLocaleLowerCase() ===
+                statusFilter.toLocaleLowerCase()
+            )
+          : evidences;
 
       setData(filteredData);
       // setTotal(total);
@@ -135,7 +137,7 @@ export default function EvidenceLibraryPage({
             <Tabs
               defaultValue="All"
               className="w-[400px]"
-              onValueChange={(value) =>
+              onValueChange={(value: string | null) =>
                 setStatusFilter(value === "All" ? null : value)
               }
             >
