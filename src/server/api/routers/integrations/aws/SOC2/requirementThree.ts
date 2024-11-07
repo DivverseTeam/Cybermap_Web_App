@@ -7,8 +7,12 @@ import {
   BackupJob,
   DescribeBackupVaultCommand,
 } from "@aws-sdk/client-backup";
-import { LookupAttribute, LookupEventsCommand } from "@aws-sdk/client-cloudtrail";
-import { DescribeSnapshotsCommand } from "@aws-sdk/client-ec2";
+import {
+  LookupAttribute,
+  LookupEventsCommand,
+} from "@aws-sdk/client-cloudtrail";
+import { DescribeSnapshotsCommand, Snapshot } from "@aws-sdk/client-ec2";
+import fs from "fs";
 
 // Backup schedules: Logs showing regular backup processes.
 export async function getBackupPlan() {
@@ -134,7 +138,7 @@ export async function listEC2Snapshots() {
   try {
     const params = {
       OwnerIds: ["self"],
-      NextToken: undefined,
+      NextToken: "",
     };
 
     let snapshots: any[] = [];
@@ -142,30 +146,21 @@ export async function listEC2Snapshots() {
     do {
       const describeSnapshotsCommand = new DescribeSnapshotsCommand(params);
       data = await ec2Client.send(describeSnapshotsCommand);
-
+      if (!data.Snapshots) return [];
       // Add snapshots to the list
       snapshots = snapshots.concat(
-        data.Snapshots.map(
-          (snapshot: {
-            SnapshotId: any;
-            VolumeId: any;
-            StartTime: any;
-            State: any;
-            Progress: any;
-            Description: any;
-          }) => ({
-            SnapshotId: snapshot.SnapshotId,
-            VolumeId: snapshot.VolumeId,
-            StartTime: snapshot.StartTime,
-            State: snapshot.State,
-            Progress: snapshot.Progress,
-            Description: snapshot.Description,
-          })
-        )
+        data.Snapshots.map((snapshot: Snapshot) => ({
+          SnapshotId: snapshot.SnapshotId,
+          VolumeId: snapshot.VolumeId,
+          StartTime: snapshot.StartTime,
+          State: snapshot.State,
+          Progress: snapshot.Progress,
+          Description: snapshot.Description,
+        }))
       );
 
       // Update NextToken for pagination
-      params.NextToken = data.NextToken;
+      params.NextToken = data.NextToken || "";
     } while (params.NextToken);
 
     console.log("EBS Snapshots:", snapshots);
@@ -177,38 +172,38 @@ export async function listEC2Snapshots() {
 
 // Disaster recovery test results: Logs and reports of tested recovery processes and their success rates.
 // test disaster recovery by attempting a snapshot recovery
-export async function testDisasterRecovery(snapshotId: any) {
-  try {
-    // Start recovery from snapshot by creating a volume (simulated recovery test)
-    const volume = await ec2Client
-      .createVolume({
-        SnapshotId: snapshotId,
-        AvailabilityZone: "your-availability-zone", // Replace with the correct AZ
-      })
-      .promise();
+// export async function testDisasterRecovery(snapshotId: any) {
+//   try {
+//     // Start recovery from snapshot by creating a volume (simulated recovery test)
+//     const volume = await ec2Client
+//       .createVolume({
+//         SnapshotId: snapshotId,
+//         AvailabilityZone: "your-availability-zone", // Replace with the correct AZ
+//       })
+//       .promise();
 
-    // Log successful recovery attempt
-    const logEntry = {
-      timestamp: new Date().toISOString(),
-      snapshotId,
-      recoveryStatus: "SUCCESS",
-      volumeId: volume.VolumeId,
-      message: "Volume successfully created from snapshot for recovery test.",
-    };
-    // logResult(logEntry);
-    return logEntry;
-  } catch (error: any) {
-    // Log failed recovery attempt
-    const logEntry = {
-      timestamp: new Date().toISOString(),
-      snapshotId,
-      recoveryStatus: "FAILED",
-      message: `Failed to recover from snapshot: ${error.message}`,
-    };
-    // logResult(logEntry);
-    throw error;
-  }
-}
+//     // Log successful recovery attempt
+//     const logEntry = {
+//       timestamp: new Date().toISOString(),
+//       snapshotId,
+//       recoveryStatus: "SUCCESS",
+//       volumeId: volume.VolumeId,
+//       message: "Volume successfully created from snapshot for recovery test.",
+//     };
+//     // logResult(logEntry);
+//     return logEntry;
+//   } catch (error: any) {
+//     // Log failed recovery attempt
+//     const logEntry = {
+//       timestamp: new Date().toISOString(),
+//       snapshotId,
+//       recoveryStatus: "FAILED",
+//       message: `Failed to recover from snapshot: ${error.message}`,
+//     };
+//     // logResult(logEntry);
+//     throw error;
+//   }
+// }
 
 // Regularly list EC2 snapshots to ensure that backup processes are functioning and timely.
 export async function checkEC2RegularBackup() {
@@ -218,9 +213,10 @@ export async function checkEC2RegularBackup() {
       OwnerIds: ["self"], // Only get snapshots owned by this account
     });
     const snapshots = await ec2Client.send(describeSnapshotsCommand);
-
+    if (!snapshots.Snapshots) return [];
     // Sort snapshots by StartTime (creation date) in descending order
     const sortedSnapshots = snapshots.Snapshots.sort(
+      //@ts-ignore
       (a: any, b: any) => new Date(b.StartTime) - new Date(a.StartTime)
     );
 
@@ -230,6 +226,7 @@ export async function checkEC2RegularBackup() {
     const now = new Date();
     const oneDayAgo = new Date(now.setDate(now.getDate() - 1));
     const recentSnapshots = sortedSnapshots.filter(
+      //@ts-ignore
       (snapshot: { StartTime: string | number | Date }) =>
         new Date(snapshot.StartTime) > oneDayAgo
     );
