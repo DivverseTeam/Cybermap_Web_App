@@ -133,7 +133,7 @@ export default function PersonnelPage({}: Props) {
         // action={<NewControlSheet />}
       />
       {data ? (
-        <div className="flex gap-10">
+        <div className="flex gap-8">
           {/* FILTERS */}
           <div className="flex flex-col rounded-lg min-w-[260px]">
             {/* Filter heading */}
@@ -147,13 +147,13 @@ export default function PersonnelPage({}: Props) {
             </div>
             {/* Selected compliances */}
             <div className="flex text-xs 2xl:text-sm items-center py-2 pl-3 flex-wrap border border-t-0 border-b-2">
-              <div className="rounded-3xl flex justify-between items-center px-2 gap-2 bg-primary/20 h-5 mb-1 2xl:h-8">
+              <div className="rounded-3xl flex justify-between items-center px-2 gap-2 bg-primary/20 h-5 2xl:h-6 mb-1">
                 All <Star className="w-4" />
               </div>
               {selectedCompliances.map((selectedCompliance: string) => (
                 <div
                   key={selectedCompliance}
-                  className="rounded-3xl font-semibold ml-1 flex justify-between items-center px-2 gap-1 bg-primary/20 h-5 mb-1 2xl:h-8"
+                  className="rounded-3xl font-semibold ml-1 2xl:text-xs flex flex-wrap justify-center items-center px-2 gap-1 bg-primary/20 h-5 2xl:h-6 mb-1"
                 >
                   {selectedCompliance}
                   <X

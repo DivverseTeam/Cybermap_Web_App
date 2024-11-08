@@ -168,10 +168,10 @@ export default function SideNavbar({}: Props) {
       className="fixed bg-[#F9F9FB] z-20 top-0 left-0 border min-w-[280px] text-[14px] leading-4  
     flex flex-col justify-start flex-grow min-h-screen"
     >
-      <div className="border-b py-4 px-4  [@media(min-width:1300px)]:py-6 [@media(min-width:1300px)]:px-6 ">
+      <div className="border-b py-4 px-4  [@media(min-width:1400px)]:py-6 [@media(min-width:1400px)]:px-6 ">
         <CyberMapBrand />
       </div>
-      <div className="text-[14px] leading-4  flex flex-col justify-start flex-grow pt-12 [@media(min-width:1300px)]:pt-20 gap-[12px] max-h-[700px] px-4 [@media(min-width:1300px)]:px-6 ">
+      <div className="text-[14px] leading-4  flex flex-col justify-start flex-grow pt-12 [@media(min-width:1400px)]:pt-20 gap-[12px] max-h-[700px] px-4 [@media(min-width:1400px)]:px-6 ">
         {menuList.map((menu) => (
           <Nav
             isCollapsed={false}

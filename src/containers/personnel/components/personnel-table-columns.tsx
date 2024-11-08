@@ -1,6 +1,9 @@
 import { type ColumnDef, createColumnHelper } from "@tanstack/react-table";
-import { useState, useEffect, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 
+import { CircleCheck, TriangleAlert } from "lucide-react";
+import { PolarAngleAxis, RadialBar, RadialBarChart } from "recharts";
+import { Button } from "~/app/_components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,10 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "~/app/_components/ui/dropdown-menu";
 import { formatDate } from "~/lib/utils";
-import { Button } from "~/app/_components/ui/button";
-import { PolarAngleAxis, RadialBar, RadialBarChart } from "recharts";
 import type { IEmployee } from "../types";
-import { CircleCheck, TriangleAlert } from "lucide-react";
 
 // const columnHelper = createColumnHelper();
 
@@ -34,7 +34,7 @@ export const columns: ColumnDef<IEmployee>[] = [
       };
       return (
         <div className="flex items-center gap-2">
-          <div className="flex items-center justify-center text-xs p-2 w-6 h-6 rounded-sm bg-secondary text-white">
+          <div className="flex h-6 w-6 items-center justify-center rounded-sm bg-secondary p-2 text-white text-xs">
             {firstName.split("")[0]?.toUpperCase()}
             {lastName.split("")[0]?.toUpperCase()}
           </div>
@@ -43,7 +43,7 @@ export const columns: ColumnDef<IEmployee>[] = [
             <span className="font-semibold">
               {firstName} {lastName}
             </span>
-            <span className="text-sm text-gray-500">{email}</span>
+            <span className="text-gray-500 text-sm">{email}</span>
           </div>
         </div>
       );
@@ -103,7 +103,7 @@ export const columns: ColumnDef<IEmployee>[] = [
           data={data}
           startAngle={90}
           endAngle={-270}
-          className="flex items-center mx-auto justify-center"
+          className="mx-auto flex items-center justify-center"
         >
           {/* Draw the interior background circle */}
           <circle
@@ -144,7 +144,7 @@ export const columns: ColumnDef<IEmployee>[] = [
       <span className="whitespace-nowrap text-center">Hire Date</span>
     ), // Wrap in span
     cell: ({ cell }) => (
-      <span className="text-sm whitespace-nowrap text-center">
+      <span className="whitespace-nowrap text-center text-sm">
         {" "}
         {formatDate(cell.getValue() as Date)}
       </span>
@@ -158,7 +158,7 @@ export const columns: ColumnDef<IEmployee>[] = [
     cell: ({ cell }) => {
       const terminationDate = cell.getValue() as Date | null;
       return (
-        <span className="text-sm whitespace-nowrap text-center">
+        <span className="whitespace-nowrap text-center text-sm">
           {terminationDate ? (
             formatDate(terminationDate)
           ) : (
@@ -187,7 +187,7 @@ export const columns: ColumnDef<IEmployee>[] = [
       )?.["Policy Acknowledgement"];
 
       return (
-        <div className="flex justify-center items-center">
+        <div className="flex items-center justify-center">
           {policyAcknowledgement ? (
             <CircleCheck className="text-[#007B17]" />
           ) : (
@@ -214,7 +214,7 @@ export const columns: ColumnDef<IEmployee>[] = [
       )?.["Identity MFA"];
 
       return (
-        <div className="flex justify-center items-center">
+        <div className="flex items-center justify-center">
           {identityMFA ? (
             <CircleCheck className="text-[#007B17]" />
           ) : (
@@ -241,7 +241,7 @@ export const columns: ColumnDef<IEmployee>[] = [
       )?.["Background Check"];
 
       return (
-        <div className="flex justify-center items-center">
+        <div className="flex items-center justify-center">
           {backgroundCheck ? (
             <CircleCheck className="text-[#007B17]" />
           ) : (
@@ -268,7 +268,7 @@ export const columns: ColumnDef<IEmployee>[] = [
       )?.["Security Training"];
 
       return (
-        <div className="flex justify-center items-center">
+        <div className="flex items-center justify-center">
           {securityTraining ? (
             <CircleCheck className="text-[#007B17]" />
           ) : (
@@ -295,7 +295,7 @@ export const columns: ColumnDef<IEmployee>[] = [
       )?.["Device Compliance"];
 
       return (
-        <div className="flex justify-center items-center">
+        <div className="flex items-center justify-center">
           {deviceCompliance ? (
             <CircleCheck className="text-[#007B17]" />
           ) : (
@@ -322,7 +322,7 @@ export const columns: ColumnDef<IEmployee>[] = [
       )?.["Password Managers"];
 
       return (
-        <div className="flex justify-center items-center">
+        <div className="flex items-center justify-center">
           {passwordManagers ? (
             <CircleCheck className="text-[#007B17]" />
           ) : (
@@ -349,7 +349,7 @@ export const columns: ColumnDef<IEmployee>[] = [
       )?.["Anti-Virus"];
 
       return (
-        <div className="flex justify-center items-center">
+        <div className="flex items-center justify-center">
           {antiVirus ? (
             <CircleCheck className="text-[#007B17]" />
           ) : (
@@ -376,7 +376,7 @@ export const columns: ColumnDef<IEmployee>[] = [
       )?.["Auto-Updates"];
 
       return (
-        <div className="flex justify-center items-center">
+        <div className="flex items-center justify-center">
           {autoUpdates ? (
             <CircleCheck className="text-[#007B17]" />
           ) : (
