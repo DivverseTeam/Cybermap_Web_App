@@ -17,22 +17,30 @@ import { AvailableIntegrationCard } from "./available-integration-card";
 type Props = {};
 
 const integrationsList = [
-	{ id: 1, name: "Github", icon: "/integrations/githubLogo.png" },
+	{ id: "1", name: "Github", icon: "/integrations/githubLogo.png" },
 	{
-		id: 2,
+		id: "2",
 		name: "Github Enterprise Server",
 		icon: "/integrations/githubLogo.png",
 	},
-	{ id: 3, name: "Gitlab", icon: "/integrations/gitlabLogo.png" },
-	{ id: 4, name: "GCP", icon: "/integrations/gcpLogo.png" },
-	{ id: 5, name: "Digital Ocean", icon: "/integrations/digitalOceanLogo.png" },
-	{ id: 6, name: "Vercel", icon: "/integrations/vercelLogo.png" },
-	{ id: 7, name: "Supabase", icon: "/integrations/supabaseLogo.png" },
-	{ id: 8, name: "GCP", icon: "/integrations/gcpLogo.png" },
-	{ id: 9, name: "Vercel", icon: "/integrations/vercelLogo.png" },
-	{ id: 10, name: "Supabase", icon: "/integrations/supabaseLogo.png" },
-	{ id: 11, name: "GCP", icon: "/integrations/gcpLogo.png" },
-	{ id: 12, name: "Digital Ocean", icon: "/integrations/digitalOceanLogo.png" },
+	{ id: "3", name: "Gitlab", icon: "/integrations/gitlabLogo.png" },
+	{ id: "4", name: "GCP", icon: "/integrations/gcpLogo.png" },
+	{
+		id: "5",
+		name: "Digital Ocean",
+		icon: "/integrations/digitalOceanLogo.png",
+	},
+	{ id: "6", name: "Vercel", icon: "/integrations/vercelLogo.png" },
+	{ id: "7", name: "Supabase", icon: "/integrations/supabaseLogo.png" },
+	{ id: "8", name: "GCP", icon: "/integrations/gcpLogo.png" },
+	{ id: "9", name: "Vercel", icon: "/integrations/vercelLogo.png" },
+	{ id: "10", name: "Supabase", icon: "/integrations/supabaseLogo.png" },
+	{ id: "11", name: "GCP", icon: "/integrations/gcpLogo.png" },
+	{
+		id: "12",
+		name: "Digital Ocean",
+		icon: "/integrations/digitalOceanLogo.png",
+	},
 ];
 
 export default function AvailableIntegrationsContainer({}: Props) {
@@ -91,7 +99,7 @@ export default function AvailableIntegrationsContainer({}: Props) {
 					</p>
 				</div>
 				<div className="grid grid-cols-2 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
-					{integrationsList.map((integration, index: any) => (
+					{integrationsList.map((integration, index: number) => (
 						<AvailableIntegrationCard key={index} integration={integration} />
 					))}
 				</div>

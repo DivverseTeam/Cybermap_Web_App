@@ -55,20 +55,21 @@ const controlDetailsData = [
 ];
 
 export function NewEvidenceSheet() {
-	const [files, setFiles] = useState<any>([]);
+	const [files, setFiles] = useState<File[]>([]);
 
-	const handleDrop = (e: any) => {
+	const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
 		e.preventDefault();
 		const droppedFiles = Array.from(e.dataTransfer.files);
 		setFiles(droppedFiles);
 	};
 
-	const handleFileSelect = (e: any) => {
-		const selectedFiles = Array.from(e.target.files);
-		setFiles((prevFiles: any) => [...prevFiles, ...selectedFiles]);
+	const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const selectedFiles = Array.from(e.target.files || []);
+		setFiles((prevFiles) => [...prevFiles, ...selectedFiles]);
 	};
 
-	const handleDragOver = (e: any) => e.preventDefault();
+	const handleDragOver = (e: React.DragEvent<HTMLDivElement>) =>
+		e.preventDefault();
 
 	return (
 		<Sheet>
@@ -112,7 +113,7 @@ export function NewEvidenceSheet() {
 					>
 						{files.length ? (
 							<ul>
-								{files.map((file: any, index: any) => (
+								{files.map((file: File, index: number) => (
 									<li key={index} className="text-gray-700 text-sm">
 										{file.name}
 									</li>

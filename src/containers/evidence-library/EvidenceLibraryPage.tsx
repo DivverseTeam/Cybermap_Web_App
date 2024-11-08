@@ -22,14 +22,13 @@ import {
 	TableRow,
 } from "~/app/_components/ui/table";
 import PageTitle from "~/components/PageTitle";
-import { formatDate } from "~/lib/utils";
-import { NewEvidenceSheet } from "./components/new-evidence-sheet";
 import type { IEvidence } from "./types";
 
 import { PaginationWithLinks } from "~/app/_components/ui/pagination-with-links";
 import { Tabs, TabsList, TabsTrigger } from "~/app/_components/ui/tabs";
 import { evidences } from "./_lib/constant";
 import { columns } from "./components/evidence-table-columns";
+import { NewEvidenceSheet } from "./components/new-evidence-sheet";
 
 interface EvidencesTableProps {
 	searchParams: { [key: string]: string | undefined };
@@ -52,7 +51,7 @@ export default function EvidenceLibraryPage({
 	// const [itemsPerPage, setItemsPerPage] = useState(10);
 
 	// Status filter goes here
-	const [statusFilter, setStatusFilter] = useState<any>(null);
+	const [statusFilter, setStatusFilter] = useState<string | null>(null);
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -61,16 +60,18 @@ export default function EvidenceLibraryPage({
 			//   { cache: "no-store" }
 			// );
 			// const { evidences, total } = await res.json();
-			const _data = evidences;
-			const filteredData = ["needs artifact", "updated"].includes(
-				statusFilter?.toLocaleLowerCase(),
-			)
-				? evidences.filter(
-						(evidence) =>
-							evidence.status.toLocaleLowerCase() ===
-							statusFilter.toLocaleLowerCase(),
-					)
-				: evidences;
+			// const data = evidences;
+			const filteredData =
+				statusFilter &&
+				["needs artifact", "updated"].includes(
+					statusFilter?.toLocaleLowerCase(),
+				)
+					? evidences.filter(
+							(evidence) =>
+								evidence.status.toLocaleLowerCase() ===
+								statusFilter.toLocaleLowerCase(),
+						)
+					: evidences;
 
 			setData(filteredData);
 			// setTotal(total);
@@ -135,7 +136,7 @@ export default function EvidenceLibraryPage({
 						<Tabs
 							defaultValue="All"
 							className="w-[400px]"
-							onValueChange={(value) =>
+							onValueChange={(value: string | null) =>
 								setStatusFilter(value === "All" ? null : value)
 							}
 						>

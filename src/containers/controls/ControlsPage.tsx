@@ -6,9 +6,11 @@ import {
 	useReactTable,
 } from "@tanstack/react-table";
 import { Search01Icon } from "hugeicons-react";
-import { Check } from "lucide-react";
+import { ArrowUpToLine, Check } from "lucide-react";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import type React from "react";
+import { useEffect, useState } from "react";
+import { Button } from "~/app/_components/ui/button";
 import { Checkbox } from "~/app/_components/ui/checkbox";
 import { Input } from "~/app/_components/ui/input";
 import {
@@ -26,31 +28,54 @@ import { columns } from "./components/control-table-columns";
 import { NewControlSheet } from "./components/new-controls-sheet";
 import type { IControl } from "./types";
 
-type Props = {};
-
-const _frameworksList = [
-	{ name: "hipaa", label: "HIPAA" },
-	{ name: "gdpr", label: "GDPR" },
-	{ name: "iso27001", label: "ISO 27001" },
-	{ name: "soc2ii", label: "SOC 2 II" },
-	{ name: "pcidss", label: "PCI DSS" },
-	{ name: "nist", label: "NIST" },
-];
+// const frameworksList = [
+//   { name: "hipaa", label: "HIPAA" },
+//   { name: "gdpr", label: "GDPR" },
+//   { name: "iso27001", label: "ISO 27001" },
+//   { name: "soc2ii", label: "SOC 2 II" },
+//   { name: "pcidss", label: "PCI DSS" },
+//   { name: "nist", label: "NIST" },
+// ];
 
 export default function ControlsPage({}) {
+	// Scroll to top button logic
+	const [isVisible, setIsVisible] = useState(false);
+
+	// Show button when page is scrolled down
+	useEffect(() => {
+		const toggleVisibility = () => {
+			if (window.scrollY > 300) {
+				setIsVisible(true);
+			} else {
+				setIsVisible(false);
+			}
+		};
+
+		window.addEventListener("scroll", toggleVisibility);
+		return () => window.removeEventListener("scroll", toggleVisibility);
+	}, []);
+
+	// Scroll to top function
+	const scrollToTop = () => {
+		window.scrollTo({
+			top: 0,
+			behavior: "smooth",
+		});
+	};
+
 	// const searchParams = useSearchParams();
 	// const search = searchParams.get("search") || "";
 	// const sortColumn = searchParams.get("sortColumn") || "title";
 	// const sortOrder = searchParams.get("sortOrder") || "asc";
 
-	const _router = useRouter();
+	// const router = useRouter();
 	const [data, setData] = useState<IControl[]>([]);
 	// const [total, setTotal] = useState(0);
 	// const [currentPage, setCurrentPage] = useState(1);
 	// const [itemsPerPage, setItemsPerPage] = useState(10);
 
 	// Status filter goes here
-	const [statusFilter, setStatusFilter] = useState<any>(null);
+	const [statusFilter, setStatusFilter] = useState<string>("");
 
 	const [selectedFrameworks, setSelectedFrameworks] = useState<string[]>([]);
 
@@ -59,7 +84,7 @@ export default function ControlsPage({}) {
 		new Set(controls.flatMap((control) => control.mappedControls)),
 	);
 
-	const handleCheckboxChange = (event: any) => {
+	const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const { value, checked } = event.target;
 
 		if (value === "All frameworks") {
@@ -85,7 +110,6 @@ export default function ControlsPage({}) {
 			//   { cache: "no-store" }
 			// );
 			// const { evidences, total } = await res.json();
-			const _data = controls;
 			const filteredData = [
 				"partially implemented",
 				"fully implemented",
@@ -163,7 +187,7 @@ export default function ControlsPage({}) {
 			/>
 			<div className="flex gap-10">
 				<div className="flex w-[142px] flex-col gap-2 2xl:w-[200px]">
-					<h5 className="mb-3">Frameworks</h5>
+					<h5 className="mb-3 font-semibold">Frameworks</h5>
 
 					<label className="flex items-center text-xs 2xl:text-sm">
 						<input
@@ -178,7 +202,7 @@ export default function ControlsPage({}) {
 						)}
 						All frameworks
 					</label>
-					{frameworks.map((framework: any, _index) => (
+					{frameworks.map((framework: string) => (
 						<label
 							key={framework}
 							className="flex items-center text-xs 2xl:text-sm"
@@ -218,7 +242,7 @@ export default function ControlsPage({}) {
 								defaultValue="All"
 								className="w-[400px]"
 								onValueChange={(value) =>
-									setStatusFilter(value === "All" ? null : value)
+									setStatusFilter(value === "All" ? "" : value)
 								}
 							>
 								<TabsList>
@@ -298,6 +322,16 @@ export default function ControlsPage({}) {
 					</Table>
 				</div>
 			</div>
+			<Button
+				variant="outline"
+				onClick={scrollToTop}
+				className={`fixed right-4 bottom-4 rounded-full bg-muted p-2 shadow-lg transition hover:bg-gray-200 ${
+					isVisible ? "opacity-100" : "opacity-0"
+				}`}
+				aria-label="Scroll to top"
+			>
+				<ArrowUpToLine />
+			</Button>
 		</div>
 	);
 }

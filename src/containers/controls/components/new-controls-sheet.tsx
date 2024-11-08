@@ -55,20 +55,21 @@ const controlDetailsData = [
 ];
 
 export function NewControlSheet() {
-	const [files, setFiles] = useState<any>([]);
+	const [files, setFiles] = useState<File[]>([]);
 
-	const handleDrop = (e: any) => {
+	const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
 		e.preventDefault();
 		const droppedFiles = Array.from(e.dataTransfer.files);
 		setFiles(droppedFiles);
 	};
 
-	const handleFileSelect = (e: any) => {
-		const selectedFiles = Array.from(e.target.files);
-		setFiles((prevFiles: any) => [...prevFiles, ...selectedFiles]);
+	const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const selectedFiles = Array.from(e.target.files || []);
+		setFiles((prevFiles) => [...prevFiles, ...selectedFiles]);
 	};
 
-	const handleDragOver = (e: any) => e.preventDefault();
+	const handleDragOver = (e: React.DragEvent<HTMLDivElement>) =>
+		e.preventDefault();
 
 	return (
 		<Sheet>
@@ -112,7 +113,7 @@ export function NewControlSheet() {
 					>
 						{files.length ? (
 							<ul>
-								{files.map((file: any, index: any) => (
+								{files.map((file: File, index: number) => (
 									<li key={index} className="text-gray-700 text-sm">
 										{file.name}
 									</li>
@@ -121,7 +122,7 @@ export function NewControlSheet() {
 						) : (
 							<div className="flex items-center justify-between gap-20">
 								<div className="flex items-center justify-between gap-3">
-									<CloudUpload className="h-20 w-20 text-secondary" />
+									<CloudUpload className="h-20 w-20 text-[#E0E1E6]" />
 									<div className="flex flex-col gap-2 text-gray-500 text-xs">
 										<span>Select a file or drag and drop here</span>
 										<span>CSV o XLSX file no more than 10mb</span>
