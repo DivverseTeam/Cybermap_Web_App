@@ -10,7 +10,7 @@ type Props = {
 
 export default function SignInPage({ callbackUrl, error }: Props) {
 	return (
-		<div className="w-full flex flex-col">
+		<div className="flex w-full flex-col">
 			<Header />
 			<SignInForm
 				headerTitle="Sign In"

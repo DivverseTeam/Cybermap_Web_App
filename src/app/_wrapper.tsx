@@ -1,9 +1,9 @@
 "use client";
 
-import type { ReactNode } from "react";
 import { BladeProvider } from "@razorpay/blade/components";
 import { bladeTheme } from "@razorpay/blade/tokens";
 import { SessionProvider } from "next-auth/react";
+import type { ReactNode } from "react";
 
 interface WrapperProps {
 	children: ReactNode;

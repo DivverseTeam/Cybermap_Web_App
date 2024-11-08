@@ -1,15 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useParams } from "next/navigation"; // Use useParams from next/navigation
 import Link from "next/link";
+import { useParams } from "next/navigation"; // Use useParams from next/navigation
+import { useEffect, useState } from "react";
 
 import { Button } from "~/app/_components/ui/button";
-import ViewFrameworks from "~/containers/dashboard/frameworks/view-framework/ViewFrameworks";
 import PageTitle from "~/components/PageTitle";
+import ViewFrameworks from "~/containers/dashboard/frameworks/view-framework/ViewFrameworks";
 // import ViewFramework from "~/containers/dashboard/frameworks/view-frameworks/ViewFramework";
 
-const frameworkData: any = {
+const _frameworkData: any = {
 	1: {
 		name: "React",
 		description: "A JavaScript library for building user interfaces.",
@@ -26,7 +26,7 @@ const frameworkData: any = {
 
 export default function page() {
 	const { id } = useParams(); // Get the dynamic route parameter
-	const [framework, setFramework] = useState(null);
+	const [_framework, _setFramework] = useState(null);
 
 	// useEffect(() => {
 	// 	// Simulate fetching data from an API or database

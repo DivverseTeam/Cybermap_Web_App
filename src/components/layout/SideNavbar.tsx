@@ -30,8 +30,8 @@ import {
   Users2,
 } from "lucide-react";
 
-import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
+import { usePathname } from "next/navigation";
 import { Nav } from "~/app/_components/ui/nav";
 import { CyberMapBrand } from "~/components/svgs/CyberMapBrand";
 

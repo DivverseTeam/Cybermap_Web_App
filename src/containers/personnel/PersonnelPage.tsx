@@ -1,10 +1,5 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import PageTitle from "~/components/PageTitle";
-import { employees } from "./_lib/constants";
-import type { IEmployee } from "./types";
-import { Button } from "~/app/_components/ui/button";
 import {
   CurvyRightDirectionIcon,
   PlusSignIcon,
@@ -12,7 +7,12 @@ import {
   UserMultipleIcon,
 } from "hugeicons-react";
 import { ArrowUpToLine, ChevronRight, ListFilter, Star, X } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { Button } from "~/app/_components/ui/button";
+import PageTitle from "~/components/PageTitle";
+import { employees } from "./_lib/constants";
 import PersonnelContainer from "./components/personnel-container";
+import type { IEmployee } from "./types";
 
 type Props = {};
 const employeesData = employees;
@@ -133,11 +133,11 @@ export default function PersonnelPage({}: Props) {
         // action={<NewControlSheet />}
       />
       {data ? (
-        <div className="flex gap-8">
+        <div className="flex gap-10">
           {/* FILTERS */}
-          <div className="flex flex-col rounded-lg min-w-[260px]">
+          <div className="flex min-w-[260px] flex-col rounded-lg">
             {/* Filter heading */}
-            <div className="flex text-sm 2xl:text-md items-center px-3 justify-between text-secondary border border-b-0 rounded-2xl rounded-b-none bg-muted h-[40px]">
+            <div className="flex h-[40px] items-center justify-between rounded-2xl rounded-b-none border border-b-0 bg-muted px-3 text-secondary text-sm 2xl:text-md">
               <div className="flex gap-2 text-secondary">
                 <span className="font-semibold">Filters</span>
                 <ListFilter className="w-5" />
@@ -146,14 +146,14 @@ export default function PersonnelPage({}: Props) {
               <ChevronRight className="w-5" />
             </div>
             {/* Selected compliances */}
-            <div className="flex text-xs 2xl:text-sm items-center py-2 pl-3 flex-wrap border border-t-0 border-b-2">
-              <div className="rounded-3xl flex justify-between items-center px-2 gap-2 bg-primary/20 h-5 2xl:h-6 mb-1">
+            <div className="flex flex-wrap items-center border border-t-0 border-b-2 py-2 pl-3 text-xs 2xl:text-sm">
+              <div className="mb-1 flex h-5 items-center justify-between gap-2 rounded-3xl bg-primary/20 px-2 2xl:h-8">
                 All <Star className="w-4" />
               </div>
               {selectedCompliances.map((selectedCompliance: string) => (
                 <div
                   key={selectedCompliance}
-                  className="rounded-3xl font-semibold ml-1 2xl:text-xs flex flex-wrap justify-center items-center px-2 gap-1 bg-primary/20 h-5 2xl:h-6 mb-1"
+                  className="mb-1 ml-1 flex h-5 items-center justify-between gap-1 rounded-3xl bg-primary/20 px-2 font-semibold 2xl:h-8"
                 >
                   {selectedCompliance}
                   <X
@@ -165,7 +165,7 @@ export default function PersonnelPage({}: Props) {
               ))}
             </div>
             {/* List of all compliances */}
-            <div className="flex flex-col text-sm 2xl:text-md border rounded-2xl rounded-t-none border-t-0">
+            <div className="flex flex-col rounded-2xl rounded-t-none border border-t-0 text-sm 2xl:text-md">
               {[
                 "Compliant",
                 "Non-compliant",
@@ -173,7 +173,7 @@ export default function PersonnelPage({}: Props) {
               ].map((compliance) => (
                 <div
                   key={compliance}
-                  className="px-2.5 py-2.5 hover:bg-muted cursor-pointer last:rounded-b-2xl"
+                  className="cursor-pointer px-2.5 py-2.5 last:rounded-b-2xl hover:bg-muted"
                   onClick={() => addSelectedCompliance(compliance)}
                 >
                   {compliance}
@@ -186,9 +186,9 @@ export default function PersonnelPage({}: Props) {
           <PersonnelContainer data={data} />
         </div>
       ) : (
-        <div className="flex flex-col items-center mx-auto mt-5 w-[827px] ">
-          <UserMultipleIcon className="w-[224px] h-[224px] text-[#E0E1E6]" />
-          <div className="flex justify-center w-[412px] gap-4">
+        <div className="mx-auto mt-5 flex w-[827px] flex-col items-center ">
+          <UserMultipleIcon className="h-[224px] w-[224px] text-[#E0E1E6]" />
+          <div className="flex w-[412px] justify-center gap-4">
             <Button variant="outline" className="rounded-md text-secondary">
               <PlusSignIcon className="mr-2" />
               Import Employee
@@ -202,7 +202,7 @@ export default function PersonnelPage({}: Props) {
       <Button
         variant="outline"
         onClick={scrollToTop}
-        className={`fixed bottom-4 right-4 bg-muted hover:bg-gray-200 p-2 rounded-full  shadow-lg  transition ${
+        className={`fixed right-4 bottom-4 rounded-full bg-muted p-2 shadow-lg transition hover:bg-gray-200 ${
           isVisible ? "opacity-100" : "opacity-0"
         }`}
         aria-label="Scroll to top"

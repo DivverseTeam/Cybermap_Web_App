@@ -1,13 +1,13 @@
 "use client";
 
 import type { ColumnDef } from "@tanstack/react-table";
-import { z } from "zod";
-import TagsContainer from "~/components/TagContainer";
-import { format, formatDistanceToNow } from "date-fns";
-import { Badge, type badgeVariants } from "~/app/_components/ui/badge";
 import type { VariantProps } from "class-variance-authority";
-import { Button } from "~/app/_components/ui/button";
+import { format, formatDistanceToNow } from "date-fns";
 import Link from "next/link";
+import { z } from "zod";
+import { Badge, type badgeVariants } from "~/app/_components/ui/badge";
+import { Button } from "~/app/_components/ui/button";
+import TagsContainer from "~/components/TagContainer";
 import { slugify } from "~/lib/utils";
 
 const PolicyStatus = z.enum(["PENDING", "APPROVED", "DRAFT"]);

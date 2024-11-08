@@ -1,20 +1,14 @@
 "use client";
 
-import Link from "next/link";
 import { LucideIcon } from "lucide-react";
+import Link from "next/link";
 
 import { buttonVariants } from "~/app/_components/ui/button";
 ("~/app/_components/ui/button");
 
-import { cn } from "~/lib/utils";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "~/app/_components/ui/tooltip";
 import { usePathname } from "next/navigation";
-import { MouseEvent, type ElementType, type ReactNode } from "react";
-import path from "path";
+import { type ElementType, MouseEvent, type ReactNode } from "react";
+import { cn } from "~/lib/utils";
 
 interface LinkProp {
   // title: string;
