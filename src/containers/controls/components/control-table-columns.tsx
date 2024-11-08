@@ -1,4 +1,4 @@
-import { ColumnDef, createColumnHelper } from "@tanstack/react-table";
+import { type ColumnDef, createColumnHelper } from "@tanstack/react-table";
 import { useState, useEffect, useTransition } from "react";
 
 import {
@@ -11,15 +11,16 @@ import {
 } from "~/app/_components/ui/dropdown-menu";
 import { formatDate } from "~/lib/utils";
 import { Button } from "~/app/_components/ui/button";
+import type { IControl } from "../types";
 
-interface RowData {
-  name: string;
-  mappedControls: string[];
-  status: string;
-}
+// interface RowData {
+//   name: string;
+//   mappedControls: string[];
+//   status: string;
+// }
 // const columnHelper = createColumnHelper<RowData>();
 
-export const columns: ColumnDef<RowData>[] = [
+export const columns: ColumnDef<IControl>[] = [
   {
     accessorKey: "name",
     header: () => <span>CONTROL</span>, // Wrap in span

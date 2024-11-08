@@ -3,6 +3,7 @@
 import CategoryCard from "./components/CategoryCard";
 import CategoryList from "./components/CategoryList";
 import ControlCompletionCard from "./components/ControlCompletionCard";
+import { ICategory } from "./types";
 
 const frameworkCategories = [
   {
@@ -259,7 +260,7 @@ export default function ViewFrameworks() {
 
       {/* framework categories details  */}
       <div className="flex flex-col w-[736px] min-w-[69%]">
-        {frameworkCategories.map((category: any, key: any) => (
+        {frameworkCategories.map((category: ICategory) => (
           <CategoryCard frameworkCategory={category} key={category.name} />
         ))}
       </div>

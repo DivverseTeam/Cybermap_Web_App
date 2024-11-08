@@ -1,6 +1,6 @@
 "use client";
 
-import React, { ReactNode } from "react";
+import React, { type ElementType, type ReactNode } from "react";
 // import { Nav } from "~/app/_components/ui/nav";
 
 import {
@@ -37,19 +37,22 @@ import { CyberMapBrand } from "~/components/svgs/CyberMapBrand";
 
 type Props = {};
 
+type MenuItem = {
+  title: string;
+  label?: string;
+  href?: string;
+  icon?: ElementType;
+  variant: "lightBlue" | "ghost" | "default"; // Adjust to the allowed values
+  onClick?: () => void;
+};
+
 interface SidebarMenuItem {
   groupName: string;
-  items: {
-    title: string;
-    href?: string;
-    icon?: ReactNode;
-    variant: string;
-    onClick?: () => void;
-  };
+  items: MenuItem[];
 }
 
 export default function SideNavbar({}: Props) {
-  const onLogout = () => {
+  const handleLogout = () => {
     signOut({
       callbackUrl: "/signin",
     });
@@ -57,7 +60,7 @@ export default function SideNavbar({}: Props) {
 
   const pathname = usePathname();
 
-  const menuList = [
+  const menuList: SidebarMenuItem[] = [
     {
       groupName: "Home",
       items: [
@@ -153,7 +156,7 @@ export default function SideNavbar({}: Props) {
           title: "Logout",
           icon: Logout02Icon,
           variant: "ghost",
-          onClick: { onLogout },
+          onClick: handleLogout,
           href: "/signin",
         },
       ],
@@ -161,12 +164,15 @@ export default function SideNavbar({}: Props) {
   ];
 
   return (
-    <aside className="fixed bg-[#F9F9FB] z-20 top-0 left-0 border min-w-[280px] text-[14px] leading-4  flex flex-col justify-start flex-grow min-h-screen">
-      <div className="border-b  py-6 px-6 ">
+    <aside
+      className="fixed bg-[#F9F9FB] z-20 top-0 left-0 border min-w-[280px] text-[14px] leading-4  
+    flex flex-col justify-start flex-grow min-h-screen"
+    >
+      <div className="border-b py-4 px-4  [@media(min-width:1300px)]:py-6 [@media(min-width:1300px)]:px-6 ">
         <CyberMapBrand />
       </div>
-      <div className="text-[14px] leading-4  flex flex-col justify-start flex-grow pt-20 gap-[12px] max-h-[700px] px-6 ">
-        {menuList.map((menu: any, key: string) => (
+      <div className="text-[14px] leading-4  flex flex-col justify-start flex-grow pt-12 [@media(min-width:1300px)]:pt-20 gap-[12px] max-h-[700px] px-4 [@media(min-width:1300px)]:px-6 ">
+        {menuList.map((menu) => (
           <Nav
             isCollapsed={false}
             key={menu.groupName}

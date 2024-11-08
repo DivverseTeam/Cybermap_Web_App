@@ -25,7 +25,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "~/app/_components/ui/drawer";
-import { IEvidence } from "../types";
+import type { IEvidence } from "../types";
 import { useMediaQuery } from "~/hooks/use-media-query";
 // import { Evidence } from "../_lib/queries";
 
@@ -46,7 +46,7 @@ export function DeleteEvidenceDialog({
   onOpenChange,
   ...props
 }: DeleteEvidenceDialogProps) {
-  const [isDeletePending, startDeleteTransition] = React.useTransition();
+  const [isDeletePending, _startDeleteTransition] = React.useTransition();
   const isDesktop = useMediaQuery("(min-width: 640px)");
 
   function onDelete() {

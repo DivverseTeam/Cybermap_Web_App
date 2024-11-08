@@ -54,9 +54,11 @@ function Calendar({
         ...classNames,
       }}
       components={{
+        // biome-ignore lint/correctness/noUnusedVariables: <explanation>
         PreviousMonthButton: ({ ...props }) => (
           <ChevronLeft className="h-4 w-4" />
         ),
+        // biome-ignore lint/correctness/noUnusedVariables: <explanation>
         NextMonthButton: ({ ...props }) => <ChevronRight className="h-4 w-4" />,
       }}
       {...props}

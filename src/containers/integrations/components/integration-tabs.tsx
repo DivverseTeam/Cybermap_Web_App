@@ -16,7 +16,11 @@ import {
   TabsTrigger,
 } from "~/app/_components/ui/tabs";
 
-export function IntegrationTabs({ setActiveList }: any) {
+type Props = {
+  setActiveList: React.Dispatch<React.SetStateAction<string>>;
+};
+
+export function IntegrationTabs({ setActiveList }: Props) {
   return (
     <Tabs defaultValue="connected" className="w-[266px] h-[886px] 2xl:w-[22%]">
       <TabsList className="grid w-full grid-cols-2 border z-10 rounded-2xl rounded-b-none bg-muted">

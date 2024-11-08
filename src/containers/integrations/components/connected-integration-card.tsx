@@ -20,7 +20,16 @@ import {
   SelectValue,
 } from "~/app/_components/ui/select";
 
-export function ConnectedIntegrationCard({ integration }: any) {
+type Integration = {
+  id: string;
+  name: string;
+  icon: string;
+};
+type Props = {
+  integration: Integration;
+};
+
+export function ConnectedIntegrationCard({ integration }: Props) {
   return (
     <Card className="p-1">
       {/* <CardHeader>

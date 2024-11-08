@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import type React from "react";
+import { useEffect, useState } from "react";
 import PageTitle from "~/components/PageTitle";
 import { NewControlSheet } from "./components/new-controls-sheet";
 import { useRouter } from "next/navigation";
-import { IControl } from "./types";
+import type { IControl } from "./types";
 import { controls } from "./_lib/constants";
 import {
   flexRender,
@@ -27,16 +28,14 @@ import { Checkbox } from "~/app/_components/ui/checkbox";
 import { ArrowUpToLine, Check } from "lucide-react";
 import { Button } from "~/app/_components/ui/button";
 
-type Props = {};
-
-const frameworksList = [
-  { name: "hipaa", label: "HIPAA" },
-  { name: "gdpr", label: "GDPR" },
-  { name: "iso27001", label: "ISO 27001" },
-  { name: "soc2ii", label: "SOC 2 II" },
-  { name: "pcidss", label: "PCI DSS" },
-  { name: "nist", label: "NIST" },
-];
+// const frameworksList = [
+//   { name: "hipaa", label: "HIPAA" },
+//   { name: "gdpr", label: "GDPR" },
+//   { name: "iso27001", label: "ISO 27001" },
+//   { name: "soc2ii", label: "SOC 2 II" },
+//   { name: "pcidss", label: "PCI DSS" },
+//   { name: "nist", label: "NIST" },
+// ];
 
 export default function ControlsPage({}) {
   // Scroll to top button logic
@@ -76,7 +75,7 @@ export default function ControlsPage({}) {
   // const [itemsPerPage, setItemsPerPage] = useState(10);
 
   // Status filter goes here
-  const [statusFilter, setStatusFilter] = useState<any>(null);
+  const [statusFilter, setStatusFilter] = useState<string>("");
 
   const [selectedFrameworks, setSelectedFrameworks] = useState<string[]>([]);
 
@@ -85,7 +84,7 @@ export default function ControlsPage({}) {
     new Set(controls.flatMap((control) => control.mappedControls))
   );
 
-  const handleCheckboxChange = (event: any) => {
+  const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value, checked } = event.target;
 
     if (value === "All frameworks") {
@@ -243,7 +242,7 @@ export default function ControlsPage({}) {
                 defaultValue="All"
                 className="w-[400px]"
                 onValueChange={(value) =>
-                  setStatusFilter(value === "All" ? null : value)
+                  setStatusFilter(value === "All" ? "" : value)
                 }
               >
                 <TabsList>

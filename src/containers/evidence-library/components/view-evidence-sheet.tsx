@@ -50,7 +50,11 @@ interface ViewEvidenceSheetProps
   evidence: Row<IEvidence>["original"];
 }
 
-function StatusLabel({ status }: any) {
+type StatusLabelProps = {
+  status: string;
+};
+
+function StatusLabel({ status }: StatusLabelProps) {
   const getStatusStyle = (status: string) => {
     switch (status.toLowerCase()) {
       case "updated":
