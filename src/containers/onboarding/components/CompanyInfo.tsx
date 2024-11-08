@@ -25,29 +25,29 @@ function CompanyInfo({
 	const [preview, setPreview] = useState<string | null>(null);
 
 	return (
-		<div className="pt-[4.5rem] pb-24 pr-24 w-full">
-			<div className="w-full flex flex-col gap-16 px-36">
+		<div className="w-full pt-[4.5rem] pr-24 pb-24">
+			<div className="flex w-full flex-col gap-16 px-36">
 				<div className="flex flex-col gap-1">
-					<span className="font-semibold text-[24px] text-[#192839] leading-8">
+					<span className="font-semibold text-[#192839] text-[24px] leading-8">
 						Tell us about your organisation
 					</span>
-					<span className="font-normal text-base text-[#40566D] leading-8">
+					<span className="font-normal text-[#40566D] text-base leading-8">
 						This would help us tailor your experience on our platform
 					</span>
 				</div>
 				<div className="flex flex-col gap-8">
 					<div className="flex gap-3">
-						<div className="w-16 h-16 rounded-[50%] border-[1.64px] border-dashed border-[#B1C1D2] flex items-center justify-center">
+						<div className="flex h-16 w-16 items-center justify-center rounded-[50%] border-[#B1C1D2] border-[1.64px] border-dashed">
 							{!preview ? (
 								<UserAvatar />
 							) : (
-								<div className="w-16 h-16 rounded-[50%] block relative">
+								<div className="relative block h-16 w-16 rounded-[50%]">
 									<Image
 										src={preview}
 										alt={"logo"}
 										fill={true}
 										priority={true}
-										className="rounded-[50%] w-16 h-16"
+										className="h-16 w-16 rounded-[50%]"
 										style={{
 											maxWidth: "100%",
 											objectFit: "cover",
@@ -78,14 +78,14 @@ function CompanyInfo({
 								{({ getRootProps, getInputProps }) => (
 									<div
 										{...getRootProps()}
-										className="relative flex justify-center items-center max-w-fit h-[1.75rem] px-2 cursor-pointer outline-none border border-solid border-[#CBD5E2] text-[#40566D] rounded-sm font-semibold text-[10px]"
+										className="relative flex h-[1.75rem] max-w-fit cursor-pointer items-center justify-center rounded-sm border border-[#CBD5E2] border-solid px-2 font-semibold text-[#40566D] text-[10px] outline-none"
 									>
 										Upload a logo
 										<input {...getInputProps()} />
 									</div>
 								)}
 							</Dropzone>
-							<span className="font-normal text-[11px] text-[#768EA7] leading-4 italic">
+							<span className="font-normal text-[#768EA7] text-[11px] italic leading-4">
 								You can upload JPG or PNG. Max size 5MB.
 							</span>
 						</div>

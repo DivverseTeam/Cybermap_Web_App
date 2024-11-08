@@ -1,12 +1,12 @@
-import CredentialsProvider from "next-auth/providers/credentials";
 import {
-	getServerSession,
 	type DefaultSession,
 	type NextAuthOptions,
+	getServerSession,
 } from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
 
-import { User } from "./models/User";
 import { signIn } from "./api/routers/actions";
+import { User } from "./models/User";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`

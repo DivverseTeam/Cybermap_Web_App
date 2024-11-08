@@ -1,6 +1,6 @@
-import { configDefaults, defineConfig } from "vitest/config";
-import { loadEnvFile } from "process";
 import { join } from "path";
+import { loadEnvFile } from "process";
+import { configDefaults, defineConfig } from "vitest/config";
 
 export default defineConfig(({ mode: _ }) => {
 	loadEnvFile();

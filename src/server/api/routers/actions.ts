@@ -1,4 +1,5 @@
-import bcrypt from "bcrypt";
+// import argon2 from "argon2";
+import bcryptjs from "bcryptjs";
 import User, { User as UserSchema } from "~/server/models/User";
 
 export const signIn = async ({
@@ -8,7 +9,7 @@ export const signIn = async ({
 	let user = await User.findOne({ email });
 
 	const isPasswordCorrect = user?.get("password")
-		? bcrypt.compareSync(password, user.get("password"))
+		? bcryptjs.compareSync(user.get("password"), password)
 		: false;
 
 	if (!user || !isPasswordCorrect) {

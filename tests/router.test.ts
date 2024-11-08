@@ -1,7 +1,7 @@
 import type { inferProcedureInput } from "@trpc/server";
-import { createInnerTRPCContext } from "~/server/api/trpc";
-import { appRouter, type AppRouter } from "~/server/api/routers/_app";
 import { expect, test } from "vitest";
+import { type AppRouter, appRouter } from "~/server/api/routers/_app";
+import { createInnerTRPCContext } from "~/server/api/trpc";
 
 test("example router", async () => {
 	const ctx = await createInnerTRPCContext({ session: null });
