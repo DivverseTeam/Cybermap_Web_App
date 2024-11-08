@@ -107,9 +107,9 @@ export default function RootLayout({
             /> */}
 						<div className="flex">
 							<SideNavbar />
-							<div className="ml-[280px] h-[calc(100vh-72px)] w-full ">
+							<div className="ml-[280px] h-full w-full ">
 								<Header />
-								<div className="container mx-auto flex flex-col gap-6 px-6 py-10 2xl:px-8 2xl:py-16">
+								<div className="container mx-auto mt-14 flex flex-col gap-6 px-6 py-10 2xl:px-8 2xl:py-16 [@media(min-width:1300px)]:mt-[72px]">
 									<BreadCrumbs />
 									{children}
 								</div>

@@ -1,4 +1,4 @@
-import { ColumnDef, createColumnHelper } from "@tanstack/react-table";
+import { type ColumnDef, createColumnHelper } from "@tanstack/react-table";
 import { useEffect, useState, useTransition } from "react";
 
 import { Button } from "~/app/_components/ui/button";
@@ -11,19 +11,23 @@ import {
 	DropdownMenuTrigger,
 } from "~/app/_components/ui/dropdown-menu";
 import { formatDate } from "~/lib/utils";
+import type { IControl } from "../types";
 
-type Props = {};
+// interface RowData {
+//   name: string;
+//   mappedControls: string[];
+//   status: string;
+// }
+// const columnHelper = createColumnHelper<RowData>();
 
-const columnHelper = createColumnHelper();
-
-// const row: Row<IEvidence> =
-
-export const columns: any = [
-	columnHelper.accessor("name", {
+export const columns: ColumnDef<IControl>[] = [
+	{
+		accessorKey: "name",
 		header: () => <span>CONTROL</span>, // Wrap in span
-		cell: ({ cell }) => <span className="">{cell.getValue()}</span>,
-	}),
-	columnHelper.accessor("mappedControls", {
+		cell: ({ cell }) => <span className="">{cell.getValue() as string}</span>,
+	},
+	{
+		accessorKey: "mappedControls",
 		header: () => <span>MAPPED</span>, // Wrap in span
 		cell: ({ row }) => {
 			const mappedControls = row.getValue("mappedControls") as string[];
@@ -44,8 +48,9 @@ export const columns: any = [
 				</div>
 			);
 		},
-	}),
-	columnHelper.accessor("status", {
+	},
+	{
+		accessorKey: "status",
 		header: () => (
 			<span className="flex w-[60px] items-center justify-center text-center">
 				STATUS
@@ -61,8 +66,8 @@ export const columns: any = [
 							: "bg-green-700/20 text-green-700 "
 				}`}
 			>
-				{cell.getValue()}
+				{cell.getValue() as string}
 			</span>
 		),
-	}),
+	},
 ];
