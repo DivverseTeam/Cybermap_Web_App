@@ -58,7 +58,7 @@ export default function PersonnelContainer({ data }: Props) {
       <div className="mx-auto flex w-full gap-3 rounded-2xl rounded-b-none border bg-muted p-4 2xl:p-5">
         <Input
           type="text"
-          placeholder="Search for available integrations"
+          placeholder="Search for employee"
           // onChange={handleSearch}
           // defaultValue={search}
           className="w-[260px] rounded-md bg-[#F9F9FB]"
