@@ -61,14 +61,17 @@ export default function PersonnelContainer({ data }: Props) {
           placeholder="Search for available integrations"
           // onChange={handleSearch}
           // defaultValue={search}
-          className="w-72 rounded-md bg-[#F9F9FB]"
+          className="min-w-[260px] h-[44px] rounded-md bg-[#F9F9FB]"
           suffix={
             <span className="cursor-pointer">
               <Search01Icon size="12" />
             </span>
           }
         />
-        <Button variant="outline" className="rounded-md text-secondary">
+        <Button
+          variant="outline"
+          className="h-[44px] rounded-md text-secondary"
+        >
           <PlusSignIcon className="mr-2" />
           Import Employee
         </Button>

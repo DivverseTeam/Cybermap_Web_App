@@ -133,7 +133,7 @@ export default function PersonnelPage({}: Props) {
         // action={<NewControlSheet />}
       />
       {data ? (
-        <div className="flex gap-10">
+        <div className="flex gap-6">
           {/* FILTERS */}
           <div className="flex min-w-[260px] flex-col rounded-lg">
             {/* Filter heading */}
