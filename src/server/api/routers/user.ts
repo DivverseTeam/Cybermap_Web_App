@@ -2,9 +2,9 @@
 import bcryptjs from "bcryptjs";
 import { z } from "zod";
 import {
-	OrganizationIndustry,
-	OrganizationKind,
-	OrganizationSize,
+	OrganisationIndustry,
+	OrganisationKind,
+	OrganisationSize,
 	UserRole,
 } from "~/lib/types";
 
@@ -14,7 +14,7 @@ import {
 	protectedProcedure,
 	publicProcedure,
 } from "~/server/api/trpc";
-import Organization from "~/server/models/Organization";
+import Organisation from "~/server/models/Organisation";
 import User, { User as UserSchema } from "~/server/models/User";
 import { signIn } from "./actions";
 
@@ -69,9 +69,9 @@ export const userRouter = createTRPCRouter({
 			z.object({
 				logoUrl: z.any(),
 				name: z.string(),
-				size: OrganizationSize,
-				kind: OrganizationKind,
-				industry: OrganizationIndustry,
+				size: OrganisationSize,
+				kind: OrganisationKind,
+				industry: OrganisationIndustry,
 				frameworks: z.array(z.string()).optional(),
 				integrations: z.array(z.string()).optional(),
 			}),
@@ -83,14 +83,14 @@ export const userRouter = createTRPCRouter({
 				},
 			} = ctx;
 
-			const organizationId = new mongoose.Types.ObjectId().toString();
+			const organisationId = new mongoose.Types.ObjectId().toString();
 
 			const [_, updatedUser] = await Promise.all([
-				Organization.create({
-					_id: organizationId,
+				Organisation.create({
+					_id: organisationId,
 					...input,
 				}),
-				User.findByIdAndUpdate(userId, { organizationId }, { new: true }),
+				User.findByIdAndUpdate(userId, { organisationId }, { new: true }),
 			]);
 
 			return updatedUser?.toObject();

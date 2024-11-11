@@ -5,8 +5,11 @@ import type {
 	AuthenticationMethod,
 	DirectoryAudit,
 	SignIn,
+	RoleAssignment,
+	AppRoleAssignment,
 } from "@microsoft/microsoft-graph-types";
 import { Client, type ClientOptions } from "@microsoft/microsoft-graph-client";
+import { formatDate, format } from "date-fns";
 
 const clientOptions: ClientOptions = {};
 const client = Client.initWithMiddleware(clientOptions);
@@ -37,17 +40,37 @@ export const listUserAuthenticationMethods = async (
 	return methods;
 };
 
-export const listDirectoryAudits = async (): Promise<DirectoryAudit[]> => {
+export const listDirectoryAudits = async (
+	since: Date,
+): Promise<DirectoryAudit[]> => {
+	const startDateString = since.toISOString();
 	const logs: DirectoryAudit[] = await client
 		.api("/auditLogs/directoryAudits")
+		.filter(`createdDateTime ge ${startDateString}`)
 		.get();
 	return logs;
 };
 
-export const listSignIns = async (): Promise<SignIn[]> => {
-	const signIns: SignIn[] = await client.api("/auditLogs/signIns").get();
+export const listSignIns = async (since: Date): Promise<SignIn[]> => {
+	const startDateString = since.toISOString();
+	const signIns: SignIn[] = await client
+		.api("/auditLogs/signIns")
+		.filter(`createdDateTime ge ${startDateString}`)
+		.get();
 	return signIns;
 };
 
-// Role management
-// export const
+export const listRoleAssignments = async (): Promise<RoleAssignment[]> => {
+	const assignments: RoleAssignment[] = await client
+		.api(`/roleManagement/directory/roleAssignments`)
+		.expand("principal")
+		.get();
+	return assignments;
+};
+
+export const listUserAppRoleAssignments = async (userId: string) => {
+	const assignments: AppRoleAssignment[] = await client
+		.api(`/users/${userId}/appRoleAssignments`)
+		.get();
+	return assignments;
+};

@@ -4,9 +4,9 @@ import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import {
-	OrganizationIndustry,
-	OrganizationKind,
-	OrganizationSize,
+	OrganisationIndustry,
+	OrganisationKind,
+	OrganisationSize,
 } from "~/lib/types";
 import { api } from "~/trpc/react";
 
@@ -14,14 +14,14 @@ const schema = z.object({
 	name: z
 		.string()
 		.min(3, {
-			message: "Organization name must be at least 3 characters long",
+			message: "Organisation name must be at least 3 characters long",
 		})
-		.max(50, { message: "Organization name cannot exceed 50 characters" }),
-	kind: OrganizationKind,
-	industry: OrganizationIndustry,
+		.max(50, { message: "Organisation name cannot exceed 50 characters" }),
+	kind: OrganisationKind,
+	industry: OrganisationIndustry,
 	frameworks: z.array(z.string()).optional(),
 	integrations: z.array(z.string()).optional(),
-	size: OrganizationSize,
+	size: OrganisationSize,
 	logoUrl: z.string().optional(),
 });
 

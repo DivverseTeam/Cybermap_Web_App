@@ -9,7 +9,7 @@ export const signIn = async ({
 	let user = await User.findOne({ email });
 
 	const isPasswordCorrect = user?.get("password")
-		? bcryptjs.compareSync(user.get("password"), password)
+		? bcryptjs.compareSync(password, user.get("password"))
 		: false;
 
 	if (!user || !isPasswordCorrect) {

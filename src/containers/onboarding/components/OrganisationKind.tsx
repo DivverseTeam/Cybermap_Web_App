@@ -1,25 +1,25 @@
 import type { FieldError } from "react-hook-form";
 import { twMerge } from "tailwind-merge";
-import { ORGANIZATION_KINDS } from "~/lib/types";
+import { ORGANISATION_KINDS } from "~/lib/types";
 
-type OrganizationSelectorProps = {
+type OrganisationSelectorProps = {
 	value: string;
 	onChange: (value: string) => void;
 	errors?: FieldError;
 };
 
-export function OrganizationKind({
+export function OrganisationKind({
 	value,
 	onChange,
 	errors,
-}: OrganizationSelectorProps) {
+}: OrganisationSelectorProps) {
 	return (
 		<div className="flex flex-col gap-3">
 			<span className="font-semibold text-[#40566D] text-base">
 				What kind of organisation are you?
 			</span>
 			<div className="flex w-[500px] flex-wrap gap-3">
-				{ORGANIZATION_KINDS.map((item, index) => (
+				{ORGANISATION_KINDS.map((item, index) => (
 					<div
 						key={index}
 						onClick={() => onChange(item)}

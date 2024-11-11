@@ -33,14 +33,14 @@ declare module "next-auth" {
 export const authOptions: NextAuthOptions = {
 	callbacks: {
 		session: ({ session, token }) => {
-			const { id, role, organizationId } = token;
+			const { id, role, organisationId } = token;
 			return {
 				...session,
 				user: {
 					...session.user,
 					id,
 					role,
-					organizationId,
+					organisationId,
 				},
 			};
 		},
@@ -52,10 +52,10 @@ export const authOptions: NextAuthOptions = {
 				const parsedUser = User.safeParse(user);
 
 				if (parsedUser.success) {
-					const { id, role, organizationId } = parsedUser.data;
+					const { id, role, organisationId } = parsedUser.data;
 					token.id = id;
 					token.role = role;
-					token.organizationId = organizationId;
+					token.organisationId = organisationId;
 				}
 			}
 			return token;

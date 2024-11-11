@@ -9,7 +9,7 @@ export const User = z.object({
 	name: z.string(),
 	role: UserRole,
 	email: z.string(),
-	organizationId: z.string().optional(),
+	organisationId: z.string().optional(),
 });
 
 export type User = z.infer<typeof User>;
@@ -31,7 +31,7 @@ const UserSchema = new BaseSchema<UserWithDocument>({
 		type: String,
 		required: [true, "Please provide a password for this User"],
 	},
-	organizationId: {
+	organisationId: {
 		type: String,
 		required: false,
 	},

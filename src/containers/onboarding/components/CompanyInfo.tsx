@@ -5,9 +5,9 @@ import { Controller } from "react-hook-form";
 import { AppInput } from "~/components/BladeTextInput";
 import { DropSelect } from "~/components/DropSelect";
 import { UserAvatar } from "~/components/svgs/userAvatar";
-import { ORGANIZATION_INDUSTRIES, ORGANIZATION_SIZES } from "~/lib/types";
+import { ORGANISATION_INDUSTRIES, ORGANISATION_SIZES } from "~/lib/types";
 import { BottomNav } from "./BottomNav";
-import { OrganizationKind } from "./OrganizationKind";
+import { OrganisationKind } from "./OrganisationKind";
 
 function CompanyInfo({
 	changeStep,
@@ -101,7 +101,7 @@ function CompanyInfo({
 						name="kind"
 						control={control}
 						render={({ field }) => (
-							<OrganizationKind
+							<OrganisationKind
 								value={field.value}
 								onChange={field.onChange}
 								errors={errors.kind}
@@ -114,14 +114,14 @@ function CompanyInfo({
 						name="industry"
 						control={control}
 						errors={errors.industry}
-						list={ORGANIZATION_INDUSTRIES.map((item) => item)}
+						list={ORGANISATION_INDUSTRIES.map((item) => item)}
 					/>
 					<DropSelect
 						label="How large is your organisation?"
-						placeholder={ORGANIZATION_SIZES[0] || ""}
+						placeholder={ORGANISATION_SIZES[0] || ""}
 						name="size"
 						control={control}
-						list={ORGANIZATION_SIZES.map((item) => item)}
+						list={ORGANISATION_SIZES.map((item) => item)}
 						errors={errors.size}
 					/>
 				</div>

@@ -6,7 +6,7 @@ import { BaseSchema } from "./base";
 export const Evidence = z.object({
 	id: z.string(),
 	name: z.string(),
-	organizationId: z.string().optional(),
+	organisationId: z.string().optional(),
 	createdAt: z.coerce.date(),
 });
 
@@ -18,7 +18,7 @@ const EvidenceSchema = new BaseSchema<EvidenceWithDocument>({
 	name: {
 		type: String,
 	},
-	organizationId: {
+	organisationId: {
 		type: String,
 		required: false,
 	},

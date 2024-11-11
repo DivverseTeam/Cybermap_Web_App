@@ -38,8 +38,8 @@ export const appRouter = createTRPCRouter({
 
 				let key: string = id;
 
-				if (type === "ORGANIZATION_LOGO") {
-					key = `media/organization_logos/${id}`;
+				if (type === "ORGANISATION_LOGO") {
+					key = `media/organisation_logos/${id}`;
 				}
 
 				const command = new PutObjectCommand({
