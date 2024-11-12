@@ -2,17 +2,17 @@
 /* tslint:disable */
 /* eslint-disable */
 /* deno-fmt-ignore-file */
-import "sst";
-export {};
+import "sst"
+export {}
 declare module "sst" {
-	export interface Resource {
-		cybermap: {
-			type: "sst.aws.Nextjs";
-			url: string;
-		};
-		images: {
-			name: string;
-			type: "sst.aws.Bucket";
-		};
-	}
+  export interface Resource {
+    "cybermap": {
+      "type": "sst.aws.Nextjs"
+      "url": string
+    }
+    "images": {
+      "name": string
+      "type": "sst.aws.Bucket"
+    }
+  }
 }

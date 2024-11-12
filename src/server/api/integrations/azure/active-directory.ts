@@ -74,3 +74,21 @@ export const listUserAppRoleAssignments = async (userId: string) => {
 		.get();
 	return assignments;
 };
+
+export const getPasswordChangeLogs = async () => {
+	const logs: DirectoryAudit[] = await client
+		.api("/auditLogs/directoryAudits")
+		.filter("activityDisplayName eq 'Change user password'")
+		.get();
+
+	logs.forEach((log) => {
+		console.log({
+			id: log.id,
+			activityDateTime: log.activityDateTime,
+			activityDisplayName: log.activityDisplayName,
+			initiatedBy: log.initiatedBy?.user?.displayName || "Unknown",
+		});
+	});
+
+	return logs;
+};
