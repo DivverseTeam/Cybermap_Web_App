@@ -1,10 +1,6 @@
 import React from "react";
-import PageTitle from "~/containers/dashboard/components/PageTitle";
+import PersonnelPage from "~/containers/personnel/PersonnelPage";
 
-export default function PersonnelPage() {
-  return (
-    <div className="h-full">
-      <PageTitle title="Personnel" description="" />
-    </div>
-  );
+export default function page() {
+  return <PersonnelPage />;
 }

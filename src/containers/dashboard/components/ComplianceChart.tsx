@@ -27,11 +27,9 @@ const data = [
 
 export default function ComplianceChart() {
   return (
-    <div className="w-full h-[259.59px] px-5">
+    <div className="h-[260px] w-full px-5">
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart
-          width={500}
-          height={400}
           data={data}
           margin={{
             top: 10,

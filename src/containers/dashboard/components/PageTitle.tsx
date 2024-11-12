@@ -18,13 +18,13 @@ export default function PageTitle({
     <div className="flex flex-col gap-4 py-6">
       <div
         className={cn(
-          "text-[16px] font-semibold w-full flex gap-2 items-baseline bg-[#F9F9FB] ",
-          className
+          "flex w-full items-baseline gap-2 bg-[#F9F9FB] font-semibold text-[16px] ",
+          className,
         )}
       >
         <span
           className={`${
-            subtitle ? "text-[#80838D] font-normal " : "text-black"
+            subtitle ? "font-normal text-[#80838D] " : "text-black"
           }`}
         >
           {title}
@@ -32,7 +32,7 @@ export default function PageTitle({
         {subtitle && <span className="mx-0">/</span>}
         <span className="text-black">{subtitle}</span>
       </div>
-      <div className="text-black flex flex-col gap-2">
+      <div className="flex flex-col gap-2 text-black">
         <span className="font-semibold text-xl">{subtitle}</span>
       </div>
     </div>

@@ -1,20 +1,20 @@
 "use client";
 
-import React from "react";
+import React, { type ElementType, type ReactNode } from "react";
 // import { Nav } from "~/app/_components/ui/nav";
 
 import {
+  AccountSetting02Icon,
   Analytics01Icon,
+  Audit02Icon,
   CurvyRightDirectionIcon,
-  FrameworksIcon,
   FileValidationIcon,
+  FrameworksIcon,
   LibraryIcon,
+  Logout02Icon,
+  OnlineLearning01Icon,
   PolicyIcon,
   UserMultipleIcon,
-  OnlineLearning01Icon,
-  Audit02Icon,
-  AccountSetting02Icon,
-  Logout02Icon,
 } from "hugeicons-react";
 import {
   AlertCircle,
@@ -30,15 +30,29 @@ import {
   Users2,
 } from "lucide-react";
 
-import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
+import { usePathname } from "next/navigation";
 import { Nav } from "~/app/_components/ui/nav";
 import { CyberMapBrand } from "~/components/svgs/CyberMapBrand";
 
 type Props = {};
 
+type MenuItem = {
+  title: string;
+  label?: string;
+  href?: string;
+  icon?: ElementType;
+  variant: "lightBlue" | "ghost" | "default"; // Adjust to the allowed values
+  onClick?: () => void;
+};
+
+interface SidebarMenuItem {
+  groupName: string;
+  items: MenuItem[];
+}
+
 export default function SideNavbar({}: Props) {
-  const onLogout = () => {
+  const handleLogout = () => {
     signOut({
       callbackUrl: "/signin",
     });
@@ -46,7 +60,7 @@ export default function SideNavbar({}: Props) {
 
   const pathname = usePathname();
 
-  const menuList = [
+  const menuList: SidebarMenuItem[] = [
     {
       groupName: "Home",
       items: [
@@ -59,12 +73,10 @@ export default function SideNavbar({}: Props) {
         },
         {
           title: "Starter guide",
-          href: "/dashboard/starter-guide",
+          href: "/starter-guide",
 
           icon: CurvyRightDirectionIcon,
-          variant: `${
-            pathname === "/dashboard/starter-guide" ? "lightBlue" : "ghost"
-          }`,
+          variant: `${pathname === "/starter-guide" ? "lightBlue" : "ghost"}`,
         },
       ],
     },
@@ -74,34 +86,28 @@ export default function SideNavbar({}: Props) {
         {
           title: "Frameworks",
           icon: FrameworksIcon,
-          href: "/dashboard/frameworks",
-          variant: `${
-            pathname === "/dashboard/frameworks" ? "lightBlue" : "ghost"
-          }`,
+          href: "/frameworks",
+          variant: `${pathname === "/frameworks" ? "lightBlue" : "ghost"}`,
         },
         {
           title: "Controls",
           icon: FileValidationIcon,
-          href: "/dashboard/controls",
-          variant: `${
-            pathname === "/dashboard/controls" ? "lightBlue" : "ghost"
-          }`,
+          href: "/controls",
+          variant: `${pathname === "/controls" ? "lightBlue" : "ghost"}`,
         },
         {
           title: "Evidence Library",
           icon: LibraryIcon,
-          href: "/dashboard/evidence-library",
+          href: "/evidence-library",
           variant: `${
-            pathname === "/dashboard/evidence-library" ? "lightBlue" : "ghost"
+            pathname === "/evidence-library" ? "lightBlue" : "ghost"
           }`,
         },
         {
           title: "Polices",
           icon: PolicyIcon,
-          href: "/dashboard/policies",
-          variant: `${
-            pathname === "/dashboard/policies" ? "lightBlue" : "ghost"
-          }`,
+          href: "/policies",
+          variant: `${pathname === "/policies" ? "lightBlue" : "ghost"}`,
         },
       ],
     },
@@ -111,34 +117,28 @@ export default function SideNavbar({}: Props) {
         {
           title: "Personnel",
           icon: UserMultipleIcon,
-          href: "/dashboard/personnel",
-          variant: `${
-            pathname === "/dashboard/personnel" ? "lightBlue" : "ghost"
-          }`,
+          href: "/personnel",
+          variant: `${pathname === "/personnel" ? "lightBlue" : "ghost"}`,
         },
         {
           title: "Integrations",
           icon: CurvyRightDirectionIcon,
-          href: "/dashboard/integrations",
-          variant: `${
-            pathname === "/dashboard/integrations" ? "lightBlue" : "ghost"
-          }`,
+          href: "/integrations",
+          variant: `${pathname === "/integrations" ? "lightBlue" : "ghost"}`,
         },
         {
           title: "Training modules",
           icon: OnlineLearning01Icon,
-          href: "/dashboard/training-modules",
+          href: "/training-modules",
           variant: `${
-            pathname === "/dashboard/training-modules" ? "lightBlue" : "ghost"
+            pathname === "/training-modules" ? "lightBlue" : "ghost"
           }`,
         },
         {
           title: "Audit center",
           icon: Audit02Icon,
-          href: "/dashboard/audit-center",
-          variant: `${
-            pathname === "/dashboard/audit-center" ? "lightBlue" : "ghost"
-          }`,
+          href: "/audit-center",
+          variant: `${pathname === "/audit-center" ? "lightBlue" : "ghost"}`,
         },
       ],
     },
@@ -148,17 +148,15 @@ export default function SideNavbar({}: Props) {
         {
           title: "Settings",
           icon: AccountSetting02Icon,
-          href: "/dashboard/settings",
+          href: "/settings",
 
-          variant: `${
-            pathname === "/dashboard/settings" ? "lightBlue" : "ghost"
-          }`,
+          variant: `${pathname === "/settings" ? "lightBlue" : "ghost"}`,
         },
         {
           title: "Logout",
           icon: Logout02Icon,
           variant: "ghost",
-          onClick: { onLogout },
+          onClick: handleLogout,
           href: "/signin",
         },
       ],
@@ -166,12 +164,12 @@ export default function SideNavbar({}: Props) {
   ];
 
   return (
-    <div className=" border min-w-[280px] text-[14px] leading-4  flex flex-col justify-start flex-grow min-h-screen">
-      <div className="border-b  py-6 px-6 ">
+    <aside className="fixed top-0 left-0 z-20 flex min-h-screen min-w-[280px] flex-grow flex-col justify-start border bg-[#F9F9FB] text-[14px] leading-4">
+      <div className="border-b px-4 py-4 [@media(min-width:1400px)]:px-6 [@media(min-width:1400px)]:py-6 ">
         <CyberMapBrand />
       </div>
-      <div className="text-[14px] leading-4  flex flex-col justify-start flex-grow pt-20 gap-[12px] max-h-[700px] px-6 ">
-        {menuList.map((menu: any, key: any) => (
+      <div className="flex max-h-[700px] flex-grow flex-col justify-start gap-[12px] px-4 pt-12 text-[14px] leading-4 [@media(min-width:1300px)]:px-6 [@media(min-width:1300px)]:pt-20 ">
+        {menuList.map((menu) => (
           <Nav
             isCollapsed={false}
             key={menu.groupName}
@@ -180,6 +178,6 @@ export default function SideNavbar({}: Props) {
           />
         ))}
       </div>
-    </div>
+    </aside>
   );
 }

@@ -13,7 +13,6 @@ const FrameworkStatus = z.enum([
 ]);
 type FrameworkStatus = z.infer<typeof FrameworkStatus>;
 
-
 const FrameComplianceType = z.object({
   id: z.string(),
   control: z.string(),
@@ -103,7 +102,7 @@ export const frameworkdataColumns: ColumnDef<FrameComplianceType>[] = [
       const cn = (c: string) =>
         twMerge(
           "font-medium text-xs p-2 flex items-center justify-center rounded-[1000px] w-fit h-5",
-          c
+          c,
         );
       if (status === FrameworkStatus.Values.FULLY_IMPLEMENTED) {
         return (
@@ -135,7 +134,7 @@ export const frameworkdataColumns: ColumnDef<FrameComplianceType>[] = [
     cell: ({ getValue: _ }) => {
       return (
         <Button variant="outline" size="sm">
-          <p className="text-xs text-neutral-12 font-medium">View control</p>
+          <p className="font-medium text-neutral-12 text-xs">View control</p>
         </Button>
       );
     },

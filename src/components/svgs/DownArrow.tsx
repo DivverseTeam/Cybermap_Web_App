@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 
 export function DownArrow() {
   return (
@@ -12,9 +12,9 @@ export function DownArrow() {
       <path
         d="M12 6.00003C12 6.00003 9.05404 9.99999 7.99997 10C6.94589 10 4 6 4 6"
         stroke="#60646C"
-        stroke-width="1.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );

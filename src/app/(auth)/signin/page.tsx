@@ -2,14 +2,15 @@ import React from "react";
 import SignInPage from "~/containers/auth/signin";
 
 type Props = {
-	searchParams?: Record<"callbackUrl" | "error", string>;
+  searchParams?: Promise<Record<"callbackUrl" | "error", string>>;
 };
 
-export default function page(props: Props) {
-	return (
-		<SignInPage
-			error={props?.searchParams?.error}
-			callbackUrl={props?.searchParams?.callbackUrl}
-		/>
-	);
+export default async function page(props: Props) {
+  const searchParams = await props.searchParams;
+  return (
+    <SignInPage
+      error={searchParams?.error}
+      callbackUrl={searchParams?.callbackUrl}
+    />
+  );
 }

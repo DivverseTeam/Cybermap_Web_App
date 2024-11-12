@@ -1,0 +1,74 @@
+name: sst-deploy
+
+on:
+  push:
+    branches:
+      - "main"
+      - "staging"
+
+
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Set Deployment Stage
+        id: set-stage
+        run: |
+          if [[ "${{ github.ref_name }}" == "main" ]]; then
+            echo "stage=production" >> $GITHUB_ENV
+          elif [[ "${{ github.ref_name }}" == "staging" ]]; then
+            echo "stage=dev" >> $GITHUB_ENV
+          else
+            echo "stage=dev" >> $GITHUB_ENV
+          fi
+
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      
+      - name: Cache Next and pnpm
+        uses: actions/cache@v4
+        with:
+          # Caching paths for pnpm and Next.js build cache
+          path: |
+            ~/.pnpm-store
+            ~/.npm
+            ${{ github.workspace }}/.next/cache
+          # Generate a new cache key whenever dependencies or source files change
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
+          # Restore prior cache if source files changed but dependencies didn't
+          restore-keys: |
+            ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}-
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install pnpm packages
+        run: pnpm install
+
+      - name: Build Lambda
+        run: pnpm build
+
+      - name: Deploy to AWS
+        run: pnpm sst deploy --stage ${{ env.stage }}
+
