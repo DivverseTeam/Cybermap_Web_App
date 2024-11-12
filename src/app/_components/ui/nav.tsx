@@ -36,15 +36,15 @@ export function Nav({ links, groupName, isCollapsed }: NavProps) {
   return (
     <div
       data-collapsed={isCollapsed}
-      className="group flex flex-col gap-2 py-2 data-[collapsed=true]:py-2 text-sm text-[#80828D] "
+      className="group flex flex-col gap-2 py-2 data-[collapsed=true]:py-2 text=xs xl:text-sm text-[#80828D] "
     >
       {!["home", "actions"].includes(groupName.toLocaleLowerCase()) && (
-        <span className="uppercase font-[500] text-[#B9BBC6] text-sm mt-[-10px]">
+        <span className="uppercase font-[500] text-[#B9BBC6] text-sm mt-[-8px]">
           {groupName}
         </span>
       )}
       {groupName.toLocaleLowerCase() === "actions" && (
-        <div className="mt-8 2xl:mt-11"></div>
+        <div className="mt-6 xl:mt-8 2xl:mt-11"></div>
       )}
       <nav className=" grid gap-1 group-[[data-collapsed=true]]:justify-center group-[[data-collapsed=true]]:px-2">
         {links.map((link: LinkProp, index) => {
@@ -69,7 +69,7 @@ export function Nav({ links, groupName, isCollapsed }: NavProps) {
                   isActive && "text-black",
                   buttonVariants({
                     variant: isActive ? "lightBlue" : "ghost",
-                    size: "sm",
+                    size: "xs",
                   }),
                   link.variant === "default" &&
                     "dark:bg-muted dark:text-white dark:hover:bg-muted  dark:hover:text-white",
