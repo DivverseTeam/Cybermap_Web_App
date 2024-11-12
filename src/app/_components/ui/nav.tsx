@@ -36,7 +36,7 @@ export function Nav({ links, groupName, isCollapsed }: NavProps) {
   return (
     <div
       data-collapsed={isCollapsed}
-      className="group flex flex-col gap-2 py-2 data-[collapsed=true]:py-2 text-sm text-[#80828D] "
+      className="group flex flex-col gap-2 py-2 data-[collapsed=true]:py-2 text=xs xl:text-sm text-[#80828D] "
     >
       {!["home", "actions"].includes(groupName.toLocaleLowerCase()) && (
         <span className="uppercase font-[500] text-[#B9BBC6] text-sm mt-[-16px] [@media(min-width:1400px)]:mt-[-10px]">
