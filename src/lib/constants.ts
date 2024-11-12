@@ -1,6 +1,6 @@
-import type { OrganizationIndustry } from "./types";
+import type { OrganisationIndustry } from "./types";
 
-export const INDUSTRY_FRAMEWORK_MAP: Record<OrganizationIndustry, string[]> = {
+export const INDUSTRY_FRAMEWORK_MAP: Record<OrganisationIndustry, string[]> = {
 	HEALTHCARE: ["HIPAA", "HITECH", "NIST_800-66", "ISO_27799"],
 	FINANCIAL_SERVICES: ["PCI_DSS", "GLBA", "SOX", "FFIEC", "NIST_800-53"],
 	GOVERNMENT_AND_DEFENSE: [

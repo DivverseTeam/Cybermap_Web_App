@@ -121,7 +121,7 @@ const SinglePolicy: FunctionComponent<SinglePolicyProps> = () => {
 							</CardHeader>
 							<CardContent className="flex flex-col gap-4">
 								<p className="text-gray-500 text-sm">
-									Describes the organization's documentation process for
+									Describes the organisation's documentation process for
 									security events and incidents.
 								</p>
 

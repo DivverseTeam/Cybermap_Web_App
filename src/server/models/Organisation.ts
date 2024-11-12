@@ -1,42 +1,42 @@
 import mongoose from "mongoose";
 import { z } from "zod";
 import {
-	ORGANIZATION_INDUSTRIES,
-	ORGANIZATION_KINDS,
-	ORGANIZATION_SIZES,
-	OrganizationIndustry,
-	OrganizationKind,
-	OrganizationSize,
+	ORGANISATION_INDUSTRIES,
+	ORGANISATION_KINDS,
+	ORGANISATION_SIZES,
+	OrganisationIndustry,
+	OrganisationKind,
+	OrganisationSize,
 } from "~/lib/types";
 import { BaseSchema } from "./base";
 
-export const Organization = z.object({
+export const Organisation = z.object({
 	id: z.string(),
 	logoUrl: z.string().optional(),
 	name: z.string(),
-	size: OrganizationSize,
-	kind: OrganizationKind,
-	industry: OrganizationIndustry,
+	size: OrganisationSize,
+	kind: OrganisationKind,
+	industry: OrganisationIndustry,
 	frameworkIds: z.array(z.string()).optional().default([]),
 	integrationIds: z.array(z.string()).optional().default([]),
 });
 
-export type Organization = z.infer<typeof Organization>;
+export type Organisation = z.infer<typeof Organisation>;
 
-type OrganizationWithDocument = Organization & mongoose.Document;
+type OrganisationWithDocument = Organisation & mongoose.Document;
 
-const OrganizationSchema = new BaseSchema<OrganizationWithDocument>({
+const OrganisationSchema = new BaseSchema<OrganisationWithDocument>({
 	logoUrl: { type: String, required: false },
 	name: { type: String, required: true },
-	size: { type: String, enum: ORGANIZATION_SIZES, required: true },
+	size: { type: String, enum: ORGANISATION_SIZES, required: true },
 	kind: {
 		type: String,
-		enum: ORGANIZATION_KINDS,
+		enum: ORGANISATION_KINDS,
 		required: true,
 	},
 	industry: {
 		type: String,
-		enum: ORGANIZATION_INDUSTRIES,
+		enum: ORGANISATION_INDUSTRIES,
 		required: true,
 	},
 	frameworkIds: {
@@ -52,5 +52,5 @@ const OrganizationSchema = new BaseSchema<OrganizationWithDocument>({
 });
 
 export default (mongoose.models
-	.Organization as mongoose.Model<OrganizationWithDocument>) ||
-	mongoose.model("Organization", OrganizationSchema);
+	.Organisation as mongoose.Model<OrganisationWithDocument>) ||
+	mongoose.model("Organisation", OrganisationSchema);
