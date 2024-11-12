@@ -38,7 +38,7 @@ const TagsContainer = ({ tags }: { tags: Array<string> }) => {
 	}, [tags]);
 
 	return (
-		<div className="flex overflow-hidden gap-2" ref={containerRef}>
+		<div className="flex gap-2 overflow-hidden" ref={containerRef}>
 			{tags.slice(0, visibleTags).map((tag, index) => (
 				<span
 					key={index}

@@ -1,7 +1,7 @@
-import * as React from "react";
 import { Slot, Slottable } from "@radix-ui/react-slot";
-import { cva, type VariantProps } from "class-variance-authority";
+import { type VariantProps, cva } from "class-variance-authority";
 import { Loader2 } from "lucide-react";
+import * as React from "react";
 
 import { cn } from "~/lib/utils";
 
@@ -24,7 +24,7 @@ const buttonVariants = cva(
       },
       size: {
         default: "h-10 px-4 py-2",
-        sm: "h-8 2xl:h-9 rounded-md px-3",
+        sm: "h-7 [@media(min-width:1400px)]:h-8 2xl:h-9 rounded-md px-3",
         lg: "h-11 rounded-md px-8",
         icon: "h-10 w-10",
         xs: "h-7 2xl:h-9 rounded-md px-3",
@@ -67,7 +67,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         {...props}
       >
         {loading && (
-          <Loader2 className="h-5 w-5 mr-2 animate-spin text-muted" />
+          <Loader2 className="mr-2 h-5 w-5 animate-spin text-muted" />
         )}
         <Slottable>{children}</Slottable>
       </Comp>

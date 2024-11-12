@@ -1,12 +1,13 @@
-import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import mongoose from "mongoose";
+import { Resource } from "sst";
+import { z } from "zod";
+import { env } from "~/env";
+import { PRESIGNED_URL_TYPES } from "~/lib/types";
 import { postRouter } from "~/server/api/routers/post";
 import { userRouter } from "~/server/api/routers/user";
-import { z } from "zod";
-import { PRESIGNED_URL_TYPES } from "~/lib/types";
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
-import { env } from "~/env";
-import mongoose from "mongoose";
+import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 
 export const appRouter = createTRPCRouter({
 	post: postRouter,
@@ -33,13 +34,7 @@ export const appRouter = createTRPCRouter({
 
 				const id = input?.id || mongoose.mongo.ObjectId.toString();
 
-				const client = new S3Client({
-					region: env.S3_REGION,
-					credentials: {
-						accessKeyId: env.S3_ACCESS_KEY,
-						secretAccessKey: env.S3_SECRET_KEY,
-					},
-				});
+				const client = new S3Client({});
 
 				let key: string = id;
 
@@ -48,7 +43,7 @@ export const appRouter = createTRPCRouter({
 				}
 
 				const command = new PutObjectCommand({
-					Bucket: env.S3_BUCKET_NAME,
+					Bucket: Resource.images.name,
 					Key: key,
 					...(fileType && {
 						Metadata: {

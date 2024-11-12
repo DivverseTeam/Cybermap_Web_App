@@ -1,4 +1,9 @@
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
+import {
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
 import { PlusSignIcon, Search01Icon } from "hugeicons-react";
 import Image from "next/image";
 import React from "react";
@@ -12,11 +17,6 @@ import {
   DropdownMenuTrigger,
 } from "~/app/_components/ui/dropdown-menu";
 import { Input } from "~/app/_components/ui/input";
-import {
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
 import {
   Table,
   TableBody,
@@ -54,14 +54,14 @@ export default function PersonnelContainer({ data }: Props) {
   });
 
   return (
-    <div className="flex flex-col grow">
-      <div className="flex bg-muted p-4 2xl:p-5 gap-3 rounded-2xl rounded-b-none border w-full mx-auto">
+    <div className="flex grow flex-col">
+      <div className="mx-auto flex w-full gap-3 rounded-2xl rounded-b-none border bg-muted p-4 2xl:p-5">
         <Input
           type="text"
           placeholder="Search for available integrations"
           // onChange={handleSearch}
           // defaultValue={search}
-          className="bg-[#F9F9FB] w-72 rounded-md"
+          className="w-72 rounded-md bg-[#F9F9FB]"
           suffix={
             <span className="cursor-pointer">
               <Search01Icon size="12" />
@@ -108,7 +108,7 @@ export default function PersonnelContainer({ data }: Props) {
           </TableBody>
         </Table>
         {data.length === 0 && (
-          <span className="flex justify-center mt-20 2xl:mt-30 h-[400px] text-2xl text-secondary font-semibold">
+          <span className="mt-20 flex h-[400px] justify-center font-semibold text-2xl text-secondary 2xl:mt-30">
             No employee matches your filter query
           </span>
         )}

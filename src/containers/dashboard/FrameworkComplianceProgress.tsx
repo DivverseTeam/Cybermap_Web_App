@@ -2,16 +2,16 @@ import SemiCircleProgressBar from "react-progressbar-semicircle";
 import { getProgressColor } from "./constants";
 
 export default function FrameworkComplianceProgress({
-  progress,
+	progress,
 }: {
-  progress: string;
+	progress: string;
 }) {
-  return (
-    <SemiCircleProgressBar
-      percentage={+progress}
-      stroke={getProgressColor(+progress)}
-      background="#F9F9FB"
-      strokeWidth={12}
-    />
-  );
+	return (
+		<SemiCircleProgressBar
+			percentage={+progress}
+			stroke={getProgressColor(+progress)}
+			background="#F9F9FB"
+			strokeWidth={12}
+		/>
+	);
 }

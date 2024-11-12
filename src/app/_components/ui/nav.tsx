@@ -1,28 +1,28 @@
 "use client";
 
-import Link from "next/link";
 import { LucideIcon } from "lucide-react";
+import Link from "next/link";
 
 import { buttonVariants } from "~/app/_components/ui/button";
 ("~/app/_components/ui/button");
 
-import { cn } from "~/lib/utils";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "~/app/_components/ui/tooltip";
 import { usePathname } from "next/navigation";
-import { MouseEvent, ElementType } from "react";
-import path from "path";
+import { type ElementType, MouseEvent, type ReactNode } from "react";
+import { cn } from "~/lib/utils";
 
 interface LinkProp {
+  // title: string;
+  // label?: string;
+  // icon?: ElementType; // Icon as a React element
+  // onClick?: (event: MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => void; // Typing for onClick event handler
+  // variant?: "default" | "ghost" | "lightBlue";
+  // href?: string | undefined;
   title: string;
   label?: string;
-  icon?: ElementType; // Icon as a React element
-  onClick?: (event: MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => void; // Typing for onClick event handler
-  variant?: "default" | "ghost" | "lightBlue";
-  href?: string | undefined;
+  href?: string;
+  icon?: ElementType;
+  variant: "lightBlue" | "ghost" | "default"; // Adjust to the allowed values
+  onClick?: () => void;
 }
 interface NavProps {
   isCollapsed: boolean;
@@ -39,12 +39,12 @@ export function Nav({ links, groupName, isCollapsed }: NavProps) {
       className="group flex flex-col gap-2 py-2 data-[collapsed=true]:py-2 text=xs xl:text-sm text-[#80828D] "
     >
       {!["home", "actions"].includes(groupName.toLocaleLowerCase()) && (
-        <span className="uppercase font-[500] text-[#B9BBC6] text-sm mt-[-8px]">
+        <span className="uppercase font-[500] text-[#B9BBC6] text-sm mt-[-16px] [@media(min-width:1400px)]:mt-[-10px]">
           {groupName}
         </span>
       )}
       {groupName.toLocaleLowerCase() === "actions" && (
-        <div className="mt-6 xl:mt-8 2xl:mt-11"></div>
+        <div className="mt-4 [@media(min-width:1400px)]:mt-8 2xl:mt-11"></div>
       )}
       <nav className=" grid gap-1 group-[[data-collapsed=true]]:justify-center group-[[data-collapsed=true]]:px-2">
         {links.map((link: LinkProp, index) => {
@@ -59,44 +59,46 @@ export function Nav({ links, groupName, isCollapsed }: NavProps) {
           return (
             <div className="flex items-center relative" key={index}>
               {isActive && (
-                <div className="h-9 w-1 2xl:w-1.5 rounded-md absolute left-[-25] bg-primary"></div>
+                <div className="absolute right-[258px] [@media(min-width:1400px)]:right-[250px] h-9 w-1 rounded-md bg-primary 2xl:w-1.5"></div>
               )}
-              <Link
-                key={index}
-                href={`${link.href}`}
-                className={cn(
-                  "w-[220px]",
-                  isActive && "text-black",
-                  buttonVariants({
-                    variant: isActive ? "lightBlue" : "ghost",
-                    size: "xs",
-                  }),
-                  link.variant === "default" &&
-                    "dark:bg-muted dark:text-white dark:hover:bg-muted  dark:hover:text-white",
-                  link.variant === "lightBlue" && "text-black",
-                  "justify-start"
-                )}
-              >
-                {link.icon && (
-                  <link.icon
-                    className={`${
-                      isActive && "text-primary"
-                    } "mr-2 pr-2 h-4 w-4"`}
-                  />
-                )}
-                {link.title}
-                {link.label && (
-                  <span
-                    className={cn(
-                      "ml-auto",
-                      link.variant === "default" &&
-                        "text-background dark:text-white"
-                    )}
-                  >
-                    {link.label}
-                  </span>
-                )}
-              </Link>
+              <div className="flex items-center">
+                <Link
+                  key={index}
+                  href={`${link.href}`}
+                  className={cn(
+                    "w-[220px]",
+                    isActive && "text-black",
+                    buttonVariants({
+                      variant: isActive ? "lightBlue" : "ghost",
+                      size: "sm",
+                    }),
+                    link.variant === "default" &&
+                      "dark:bg-muted dark:text-white dark:hover:bg-muted  dark:hover:text-white",
+                    link.variant === "lightBlue" && "text-black",
+                    "justify-start"
+                  )}
+                >
+                  {link.icon && (
+                    <link.icon
+                      className={`${
+                        isActive && "text-primary"
+                      } "mr-2 pr-2 h-4 w-4"`}
+                    />
+                  )}
+                  {link.title}
+                  {link.label && (
+                    <span
+                      className={cn(
+                        "ml-auto",
+                        link.variant === "default" &&
+                          "text-background dark:text-white"
+                      )}
+                    >
+                      {link.label}
+                    </span>
+                  )}
+                </Link>
+              </div>
             </div>
           );
         })}
