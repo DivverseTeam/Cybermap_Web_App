@@ -1,7 +1,7 @@
 export const AppRoutes = {
-	AUTH: {
-		LOGIN: "/signin",
-		REGISTER: "/signup",
-		ONBOARDING: "/onboarding",
-	},
+  AUTH: {
+    LOGIN: "/signin",
+    REGISTER: "/signup",
+    ONBOARDING: "/onboarding",
+  },
 };

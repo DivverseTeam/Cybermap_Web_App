@@ -63,14 +63,14 @@ export default function PersonnelPage({}: Props) {
     setSelectedCompliances((prev) =>
       prev.includes(compliance)
         ? prev.filter((item) => item !== compliance)
-        : [...prev, compliance]
+        : [...prev, compliance],
     );
   };
 
   // Function to remove a compliance from selectedCompliances
   const removeSelectedCompliance = (compliance: string) => {
     setSelectedCompliances((prevCompliances) =>
-      prevCompliances.filter((item) => item !== compliance)
+      prevCompliances.filter((item) => item !== compliance),
     );
   };
 
@@ -92,7 +92,7 @@ export default function PersonnelPage({}: Props) {
             Object.entries(compliance).map(([key, value]) => [
               key,
               value ?? false,
-            ]) // Set undefined to false
+            ]), // Set undefined to false
           );
           return cleanedCompliance;
         }),
@@ -101,22 +101,22 @@ export default function PersonnelPage({}: Props) {
         // Check if "compliant" is selected in the list
         if (selectedCompliances.includes("Compliant")) {
           return employee.complianceList.every(
-            (compliance) => Object.values(compliance)[0] === true
+            (compliance) => Object.values(compliance)[0] === true,
           );
         }
 
         // Check if "non-compliant" is selected in the list
         if (selectedCompliances.includes("Non-compliant")) {
           return employee.complianceList.some((compliance) =>
-            Object.values(compliance).some((value) => value === false)
+            Object.values(compliance).some((value) => value === false),
           );
         }
 
         // General case for specific compliance selections
         return selectedCompliances.every((compliance) =>
           employee.complianceList.some(
-            (complianceObj) => complianceObj[compliance] === true
-          )
+            (complianceObj) => complianceObj[compliance] === true,
+          ),
         );
       });
       setData(filteredData);

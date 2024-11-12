@@ -84,8 +84,8 @@ export default function PersonnelContainer({ data }: Props) {
                       {header.isPlaceholder
                         ? null
                         : typeof header.column.columnDef.header === "function"
-                        ? header.column.columnDef.header(header.getContext()) // Call the function to get the rendered header
-                        : header.column.columnDef.header}
+                          ? header.column.columnDef.header(header.getContext()) // Call the function to get the rendered header
+                          : header.column.columnDef.header}
                     </button>
                   </TableHead>
                 ))}

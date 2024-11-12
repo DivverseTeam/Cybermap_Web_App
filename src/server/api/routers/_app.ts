@@ -10,56 +10,56 @@ import { userRouter } from "~/server/api/routers/user";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 
 export const appRouter = createTRPCRouter({
-	post: postRouter,
-	user: userRouter,
-	example: createTRPCRouter({
-		hello: publicProcedure
-			.input(z.object({ text: z.string().nullish() }).nullish())
-			.query(({ input }) => {
-				return {
-					greeting: `Hello ${input?.text ?? "world"}`,
-				};
-			}),
+  post: postRouter,
+  user: userRouter,
+  example: createTRPCRouter({
+    hello: publicProcedure
+      .input(z.object({ text: z.string().nullish() }).nullish())
+      .query(({ input }) => {
+        return {
+          greeting: `Hello ${input?.text ?? "world"}`,
+        };
+      }),
 
-		getS3PresignedUrl: publicProcedure
-			.input(
-				z.object({
-					type: z.enum([...PRESIGNED_URL_TYPES]),
-					fileType: z.string(),
-					id: z.string().optional(),
-				}),
-			)
-			.mutation(async ({ input }) => {
-				const { type, fileType } = input;
+    getS3PresignedUrl: publicProcedure
+      .input(
+        z.object({
+          type: z.enum([...PRESIGNED_URL_TYPES]),
+          fileType: z.string(),
+          id: z.string().optional(),
+        }),
+      )
+      .mutation(async ({ input }) => {
+        const { type, fileType } = input;
 
-				const id = input?.id || mongoose.mongo.ObjectId.toString();
+        const id = input?.id || mongoose.mongo.ObjectId.toString();
 
-				const client = new S3Client({});
+        const client = new S3Client({});
 
-				let key: string = id;
+        let key: string = id;
 
-				if (type === "ORGANISATION_LOGO") {
-					key = `media/organisation_logos/${id}`;
-				}
+        if (type === "ORGANISATION_LOGO") {
+          key = `media/organisation_logos/${id}`;
+        }
 
-				const command = new PutObjectCommand({
-					Bucket: Resource.images.name,
-					Key: key,
-					...(fileType && {
-						Metadata: {
-							"content-type": fileType,
-						},
-					}),
-				});
+        const command = new PutObjectCommand({
+          Bucket: Resource.images.name,
+          Key: key,
+          ...(fileType && {
+            Metadata: {
+              "content-type": fileType,
+            },
+          }),
+        });
 
-				const url = await getSignedUrl(client, command, { expiresIn: 60 });
+        const url = await getSignedUrl(client, command, { expiresIn: 60 });
 
-				return {
-					url,
-					id,
-				};
-			}),
-	}),
+        return {
+          url,
+          id,
+        };
+      }),
+  }),
 });
 
 // export type definition of API

@@ -4,10 +4,10 @@ import { z } from "zod";
 import { BaseSchema } from "./base";
 
 export const Evidence = z.object({
-	id: z.string(),
-	name: z.string(),
-	organisationId: z.string().optional(),
-	createdAt: z.coerce.date(),
+  id: z.string(),
+  name: z.string(),
+  organisationId: z.string().optional(),
+  createdAt: z.coerce.date(),
 });
 
 export type Evidence = z.infer<typeof Evidence>;
@@ -15,15 +15,15 @@ export type Evidence = z.infer<typeof Evidence>;
 type EvidenceWithDocument = Evidence & mongoose.Document;
 
 const EvidenceSchema = new BaseSchema<EvidenceWithDocument>({
-	name: {
-		type: String,
-	},
-	organisationId: {
-		type: String,
-		required: false,
-	},
+  name: {
+    type: String,
+  },
+  organisationId: {
+    type: String,
+    required: false,
+  },
 });
 
 export default (mongoose.models
-	.Evidence as mongoose.Model<EvidenceWithDocument>) ||
-	mongoose.model("Evidence", EvidenceSchema);
+  .Evidence as mongoose.Model<EvidenceWithDocument>) ||
+  mongoose.model("Evidence", EvidenceSchema);
