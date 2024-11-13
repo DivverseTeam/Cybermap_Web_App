@@ -15,7 +15,7 @@ import { CyberMapBrand } from "../svgs/CyberMapBrand";
 export default function Header() {
   const { data } = useSession();
   return (
-    <header className="fixed inset-x-0 top-0 z-10 ml-[280px] w-[calc(100vw-280px)] border-b-2 border-b-[#E8E8EC] bg-white py-2 px-4  [@media(min-width:1400px)]:py-6 [@media(min-width:1400px)]:px-6 ">
+    <header className="fixed inset-x-0 top-0 z-10 ml-[250px] [@media(min-width:1400px)]:ml-[280px] w-[calc(100vw-250px)] [@media(min-width:1400px)]:w-[calc(100vw-280px)] border-b-2 border-b-[#E8E8EC] bg-white py-2 px-4  [@media(min-width:1400px)]:py-4 [@media(min-width:1400px)]:px-6 ">
       <nav className="flex items-center">
         {/* <div className="w-64 px-3">
 					<CyberMapBrand />
@@ -41,13 +41,18 @@ export default function Header() {
               <Separator orientation="vertical" className="mx-1 2xl:mx-2" />
               <Avatar className="h-7 w-7 rounded-xs">
                 <AvatarImage src="" />
-                <AvatarFallback>TU</AvatarFallback>
+                <AvatarFallback>
+                  {data?.user.name
+                    .split(" ")
+                    .map((word) => word[0])
+                    .join("")}
+                </AvatarFallback>
               </Avatar>
-              <span className="flex flex-col">
+              <span className="flex flex-col ">
                 <span className="text-[#80828D] text-sm">
                   {data?.user.name}
                 </span>
-                <span className="text-[#B9BBC6] text-xs">
+                <span className="text-[#B9BBC6] text-xs -mt-1 [@media(min-width:1400px)]:-mt-0">
                   {data?.user?.email}
                 </span>
               </span>
