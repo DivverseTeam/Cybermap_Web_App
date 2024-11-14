@@ -17,7 +17,7 @@ import {
 import { acmClient, kmsClient, s3Client } from "../init";
 
 // Encryption policies: Documentation of how encryption is enforced at rest and in transit.
-export async function getKeyDetails() {
+async function getKeyDetails() {
   try {
     // List all key IDs
     const listKeysCommand = new ListKeysCommand({});
@@ -73,7 +73,7 @@ export async function getKeyDetails() {
 }
 
 // Key rotation schedules: Proof that encryption keys are rotated according to policy
-export async function getKeyRotationStatus() {
+async function getKeyRotationStatus() {
   try {
     // List all keys
     const listKeysCommand = new ListKeysCommand({});
@@ -130,7 +130,7 @@ export async function getKeyRotationStatus() {
 }
 
 // Certificate management logs: Logs showing encryption certificates being issued or renewed.
-export async function checkBucketEncryption() {
+async function checkBucketEncryption() {
   try {
     // List all S3 buckets in the account
     const listBucketsCommand = new ListBucketsCommand({});
@@ -189,7 +189,7 @@ export async function checkBucketEncryption() {
 
 // Certificate management logs: Logs showing encryption certificates being issued or renewed.
 // Lists all ACM certificates with their statuses.
-export async function listACMCertificates() {
+async function listACMCertificates() {
   try {
     const listCertificatesCommand = new ListCertificatesCommand();
     const certificates = await acmClient.send(listCertificatesCommand);
@@ -216,3 +216,58 @@ export async function listACMCertificates() {
     console.error("Error retrieving ACM certificates:", error);
   }
 }
+
+async function getEncryptionPoliciesEvidence() {
+  try {
+    // Get KMS key details related to encryption policies
+    const keyDetails = await getKeyDetails();
+
+    // Get bucket encryption details
+    const bucketEncryptionDetails = await checkBucketEncryption();
+
+    return {
+      KeyDetails: keyDetails,
+      BucketEncryptionDetails: bucketEncryptionDetails,
+    };
+  } catch (error) {
+    console.error("Error retrieving encryption policy evidence:", error);
+    throw error;
+  }
+}
+
+async function getKeyRotationEvidence() {
+  try {
+    // Get key rotation details
+    const keyRotationDetails = await getKeyRotationStatus();
+
+    return {
+      KeyRotationDetails: keyRotationDetails,
+    };
+  } catch (error) {
+    console.error("Error retrieving key rotation evidence:", error);
+    throw error;
+  }
+}
+
+async function getCertManagementLogsEvidence() {
+  try {
+    // Get ACM certificate details
+    const certificateDetails = await listACMCertificates();
+
+    return {
+      CertificateManagementLogs: certificateDetails,
+    };
+  } catch (error) {
+    console.error(
+      "Error retrieving certificate management logs evidence:",
+      error
+    );
+    throw error;
+  }
+}
+
+export {
+  getCertManagementLogsEvidence,
+  getEncryptionPoliciesEvidence,
+  getKeyRotationEvidence,
+};

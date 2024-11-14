@@ -21,7 +21,7 @@ import {
 } from "../init";
 
 // Data retention policies: Logs of how long data is stored before deletion or archival.
-export async function getCloudWatchLogRetention() {
+async function getCloudWatchLogRetention() {
   const describeLogGroupsCommand = new DescribeLogGroupsCommand({});
   const logGroups = await cloudWatchLogsClient.send(describeLogGroupsCommand);
   if (!logGroups.logGroups) return [];
@@ -32,7 +32,7 @@ export async function getCloudWatchLogRetention() {
 }
 
 // Data retention policies: Logs of how long data is stored before deletion or archival.
-export async function getS3BucketLifecyclePolicies() {
+async function getS3BucketLifecyclePolicies() {
   const listBucketsCommand = new ListBucketsCommand({});
   const buckets = await s3Client.send(listBucketsCommand);
   if (!buckets.Buckets) return [];
@@ -84,7 +84,7 @@ export async function getS3BucketLifecyclePolicies() {
 }
 
 // Data retention policies: Logs of how long data is stored before deletion or archival.
-export async function getCloudTrailLogRetention() {
+async function getCloudTrailLogRetention() {
   const describeTrailsCommand = new DescribeTrailsCommand({});
   const trails = await cloudTrailClient.send(describeTrailsCommand);
   if (!trails.trailList) return [];
@@ -104,7 +104,7 @@ export async function getCloudTrailLogRetention() {
   return trailSettings;
 }
 
-export async function getVaultAccessPolicy() {
+async function getVaultAccessPolicy() {
   try {
     const command = new ListVaultsCommand({
       accountId: "-",
@@ -131,7 +131,7 @@ export async function getVaultAccessPolicy() {
 }
 
 // Deletion and archival logs: Evidence of data being securely deleted or moved to long-term storage after the retention period.
-export async function getDeletionAndArchivalLogs(
+async function getDeletionAndArchivalLogs(
   startTime = new Date(),
   endTime = new Date()
 ) {
@@ -179,3 +179,43 @@ export async function getDeletionAndArchivalLogs(
     throw error;
   }
 }
+
+async function getRetentionPolicyEvidence() {
+  try {
+    const [
+      cloudWatchRetention,
+      s3LifecyclePolicies,
+      cloudTrailRetention,
+      vaultAccessPolicy,
+    ] = await Promise.all([
+      getCloudWatchLogRetention(),
+      getS3BucketLifecyclePolicies(),
+      getCloudTrailLogRetention(),
+      getVaultAccessPolicy(),
+    ]);
+
+    return {
+      cloudWatchRetention,
+      s3LifecyclePolicies,
+      cloudTrailRetention,
+      vaultAccessPolicy,
+    };
+  } catch (error) {
+    console.error("Error fetching data retention policy evidence:", error);
+    throw error;
+  }
+}
+
+async function getDeletionAndArchivalLogsEvidence() {
+  try {
+    const deletionAndArchivalLogs = await getDeletionAndArchivalLogs();
+    return {
+      deletionAndArchivalLogs,
+    };
+  } catch (error) {
+    console.error("Error fetching deletion and archival logs evidence:", error);
+    throw error;
+  }
+}
+
+export { getDeletionAndArchivalLogsEvidence, getRetentionPolicyEvidence };

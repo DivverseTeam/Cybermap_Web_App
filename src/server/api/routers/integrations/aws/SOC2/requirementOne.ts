@@ -190,7 +190,7 @@ async function fetchUserLoginAttempts(username: string) {
 }
 
 // Login and activity logs: role changes and unauthorized access attempts
-export async function getActivityLogs() {
+ async function getActivityLogs() {
   try {
     const command = new LookupEventsCommand({
       LookupAttributes: [
@@ -206,4 +206,55 @@ export async function getActivityLogs() {
     console.error("Error fetching activity logs:", error);
     return null;
   }
+}
+
+ async function getIAMConfigurationsAndPoliciesEvidence() {
+  try {
+    const [iamUsers, iamRoles] = await Promise.all([
+      listIAMUsers(),
+      listIAMRoles(),
+    ]);
+
+    return {
+      iamUsers,
+      iamRoles,
+    };
+  } catch (error) {
+    console.error("Error fetching IAM configurations and policies:", error);
+    return null;
+  }
+}
+
+ async function getMFAEnforcementEvidence() {
+  try {
+    const mfaStatus = await checkMFAForCriticalAccounts(); // Check MFA status for all users
+    return mfaStatus;
+  } catch (error) {
+    console.error("Error fetching MFA enforcement evidence:", error);
+    return null;
+  }
+}
+
+ async function getLoginAndActivityLogsEvidence() {
+  try {
+    const [loginAttempts, activityLogs] = await Promise.all([
+      fetchLoginAttempts(),
+      getActivityLogs(),
+    ]);
+
+    return {
+      loginAttempts,
+      activityLogs,
+    };
+  } catch (error) {
+    console.error("Error fetching login and activity logs:", error);
+    return null;
+  }
+}
+
+
+export {
+  getIAMConfigurationsAndPoliciesEvidence,
+  getMFAEnforcementEvidence,
+  getLoginAndActivityLogsEvidence,
 }

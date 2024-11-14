@@ -1,21 +1,20 @@
 // Backup and Disaster Recovery (Availability)
 
-import { backupClient, cloudTrailClient, ec2Client } from "../init";
 import {
-  ListBackupPlansCommand,
-  ListBackupJobsCommand,
   BackupJob,
   DescribeBackupVaultCommand,
+  ListBackupJobsCommand,
+  ListBackupPlansCommand,
 } from "@aws-sdk/client-backup";
 import {
   LookupAttribute,
   LookupEventsCommand,
 } from "@aws-sdk/client-cloudtrail";
 import { DescribeSnapshotsCommand, Snapshot } from "@aws-sdk/client-ec2";
-import fs from "fs";
+import { backupClient, cloudTrailClient, ec2Client } from "../init";
 
 // Backup schedules: Logs showing regular backup processes.
-export async function getBackupPlan() {
+async function getBackupPlan() {
   try {
     // List all backup plans
     const listBackupPlansCommand = new ListBackupPlansCommand();
@@ -32,7 +31,7 @@ export async function getBackupPlan() {
 
 // Backup schedules: Logs showing regular backup processes.
 // Disaster recovery test results: Logs and reports of tested recovery processes and their success rates.
-export async function getBackupJobs() {
+async function getBackupJobs() {
   try {
     const params = { MaxResults: 100, NextToken: "" };
     let completedJobs: any[] = [];
@@ -70,7 +69,7 @@ export async function getBackupJobs() {
 }
 
 // Backup encryption: Proof that backups are encrypted.
-export async function verifyBackupEncryption() {
+async function verifyBackupEncryption() {
   try {
     const params = { MaxResults: 100, NextToken: "" };
     let encryptedBackups: {
@@ -134,7 +133,7 @@ export async function verifyBackupEncryption() {
 }
 
 // Disaster recovery test results: Logs and reports of tested recovery processes and their success rates.
-export async function listEC2Snapshots() {
+async function listEC2Snapshots() {
   try {
     const params = {
       OwnerIds: ["self"],
@@ -206,7 +205,7 @@ export async function listEC2Snapshots() {
 // }
 
 // Regularly list EC2 snapshots to ensure that backup processes are functioning and timely.
-export async function checkEC2RegularBackup() {
+async function checkEC2RegularBackup() {
   try {
     // Retrieve snapshots created by your account
     const describeSnapshotsCommand = new DescribeSnapshotsCommand({
@@ -244,30 +243,6 @@ export async function checkEC2RegularBackup() {
   }
 }
 
-function logResult(logEntry: {
-  timestamp: string;
-  snapshotId: any;
-  recoveryStatus: string;
-  volumeId?: any;
-  message: string;
-}) {
-  const logFile = "dr_test_results.json";
-  let logData: any[] = [];
-
-  // Read existing log data if available
-  if (fs.existsSync(logFile)) {
-    const existingData: any = fs.readFileSync(logFile);
-    logData = JSON.parse(existingData) as any[];
-  }
-
-  // Append the new log entry
-  logData.push(logEntry);
-
-  // Write updated log data to the file
-  fs.writeFileSync(logFile, JSON.stringify(logData, null, 2));
-  console.log("Log entry added:", logEntry);
-}
-
 // Function to get CloudTrail events indicating potential incidents
 async function getCloudTrailEvents({
   lookupAttributes,
@@ -296,7 +271,7 @@ async function getCloudTrailEvents({
 }
 
 // Disaster recovery test results: Logs and reports of tested recovery processes and their success rates.
-export async function getCloudTrailRecoveryLogs() {
+async function getCloudTrailRecoveryLogs() {
   try {
     const response = await getCloudTrailEvents({
       lookupAttributes: [
@@ -313,3 +288,55 @@ export async function getCloudTrailRecoveryLogs() {
     console.error("Error retrieving CloudTrail logs:", error);
   }
 }
+
+async function getBackupScheduleEvidence() {
+  try {
+    const backupPlans = await getBackupPlan();
+    const backupJobs = await getBackupJobs();
+    const ec2BackupCheck = await checkEC2RegularBackup();
+
+    return {
+      backupPlans,
+      backupJobs,
+      ec2BackupCheck,
+    };
+  } catch (error) {
+    console.error("Error retrieving backup schedule evidence:", error);
+    throw error;
+  }
+}
+
+async function getBackupEncryptionEvidence() {
+  try {
+    const encryptionStatus = await verifyBackupEncryption();
+    return {
+      encryptionStatus,
+    };
+  } catch (error) {
+    console.error("Error retrieving backup encryption evidence:", error);
+    throw error;
+  }
+}
+
+async function getDisasterRecoveryTestResults() {
+  try {
+    const snapshots = await listEC2Snapshots();
+    const backupJobs = await getBackupJobs(); // for success/failure status of jobs
+    const recoveryLogs = await getCloudTrailRecoveryLogs();
+
+    return {
+      snapshots,
+      backupJobs,
+      recoveryLogs,
+    };
+  } catch (error) {
+    console.error("Error retrieving disaster recovery test results:", error);
+    throw error;
+  }
+}
+
+export {
+  getBackupEncryptionEvidence,
+  getBackupScheduleEvidence,
+  getDisasterRecoveryTestResults,
+};

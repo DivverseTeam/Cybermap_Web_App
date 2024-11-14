@@ -26,7 +26,7 @@ import {
 
 // Incident reports: Logs that detail security incidents and the responses taken.
 // Function to get CloudTrail events indicating potential incidents
-export async function getCloudTrailEvents({
+async function getCloudTrailEvents({
   lookupAttributes,
   startTime,
   endTime,
@@ -54,7 +54,7 @@ export async function getCloudTrailEvents({
 
 // Incident reports: Logs that detail security incidents and the responses taken.
 // Alert configurations: Proof of alerts set for security breaches, resource overloads, or downtime.
-export async function getAllAlarms() {
+async function getAllAlarms() {
   try {
     const params = {};
     const describeAlarmsCommand = new DescribeAlarmsCommand(params);
@@ -68,7 +68,7 @@ export async function getAllAlarms() {
 
 // Incident reports: Logs that detail security incidents and the responses taken.
 // Function to get logs from CloudWatch-Logs by filtering with a specific keyword (e.g., "ERROR", "incident")
-export async function getCloudWatchIncidentLogs(
+async function getCloudWatchIncidentLogs(
   logGroupName: any,
   startTime: any,
   endTime: any,
@@ -92,7 +92,7 @@ export async function getCloudWatchIncidentLogs(
 
 // Monitoring system configurations: Evidence of continuous monitoring in place for critical infrastructure.
 // Alert configurations: Proof of alerts set for security breaches, resource overloads, or downtime.
-export async function getAllFindings(detectorId: any) {
+async function getAllFindings(detectorId: any) {
   try {
     // Step 1: List all finding IDs
     const listFindingsParams = { DetectorId: detectorId };
@@ -127,7 +127,7 @@ export async function getAllFindings(detectorId: any) {
 
 // Monitoring system configurations: Evidence of continuous monitoring in place for critical infrastructure.
 // Function to get compliance status of critical resources from AWS Config
-export async function getConfigCompliance(resourceType: any, resourceId: any) {
+async function getConfigCompliance(resourceType: any, resourceId: any) {
   try {
     const params = {
       NextToken: "",
@@ -155,7 +155,7 @@ export async function getConfigCompliance(resourceType: any, resourceId: any) {
 }
 
 // Alert configurations: Proof of alerts set for security breaches, resource overloads, or downtime.
-export async function getHealthEvents() {
+async function getHealthEvents() {
   try {
     const describeEventsCommand = new DescribeEventsCommand({});
     const describeEventsResponse = await healthClient.send(
@@ -171,7 +171,7 @@ export async function getHealthEvents() {
 }
 
 // Function to get metric data for a specific metric over a given period
-export async function getMetricData(
+async function getMetricData(
   metricName = "CPUUtilization",
   namespace = "AWS/EC2",
   startTime = new Date(), // new Date(new Date() - 24 * 60 * 60 * 1000) 24 hours ago,
