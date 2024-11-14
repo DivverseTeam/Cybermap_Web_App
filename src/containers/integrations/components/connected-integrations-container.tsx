@@ -47,56 +47,27 @@ const integrationsList = [
 export default function ConnectedIntegrationsContainer({}: Props) {
   return (
     <div className="flex grow flex-col">
-      <div className="mx-auto flex w-full justify-between rounded-2xl rounded-b-none border bg-muted p-4 2xl:p-5">
+      <div className="mx-auto flex w-full justify-between rounded-2xl rounded-b-none border bg-muted p-2 [@media(min-width:1400px)]:p-4 2xl:p-5">
         <Input
           type="text"
-          placeholder="Search for available integrations"
+          placeholder="Search for connected integrations"
           // onChange={handleSearch}
           // defaultValue={search}
-          className="w-72 rounded-md bg-[#F9F9FB]"
+          className="w-60 [@media(min-width:1400px)]:w-72 rounded-md bg-[#F9F9FB]"
           suffix={
             <span className="cursor-pointer">
               <Search01Icon size="12" />
             </span>
           }
         />
-        <div>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                aria-label="Open menu"
-                variant="ghost"
-                className="mx-auto flex size-8 p-0 data-[state=open]:bg-muted"
-              >
-                <DotsHorizontalIcon
-                  className="size-6 font-bold text-secondary"
-                  aria-hidden="true"
-                />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-40">
-              <DropdownMenuItem
-              // onSelect={() => setShowUpdateEvidenceSheet(true)}
-              >
-                View
-              </DropdownMenuItem>
-
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-              // onSelect={() => setShowDeleteEvidenceDialog(true)}
-              >
-                Delete
-                <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
       </div>
-      <div className="border px-5 py-8 2xl:px-8 2xl:py-9">
-        <div className=" mb-6">
-          <h2 className="font-semibold text-xl">All integrations</h2>
-          <p className="text-gray-600 text-sm">
-            Go through and access all available integrations in here
+      <div className="border bg-white px-3 py-4 [@media(min-width:1400px)]:px-5 [@media(min-width:1400px)]:py-8 2xl:px-8 2xl:py-9">
+        <div className="mb-4 [@media(min-width:1400px)]:mb-6">
+          <h2 className="font-semibold text-lg [@media(min-width:1400px)]:text-xl">
+            Connected integrations
+          </h2>
+          <p className="text-gray-600 text-xs [@media(min-width:1400px)]:text-sm">
+            Go through and access connected integrations in here
           </p>
         </div>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">

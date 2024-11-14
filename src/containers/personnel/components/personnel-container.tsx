@@ -55,20 +55,24 @@ export default function PersonnelContainer({ data }: Props) {
 
   return (
     <div className="flex grow flex-col">
-      <div className="mx-auto flex w-full gap-3 rounded-2xl rounded-b-none border bg-muted p-4 2xl:p-5">
+      <div className="mx-auto flex w-full gap-3 rounded-2xl rounded-b-none border bg-muted p-3 [@media(min-width:1400px)]:p-4 2xl:p-5">
         <Input
           type="text"
-          placeholder="Search for employee"
+          placeholder="Search for available integrations"
           // onChange={handleSearch}
           // defaultValue={search}
-          className="w-[260px] rounded-md bg-[#F9F9FB]"
+          className="min-w-[260px] h-[36px] [@media(min-width:1400px)]:h-[44px] rounded-md bg-[#F9F9FB]"
           suffix={
             <span className="cursor-pointer">
               <Search01Icon size="12" />
             </span>
           }
         />
-        <Button variant="outline" className=" rounded-md text-secondary">
+        <Button
+          variant="outline"
+          className="h-[36px] [@media(min-width:1400px)]:h-[44px] rounded-md text-secondary"
+          size="sm"
+        >
           <PlusSignIcon className="mr-2" />
           Import Employee
         </Button>
@@ -84,8 +88,8 @@ export default function PersonnelContainer({ data }: Props) {
                       {header.isPlaceholder
                         ? null
                         : typeof header.column.columnDef.header === "function"
-                          ? header.column.columnDef.header(header.getContext()) // Call the function to get the rendered header
-                          : header.column.columnDef.header}
+                        ? header.column.columnDef.header(header.getContext()) // Call the function to get the rendered header
+                        : header.column.columnDef.header}
                     </button>
                   </TableHead>
                 ))}

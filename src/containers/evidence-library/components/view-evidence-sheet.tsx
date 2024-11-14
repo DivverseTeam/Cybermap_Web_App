@@ -44,6 +44,8 @@ import { User } from "lucide-react";
 // import { Evidence } from "../_lib/queries";
 import { useEffect, useTransition } from "react";
 import type { IEvidence } from "../types";
+import type { VariantProps } from "class-variance-authority";
+import { Badge, type badgeVariants } from "~/app/_components/ui/badge";
 
 interface ViewEvidenceSheetProps
   extends React.ComponentPropsWithRef<typeof Sheet> {
@@ -55,19 +57,20 @@ type StatusLabelProps = {
 };
 
 function StatusLabel({ status }: StatusLabelProps) {
-  const getStatusStyle = (status: string) => {
-    switch (status.toLowerCase()) {
-      case "updated":
-        return "bg-green-700/20 text-green-700  rounded-xl px-2 font-semibold flex items-center h-4";
-      case "needs artifact":
-        return "bg-destructive/20 text-destructive rounded-xl px-2 font-semibold flex items-center h-4";
-    }
-  };
+  let badgeVariant: VariantProps<typeof badgeVariants>["variant"];
+
+  if (status.toLowerCase() === "not implemented") {
+    badgeVariant = "destructive";
+  }
+
+  if (status.toLowerCase() === "fully implemented") {
+    badgeVariant = "success";
+  }
 
   return (
-    <span className={`rounded px-2 py-1 ${getStatusStyle(status)}`}>
+    <Badge className="w-max font-semibold" variant={badgeVariant}>
       {status}
-    </span>
+    </Badge>
   );
 }
 

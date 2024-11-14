@@ -18,18 +18,13 @@ import {
 const controlDetailsData = [
   [
     <span className="w-24 text-secondary ">Name</span>,
-    <span className="font-semibold text-secondary-foreground">
-      Risk management program established
-    </span>,
+
+    <Input placeholder="Enter a name..." className="border-none" />,
   ],
   [
     <span className="w-24 text-secondary">Description</span>,
-    <span className="text-secondary ">
-      The company has a documented risk management program in place that
-      includes guidance on the identification of potential threats, rating the
-      significance of the risks associated with the ientified threats, and
-      mitigration strategies for those risks,
-    </span>,
+
+    <Input placeholder="Add description..." className="border-none" />,
   ],
 
   [
@@ -45,12 +40,7 @@ const controlDetailsData = [
 
   [
     <span className="w-24 text-secondary">Implementation Guidance</span>,
-    <span className="text-secondary ">
-      The company has a documented risk management program in place that
-      includes guidance on the identification of potential threats, rating the
-      significance of the risks associated with the ientified threats, and
-      mitigration strategies for those risks,
-    </span>,
+    <Input className="border-none" placeholder="Add a note..." />,
   ],
 ];
 

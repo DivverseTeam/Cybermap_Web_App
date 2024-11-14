@@ -75,7 +75,11 @@ export const columns: ColumnDef<Policy>[] = [
         badgeVariant = "default";
       }
 
-      return <Badge variant={badgeVariant}>{displayText}</Badge>;
+      return (
+        <Badge className="w-max font-semibold" variant={badgeVariant}>
+          {displayText}
+        </Badge>
+      );
     },
   },
   {

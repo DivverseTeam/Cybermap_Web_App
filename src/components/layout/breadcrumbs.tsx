@@ -23,7 +23,7 @@ const BreadCrumbs: FunctionComponent<BreadCrumbsProps> = () => {
   }
 
   return (
-    <Breadcrumb className="-mt-6">
+    <Breadcrumb className="-mt-4 [@media(min-width:1400px)]:-mt-6">
       <BreadcrumbList>
         {pathNames.map((path, index) => {
           const fullPath = pathNames.slice(0, index + 1).join("/");
@@ -35,7 +35,7 @@ const BreadCrumbs: FunctionComponent<BreadCrumbsProps> = () => {
                   className={cn(
                     index === pathNames.length - 1
                       ? "text-black"
-                      : "text-muted-foreground",
+                      : "text-muted-foreground"
                   )}
                 >
                   {unslugify(path)}

@@ -7,7 +7,7 @@ import { frameworklist } from "./constants";
 
 export default function FrameworksPage() {
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-4 [@media(min-width:1400px)]:gap-6">
       <PageTitle
         title="Frameworks"
         subtitle="Monitor and manage all your frameworks"
@@ -18,7 +18,7 @@ export default function FrameworksPage() {
           </div>
         }
       />
-      <div className="flex flex-wrap gap-6 p-6">
+      <div className="flex flex-wrap gap-6">
         {frameworklist.map((item, idx) => (
           <FrameworkMonitorCard key={idx} {...item} />
         ))}

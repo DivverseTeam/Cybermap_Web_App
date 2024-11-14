@@ -12,6 +12,8 @@ import {
 } from "~/app/_components/ui/dropdown-menu";
 import { formatDate } from "~/lib/utils";
 import type { IControl } from "../types";
+import type { VariantProps } from "class-variance-authority";
+import { Badge, type badgeVariants } from "~/app/_components/ui/badge";
 
 // interface RowData {
 //   name: string;
@@ -56,18 +58,45 @@ export const columns: ColumnDef<IControl>[] = [
         STATUS
       </span>
     ), // Wrap in span
-    cell: ({ cell }) => (
-      <span
-        className={`flex w-[150px] items-center justify-center rounded-xl px-2 py-[2px] font-medium text-xs ${
-          cell.getValue() === "Not implemented"
-            ? "bg-destructive/20 text-destructive"
-            : cell.getValue() === "Partially implemented"
-              ? "bg-[#C65C10]/20 text-[#C65C10]"
-              : "bg-green-700/20 text-green-700 "
-        }`}
-      >
-        {cell.getValue() as string}
-      </span>
-    ),
+    // cell: ({ cell }) => (
+    //   <span
+    //     className={`flex w-max w-[150px] items-center justify-center rounded-xl px-2 py-[2px] font-medium text-xs ${
+    //       cell.getValue() === "Not implemented"
+    //         ? "bg-destructive/20 text-destructive"
+    //         : cell.getValue() === "Partially implemented"
+    //         ? "bg-[#C65C10]/20 text-[#C65C10]"
+    //         : "bg-green-700/20 text-green-700 "
+    //     }`}
+    //   >
+    //     {cell.getValue() as string}
+    //   </span>
+    // ),
+    cell: ({ cell }) => {
+      const status = cell.getValue() as string;
+      let badgeVariant: VariantProps<typeof badgeVariants>["variant"];
+
+      if (status.toLowerCase() === "not implemented") {
+        badgeVariant = "destructive";
+      }
+
+      if (status.toLowerCase() === "fully implemented") {
+        badgeVariant = "success";
+      }
+      if (status.toLowerCase() === "partially implemented") {
+        badgeVariant = "warning";
+      }
+      return (
+        // <span
+        //   className={`flex w-max items-center justify-center rounded-xl px-2 py-[2px] font-medium text-xs ${
+        //     cell.getValue() === "Needs artifact"
+        //       ? "bg-destructive/20 text-destructive"
+        //       : "bg-green-700/20 text-green-700 "
+        //   }`}
+        // >{cell.getValue() as string}</span>
+        <Badge className="w-max font-semibold" variant={badgeVariant}>
+          {status}
+        </Badge>
+      );
+    },
   },
 ];

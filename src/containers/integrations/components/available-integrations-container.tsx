@@ -59,46 +59,17 @@ export default function AvailableIntegrationsContainer({}: Props) {
             </span>
           }
         />
-        <div>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                aria-label="Open menu"
-                variant="ghost"
-                className="mx-auto flex size-8 p-0 data-[state=open]:bg-muted"
-              >
-                <DotsHorizontalIcon
-                  className="size-6 font-bold text-secondary"
-                  aria-hidden="true"
-                />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-40">
-              <DropdownMenuItem
-              // onSelect={() => setShowUpdateEvidenceSheet(true)}
-              >
-                View
-              </DropdownMenuItem>
-
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-              // onSelect={() => setShowDeleteEvidenceDialog(true)}
-              >
-                Delete
-                <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
       </div>
-      <div className="border px-5 py-8 2xl:px-8 2xl:py-9">
-        <div className=" mb-6">
-          <h2 className="font-semibold text-xl">All integrations</h2>
-          <p className="text-gray-600 text-sm">
+      <div className="border bg-white px-3 py-4 [@media(min-width:1400px)]:px-5 [@media(min-width:1400px)]:py-8 2xl:px-8 2xl:py-9">
+        <div className="mb-4 [@media(min-width:1400px)]:mb-6">
+          <h2 className="font-semibold text-lg [@media(min-width:1400px)]:text-xl">
+            All integrations
+          </h2>
+          <p className="text-gray-600 text-xs [@media(min-width:1400px)]:text-sm">
             Go through and access all available integrations in here
           </p>
         </div>
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+        <div className="grid grid-cols-2 gap-2 [@media(min-width:1400px)]:gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
           {integrationsList.map((integration, index: number) => (
             <AvailableIntegrationCard key={index} integration={integration} />
           ))}

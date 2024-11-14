@@ -7,7 +7,30 @@ import { DownArrow } from "~/components/svgs/DownArrow";
 import ComplianceChart from "./components/ComplianceChart";
 import FrameComplianceList from "./components/FrameComplianceList";
 import ProgressChart from "./components/ProgressChart";
-import { frameworkdata, frameworkdataColumns } from "./constants";
+import { frameworkData, frameworkDataColumns } from "./constants";
+import {
+  Table,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+  TableBody,
+} from "~/app/_components/ui/table";
+import { z } from "zod";
+
+// const FrameworkStatus = z.enum([
+//   "FULLY_IMPLEMENTED",
+//   "NOT_IMPLEMENTED",
+//   "PARTIALLY_IMPLEMENTED",
+// ]);
+// type FrameworkStatus = z.infer<typeof FrameworkStatus>;
+
+// type Framework = {
+//   id: string;
+//   control: string;
+//   mapped: string[];
+//   status: FrameworkStatus;
+// };
 
 export default function DashboardPage() {
   return (
@@ -71,15 +94,13 @@ export default function DashboardPage() {
         <div className="flex items-center gap-6">
           <div className="custom-scroll h-[552px] max-h-[552px] w-full overflow-scroll rounded-[8px] bg-white">
             <div className="flex h-[72px] w-full items-center justify-between px-5">
-              <p className="text-base text-neutral-normal">
-                Framework compliance
-              </p>
+              <p className="text-base text-neutral-normal">Control status</p>
               <div className="flex h-8 w-[76px] items-center justify-center rounded-sm border border-neutral-5 border-solid bg-white font-medium text-neutral-11 text-sm">
                 View all
               </div>
             </div>
             <div>
-              <DataTable columns={frameworkdataColumns} data={frameworkdata} />
+              <DataTable columns={frameworkDataColumns} data={frameworkData} />
             </div>
           </div>
           <div className="custom-scroll h-[552px] max-h-[552px] min-w-[378px] rounded-[8px] bg-white">

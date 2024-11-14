@@ -22,8 +22,11 @@ type Props = {
 
 export function IntegrationTabs({ setActiveList }: Props) {
   return (
-    <Tabs defaultValue="connected" className="h-[886px] w-[266px] 2xl:w-[22%]">
-      <TabsList className="z-10 grid w-full grid-cols-2 rounded-2xl rounded-b-none border bg-muted">
+    <Tabs
+      defaultValue="connected"
+      className="h-[500px] [@media(min-width:1400px)]:h-[886px] w-[200px] [@media(min-width:1400px)]:w-[270px] 2xl:w-[22%]"
+    >
+      <TabsList className="z-10 flex w-full rounded-2xl rounded-b-none border bg-muted">
         <TabsTrigger
           value="connected"
           className="rounded-2xl rounded-b-none rounded-tr-none"
@@ -45,6 +48,11 @@ export function IntegrationTabs({ setActiveList }: Props) {
           <CardHeader>
             <CardTitle>Connected</CardTitle>
             {/* <CardDescription>
+      <TabsContent value="connected">
+        <Card className="rounded-t-none">
+          <CardHeader>
+            <CardTitle className="text-sm">Connected</CardTitle>
+            {/* <CardDescription>
               Make changes to your account here. Click save when you're done.
             </CardDescription> */}
           </CardHeader>
@@ -59,6 +67,11 @@ export function IntegrationTabs({ setActiveList }: Props) {
         <Card className="rounded-t-none">
           <CardHeader>
             <CardTitle>Available</CardTitle>
+            {/* <CardDescription>
+      <TabsContent value="available">
+        <Card className="rounded-t-none">
+          <CardHeader>
+            <CardTitle className="text-sm">Available</CardTitle>
             {/* <CardDescription>
               Change your password here. After saving, you'll be logged out.
             </CardDescription> */}

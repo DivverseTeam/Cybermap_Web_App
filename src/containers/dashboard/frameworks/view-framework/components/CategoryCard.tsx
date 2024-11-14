@@ -23,9 +23,11 @@ import {
   TableRow,
 } from "~/app/_components/ui/table";
 import { ViewControlSheet } from "./view-control-sheet";
+import type { ICategory, IControl, IControlGroup } from "../types";
+import { Badge } from "~/app/_components/ui/badge";
 
 type Props = {
-  frameworkCategory: any;
+  frameworkCategory: ICategory;
 };
 
 export default function CategoryCard({ frameworkCategory }: Props) {
@@ -43,7 +45,7 @@ export default function CategoryCard({ frameworkCategory }: Props) {
           <AccordionTrigger className="hover:no-underline">
             {frameworkCategory.name}
           </AccordionTrigger>
-          {frameworkCategory.controlGroup.map((group: any, _key: any) => (
+          {frameworkCategory.controlGroup.map((group: IControlGroup) => (
             <AccordionContent key={group.name}>
               <div className="flex flex-col rounded-sm bg-white px-4 py-5">
                 <div className="flex flex-col">
@@ -67,7 +69,7 @@ export default function CategoryCard({ frameworkCategory }: Props) {
                         </TableRow>
                       </TableHeader>
                       <TableBody className="font-normal text-xs">
-                        {group.controls.map((control: any, _key: any) => (
+                        {group.controls.map((control: IControl) => (
                           <TableRow key={control.name}>
                             <TableCell className="flex flex-col font-medium ">
                               <span>{control.name}</span>
@@ -76,32 +78,34 @@ export default function CategoryCard({ frameworkCategory }: Props) {
                               </span>
                             </TableCell>
                             <TableCell>
-                              <div className="flex flex-col">
+                              <div className="flex flex-col w-max p-2">
                                 {control.evidencesCollected ===
                                   control.evidencesExpected && (
-                                  <span className="flex h-4 items-center justify-center rounded-full bg-[#008743]/20 font-semibold text-[#008743] text-[10px]">
+                                  <Badge
+                                    className="w-max font-semibold"
+                                    variant="success"
+                                  >
                                     Fully Implemented
-                                  </span>
+                                  </Badge>
                                 )}
                                 {control.evidencesCollected > 0 &&
                                   control.evidencesCollected <
                                     control.evidencesExpected && (
-                                    <span className="flex h-4 items-center justify-center rounded-full bg-[#C65C10]/20 px-1 font-semibold text-[#C65C10] text-[10px]">
+                                    <Badge
+                                      className="w-max font-semibold"
+                                      variant="warning"
+                                    >
                                       Partially Implemented
-                                    </span>
+                                    </Badge>
                                   )}
                                 {control.evidencesCollected === 0 && (
-                                  <span className="flex h-4 items-center justify-center rounded-full bg-destructive/20 font-semibold text-[10px] text-destructive">
+                                  <Badge
+                                    className="w-max font-semibold"
+                                    variant="destructive"
+                                  >
                                     Not Implemented
-                                  </span>
+                                  </Badge>
                                 )}
-                                {/* <Progress
-                                value={
-                                  (+control.evidencesCollected /
-                                    +control.evidencesExpected) *
-                                  100
-                                }
-                              /> */}
                               </div>
                             </TableCell>
                             <TableCell className="font-semibold ">

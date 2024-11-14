@@ -59,7 +59,7 @@ export const columns: ColumnDef<IEmployee>[] = [
         }[]) || [];
       const totalCompliance = complianceList.length;
       const trueComplianceCount = complianceList.filter(
-        (item) => Object.values(item)[0],
+        (item) => Object.values(item)[0]
       ).length;
       const score = Math.ceil((+trueComplianceCount / +totalCompliance) * 100);
       const data = [{ name: "score", value: score }];
@@ -70,26 +70,26 @@ export const columns: ColumnDef<IEmployee>[] = [
         score > 75
           ? "rgba(0, 123, 23)"
           : score > 50 && score <= 75
-            ? "rgba(255, 179, 0)"
-            : score === 50
-              ? "rgba(198, 92, 16)"
-              : "rgba(219, 0, 7)";
+          ? "rgba(255, 179, 0)"
+          : score === 50
+          ? "rgba(198, 92, 16)"
+          : "rgba(219, 0, 7)";
       const textColor =
         score > 75
           ? "rgba(0, 123, 23)"
           : score > 50 && score <= 75
-            ? "rgba(255, 179, 0)"
-            : score === 50
-              ? "rgba(198, 92, 16)"
-              : "rgba(219, 0, 7)";
+          ? "rgba(255, 179, 0)"
+          : score === 50
+          ? "rgba(198, 92, 16)"
+          : "rgba(219, 0, 7)";
       const interiorBackgroundColor =
         score > 75
           ? "rgba(0, 123, 23, 0.2)"
           : score > 50 && score <= 75
-            ? "rgba(255, 179, 0, 0.2)"
-            : score === 50
-              ? "rgba(198, 92, 16, 0.2)"
-              : "rgba(219, 0, 7, 0.2)";
+          ? "rgba(255, 179, 0, 0.2)"
+          : score === 50
+          ? "rgba(198, 92, 16, 0.2)"
+          : "rgba(219, 0, 7, 0.2)";
 
       return (
         <RadialBarChart
@@ -183,7 +183,7 @@ export const columns: ColumnDef<IEmployee>[] = [
 
       // Find the value of "Policy Acknowledgement"
       const policyAcknowledgement = complianceList.find((item) =>
-        item.hasOwnProperty("Policy Acknowledgement"),
+        item.hasOwnProperty("Policy Acknowledgement")
       )?.["Policy Acknowledgement"];
 
       return (
@@ -210,7 +210,7 @@ export const columns: ColumnDef<IEmployee>[] = [
 
       // Find the value of "Policy Acknowledgement"
       const identityMFA = complianceList.find((item) =>
-        item.hasOwnProperty("Identity MFA"),
+        item.hasOwnProperty("Identity MFA")
       )?.["Identity MFA"];
 
       return (
@@ -237,7 +237,7 @@ export const columns: ColumnDef<IEmployee>[] = [
 
       // Find the value of "Policy Acknowledgement"
       const backgroundCheck = complianceList.find((item) =>
-        item.hasOwnProperty("Background Check"),
+        item.hasOwnProperty("Background Check")
       )?.["Background Check"];
 
       return (
@@ -264,7 +264,7 @@ export const columns: ColumnDef<IEmployee>[] = [
 
       // Find the value of "Policy Acknowledgement"
       const securityTraining = complianceList.find((item) =>
-        item.hasOwnProperty("Security Training"),
+        item.hasOwnProperty("Security Training")
       )?.["Security Training"];
 
       return (
@@ -291,7 +291,7 @@ export const columns: ColumnDef<IEmployee>[] = [
 
       // Find the value of "Policy Acknowledgement"
       const deviceCompliance = complianceList.find((item) =>
-        item.hasOwnProperty("Device Compliance"),
+        item.hasOwnProperty("Device Compliance")
       )?.["Device Compliance"];
 
       return (
@@ -318,7 +318,7 @@ export const columns: ColumnDef<IEmployee>[] = [
 
       // Find the value of "Policy Acknowledgement"
       const passwordManagers = complianceList.find((item) =>
-        item.hasOwnProperty("Password Managers"),
+        item.hasOwnProperty("Password Managers")
       )?.["Password Managers"];
 
       return (
@@ -345,7 +345,7 @@ export const columns: ColumnDef<IEmployee>[] = [
 
       // Find the value of "Policy Acknowledgement"
       const antiVirus = complianceList.find((item) =>
-        item.hasOwnProperty("Anti-Virus"),
+        item.hasOwnProperty("Anti-Virus")
       )?.["Anti-Virus"];
 
       return (
@@ -372,7 +372,7 @@ export const columns: ColumnDef<IEmployee>[] = [
 
       // Find the value of "Policy Acknowledgement"
       const autoUpdates = complianceList.find((item) =>
-        item.hasOwnProperty("Auto-Updates"),
+        item.hasOwnProperty("Auto-Updates")
       )?.["Auto-Updates"];
 
       return (
