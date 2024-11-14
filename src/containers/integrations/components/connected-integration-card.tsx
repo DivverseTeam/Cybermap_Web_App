@@ -31,16 +31,12 @@ type Props = {
 
 export function ConnectedIntegrationCard({ integration }: Props) {
   return (
-    <Card className="p-1">
-      {/* <CardHeader>
-        <CardTitle>Create project</CardTitle>
-        <CardDescription>Deploy your new project in one-click.</CardDescription>
-      </CardHeader> */}
-      <div className="mx-auto my-auto flex h-[200px] flex-col justify-between gap-0 p-0 px-0 2xl:w-[266px]">
+    <Card className="p-0 [@media(min-width:1400px)]:p-1">
+      <div className="mx-auto my-auto flex h-[200px] flex-col justify-center gap-0 p-0 px-0 2xl:w-[266px]">
         <CardContent className="my-auto p-0">
-          <div className="flex w-full flex-col gap-2">
-            <div className="flex items-start justify-between gap-1 px-4 ">
-              <div className="flex flex-col items-start justify-center gap-2 ">
+          <div className="flex w-full flex-col gap-1 [@media(min-width:1400px)]:gap-2">
+            <div className="flex items-start justify-between gap-1 px-3 [@media(min-width:1400px)]:px-4 ">
+              <div className="flex flex-col items-start justify-center gap-1 [@media(min-width:1400px)]:gap-2 ">
                 <Image
                   src={integration.icon}
                   alt="image"
@@ -52,9 +48,9 @@ export function ConnectedIntegrationCard({ integration }: Props) {
                   className="flex items-center justify-center "
                 />
                 {["Github", "Github Enterprise Server"].includes(
-                  integration.name,
+                  integration.name
                 ) && (
-                  <span className="font-semibold text-xs">
+                  <span className="font-semibold whitespace-nowrap text-[7px] [@media(min-width:1400px)]:text-xs">
                     {integration.name}
                   </span>
                 )}
@@ -79,10 +75,10 @@ export function ConnectedIntegrationCard({ integration }: Props) {
             </div>
           </div>
         </CardContent>
-        <CardFooter className="flex items-center justify-between gap-2 p-3 2xl:gap-3 ">
+        <CardFooter className="flex items-center justify-between gap-1 p-2 [@media(min-width:1400px)]:p-3 2xl:gap-3 ">
           <Button
             variant="outline"
-            className="h-8 w-[234px] 2xl:h-9 2xl:w-[244px]"
+            className="h-8 w-[230px] 2xl:h-9 2xl:w-[230px]"
           >
             View details
           </Button>

@@ -63,14 +63,14 @@ export default function PersonnelPage({}: Props) {
     setSelectedCompliances((prev) =>
       prev.includes(compliance)
         ? prev.filter((item) => item !== compliance)
-        : [...prev, compliance],
+        : [...prev, compliance]
     );
   };
 
   // Function to remove a compliance from selectedCompliances
   const removeSelectedCompliance = (compliance: string) => {
     setSelectedCompliances((prevCompliances) =>
-      prevCompliances.filter((item) => item !== compliance),
+      prevCompliances.filter((item) => item !== compliance)
     );
   };
 
@@ -92,7 +92,7 @@ export default function PersonnelPage({}: Props) {
             Object.entries(compliance).map(([key, value]) => [
               key,
               value ?? false,
-            ]), // Set undefined to false
+            ]) // Set undefined to false
           );
           return cleanedCompliance;
         }),
@@ -101,22 +101,22 @@ export default function PersonnelPage({}: Props) {
         // Check if "compliant" is selected in the list
         if (selectedCompliances.includes("Compliant")) {
           return employee.complianceList.every(
-            (compliance) => Object.values(compliance)[0] === true,
+            (compliance) => Object.values(compliance)[0] === true
           );
         }
 
         // Check if "non-compliant" is selected in the list
         if (selectedCompliances.includes("Non-compliant")) {
           return employee.complianceList.some((compliance) =>
-            Object.values(compliance).some((value) => value === false),
+            Object.values(compliance).some((value) => value === false)
           );
         }
 
         // General case for specific compliance selections
         return selectedCompliances.every((compliance) =>
           employee.complianceList.some(
-            (complianceObj) => complianceObj[compliance] === true,
-          ),
+            (complianceObj) => complianceObj[compliance] === true
+          )
         );
       });
       setData(filteredData);
@@ -133,11 +133,11 @@ export default function PersonnelPage({}: Props) {
         // action={<NewControlSheet />}
       />
       {data ? (
-        <div className="flex gap-5">
+        <div className="flex gap-5 [@media(min-width:1400px)]:gap-6">
           {/* FILTERS */}
-          <div className="flex min-w-[260px] flex-col rounded-lg">
+          <div className="flex min-w-[200px] [@media(min-width:1400px)]:min-w-[260px] flex-col rounded-lg">
             {/* Filter heading */}
-            <div className="flex h-[40px] items-center justify-between rounded-2xl rounded-b-none border border-b-0 bg-muted px-3 text-secondary text-sm 2xl:text-md">
+            <div className="flex h-[34px] [@media(min-width:1400px)]:h-[40px] items-center justify-between rounded-2xl rounded-b-none border border-b-0 bg-muted px-3 text-secondary text-sm 2xl:text-md">
               <div className="flex gap-2 text-secondary">
                 <span className="font-semibold">Filters</span>
                 <ListFilter className="w-5" />
@@ -146,7 +146,7 @@ export default function PersonnelPage({}: Props) {
               <ChevronRight className="w-5" />
             </div>
             {/* Selected compliances */}
-            <div className="flex flex-wrap items-center border border-t-0 border-b-2 py-2 pl-3 text-xs 2xl:text-sm">
+            <div className="flex flex-wrap items-center border border-t-0 border-b-2 py-2 pl-2 [@media(min-width:1400px)]:pl-3 text-xs 2xl:text-sm">
               <div className="mb-1 flex h-5 items-center justify-between gap-2 rounded-3xl bg-primary/20 px-2 2xl:h-8">
                 All <Star className="w-4" />
               </div>
@@ -173,7 +173,7 @@ export default function PersonnelPage({}: Props) {
               ].map((compliance) => (
                 <div
                   key={compliance}
-                  className="cursor-pointer px-2.5 py-2.5 last:rounded-b-2xl hover:bg-muted"
+                  className="cursor-pointer px-1.5 py-1.5 [@media(min-width:1400px)]:px-2.5 [@media(min-width:1400px)]:py-2.5 last:rounded-b-2xl hover:bg-muted"
                   onClick={() => addSelectedCompliance(compliance)}
                 >
                   {compliance}

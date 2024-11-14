@@ -64,12 +64,12 @@ export default function EvidenceLibraryPage({
       const filteredData =
         statusFilter &&
         ["needs artifact", "updated"].includes(
-          statusFilter?.toLocaleLowerCase(),
+          statusFilter?.toLocaleLowerCase()
         )
           ? evidences.filter(
               (evidence) =>
                 evidence.status.toLocaleLowerCase() ===
-                statusFilter.toLocaleLowerCase(),
+                statusFilter.toLocaleLowerCase()
             )
           : evidences;
 
@@ -152,7 +152,7 @@ export default function EvidenceLibraryPage({
             placeholder="Search for a file"
             // onChange={handleSearch}
             // defaultValue={search}
-            className="w-72 bg-[#F9F9FB]"
+            className="w-54 [@media(min-width:1400px)]:w-72 bg-[#F9F9FB]"
             suffix={
               <span className="cursor-pointer">
                 <Search01Icon size="12" />
@@ -161,8 +161,8 @@ export default function EvidenceLibraryPage({
           />
         </div>
 
-        <Table>
-          <TableHeader className="bg-gray-100 text-[#40566D]">
+        <Table className="border ">
+          <TableHeader className="bg-white border text-[#40566D] text-xs [@media(min-width:1400px)]:text-sm">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
@@ -170,15 +170,15 @@ export default function EvidenceLibraryPage({
                     <button
                       onClick={() =>
                         router.push(
-                          `/dashboard/evidences?page=${currentPage}&limit=${itemsPerPage}`,
+                          `/dashboard/evidences?page=${currentPage}&limit=${itemsPerPage}`
                         )
                       }
                     >
                       {header.isPlaceholder
                         ? null
                         : typeof header.column.columnDef.header === "function"
-                          ? header.column.columnDef.header(header.getContext()) // Call the function to get the rendered header
-                          : header.column.columnDef.header}
+                        ? header.column.columnDef.header(header.getContext()) // Call the function to get the rendered header
+                        : header.column.columnDef.header}
                     </button>
                   </TableHead>
                 ))}

@@ -18,18 +18,13 @@ import {
 const controlDetailsData = [
   [
     <span className="w-24 text-secondary ">Name</span>,
-    <span className="font-semibold text-secondary-foreground">
-      Risk management program established
-    </span>,
+
+    <Input placeholder="Enter a name..." className="border-none" />,
   ],
   [
     <span className="w-24 text-secondary">Description</span>,
-    <span className="text-secondary ">
-      The company has a documented risk management program in place that
-      includes guidance on the identification of potential threats, rating the
-      significance of the risks associated with the ientified threats, and
-      mitigration strategies for those risks,
-    </span>,
+
+    <Input placeholder="Add description..." className="border-none" />,
   ],
 
   [
@@ -45,12 +40,7 @@ const controlDetailsData = [
 
   [
     <span className="w-24 text-secondary">Implementation Guidance</span>,
-    <span className="text-secondary ">
-      The company has a documented risk management program in place that
-      includes guidance on the identification of potential threats, rating the
-      significance of the risks associated with the ientified threats, and
-      mitigration strategies for those risks,
-    </span>,
+    <Input className="border-none" placeholder="Add a note..." />,
   ],
 ];
 
@@ -109,7 +99,7 @@ export function NewControlSheet() {
           <div
             onDrop={handleDrop}
             onDragOver={handleDragOver}
-            className="flex h-36 w-full cursor-pointer items-center justify-center rounded-lg border-2 border-gray-300 border-dashed bg-muted hover:border-secondary"
+            className="flex h-36 w-full cursor-pointer items-center justify-center rounded-lg border-2 border-gray-300 border-dashed bg-gray-50 hover:border-secondary"
           >
             {files.length ? (
               <ul>
@@ -130,7 +120,7 @@ export function NewControlSheet() {
                 </div>
                 <Label
                   htmlFor="fileUpload"
-                  className="mt-4 cursor-pointer rounded-md border-2 border-secondary bg-muted px-4 py-2 text-secondary text-xs hover:bg-secondary-foreground/20"
+                  className="mt-4 cursor-pointer rounded-md border-2 border-secondary bg-gray-50 px-4 py-2 text-secondary text-xs hover:bg-muted"
                 >
                   SELECT FILE
                 </Label>

@@ -15,6 +15,8 @@ import {
 import { formatDate } from "~/lib/utils";
 import { DeleteEvidenceDialog } from "./delete-evidence-dialog";
 import { ViewEvidenceSheet } from "./view-evidence-sheet";
+import { Badge, type badgeVariants } from "~/app/_components/ui/badge";
+import type { VariantProps } from "class-variance-authority";
 
 // interface RowData {
 //   name: string;
@@ -41,7 +43,7 @@ export const columns: ColumnDef<IEvidence>[] = [
             linkedControls.map((control, idx) => (
               <span
                 key={idx}
-                className="rounded-xl bg-[#0F78AD]/20 px-2 py-1 font-semibold text-[#0F78AD] text-xs"
+                className="rounded-xl bg-[#0F78AD]/20 px-2 py-[2px] font-semibold text-[#0F78AD] text-xs whitespace-nowrap text-center"
               >
                 {control}
               </span>
@@ -55,9 +57,14 @@ export const columns: ColumnDef<IEvidence>[] = [
   },
   {
     accessorKey: "renewalDate",
-    header: () => <span className="">Renewal Date</span>, // Wrap in span
+    header: () => (
+      <span className="whitespace-nowrap text-center">Renewal Date</span>
+    ), // Wrap in span
     cell: ({ cell }) => (
-      <span className="text-sm "> {formatDate(cell.getValue() as Date)}</span>
+      <span className="whitespace-nowrap text-center text-sm ">
+        {" "}
+        {formatDate(cell.getValue() as Date)}
+      </span>
     ),
   },
   {
@@ -67,17 +74,30 @@ export const columns: ColumnDef<IEvidence>[] = [
         Status
       </span>
     ), // Wrap in span
-    cell: ({ cell }) => (
-      <span
-        className={`flex items-center justify-center rounded-xl px-2 py-[2px] font-medium text-xs ${
-          cell.getValue() === "Needs artifact"
-            ? "bg-destructive/20 text-destructive"
-            : "bg-green-700/20 text-green-700 "
-        }`}
-      >
-        {cell.getValue() as string}
-      </span>
-    ),
+    cell: ({ cell }) => {
+      const status = cell.getValue() as string;
+      let badgeVariant: VariantProps<typeof badgeVariants>["variant"];
+
+      if (status.toLowerCase() === "needs artifact") {
+        badgeVariant = "destructive";
+      }
+
+      if (status.toLowerCase() === "updated") {
+        badgeVariant = "success";
+      }
+      return (
+        // <span
+        //   className={`flex w-max items-center justify-center rounded-xl px-2 py-[2px] font-medium text-xs ${
+        //     cell.getValue() === "Needs artifact"
+        //       ? "bg-destructive/20 text-destructive"
+        //       : "bg-green-700/20 text-green-700 "
+        //   }`}
+        // >{cell.getValue() as string}</span>
+        <Badge className="w-max font-semibold" variant={badgeVariant}>
+          {status}
+        </Badge>
+      );
+    },
   },
 
   {

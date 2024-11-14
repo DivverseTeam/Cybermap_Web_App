@@ -22,7 +22,7 @@ const FrameComplianceType = z.object({
 
 export type FrameComplianceType = z.infer<typeof FrameComplianceType>;
 
-export const frameworkdata = [
+export const frameworkData = [
   {
     id: "CB203",
     control: "Incident Response Plan",
@@ -42,38 +42,38 @@ export const frameworkdata = [
     status: FrameworkStatus.Values.PARTIALLY_IMPLEMENTED,
   },
   {
-    id: "CB2",
+    id: "CB24",
     control: "Incident Response Plan",
     mapped: ["SOC 2 II", "HIPAA", "+1"],
     status: FrameworkStatus.Values.FULLY_IMPLEMENTED,
   },
   {
-    id: "CB2",
+    id: "CB25",
     control: "Incident Response Plan",
     mapped: ["SOC 2 II", "HIPAA", "+1"],
     status: FrameworkStatus.Values.PARTIALLY_IMPLEMENTED,
   },
   {
-    id: "CB2",
+    id: "CB26",
     control: "Incident Response Plan",
     mapped: ["SOC 2 II", "HIPAA", "+1"],
     status: FrameworkStatus.Values.FULLY_IMPLEMENTED,
   },
   {
-    id: "CB2",
+    id: "CB27",
     control: "Incident Response Plan",
     mapped: ["SOC 2 II", "HIPAA", "+1"],
     status: FrameworkStatus.Values.NOT_IMPLEMENTED,
   },
   {
-    id: "CB2",
+    id: "CB28",
     control: "Incident Response Plan",
     mapped: ["SOC 2 II", "HIPAA", "+1"],
     status: FrameworkStatus.Values.PARTIALLY_IMPLEMENTED,
   },
 ];
 
-export const frameworkdataColumns: ColumnDef<FrameComplianceType>[] = [
+export const frameworkDataColumns: ColumnDef<FrameComplianceType>[] = [
   {
     accessorKey: "id",
     header: "ID",
@@ -102,7 +102,7 @@ export const frameworkdataColumns: ColumnDef<FrameComplianceType>[] = [
       const cn = (c: string) =>
         twMerge(
           "font-medium text-xs p-2 flex items-center justify-center rounded-[1000px] w-fit h-5",
-          c,
+          c
         );
       if (status === FrameworkStatus.Values.FULLY_IMPLEMENTED) {
         return (

@@ -46,6 +46,8 @@ import { User, X } from "lucide-react";
 // import { Evidence } from "../_lib/queries";
 import { useEffect, useRef, useTransition } from "react";
 import { Input } from "~/app/_components/ui/input";
+import type { IControlGroup } from "../types";
+import { Badge } from "~/app/_components/ui/badge";
 
 const controlDetailsData = [
   [
@@ -79,9 +81,9 @@ const controlDetailsData = [
   ],
   [
     <span className="w-24 text-secondary">Control Status</span>,
-    <span className="flex h-4 items-center rounded-xl bg-[#C65C10]/20 px-2 font-semibold text-[#C65C10]">
+    <Badge className="w-max font-semibold" variant="warning">
       Partially Implemented
-    </span>,
+    </Badge>,
   ],
   [
     <span className="w-24 text-secondary">Note</span>,
@@ -92,9 +94,7 @@ const controlDetailsData = [
 
 interface ViewControlSheetProps
   extends React.ComponentPropsWithRef<typeof Sheet> {
-  control: any;
-  open: any;
-  onOpenChange: any;
+  control: IControlGroup;
 }
 
 export function ViewControlSheet({
@@ -108,8 +108,8 @@ export function ViewControlSheet({
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  const handleEvidenceUpload = (event: any) => {
-    const file = event.target.files[0];
+  const handleEvidenceUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
     if (file) {
       // Handle the file upload logic here
       console.log("Uploaded file:", file.name);
@@ -129,7 +129,7 @@ export function ViewControlSheet({
       </SheetTrigger>
       <SheetContent className="flex h-full flex-col gap-6 overflow-y-auto">
         <SheetHeader className="text-left">
-          <SheetTitle>View Control {control.id}</SheetTitle>
+          <SheetTitle>View Control {control.name}</SheetTitle>
           {/* <SheetDescription>
             Update the task details and save the changes
           </SheetDescription> */}

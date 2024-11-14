@@ -32,18 +32,18 @@ export function DataTable<TData, TValue>({
   });
 
   return (
-    <Table>
-      <TableHeader className="bg-gray-100 text-[#40566D]">
+    <Table className="text-xs [@media(min-width:1400px)]:text-sm">
+      <TableHeader className="bg-white border text-[#40566D] ">
         {table.getHeaderGroups().map((headerGroup) => (
           <TableRow key={headerGroup.id}>
             {headerGroup.headers.map((header) => {
               return (
-                <TableHead key={header.id}>
+                <TableHead className="whitespace-nowrap" key={header.id}>
                   {header.isPlaceholder
                     ? null
                     : flexRender(
                         header.column.columnDef.header,
-                        header.getContext(),
+                        header.getContext()
                       )}
                 </TableHead>
               );

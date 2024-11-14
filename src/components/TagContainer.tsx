@@ -38,12 +38,15 @@ const TagsContainer = ({ tags }: { tags: Array<string> }) => {
   }, [tags]);
 
   return (
-    <div className="flex gap-2 overflow-hidden" ref={containerRef}>
+    <div
+      className="flex gap-1 [@media(min-width:1400px)]:gap-2 overflow-hidden"
+      ref={containerRef}
+    >
       {tags.slice(0, visibleTags).map((tag, index) => (
         <span
           key={index}
           id={`tag-${index}`}
-          className="rounded-lg bg-gray-100 px-2 py-1 font-semibold text-gray-700 text-xs"
+          className="rounded-lg bg-gray-100 whitespace-nowrap px-2 py-1 font-semibold text-gray-700 text-[10px] [@media(min-width:1400px)]:text-xs"
         >
           {tag}
         </span>

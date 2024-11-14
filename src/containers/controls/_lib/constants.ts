@@ -1,7 +1,7 @@
 export const controls = [
   {
-    id: "adadcecefadfaf",
-    name: "Clerissa",
+    id: "adadcecefadfaf ",
+    name: "Clerissa The quick brown fox jumps over the lazy dog  The quick brown fox jumps over the lazy dog",
     description:
       "Integer pede justo, lacinia eget, tincidunt eget, tempus vel, pede.",
     mappedControls: ["SOC 2 II", "HIPAA", "HIPAA"],

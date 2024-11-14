@@ -81,7 +81,7 @@ export default function ControlsPage({}) {
 
   // Unique list of frameworks
   const frameworks = Array.from(
-    new Set(controls.flatMap((control) => control.mappedControls)),
+    new Set(controls.flatMap((control) => control.mappedControls))
   );
 
   const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -98,7 +98,7 @@ export default function ControlsPage({}) {
       setSelectedFrameworks((prev) =>
         checked
           ? [...prev, value]
-          : prev.filter((framework) => framework !== value),
+          : prev.filter((framework) => framework !== value)
       );
     }
   };
@@ -118,7 +118,7 @@ export default function ControlsPage({}) {
         ? controls.filter(
             (control) =>
               control.status.toLocaleLowerCase() ===
-              statusFilter.toLocaleLowerCase(),
+              statusFilter.toLocaleLowerCase()
           )
         : controls;
 
@@ -134,7 +134,7 @@ export default function ControlsPage({}) {
           return true; // Show all controls if no specific filter is applied
         }
         return selectedFrameworks.some((framework) =>
-          control.mappedControls.includes(framework),
+          control.mappedControls.includes(framework)
         );
       });
       setData(filteredControlsData);
@@ -185,8 +185,8 @@ export default function ControlsPage({}) {
         subtitle="View and manage your controls"
         action={<NewControlSheet />}
       />
-      <div className="flex gap-10">
-        <div className="flex w-[142px] flex-col gap-2 2xl:w-[200px]">
+      <div className="flex gap-7 [@media(min-width:1400px)]:gap-10">
+        <div className="flex w-[136px] [@media(min-width:1400px)]:w-[142px] flex-col gap-1 [@media(min-width:1400px)]:gap-2 2xl:w-[200px]">
           <h5 className="mb-3 font-semibold">Frameworks</h5>
 
           <label className="flex items-center text-xs 2xl:text-sm">
@@ -235,12 +235,12 @@ export default function ControlsPage({}) {
           </label>
         </div>
 
-        <div className="container flex flex-col gap-6 bg-white p-4 py-6">
+        <div className="container flex flex-col gap-4 [@media(min-width:1400px)]:gap-6 bg-white p-3 [@media(min-width:1400px)]:p-4 py-4 [@media(min-width:1400px)]:py-6">
           <div className="flex justify-between">
             <div>
               <Tabs
                 defaultValue="All"
-                className="w-[400px]"
+                className="w-[100px]"
                 onValueChange={(value) =>
                   setStatusFilter(value === "All" ? "" : value)
                 }
@@ -264,7 +264,7 @@ export default function ControlsPage({}) {
               placeholder="Search for a file"
               // onChange={handleSearch}
               // defaultValue={search}
-              className="w-72 bg-[#F9F9FB]"
+              className="w-54 [@media(min-width:1400px)]:w-72 bg-[#F9F9FB]"
               suffix={
                 <span className="cursor-pointer">
                   <Search01Icon size="12" />
@@ -273,8 +273,8 @@ export default function ControlsPage({}) {
             />
           </div>
 
-          <Table>
-            <TableHeader className="bg-gray-100 text-[#40566D]">
+          <Table className="border">
+            <TableHeader className="bg-white border text-[#40566D] text-xs [@media(min-width:1400px)]:text-sm">
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
@@ -283,10 +283,8 @@ export default function ControlsPage({}) {
                         {header.isPlaceholder
                           ? null
                           : typeof header.column.columnDef.header === "function"
-                            ? header.column.columnDef.header(
-                                header.getContext(),
-                              ) // Call the function to get the rendered header
-                            : header.column.columnDef.header}
+                          ? header.column.columnDef.header(header.getContext()) // Call the function to get the rendered header
+                          : header.column.columnDef.header}
                       </button>
                     </TableHead>
                   ))}
@@ -312,7 +310,7 @@ export default function ControlsPage({}) {
                     <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext(),
+                        cell.getContext()
                       )}
                     </TableCell>
                   ))}
