@@ -20,7 +20,7 @@ export default function FrameworkMonitorCard({
   keyVal: FrameworkKey;
 }) {
   return (
-    <div className="flex h-[228.35] min-w-[217.6px] flex-col gap-2 rounded-[8px] border border-neutral-2 border-solid bg-white p-4">
+    <div className="flex h-[228.35] min-w-[217.6px] flex-col gap-2 rounded-[8px] border border-neutral-2 border-solid bg-white p-3">
       <div className="flex w-full items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="relative block h-5 w-5 rounded-[50%]">
@@ -41,7 +41,7 @@ export default function FrameworkMonitorCard({
         </div>
         <p className="font-medium text-gray-11 text-xs">{score}</p>
       </div>
-      <div className="relative flex h-[128px] justify-center">
+      <div className="relative flex justify-center">
         <FrameworkComplianceProgress progress={progress} />
         <div className="absolute top-[4.5rem] flex flex-col items-center gap-[18px]">
           <div className="flex flex-col items-center gap-2 ">
@@ -51,7 +51,7 @@ export default function FrameworkMonitorCard({
           </div>
 
           <Link href={`/frameworks/${framework}`}>
-            <Button size="sm" variant="outline">
+            <Button size="sm" className="w-[188px] text-sm" variant="outline">
               View framework
             </Button>
           </Link>
