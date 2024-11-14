@@ -67,14 +67,14 @@ export function Nav({ links, groupName, isCollapsed }: NavProps) {
                   href={`${link.href}`}
                   className={cn(
                     "w-[200px] [@media(min-width:1400px)]:w-[220px]",
-                    isActive && "text-black",
+                    isActive && "text-white",
                     buttonVariants({
-                      variant: isActive ? "lightBlue" : "ghost",
+                      variant: isActive ? "lightBlue" : "linkGhost",
                       size: "linkSm",
                     }),
                     link.variant === "default" &&
-                      "dark:bg-muted dark:text-white dark:hover:bg-muted  dark:hover:text-white",
-                    link.variant === "lightBlue" && "text-black",
+                      "dark:bg-muted dark:text-white dark:hover:bg-muted-foreground  dark:hover:text-white",
+                    link.variant === "lightBlue" && "text-white",
                     "justify-start"
                   )}
                 >

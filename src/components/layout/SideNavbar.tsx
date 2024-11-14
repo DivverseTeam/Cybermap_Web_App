@@ -16,19 +16,6 @@ import {
   PolicyIcon,
   UserMultipleIcon,
 } from "hugeicons-react";
-import {
-  AlertCircle,
-  Archive,
-  ArchiveX,
-  File,
-  Inbox,
-  MessagesSquare,
-  Search,
-  Send,
-  ShoppingCart,
-  Trash2,
-  Users2,
-} from "lucide-react";
 
 import { signOut } from "next-auth/react";
 import { usePathname } from "next/navigation";
@@ -165,10 +152,10 @@ export default function SideNavbar({}: Props) {
 
   return (
     <aside
-      className="fixed bg-white z-20 top-0 left-0 border w-[250px] [@media(min-width:1400px)]:w-[280px] [@media(min-width:1400px)]:min-w-[280px] text-[14px] leading-4  
+      className="fixed bg-[#192839] z-20 top-0 left-0 w-[250px] [@media(min-width:1400px)]:w-[280px] [@media(min-width:1400px)]:min-w-[280px] text-[14px] leading-4  
     flex flex-col justify-start flex-grow min-h-screen"
     >
-      <div className="w-full flex items-center justify-center border-b mx-auto py-3 px-4  [@media(min-width:1400px)]:py-6 [@media(min-width:1400px)]:px-6 ">
+      <div className="w-full flex items-center justify-center mx-auto py-3 px-4  [@media(min-width:1400px)]:py-6 [@media(min-width:1400px)]:px-6 ">
         <CyberMapBrand />
       </div>
       <div className="text-[14px] leading-4  flex flex-col justify-start flex-grow pt-12 [@media(min-width:1400px)]:pt-20 gap-[12px] max-h-[700px] px-4 [@media(min-width:1400px)]:px-6 ">
