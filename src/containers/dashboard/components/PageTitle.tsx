@@ -8,18 +8,13 @@ type Props = {
   className?: string;
 };
 
-export default function PageTitle({
-  title,
-  subtitle,
-  description,
-  className,
-}: Props) {
+export default function PageTitle({ title, subtitle, className }: Props) {
   return (
     <div className="flex flex-col gap-4 py-6">
       <div
         className={cn(
           "flex w-full items-baseline gap-2 bg-[#F9F9FB] font-semibold text-[16px] ",
-          className,
+          className
         )}
       >
         <span

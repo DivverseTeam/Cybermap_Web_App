@@ -45,10 +45,10 @@ interface RealtimeMonitoringData {
 
 const realtimeMonitoringData: RealtimeMonitoringData[] = [
   {
-    name: "At risk",
-    value: 10,
-    color: "#FFDC00",
-    icon: <TriangleAlert className="text-[#C65C10]" />,
+    name: "Passing",
+    value: 115,
+    color: "#09D886",
+    icon: <CircleCheck className="text-[#09D886]" />,
   },
   {
     name: "Failing",
@@ -57,10 +57,10 @@ const realtimeMonitoringData: RealtimeMonitoringData[] = [
     icon: <CircleX className="text-destructive" />,
   },
   {
-    name: "Passing",
-    value: 115,
-    color: "#09D886",
-    icon: <CircleCheck className="text-[#007B17]" />,
+    name: "At risk",
+    value: 10,
+    color: "#FFDC00",
+    icon: <TriangleAlert className="text-[#FFDC00]" />,
   },
 ];
 
@@ -108,8 +108,8 @@ export default function DashboardPage() {
       <div className="flex flex-col gap-6 py-6">
         {/* General charts */}
         <div className="flex items-center gap-6">
-          <div className="min-h-[367.93px] min-w-[378px] rounded-[8px] border border-neutral-2 border-solid bg-white">
-            <div className="flex h-[72px] w-full items-center justify-between px-5">
+          <div className="h-[400px] min-w-[378px] flex flex-col gap-3 [@media(min-width:1400px)]:gap-4 rounded-[8px] border border-neutral-2 border-solid bg-white p-4 px-2">
+            <div className="flex w-full items-center justify-between px-5">
               <p className="text-base font-semibold text-neutral-normal">
                 Realtime monitoring
               </p>
@@ -117,77 +117,65 @@ export default function DashboardPage() {
                 Last update 2mins ago
               </span>
             </div>
-            <div className="flex items-center justify-center">
-              <div className="relative flex flex-col items-center">
-                {/* <div className="w-[260px] h-[130px] relative border-t-[50px] border-l-[50px] border-r-[50px]  rounded-t-full border-gray-2">
-                  <div className="w-[260px] h-[130px] absolute  border-t-[50px] border-l-[50px] border-r-[50px]  rounded-t-full border-gray-2"></div>
-                </div> */}
-                <div className="flex flex-col gap-1 w-full mx-auto justify-center items-center">
-                  {/* <ProgressChart /> */}
-                  <PieChart width={200} height={200}>
-                    <Pie
-                      data={realtimeMonitoringData}
-                      dataKey="value"
-                      nameKey="name"
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={70}
-                      outerRadius={100}
-                      startAngle={-60}
-                      endAngle={240} // 80% of a full circle (approximate)
-                      cornerRadius={12} // Rounded edges for each segment
-                      paddingAngle={-12} // Creates slight overlap by negative padding
-                    >
-                      {realtimeMonitoringData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
-                      {/* First text with larger font size and bold style */}
-                      <Label
-                        value={`${Math.ceil(
-                          (+(
-                            realtimeMonitoringData.find(
-                              (item) => item.name.toLowerCase() === "passing"
-                            )?.value ?? 0
-                          ) /
-                            +realtimeMonitoringData.reduce(
-                              (acc, item) => acc + item.value,
-                              0
-                            )) *
-                            100
-                        )}%`}
-                        position="center"
-                        fontSize={20}
-                        fontWeight="bold"
-                        fill="#333"
-                      />
+            <div className="flex flex-col gap-1 w-full mx-auto justify-center items-center">
+              {/* <ProgressChart /> */}
+              <PieChart width={200} height={200}>
+                <Pie
+                  data={realtimeMonitoringData}
+                  dataKey="value"
+                  nameKey="name"
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={70}
+                  outerRadius={100}
+                  startAngle={240}
+                  endAngle={-60} // 80% of a full circle (approximate)
+                  cornerRadius={12} // Rounded edges for each segment
+                  paddingAngle={-12} // Creates slight overlap by negative padding
+                >
+                  {realtimeMonitoringData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                  {/* First text with larger font size and bold style */}
+                  <Label
+                    value={`${Math.ceil(
+                      (+(
+                        realtimeMonitoringData.find(
+                          (item) => item.name.toLowerCase() === "passing"
+                        )?.value ?? 0
+                      ) /
+                        +realtimeMonitoringData.reduce(
+                          (acc, item) => acc + item.value,
+                          0
+                        )) *
+                        100
+                    )}%`}
+                    position="center"
+                    fontSize={20}
+                    fontWeight="bold"
+                    fill="#333"
+                  />
 
-                      {/* Second text with smaller font size and different color */}
-                      <Label
-                        value="Passing"
-                        position="center"
-                        fontSize={13}
-                        fill="#8B8D98" // Different color for the second text
-                        dy={20} // Position the second text slightly below the first one
-                      />
-                    </Pie>
+                  {/* Second text with smaller font size and different color */}
+                  <Label
+                    value="Passing"
+                    position="center"
+                    fontSize={13}
+                    fill="#8B8D98" // Different color for the second text
+                    dy={20} // Position the second text slightly below the first one
+                  />
+                </Pie>
 
-                    <Tooltip />
-                  </PieChart>
+                <Tooltip />
+              </PieChart>
 
-                  <CustomPiechartLegend payload={realtimeMonitoringData} />
-                </div>
-                {/* <div className="absolute top-20 flex flex-col items-center gap-[18px]">
-                  <div className="flex h-8 w-[137px] items-center justify-center rounded-sm border border-neutral-5 border-solid bg-white font-medium text-neutral-11 text-sm">
-                    Download report
-                  </div>
-                </div> */}
-              </div>
+              <CustomPiechartLegend payload={realtimeMonitoringData} />
             </div>
-            <div className="w-full flex mx-auto">
-              <Button variant="outline">Download report</Button>
-            </div>
+            <Button variant="outline" className="w-60 mx-auto">
+              Download report
+            </Button>
           </div>
-          <div className="h-[367.93px] w-full rounded-[8px] border border-neutral-2 border-solid bg-white">
+          <div className="flex flex-col justify-center items-center h-[400px] w-full rounded-[8px] border border-neutral-2 border-solid bg-white">
             <div className="flex h-[72px] w-full items-center justify-between px-5">
               <p className="text-base text-neutral-normal">
                 Compliance over time
@@ -223,8 +211,8 @@ export default function DashboardPage() {
                       cy="50%"
                       innerRadius={70}
                       outerRadius={100}
-                      startAngle={-60}
-                      endAngle={240} // 80% of a full circle (approximate)
+                      startAngle={240}
+                      endAngle={-60} // 80% of a full circle (approximate)
                       cornerRadius={12} // Rounded edges for each segment
                       paddingAngle={-12} // Creates slight overlap by negative padding
                     >
@@ -309,8 +297,8 @@ export default function DashboardPage() {
                       cy="50%"
                       innerRadius={70}
                       outerRadius={100}
-                      startAngle={-60}
-                      endAngle={240} // 80% of a full circle (approximate)
+                      startAngle={240}
+                      endAngle={-60} // 80% of a full circle (approximate)
                       cornerRadius={12} // Rounded edges for each segment
                       paddingAngle={-12} // Creates slight overlap by negative padding
                     >
