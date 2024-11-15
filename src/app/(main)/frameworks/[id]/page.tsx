@@ -6,10 +6,10 @@ import { useEffect, useState } from "react";
 
 import { Button } from "~/app/_components/ui/button";
 import PageTitle from "~/components/PageTitle";
-import ViewFrameworks from "~/containers/dashboard/frameworks/view-framework/ViewFrameworks";
+import ViewFrameworks from "~/containers/frameworks/view-framework/ViewFrameworks";
 // import ViewFramework from "~/containers/dashboard/frameworks/view-frameworks/ViewFramework";
 
-const _frameworkData: any = {
+const _frameworkData = {
   1: {
     name: "React",
     description: "A JavaScript library for building user interfaces.",
@@ -25,7 +25,7 @@ const _frameworkData: any = {
 };
 
 export default function page() {
-  const { id } = useParams(); // Get the dynamic route parameter
+  // const { id } = useParams(); // Get the dynamic route parameter
   const [_framework, _setFramework] = useState(null);
 
   // useEffect(() => {

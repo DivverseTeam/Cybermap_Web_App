@@ -45,7 +45,7 @@ export default function RootLayout({
               <SideNavbar />
               <div className="ml-[250px] [@media(min-width:1400px)]:ml-[280px] h-full w-full ">
                 <Header />
-                <div className="container select-none mx-auto mt-16 flex flex-col gap-6 px-4 py-5 [@media(min-width:1400px)]:px-6 [@media(min-width:1400px)]:py-10  2xl:px-8 2xl:py-16 [@media(min-width:1300px)]:mt-[72px]">
+                <div className="container  mx-auto mt-16 flex flex-col gap-6 px-4 py-5 [@media(min-width:1400px)]:px-6 [@media(min-width:1400px)]:py-10  2xl:px-8 2xl:py-16 [@media(min-width:1300px)]:mt-[72px]">
                   <BreadCrumbs />
                   {children}
                 </div>
