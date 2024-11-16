@@ -1,5 +1,5 @@
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Dropzone from "react-dropzone";
 import { Controller } from "react-hook-form";
 import { AppInput } from "~/components/BladeTextInput";
@@ -8,6 +8,8 @@ import { UserAvatar } from "~/components/svgs/userAvatar";
 import { ORGANISATION_INDUSTRIES, ORGANISATION_SIZES } from "~/lib/types";
 import { BottomNav } from "./BottomNav";
 import { OrganisationKind } from "./OrganisationKind";
+import { api } from "~/trpc/react";
+import { useSession } from "next-auth/react";
 
 function CompanyInfo({
   changeStep,
@@ -23,6 +25,33 @@ function CompanyInfo({
   onImgChange: (img: string) => void;
 }) {
   const [preview, setPreview] = useState<string | null>(null);
+  const { data: session, status } = useSession();
+  const [uploadUrl, setUploadUrl] = useState<string | null>(null);
+
+  const { mutate: presignedUrlMutation } =
+    api.general.getS3PresignedUrl.useMutation();
+
+  useEffect(() => {
+    if (status !== "authenticated") {
+      return;
+    }
+    presignedUrlMutation(
+      {
+        type: "ORGANISATION_LOGO",
+        fileType: "image/jpg",
+        id: session.user.organisationId,
+      },
+      {
+        onSuccess: (data) => {
+          console.log(data);
+          setUploadUrl(data.url);
+        },
+        onError: (error) => {
+          console.error("Error getting presigned URL:", error);
+        },
+      },
+    );
+  }, [status]);
 
   return (
     <div className="w-full pt-[4.5rem] pr-24 pb-24">
@@ -62,6 +91,7 @@ function CompanyInfo({
                 onDrop={(acceptedFiles) => {
                   if (acceptedFiles) {
                     const file = acceptedFiles[0] as File;
+                    // TODO: Upload the file to uploadUrl and set the logoUrl property
                     console.log("acceptedFiles", file);
                     onImgChange(file?.name as string);
                     const reader = new FileReader();
