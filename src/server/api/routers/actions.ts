@@ -11,8 +11,10 @@ import {
   AdminConfirmSignUpCommand,
 } from "@aws-sdk/client-cognito-identity-provider";
 import type { SignInProps, SignUpProps } from "./user";
+import { mongoosePromise } from "~/server/db";
 
 const cognitoClient = new CognitoIdentityProviderClient();
+await mongoosePromise;
 
 export const signUp = async (props: SignUpProps) => {
   try {
