@@ -1,9 +1,20 @@
 "use client";
 
+import { useState } from "react";
 import CategoryCard from "./components/CategoryCard";
 import CategoryList from "./components/CategoryList";
 import ControlCompletionCard from "./components/ControlCompletionCard";
 import type { ICategory } from "./types";
+import { PanelRightClose, PanelRightOpen } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "~/app/_components/ui/tooltip";
+import { Button } from "~/app/_components/ui/button";
+import { frameworkList } from "../_lib/constants";
+import { useParams } from "next/navigation";
 
 const frameworkCategories = [
   {
@@ -247,19 +258,67 @@ const frameworkCategories = [
 ];
 
 export default function ViewFrameworks() {
+  const [isFrameworkInfoOpen, setIsFrameworkInfoOpen] = useState(true);
+  const params = useParams();
+  const frameworkId = params.id as string;
+
+  const framework = frameworkList.find(
+    (framework) => framework.name === frameworkId?.replace(/%20/g, " ")
+  );
+
   return (
     <div className="mx-auto flex justify-between gap-5 py-3">
       {/* framework info */}
-      <div className="flex w-[261px] min-w-[28%] flex-col gap-8">
-        {/* progress */}
-        <ControlCompletionCard />
+      <div className="flex flex-col gap-2">
+        {/* Toggle info open panel */}
+        {isFrameworkInfoOpen ? (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="w-20"
+                  onClick={() => setIsFrameworkInfoOpen(false)}
+                >
+                  <PanelRightOpen className="text-secondary cursor-pointer" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Close info panel</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        ) : (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="w-20"
+                  onClick={() => setIsFrameworkInfoOpen(true)}
+                >
+                  <PanelRightClose className="text-secondary cursor-pointer" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Open info panel</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        )}
+        {isFrameworkInfoOpen && (
+          <div className="flex w-[261px] min-w-[28%] flex-col gap-8">
+            {/* progress */}
+            {framework && <ControlCompletionCard framework={framework} />}
 
-        {/* categories list */}
-        <CategoryList />
+            {/* categories list */}
+            <CategoryList />
+          </div>
+        )}
       </div>
 
       {/* framework categories details  */}
-      <div className="flex w-[736px] min-w-[69%] flex-col">
+      <div className="flex w-full flex-col">
         {frameworkCategories.map((category: ICategory) => (
           <CategoryCard frameworkCategory={category} key={category.name} />
         ))}

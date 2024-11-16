@@ -2,8 +2,8 @@
 
 import { Button } from "~/app/_components/ui/button";
 import PageTitle from "~/components/PageTitle";
-import FrameworkMonitorCard from "./FrameworkMonitorCard";
-import { frameworklist } from "./constants";
+import { frameworkList } from "./_lib/constants";
+import FrameworkMonitorCard from "./components/FrameworkMonitorCard";
 
 export default function FrameworksPage() {
   return (
@@ -11,16 +11,11 @@ export default function FrameworksPage() {
       <PageTitle
         title="Frameworks"
         subtitle="Monitor and manage all your frameworks"
-        action={
-          <div className="flex items-center gap-2">
-            <Button variant="outline">Customize widgets</Button>
-            <Button>Create custom framework</Button>
-          </div>
-        }
+        action={<Button>Add new framework</Button>}
       />
       <div className="flex flex-wrap gap-6">
-        {frameworklist.map((item, idx) => (
-          <FrameworkMonitorCard key={idx} {...item} />
+        {frameworkList.map((framework, idx) => (
+          <FrameworkMonitorCard key={idx} framework={framework} />
         ))}
       </div>
     </div>

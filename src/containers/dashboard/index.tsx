@@ -6,8 +6,11 @@ import PageTitle from "~/components/PageTitle";
 import { DownArrow } from "~/components/svgs/DownArrow";
 import ComplianceChart from "./components/ComplianceChart";
 import FrameComplianceList from "./components/FrameComplianceList";
-import ProgressChart from "./components/ProgressChart";
-import { frameworkData, frameworkDataColumns } from "./constants";
+// import ProgressChart from "./components/ProgressChart";
+import {
+  frameworkData,
+  frameworkDataColumns,
+} from "../frameworks/_lib/constants";
 import {
   Table,
   TableCell,
@@ -17,9 +20,28 @@ import {
   TableBody,
 } from "~/app/_components/ui/table";
 import { z } from "zod";
-import { PieChart, Pie, Cell, Tooltip, Label, Legend } from "recharts";
+import {
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  Label,
+  Legend,
+  BarChart,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  Bar,
+} from "recharts";
 import { CircleCheck, CircleX, TriangleAlert } from "lucide-react";
 import type { JSX } from "react";
+import {
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
+import { integrations } from "./_lib/contants";
+import { columns } from "./components/integrations-table-colums";
 
 // const FrameworkStatus = z.enum([
 //   "FULLY_IMPLEMENTED",
@@ -64,6 +86,19 @@ const realtimeMonitoringData: RealtimeMonitoringData[] = [
   },
 ];
 
+interface EvidenceGatheringData {
+  collected: number;
+  pending: number;
+  notCollected: number;
+}
+const evidenceGatheringData: EvidenceGatheringData[] = [
+  {
+    collected: 90000,
+    pending: 100000,
+    notCollected: 350000,
+  },
+];
+
 interface CustomPiechartLegendProps {
   payload: {
     name: string;
@@ -94,10 +129,57 @@ const CustomPiechartLegend: React.FC<CustomPiechartLegendProps> = ({
     </div>
   );
 };
+interface CustomBarchartLegendProps {
+  payload: string[];
+}
+const CustomBarchartLegend: React.FC<CustomBarchartLegendProps> = ({
+  payload,
+}) => {
+  return (
+    <div className="w-full mx-auto flex items-center mt-5 text-sm gap-4">
+      {payload.map((entry, index) => (
+        <div key={`legend-item-${index}`} className="flex items-center gap-2">
+          {/* Display the text */}
+          {/* Display the React icon */}
+          <div className="flex gap-1 items-center">
+            <div
+              className={`w-3 h-3 rounded-full ${
+                entry.toLowerCase() === "collected"
+                  ? "bg-[#962DFF]"
+                  : entry.toLowerCase() === "pending"
+                  ? "bg-[#C893FD]"
+                  : "bg-[#F0E5FC]"
+              }`}
+            ></div>
+            <span className="">{entry}</span>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
 
 export default function DashboardPage() {
+  const table = useReactTable({
+    data: integrations,
+    columns: columns,
+    manualPagination: true,
+    manualSorting: true,
+    getCoreRowModel: getCoreRowModel(),
+    // onSortingChange: (updater) => {
+    //   const newSortingState =
+    //     typeof updater === "function" ? updater([]) : updater;
+
+    //   const sortBy = newSortingState[0];
+    //   router.push(
+    //     `/dashboard/evidences?page=1&limit=${itemsPerPage}&search=${search}&sortColumn=${
+    //       sortBy?.id
+    //     }&sortOrder=${sortBy?.desc ? "desc" : "asc"}`
+    //   );
+    // },
+  });
   return (
-    <div className="flex flex-col pb-6">
+    <div className="flex flex-col">
       {/* px-6 */}
       <PageTitle
         title="Dashboard"
@@ -126,7 +208,7 @@ export default function DashboardPage() {
                   nameKey="name"
                   cx="50%"
                   cy="50%"
-                  innerRadius={70}
+                  innerRadius={80}
                   outerRadius={100}
                   startAngle={240}
                   endAngle={-60} // 80% of a full circle (approximate)
@@ -175,10 +257,10 @@ export default function DashboardPage() {
               Download report
             </Button>
           </div>
-          <div className="flex flex-col justify-center items-center h-[400px] w-full rounded-[8px] border border-neutral-2 border-solid bg-white">
-            <div className="flex h-[72px] w-full items-center justify-between px-5">
-              <p className="text-base text-neutral-normal">
-                Compliance over time
+          <div className="h-[400px] w-full flex flex-col gap-3 [@media(min-width:1400px)]:gap-4 rounded-[8px] border border-neutral-2 border-solid bg-white p-4 px-2">
+            <div className="flex w-full items-center justify-between px-5">
+              <p className="text-base font-semibold text-neutral-normal">
+                ISO 27001 Compliance trend
               </p>
               <div className="flex h-8 w-[106px] items-center justify-center gap-2 rounded-sm border border-neutral-5 border-solid bg-white font-medium text-neutral-11 text-sm">
                 <span>Annually</span>
@@ -209,7 +291,7 @@ export default function DashboardPage() {
                       nameKey="name"
                       cx="50%"
                       cy="50%"
-                      innerRadius={70}
+                      innerRadius={80}
                       outerRadius={100}
                       startAngle={240}
                       endAngle={-60} // 80% of a full circle (approximate)
@@ -295,7 +377,7 @@ export default function DashboardPage() {
                       nameKey="name"
                       cx="50%"
                       cy="50%"
-                      innerRadius={70}
+                      innerRadius={80}
                       outerRadius={100}
                       startAngle={240}
                       endAngle={-60} // 80% of a full circle (approximate)
@@ -365,37 +447,96 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Integrations and evidences */}
-
-        <div className="flex items-center gap-6">
-          <div className="custom-scroll h-[552px] max-h-[552px] w-full overflow-scroll rounded-[8px] bg-white">
-            <div className="flex h-[72px] w-full items-center justify-between px-5">
-              <p className="text-base text-neutral-normal">Control status</p>
-              <div className="flex h-8 w-[76px] items-center justify-center rounded-sm border border-neutral-5 border-solid bg-white font-medium text-neutral-11 text-sm">
-                View all
-              </div>
+        {/* Integrations table and evidence gathering */}
+        <div className="flex gap-4 w-full justify-between ">
+          <div className="w-2/3 p-4 bg-white rounded-[8px] min-h-[464px]">
+            <div className="flex justify-between w-full items-center  mb-4">
+              <p className="font-semibold">Selected Integrations</p>
+              <Button variant="outline">View all</Button>
             </div>
-            <div>
-              <DataTable columns={frameworkDataColumns} data={frameworkData} />
-            </div>
+            <Table className=" ">
+              <TableHeader className="bg-muted text-[#40566D] text-xs [@media(min-width:1400px)]:text-sm">
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <TableRow key={headerGroup.id}>
+                    {headerGroup.headers.map((header) => (
+                      <TableHead key={header.id}>
+                        <button className="rounded-none">
+                          {header.isPlaceholder
+                            ? null
+                            : typeof header.column.columnDef.header ===
+                              "function"
+                            ? header.column.columnDef.header(
+                                header.getContext()
+                              ) // Call the function to get the rendered header
+                            : header.column.columnDef.header}
+                        </button>
+                      </TableHead>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableHeader>
+              <TableBody className="bg-white">
+                {/* {table.getRowModel().rows.map((row) => (
+            <tr key={row.id}>
+              {row.getVisibleCells().map((cell) => (
+                <td key={cell.id} className="px-4 py-2">
+                  {cell.renderCell()}
+                </td>
+              ))}
+            </tr>
+          ))} */}
+                {table.getRowModel().rows.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </div>
-          <div className="custom-scroll h-[552px] max-h-[552px] min-w-[378px] rounded-[8px] bg-white">
-            <div className="flex h-[72px] w-full items-center justify-between px-5">
-              <p className="text-base text-neutral-normal">
-                Framework compliance
-              </p>
-              <div className="flex h-8 w-[76px] items-center justify-center rounded-sm border border-neutral-5 border-solid bg-white font-medium text-neutral-11 text-sm">
-                View all
-              </div>
-            </div>
-            <div className="flex flex-col gap-4 p-4">
-              <FrameComplianceList />
-              <FrameComplianceList />
-              <FrameComplianceList />
-              <FrameComplianceList />
-              <FrameComplianceList />
-              {/* <FrameComplianceList /> */}
-            </div>
+          <div className="flex flex-col gap-5 w-1/3 p-4 bg-white rounded-[8px] min-h-[464px]">
+            <p className="font-semibold">Evidence gathering</p>
+
+            <CustomBarchartLegend
+              payload={["Collected", "Pending", "Not collected"]}
+            />
+
+            <BarChart
+              width={300}
+              height={340}
+              data={evidenceGatheringData}
+              margin={{
+                top: 20,
+                right: 30,
+                left: 20,
+                bottom: 5,
+              }}
+            >
+              {/* <Legend /> */}
+              <CartesianGrid strokeDasharray="3 3" />
+              {/* <XAxis dataKey="name" /> */}
+              <YAxis
+                tickFormatter={(value) => `${value / 1000}k`} // Format ticks as 'k'
+              />
+              <Tooltip />
+              <Bar dataKey="collected" stackId="a" fill="#962DFF" />
+              <Bar dataKey="pending" stackId="a" fill="#C893FD" />
+              <Bar
+                dataKey="notCollected"
+                stackId="a"
+                fill="#F0E5FC"
+                radius={[10, 10, 0, 0]}
+              />
+            </BarChart>
           </div>
         </div>
       </div>

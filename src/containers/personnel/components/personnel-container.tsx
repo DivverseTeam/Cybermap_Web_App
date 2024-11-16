@@ -79,7 +79,7 @@ export default function PersonnelContainer({ data }: Props) {
       </div>
       <div className="border">
         <Table className="rounded-none">
-          <TableHeader className="bg-gray-100 text-[#40566D] ">
+          <TableHeader className="bg-muted text-[#40566D] ">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (

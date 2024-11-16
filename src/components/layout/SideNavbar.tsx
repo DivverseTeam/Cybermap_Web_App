@@ -83,6 +83,12 @@ export default function SideNavbar({}: Props) {
           variant: `${pathname === "/controls" ? "lightBlue" : "ghost"}`,
         },
         {
+          title: "Regulations",
+          icon: PolicyIcon,
+          href: "/regulations",
+          variant: `${pathname === "/regulations" ? "lightBlue" : "ghost"}`,
+        },
+        {
           title: "Evidence Library",
           icon: LibraryIcon,
           href: "/evidence-library",
@@ -91,7 +97,7 @@ export default function SideNavbar({}: Props) {
           }`,
         },
         {
-          title: "Polices",
+          title: "Police templates",
           icon: PolicyIcon,
           href: "/policies",
           variant: `${pathname === "/policies" ? "lightBlue" : "ghost"}`,

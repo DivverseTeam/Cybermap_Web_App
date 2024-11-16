@@ -16,7 +16,10 @@ interface BreadCrumbsProps {}
 
 const BreadCrumbs: FunctionComponent<BreadCrumbsProps> = () => {
   const paths = usePathname();
-  const pathNames = paths.split("/").filter((path) => path);
+  const pathNames = paths
+    .replace(/%20/g, " ")
+    .split("/")
+    .filter((path) => path);
 
   if (pathNames.length < 2) {
     return null;
