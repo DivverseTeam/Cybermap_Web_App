@@ -11,7 +11,6 @@ import {
 } from "@aws-sdk/client-glacier";
 import {
   GetBucketLifecycleConfigurationCommand,
-  ListBucketsCommand,
 } from "@aws-sdk/client-s3";
 import {
   cloudTrailClient,
@@ -19,6 +18,7 @@ import {
   glacierClient,
   s3Client,
 } from "../init";
+import { getAllS3Buckets } from "../common";
 
 // Data retention policies: Logs of how long data is stored before deletion or archival.
 async function getCloudWatchLogRetention() {
@@ -33,12 +33,11 @@ async function getCloudWatchLogRetention() {
 
 // Data retention policies: Logs of how long data is stored before deletion or archival.
 async function getS3BucketLifecyclePolicies() {
-  const listBucketsCommand = new ListBucketsCommand({});
-  const buckets = await s3Client.send(listBucketsCommand);
-  if (!buckets.Buckets) return [];
+  const buckets = await getAllS3Buckets();
+  if (!buckets) return [];
   const lifecyclePolicies = [];
 
-  for (const bucket of buckets.Buckets) {
+  for (const bucket of buckets) {
     try {
       const getBucketLifecycleConfigurationCommand =
         new GetBucketLifecycleConfigurationCommand({ Bucket: bucket.Name });

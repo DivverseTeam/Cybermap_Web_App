@@ -1,19 +1,22 @@
+// Data Subject Rights (Articles 12-23)
+
 import { LookupEventsCommand } from "@aws-sdk/client-cloudtrail";
 import { StartExportLabelsTaskRunCommand } from "@aws-sdk/client-glue";
 import { DeleteObjectCommand, ListObjectsCommand } from "@aws-sdk/client-s3";
+import { TIME_FRAME } from "../constants";
 import { cloudTrailClient, glueClient, s3Client } from "../init";
 
+// This function provides evidence that data access requests are processed in a timely manner.
 // Access request logs: Retrieve CloudTrail logs to track data access requests
-export const getAccessRequestLogs = async () => {
-  // This function provides evidence that data access requests are processed in a timely manner.
+const getAccessRequestLogs = async () => {
   try {
     const data = await cloudTrailClient.send(
       new LookupEventsCommand({
         LookupAttributes: [
           { AttributeKey: "EventName", AttributeValue: "GetObject" },
         ],
-        StartTime: new Date(new Date().setDate(new Date().getDate() - 30)),
-        EndTime: new Date(),
+        StartTime: TIME_FRAME.START,
+        EndTime: TIME_FRAME.END,
       })
     );
     return data.Events;
@@ -22,17 +25,17 @@ export const getAccessRequestLogs = async () => {
   }
 };
 
+// This function provides evidence that data deletion requests are fulfilled in a timely manner.
 // Data deletion logs: Retrieve CloudTrail logs to track data deletion events
-export const getDataDeletionLogs = async () => {
-  // This function provides evidence that data deletion requests are fulfilled in a timely manner.
+const getDataDeletionLogs = async () => {
   try {
     const data = await cloudTrailClient.send(
       new LookupEventsCommand({
         LookupAttributes: [
           { AttributeKey: "EventName", AttributeValue: "DeleteObject" },
         ],
-        StartTime: new Date(new Date().setDate(new Date().getDate() - 30)), // Example: last 30 days
-        EndTime: new Date(),
+        StartTime: TIME_FRAME.START,
+        EndTime: TIME_FRAME.END,
       })
     );
     return data.Events;
@@ -42,7 +45,7 @@ export const getDataDeletionLogs = async () => {
 };
 
 // Data export logs: Track data export events for portability requests
-export const getDataExportLogs = async () => {
+const getDataExportLogs = async () => {
   // This function provides evidence that data portability requests are fulfilled.
   try {
     const data = await cloudTrailClient.send(
@@ -53,8 +56,8 @@ export const getDataExportLogs = async () => {
             AttributeValue: "StartExportLabelsTaskRun",
           },
         ],
-        StartTime: new Date(new Date().setDate(new Date().getDate() - 30)), // Example: last 30 days
-        EndTime: new Date(),
+        StartTime: TIME_FRAME.START,
+        EndTime: TIME_FRAME.END,
       })
     );
     return data.Events;
@@ -63,9 +66,9 @@ export const getDataExportLogs = async () => {
   }
 };
 
+// This function is used to manage personal data stored in S3 and list objects for data access or rectification.
 // Retrieve S3 data: List objects in an S3 bucket
-export const listS3Objects = async (bucketName: string) => {
-  // This function is used to manage personal data stored in S3 and list objects for data access or rectification.
+const listS3Objects = async (bucketName: string) => {
   try {
     const params = { Bucket: bucketName };
     const data = await s3Client.send(new ListObjectsCommand(params));
@@ -75,9 +78,9 @@ export const listS3Objects = async (bucketName: string) => {
   }
 };
 
+// This function is used to delete personal data from S3 as part of the right to erasure.
 // Delete S3 data: Delete an object from S3
-export const deleteS3Object = async (bucketName: string, objectKey: string) => {
-  // This function is used to delete personal data from S3 as part of the right to erasure.
+const deleteS3Object = async (bucketName: string, objectKey: string) => {
   try {
     const params = { Bucket: bucketName, Key: objectKey };
     await s3Client.send(new DeleteObjectCommand(params));
@@ -87,12 +90,12 @@ export const deleteS3Object = async (bucketName: string, objectKey: string) => {
   }
 };
 
+// This function exports personal data in a machine-readable format for the right to data portability.
 // Export data for portability: Use AWS Glue to export data in machine-readable format
-export const exportDataForPortability = async (
+const exportDataForPortability = async (
   s3Bucket: string,
   s3Prefix: string
 ) => {
-  // This function exports personal data in a machine-readable format for the right to data portability.
   try {
     const data = await glueClient.send(
       new StartExportLabelsTaskRunCommand({
@@ -105,3 +108,17 @@ export const exportDataForPortability = async (
     console.error("Error starting data export for portability:", error);
   }
 };
+
+// not completed
+async function getDataSubjectRightsEvidence() {
+  const accessRequestLogs = await getAccessRequestLogs();
+  const dataDeletionLogs = await getDataDeletionLogs();
+  const dataExportLogs = await getDataExportLogs();
+  const s3Objects = await listS3Objects("my-bucket");
+  // const s3ObjectKey = s3Objects[0].Key;
+  // await deleteS3Object("my-bucket", s3ObjectKey);
+  const taskRunId = await exportDataForPortability("my-bucket", "exports");
+  return { accessRequestLogs, dataDeletionLogs, dataExportLogs, taskRunId };
+}
+
+export { getDataSubjectRightsEvidence };

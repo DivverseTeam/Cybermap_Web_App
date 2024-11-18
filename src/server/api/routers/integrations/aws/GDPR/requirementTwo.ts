@@ -1,11 +1,9 @@
-import {
-  CloudTrailClient,
-  LookupEventsCommand,
-} from "@aws-sdk/client-cloudtrail";
+//  Lawful Basis for Processing (Article 6)
+
+import { LookupEventsCommand } from "@aws-sdk/client-cloudtrail";
 // import { DynamoDBClient, ScanCommand } from "@aws-sdk/client-dynamodb";
 import { cloudTrailClient } from "../init";
-
-// const dynamoDBClient = new DynamoDBClient({ region: "your-region" });
+import { TIME_FRAME } from "../constants";
 
 /**
  * Evidence: Consent management logs
@@ -18,8 +16,8 @@ async function getConsentManagementLogs() {
       LookupAttributes: [
         { AttributeKey: "EventName", AttributeValue: "ConsentGiven" },
       ],
-      StartTime: new Date("YYYY-MM-DD"),
-      EndTime: new Date(),
+      StartTime: TIME_FRAME.START,
+      EndTime: TIME_FRAME.END,
     });
     const response = await cloudTrailClient.send(command);
     return response.Events;
@@ -41,8 +39,8 @@ async function getDataProcessingDocumentation() {
         { AttributeKey: "EventName", AttributeValue: "DataUpdated" },
         { AttributeKey: "EventName", AttributeValue: "DataDeleted" },
       ],
-      StartTime: new Date("YYYY-MM-DD"),
-      EndTime: new Date(),
+      StartTime: TIME_FRAME.START,
+      EndTime: TIME_FRAME.END,
     });
     const response = await cloudTrailClient.send(command);
     return response.Events;
@@ -51,20 +49,10 @@ async function getDataProcessingDocumentation() {
   }
 }
 
-/**
- * Evidence: Consent management logs (DynamoDB)
- * This function scans a DynamoDB table to retrieve records of consent.
- * It verifies when and how consent for data processing was obtained.
- */
-// async function getConsentRecordsFromDynamoDB() {
-//   try {
-//     const command = new ScanCommand({
-//       TableName: "ConsentRecordsTable", // Replace with your DynamoDB table name
-//       FilterExpression: "attribute_exists(consentGiven)", // Customize based on table schema
-//     });
-//     const response = await dynamoDBClient.send(command);
-//     return response.Items;
-//   } catch (error) {
-//     console.error("Error fetching consent records from DynamoDB:", error);
-//   }
-// }
+async function getLawfulBasisForDataProcessingEvidence() {
+  const consentManagementLogs = await getConsentManagementLogs();
+  const dataProcessingDocumentation = await getDataProcessingDocumentation();
+  return { consentManagementLogs, dataProcessingDocumentation };
+}
+
+export { getLawfulBasisForDataProcessingEvidence };

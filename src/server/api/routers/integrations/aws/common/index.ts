@@ -1,8 +1,12 @@
-import { LookupAttribute, LookupEventsCommand } from "@aws-sdk/client-cloudtrail";
-import { cloudTrailClient } from "../init";
+import {
+  LookupAttribute,
+  LookupEventsCommand,
+} from "@aws-sdk/client-cloudtrail";
+import { ListBucketsCommand } from "@aws-sdk/client-s3";
+import { cloudTrailClient, kmsClient, s3Client } from "../init";
+import { ListKeysCommand } from "@aws-sdk/client-kms";
 
-
-export async function getCloudTrailEvents({
+async function getCloudTrailEvents({
   lookupAttributes,
   startTime,
   endTime,
@@ -27,3 +31,17 @@ export async function getCloudTrailEvents({
     console.error("Error fetching CloudTrail events:", error);
   }
 }
+
+async function getAllS3Buckets() {
+  const listBucketsCommand = new ListBucketsCommand({});
+  const buckets = await s3Client.send(listBucketsCommand);
+  return buckets?.Buckets || [];
+}
+
+async function getAllEncryptionKeys() {
+  const listCommand = new ListKeysCommand({});
+  const listResponse = await kmsClient.send(listCommand);
+  return listResponse?.Keys || [];
+}
+
+export { getCloudTrailEvents, getAllS3Buckets, getAllEncryptionKeys };

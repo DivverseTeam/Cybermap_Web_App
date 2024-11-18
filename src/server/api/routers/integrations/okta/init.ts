@@ -1,10 +1,14 @@
-import { Client } from "@okta/okta-sdk-nodejs";
+import axios from 'axios';
 
-const TIME_FRAME = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(); // last 24 hours
+const TIME_FRAME = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
 
-const oktaClient = new Client({
-  orgUrl: "https://your-okta-domain.okta.com",
-  token: "your-okta-api-token",
+const oktaDomain = 'your-okta-domain.okta.com';
+const oktaApi = axios.create({
+  baseURL: `${oktaDomain}/api/v1`,
+  headers: {
+    Authorization: `SSWS your-okta-api-token`,
+    Accept: "application/json",
+  },
 });
 
-export { oktaClient, TIME_FRAME };
+export { oktaApi, TIME_FRAME };

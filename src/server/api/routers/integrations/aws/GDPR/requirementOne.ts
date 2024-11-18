@@ -1,21 +1,15 @@
-import {
-    LookupEventsCommand
-} from "@aws-sdk/client-cloudtrail";
-import {
-    GetComplianceDetailsByConfigRuleCommand
-} from "@aws-sdk/client-config-service";
-import {
-    DescribeKeyCommand,
-    ListKeysCommand
-} from "@aws-sdk/client-kms";
-import { cloudTrailClient, configServiceClient, kmsClient } from "../init";
+// Data Protection Principles (Article 5)
 
+import { LookupEventsCommand } from "@aws-sdk/client-cloudtrail";
+import { GetComplianceDetailsByConfigRuleCommand } from "@aws-sdk/client-config-service";
+import { DescribeKeyCommand, ListKeysCommand } from "@aws-sdk/client-kms";
+import { cloudTrailClient, configServiceClient, kmsClient } from "../init";
 
 /**
  * Data processing logs: Logs user activities to show how personal data is accessed or modified.
  * Evidence: CloudTrail logs for data processing activities.
  */
-export const getDataProcessingLogs = async () => {
+const getDataProcessingLogs = async () => {
   const command = new LookupEventsCommand({});
   try {
     const response = await cloudTrailClient.send(command);
@@ -30,13 +24,26 @@ export const getDataProcessingLogs = async () => {
  * Data retention policies: Validates whether data retention and minimization rules are enforced.
  * Evidence: AWS Config compliance details.
  */
-export const getDataRetentionCompliance = async (ruleName: string) => {
-  const command = new GetComplianceDetailsByConfigRuleCommand({
-    ConfigRuleName: ruleName,
-  });
+const getDataRetentionCompliance = async (
+  ruleNames = [
+    "cloudwatch-log-group-retention-period-check",
+    "s3-bucket-lifecycle-policy-check",
+    "rds-snapshot-retention-period",
+  ]
+) => {
   try {
-    const response = await configServiceClient.send(command);
-    return response.EvaluationResults; // Compliance evaluations for the specified rule
+    const results = [];
+    for (const ruleName of ruleNames) {
+      const command = new GetComplianceDetailsByConfigRuleCommand({
+        ConfigRuleName: ruleName,
+      });
+      const response = await configServiceClient.send(command);
+      results.push({
+        ruleName,
+        evaluations: response.EvaluationResults, // Compliance evaluations for the specified rule
+      });
+    }
+    return results; // Array of compliance evaluations for all specified rules
   } catch (error) {
     console.error("Error fetching compliance details:", error);
     throw error;
@@ -47,11 +54,11 @@ export const getDataRetentionCompliance = async (ruleName: string) => {
  * Encryption logs: Retrieves and validates encryption keys used for securing personal data.
  * Evidence: Details of encryption keys from KMS.
  */
-export const getEncryptionKeys = async () => {
+const getEncryptionKeys = async () => {
   try {
     const listKeysCommand = new ListKeysCommand({});
-      const keys = await kmsClient.send(listKeysCommand);
-      if(!keys.Keys) return [];
+    const keys = await kmsClient.send(listKeysCommand);
+    if (!keys.Keys) return [];
 
     const keyDetails = await Promise.all(
       keys.Keys.map(async (key) => {
@@ -71,15 +78,44 @@ export const getEncryptionKeys = async () => {
  * Access control policies: Ensures access to data is restricted to authorized individuals.
  * Evidence: AWS Config rule compliance for access control policies.
  */
-export const getAccessControlCompliance = async (ruleName: string) => {
-  const command = new GetComplianceDetailsByConfigRuleCommand({
-    ConfigRuleName: ruleName,
-  });
+const getAccessControlCompliance = async (
+  ruleNames = [
+    "iam-user-no-inline-policy",
+    "root-account-mfa-enabled",
+    "ec2-security-group-ssh-disabled",
+  ]
+) => {
   try {
-    const response = await configServiceClient.send(command);
-    return response.EvaluationResults; // Access control compliance data
+    const results = [];
+    for (const ruleName of ruleNames) {
+      const command = new GetComplianceDetailsByConfigRuleCommand({
+        ConfigRuleName: ruleName,
+      });
+      const response = await configServiceClient.send(command);
+      results.push({
+        ruleName,
+        evaluations: response.EvaluationResults, // Access control compliance data for the specified rule
+      });
+    }
+    return results; // Array of compliance data for all specified rules
   } catch (error) {
     console.error("Error fetching access control compliance:", error);
     throw error;
   }
 };
+
+async function getDataProtectionPrinciplesEvidence() {
+  const dataProcessingLogs = await getDataProcessingLogs();
+  const dataRetentionCompliance = await getDataRetentionCompliance();
+  const encryptionKeys = await getEncryptionKeys();
+  const accessControlCompliance = await getAccessControlCompliance();
+
+  return {
+    dataProcessingLogs,
+    dataRetentionCompliance,
+    encryptionKeys,
+    accessControlCompliance,
+  };
+}
+
+export { getDataProtectionPrinciplesEvidence };

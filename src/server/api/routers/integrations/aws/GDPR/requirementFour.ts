@@ -1,20 +1,27 @@
-import { KMSClient, DescribeKeyCommand } from "@aws-sdk/client-kms";
-import { S3Client, GetBucketEncryptionCommand } from "@aws-sdk/client-s3";
-import {
-  IAMClient,
-  ListUsersCommand,
-  ListRolesCommand,
-} from "@aws-sdk/client-iam";
+import { ListRolesCommand, ListUsersCommand } from "@aws-sdk/client-iam";
+import { DescribeKeyCommand } from "@aws-sdk/client-kms";
+import { GetBucketEncryptionCommand } from "@aws-sdk/client-s3";
+import { getAllEncryptionKeys, getAllS3Buckets } from "../common";
 import { iamClient, kmsClient, s3Client } from "../init";
 
-
 // Evidence: Encryption logs - Use KMS DescribeKey to retrieve encryption key details
-async function getEncryptionKeyDetails(keyId: string) {
+async function getEncryptionKeyDetails() {
   try {
-    const command = new DescribeKeyCommand({ KeyId: keyId });
-    const response = await kmsClient.send(command);
-    console.log("Encryption Key Details:", response);
-    return response;
+    // Retrieve the list of key IDs
+    const keys = await getAllEncryptionKeys();
+
+    // Check if there are any keys and get the first key
+    if (keys.length > 0) {
+      const firstKeyId = keys[0]?.KeyId;
+
+      // Use the first key ID to get its details
+      const describeCommand = new DescribeKeyCommand({ KeyId: firstKeyId });
+      const describeResponse = await kmsClient.send(describeCommand);
+      console.log("Encryption Key Details:", describeResponse);
+      return describeResponse;
+    } else {
+      throw new Error("No keys found in the account.");
+    }
   } catch (error) {
     console.error("Error retrieving encryption key details:", error);
     throw error;
@@ -22,12 +29,21 @@ async function getEncryptionKeyDetails(keyId: string) {
 }
 
 // Evidence: Encryption logs - Use S3 GetBucketEncryption to retrieve bucket encryption settings
-async function getBucketEncryption(bucketName: string) {
+async function getBucketEncryption() {
   try {
-    const command = new GetBucketEncryptionCommand({ Bucket: bucketName });
-    const response = await s3Client.send(command);
-    console.log("Bucket Encryption Settings:", response);
-    return response;
+    const buckets = await getAllS3Buckets();
+    const encryptionSettings = [];
+
+    for (const bucket of buckets) {
+      const command = new GetBucketEncryptionCommand({ Bucket: bucket.Name });
+      const response = await s3Client.send(command);
+      console.log(`Bucket Encryption Settings for ${bucket.Name}:`, response);
+      encryptionSettings.push({
+        bucketName: bucket.Name,
+        encryption: response,
+      });
+    }
+    return encryptionSettings;
   } catch (error) {
     console.error("Error retrieving bucket encryption settings:", error);
     throw error;
@@ -76,3 +92,29 @@ async function getAuditLogs() {
     throw error;
   }
 }
+
+async function getDataSecurityAndIntegrityEvidence() {
+  try {
+    const encryptionKeyDetails = await getEncryptionKeyDetails();
+    const bucketEncryptionSettings = await getBucketEncryption();
+    const iamUsers = await getIamUsers();
+    const iamRoles = await getIamRoles();
+    const auditLogs = await getAuditLogs();
+
+    return {
+      encryptionKeyDetails,
+      bucketEncryptionSettings,
+      iamUsers,
+      iamRoles,
+      auditLogs,
+    };
+  } catch (error) {
+    console.error(
+      "Error retrieving data security and integrity evidence:",
+      error
+    );
+    throw error;
+  }
+}
+
+export { getDataSecurityAndIntegrityEvidence };
