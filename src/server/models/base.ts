@@ -6,11 +6,6 @@ export class BaseSchema<T extends Document> extends Schema<T> {
 
     this.set("toJSON", {
       virtuals: true,
-      transform: (_doc, converted) => {
-        // Remove sensitive fields (like password) if they exist
-        if (converted.password) delete converted.password;
-        return converted;
-      },
     });
   }
 }

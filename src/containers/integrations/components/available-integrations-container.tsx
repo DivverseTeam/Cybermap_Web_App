@@ -60,7 +60,7 @@ export default function AvailableIntegrationsContainer({}: Props) {
           }
         />
       </div>
-      <div className="border bg-white px-3 py-4 [@media(min-width:1400px)]:px-5 [@media(min-width:1400px)]:py-8 2xl:px-8 2xl:py-9">
+      <div className="border bg-white px-3 py-4 2xl:px-8 2xl:py-9 [@media(min-width:1400px)]:px-5 [@media(min-width:1400px)]:py-8">
         <div className="mb-4 [@media(min-width:1400px)]:mb-6">
           <h2 className="font-semibold text-lg [@media(min-width:1400px)]:text-xl">
             All integrations
@@ -69,7 +69,7 @@ export default function AvailableIntegrationsContainer({}: Props) {
             Go through and access all available integrations in here
           </p>
         </div>
-        <div className="grid grid-cols-2 gap-2 [@media(min-width:1400px)]:gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 [@media(min-width:1400px)]:gap-4">
           {integrationsList.map((integration, index: number) => (
             <AvailableIntegrationCard key={index} integration={integration} />
           ))}

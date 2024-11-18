@@ -21,8 +21,21 @@ export default $config({
     const bucket = new sst.aws.Bucket("images", {
       access: "public",
     });
+
+    const userPool = new sst.aws.CognitoUserPool("user", {
+      usernames: ["email"],
+    });
+
+    const userPoolClient = userPool.addClient("user-client", {
+      transform: {
+        client: {
+          explicitAuthFlows: ["USER_PASSWORD_AUTH"],
+        },
+      },
+    });
+
     new sst.aws.Nextjs("cybermap", {
-      link: [bucket],
+      link: [bucket, userPool, userPoolClient],
     });
   },
 });

@@ -1,5 +1,3 @@
-// import argon2 from "argon2";
-import bcryptjs from "bcryptjs";
 import { z } from "zod";
 import {
   OrganisationIndustry,
@@ -16,52 +14,33 @@ import {
 } from "~/server/api/trpc";
 import Organisation from "~/server/models/Organisation";
 import User, { User as UserSchema } from "~/server/models/User";
-import { signIn } from "./actions";
+import { signIn, signUp } from "./actions";
+
+export const SignInProps = z.object({
+  email: z.string(),
+  password: z.string(),
+});
+
+export type SignInProps = z.infer<typeof SignInProps>;
+
+export const SignUpProps = SignInProps.extend({
+  name: z.string(),
+  role: UserRole.default("ADMIN"),
+});
+
+export type SignUpProps = z.infer<typeof SignUpProps>;
 
 export const userRouter = createTRPCRouter({
   signUp: publicProcedure
-    .input(
-      z.object({
-        name: z.string(),
-        email: z.string(),
-        password: z.string(),
-        role: UserRole.default("ADMIN"),
-      }),
-    )
+    .input(SignUpProps)
     .mutation(async ({ ctx: _, input }) => {
-      const { name, email, role, password } = input;
-
-      const isEmailTaken = await User.findOne({ email });
-
-      if (isEmailTaken) {
-        throw new Error("Email address is already taken");
-      }
-
-      const hashPassword = bcryptjs.hashSync(password, 12);
-
-      let user = await User.create({
-        name,
-        email,
-        role,
-        password: hashPassword,
-      });
-
-      user = user.toJSON();
-
-      return UserSchema.parse(user);
+      return await signUp(input);
     }),
 
   signIn: publicProcedure
-    .input(
-      z.object({
-        email: z.string(),
-        password: z.string(),
-      }),
-    )
+    .input(SignInProps)
     .mutation(async ({ ctx: _, input }) => {
-      const { email, password } = input;
-
-      return await signIn({ email, password });
+      return await signIn(input);
     }),
 
   completeOnboarding: protectedProcedure

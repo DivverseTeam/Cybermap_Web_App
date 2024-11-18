@@ -19,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/app/_components/ui/select";
+import { api } from "~/trpc/react";
 
 type Integration = {
   id: string;
@@ -30,6 +31,19 @@ type Props = {
 };
 
 export function AvailableIntegrationCard({ integration }: Props) {
+  const { mutate } = api.general.oauth2.authorization.useMutation();
+
+  const onConnectIntegration = () => {
+    mutate("MICROSOFT", {
+      onSuccess: (data) => {
+        window.open(data);
+      },
+      onError: (error) => {
+        console.log({ error });
+      },
+    });
+  };
+
   return (
     <Card className="p-0 [@media(min-width:1400px)]:p-1">
       {/* <CardHeader>
@@ -50,7 +64,7 @@ export function AvailableIntegrationCard({ integration }: Props) {
               className="flex items-center justify-center "
             />
             {["Github", "Github Enterprise Server"].includes(
-              integration.name
+              integration.name,
             ) && (
               <span className="font-semibold text-xs [@media(min-width:1400px)]:text-sm">
                 {integration.name}
@@ -58,14 +72,17 @@ export function AvailableIntegrationCard({ integration }: Props) {
             )}
           </div>
         </CardContent>
-        <CardFooter className="flex items-center justify-between gap-2 p-2 [@media(min-width:1400px)]:p-3 2xl:gap-3 ">
+        <CardFooter className="flex items-center justify-between gap-2 p-2 2xl:gap-3 [@media(min-width:1400px)]:p-3 ">
           <Button
             variant="outline"
-            className="h-7 [@media(min-width:1400px)]:h-9 w-[75px] [@media(min-width:1400px)]:w-[110px] text-xs [@media(min-width:1400px)]:text-sm"
+            className="h-7 w-[75px] text-xs [@media(min-width:1400px)]:h-9 [@media(min-width:1400px)]:w-[110px] [@media(min-width:1400px)]:text-sm"
           >
             See details
           </Button>
-          <Button className="h-7 [@media(min-width:1400px)]:h-9 w-[75px] [@media(min-width:1400px)]:w-[110px] text-xs [@media(min-width:1400px)]:text-sm">
+          <Button
+            className="h-7 w-[75px] text-xs [@media(min-width:1400px)]:h-9 [@media(min-width:1400px)]:w-[110px] [@media(min-width:1400px)]:text-sm"
+            onClick={onConnectIntegration}
+          >
             Connect
           </Button>
         </CardFooter>

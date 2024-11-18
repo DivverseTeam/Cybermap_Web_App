@@ -8,13 +8,14 @@ export const User = z.object({
   id: z.string(),
   name: z.string(),
   role: UserRole,
+  cognitoId: z.string(),
   email: z.string(),
   organisationId: z.string().optional(),
 });
 
 export type User = z.infer<typeof User>;
 
-type UserWithDocument = User & mongoose.Document & { password: string };
+type UserWithDocument = User & mongoose.Document;
 
 const UserSchema = new BaseSchema<UserWithDocument>({
   name: {
@@ -27,9 +28,10 @@ const UserSchema = new BaseSchema<UserWithDocument>({
     required: [true, "Please provide an email this User"],
     unique: true,
   },
-  password: {
+  cognitoId: {
     type: String,
-    required: [true, "Please provide a password for this User"],
+    required: [true, "Please provide a cognito sub for this User"],
+    unique: true,
   },
   organisationId: {
     type: String,
