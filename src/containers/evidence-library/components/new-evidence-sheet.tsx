@@ -17,26 +17,21 @@ import {
 
 const controlDetailsData = [
   [
-    <span className="text-secondary w-24 ">Name</span>,
-    <span className="text-secondary-foreground font-semibold">
-      Risk management program established
-    </span>,
+    <span className="w-24 text-secondary ">Name</span>,
+
+    <Input placeholder="Enter a name..." className="border-none" />,
   ],
   [
-    <span className="text-secondary w-24">Description</span>,
-    <span className="text-secondary ">
-      The company has a documented risk management program in place that
-      includes guidance on the identification of potential threats, rating the
-      significance of the risks associated with the ientified threats, and
-      mitigration strategies for those risks,
-    </span>,
+    <span className="w-24 text-secondary">Description</span>,
+
+    <Input placeholder="Add description..." className="border-none" />,
   ],
 
   [
-    <span className="text-secondary w-24">Owner</span>,
+    <span className="w-24 text-secondary">Owner</span>,
     <Button
       variant="outline"
-      className="flex items-center justify-between h-6 font-semibold text-xs gap-2 text-secondary"
+      className="flex h-6 items-center justify-between gap-2 font-semibold text-secondary text-xs"
     >
       <User size={14} />
       Amanda owner
@@ -44,38 +39,34 @@ const controlDetailsData = [
   ],
 
   [
-    <span className="text-secondary w-24">Implementation Guidance</span>,
-    <span className="text-secondary ">
-      The company has a documented risk management program in place that
-      includes guidance on the identification of potential threats, rating the
-      significance of the risks associated with the ientified threats, and
-      mitigration strategies for those risks,
-    </span>,
+    <span className="w-24 text-secondary">Implementation Guidance</span>,
+    <Input className="border-none" placeholder="Add a note..." />,
   ],
 ];
 
 export function NewEvidenceSheet() {
-  const [files, setFiles] = useState<any>([]);
+  const [files, setFiles] = useState<File[]>([]);
 
-  const handleDrop = (e: any) => {
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     const droppedFiles = Array.from(e.dataTransfer.files);
     setFiles(droppedFiles);
   };
 
-  const handleFileSelect = (e: any) => {
-    const selectedFiles = Array.from(e.target.files);
-    setFiles((prevFiles: any) => [...prevFiles, ...selectedFiles]);
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFiles = Array.from(e.target.files || []);
+    setFiles((prevFiles) => [...prevFiles, ...selectedFiles]);
   };
 
-  const handleDragOver = (e: any) => e.preventDefault();
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) =>
+    e.preventDefault();
 
   return (
     <Sheet>
       <SheetTrigger asChild>
         <Button>Add new evidence</Button>
       </SheetTrigger>
-      <SheetContent className="overflow-y-auto h-full flex flex-col gap-6">
+      <SheetContent className="flex h-full flex-col gap-6 overflow-y-auto">
         <SheetHeader>
           <SheetTitle>Add new evidence</SheetTitle>
           {/* <SheetDescription>
@@ -92,9 +83,9 @@ export function NewEvidenceSheet() {
             <table className=" w-full">
               <tbody>
                 {controlDetailsData.map((row, index) => (
-                  <tr key={index} className="flex text-left gap-3">
+                  <tr key={index} className="flex gap-3 text-left">
                     {row.map((cell, cellIndex) => (
-                      <td key={cellIndex} className="p-2 px-0 flex text-left">
+                      <td key={cellIndex} className="flex p-2 px-0 text-left">
                         {cell}
                       </td>
                     ))}
@@ -104,16 +95,16 @@ export function NewEvidenceSheet() {
             </table>
           </div>
         </div>
-        <div className="flex flex-col items-center justify-center w-full">
+        <div className="flex w-full flex-col items-center justify-center">
           <div
             onDrop={handleDrop}
             onDragOver={handleDragOver}
-            className="flex items-center bg-muted justify-center w-full h-36 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-secondary"
+            className="flex h-36 w-full cursor-pointer items-center justify-center rounded-lg border-2 border-gray-300 border-dashed bg-muted hover:border-secondary"
           >
             {files.length ? (
               <ul>
-                {files.map((file: any, index: any) => (
-                  <li key={index} className="text-sm text-gray-700">
+                {files.map((file: File, index: number) => (
+                  <li key={index} className="text-gray-700 text-sm">
                     {file.name}
                   </li>
                 ))}
@@ -121,15 +112,15 @@ export function NewEvidenceSheet() {
             ) : (
               <div className="flex items-center justify-between gap-20">
                 <div className="flex items-center justify-between gap-3">
-                  <CloudUpload className="w-20 h-20 text-secondary" />
-                  <div className="text-gray-500 flex flex-col gap-2 text-xs">
+                  <CloudUpload className="h-20 w-20 text-secondary" />
+                  <div className="flex flex-col gap-2 text-gray-500 text-xs">
                     <span>Select a file or drag and drop here</span>
                     <span>CSV o XLSX file no more than 10mb</span>
                   </div>
                 </div>
                 <Label
                   htmlFor="fileUpload"
-                  className="mt-4 px-4 py-2 bg-muted border-secondary border-2 text-xs text-secondary rounded-md cursor-pointer hover:bg-secondary-foreground/20"
+                  className="mt-4 cursor-pointer rounded-md border-2 border-secondary bg-muted px-4 py-2 text-secondary text-xs hover:bg-secondary-foreground/20"
                 >
                   SELECT FILE
                 </Label>

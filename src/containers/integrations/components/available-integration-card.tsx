@@ -19,17 +19,40 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/app/_components/ui/select";
+import { api } from "~/trpc/react";
 
-export function AvailableIntegrationCard({ integration }: any) {
+type Integration = {
+  id: string;
+  name: string;
+  icon: string;
+};
+type Props = {
+  integration: Integration;
+};
+
+export function AvailableIntegrationCard({ integration }: Props) {
+  const { mutate } = api.general.oauth2.authorization.useMutation();
+
+  const onConnectIntegration = () => {
+    mutate("MICROSOFT", {
+      onSuccess: (data) => {
+        window.open(data);
+      },
+      onError: (error) => {
+        console.log({ error });
+      },
+    });
+  };
+
   return (
-    <Card className="">
+    <Card className="p-0 [@media(min-width:1400px)]:p-1">
       {/* <CardHeader>
         <CardTitle>Create project</CardTitle>
         <CardDescription>Deploy your new project in one-click.</CardDescription>
       </CardHeader> */}
-      <div className="flex flex-col justify-between px-0  mx-auto my-auto h-[200px] 2xl:w-[266px]">
-        <CardContent className="p-0 my-auto">
-          <div className="flex flex-col items-center gap-2 justify-center ">
+      <div className="mx-auto my-auto flex h-[180px] [@media(min-width:1400px)]:h-[200px] flex-col justify-between px-0 2xl:w-[266px]">
+        <CardContent className="my-auto p-0">
+          <div className="flex flex-col items-center justify-center gap-2 ">
             <Image
               src={integration.icon}
               alt="image"
@@ -41,17 +64,27 @@ export function AvailableIntegrationCard({ integration }: any) {
               className="flex items-center justify-center "
             />
             {["Github", "Github Enterprise Server"].includes(
-              integration.name
+              integration.name,
             ) && (
-              <span className="text-sm font-semibold">{integration.name}</span>
+              <span className="font-semibold text-xs [@media(min-width:1400px)]:text-sm">
+                {integration.name}
+              </span>
             )}
           </div>
         </CardContent>
-        <CardFooter className="flex items-center justify-between gap-2 p-3 2xl:gap-3 ">
-          <Button variant="outline" className="h-9 w-[110px]">
+        <CardFooter className="flex items-center justify-between gap-2 p-2 2xl:gap-3 [@media(min-width:1400px)]:p-3 ">
+          <Button
+            variant="outline"
+            className="h-7 w-[75px] text-xs [@media(min-width:1400px)]:h-9 [@media(min-width:1400px)]:w-[110px] [@media(min-width:1400px)]:text-sm"
+          >
             See details
           </Button>
-          <Button className="h-9 w-[110px]">Connect</Button>
+          <Button
+            className="h-7 w-[75px] text-xs [@media(min-width:1400px)]:h-9 [@media(min-width:1400px)]:w-[110px] [@media(min-width:1400px)]:text-sm"
+            onClick={onConnectIntegration}
+          >
+            Connect
+          </Button>
         </CardFooter>
       </div>
     </Card>

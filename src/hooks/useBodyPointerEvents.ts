@@ -1,17 +1,17 @@
-import { useEffect } from "react"
+import { useEffect } from "react";
 
 const useBodyPointerEvents = (isOpen: boolean) => {
   useEffect(() => {
     if (isOpen) {
-      document.body.style.pointerEvents = "auto"
+      document.body.style.pointerEvents = "auto";
     } else {
-      document.body.style.pointerEvents = ""
+      document.body.style.pointerEvents = "";
     }
 
     return () => {
-      document.body.style.pointerEvents = ""
-    }
-  }, [isOpen])
-}
+      document.body.style.pointerEvents = "";
+    };
+  }, [isOpen]);
+};
 
-export default useBodyPointerEvents
+export default useBodyPointerEvents;

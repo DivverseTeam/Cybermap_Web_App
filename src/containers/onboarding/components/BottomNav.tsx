@@ -17,12 +17,12 @@ export function BottomNav({
   return (
     <div
       className={twMerge(
-        "w-full flex items-center gap-4",
-        showSkip ? "justify-between" : "justify-end"
+        "flex w-full items-center gap-4",
+        showSkip ? "justify-between" : "justify-end",
       )}
     >
       {showSkip && (
-        <span className="font-semibold text-base text-[#305EFF] leading-8 cursor-pointer">
+        <span className="cursor-pointer font-semibold text-[#305EFF] text-base leading-8">
           Skip this step
         </span>
       )}
@@ -34,10 +34,10 @@ export function BottomNav({
           }}
           disabled={!hasPrevious}
           className={twMerge(
-            "max-w-fit h-[36px] px-[20px] outline-none  rounded-sm font-semibold text-sm text-[#243547] border border-solid border-[#CBD5E2]",
+            "h-[36px] max-w-fit rounded-sm border border-[#CBD5E2] border-solid px-[20px] font-semibold text-[#243547] text-sm outline-none",
             hasPrevious
               ? "cursor-pointer"
-              : "cursor-not-allowed text-gray-1 bg-gray-1"
+              : "cursor-not-allowed bg-gray-1 text-gray-1",
           )}
         >
           Back

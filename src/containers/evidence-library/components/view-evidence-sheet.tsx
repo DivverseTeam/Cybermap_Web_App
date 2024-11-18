@@ -33,6 +33,8 @@ import {
 } from "~/app/_components/ui/sheet";
 import { Textarea } from "~/app/_components/ui/textarea";
 
+import type { Row } from "@tanstack/react-table";
+import { User } from "lucide-react";
 // import { updateEvidence } from "../_lib/actions";
 // import {
 //   EvidenceStatus,
@@ -41,41 +43,46 @@ import { Textarea } from "~/app/_components/ui/textarea";
 // } from "../_lib/validations";
 // import { Evidence } from "../_lib/queries";
 import { useEffect, useTransition } from "react";
-import { type Row } from "@tanstack/react-table";
-import { User } from "lucide-react";
-import { IEvidence } from "../types";
+import type { IEvidence } from "../types";
+import type { VariantProps } from "class-variance-authority";
+import { Badge, type badgeVariants } from "~/app/_components/ui/badge";
 
 interface ViewEvidenceSheetProps
   extends React.ComponentPropsWithRef<typeof Sheet> {
   evidence: Row<IEvidence>["original"];
 }
 
-function StatusLabel({ status }: any) {
-  const getStatusStyle = (status: string) => {
-    switch (status.toLowerCase()) {
-      case "updated":
-        return "bg-green-700/20 text-green-700  rounded-xl px-2 font-semibold flex items-center h-4";
-      case "needs artifact":
-        return "bg-destructive/20 text-destructive rounded-xl px-2 font-semibold flex items-center h-4";
-    }
-  };
+type StatusLabelProps = {
+  status: string;
+};
+
+function StatusLabel({ status }: StatusLabelProps) {
+  let badgeVariant: VariantProps<typeof badgeVariants>["variant"];
+
+  if (status.toLowerCase() === "not implemented") {
+    badgeVariant = "destructive";
+  }
+
+  if (status.toLowerCase() === "fully implemented") {
+    badgeVariant = "success";
+  }
 
   return (
-    <span className={`px-2 py-1 rounded ${getStatusStyle(status)}`}>
+    <Badge className="w-max font-semibold" variant={badgeVariant}>
       {status}
-    </span>
+    </Badge>
   );
 }
 
 const controlDetailsData = [
   [
-    <span className="text-secondary w-24 ">Name</span>,
-    <span className="text-secondary-foreground font-semibold">
+    <span className="w-24 text-secondary ">Name</span>,
+    <span className="font-semibold text-secondary-foreground">
       Risk management program established
     </span>,
   ],
   [
-    <span className="text-secondary w-24">Description</span>,
+    <span className="w-24 text-secondary">Description</span>,
     <span className="text-secondary ">
       The company has a documented risk management program in place that
       includes guidance on the identification of potential threats, rating the
@@ -85,21 +92,21 @@ const controlDetailsData = [
   ],
 
   [
-    <span className="text-secondary w-24">Owner</span>,
+    <span className="w-24 text-secondary">Owner</span>,
     <Button
       variant="outline"
-      className="flex items-center justify-between h-6 font-semibold text-xs gap-2 text-secondary"
+      className="flex h-6 items-center justify-between gap-2 font-semibold text-secondary text-xs"
     >
       <User size={14} />
       Amanda owner
     </Button>,
   ],
   [
-    <span className="text-secondary w-24">Status</span>,
+    <span className="w-24 text-secondary">Status</span>,
     <StatusLabel status="Updated" />,
   ],
   [
-    <span className="text-secondary w-24">Implementation Guidance</span>,
+    <span className="w-24 text-secondary">Implementation Guidance</span>,
     <span className="text-secondary ">
       The company has a documented risk management program in place that
       includes guidance on the identification of potential threats, rating the
@@ -117,7 +124,7 @@ export function ViewEvidenceSheet({
 }: ViewEvidenceSheetProps) {
   return (
     <Sheet open={open} onOpenChange={onOpenChange} {...props}>
-      <SheetContent className="flex flex-col gap-6 overflow-y-auto h-full">
+      <SheetContent className="flex h-full flex-col gap-6 overflow-y-auto">
         <SheetHeader className="text-left">
           <SheetTitle>View evidence</SheetTitle>
           {/* <SheetDescription>
@@ -134,9 +141,9 @@ export function ViewEvidenceSheet({
             <table className=" w-full">
               <tbody>
                 {controlDetailsData.map((row, index) => (
-                  <tr key={index} className="flex text-left gap-3">
+                  <tr key={index} className="flex gap-3 text-left">
                     {row.map((cell, cellIndex) => (
-                      <td key={cellIndex} className="p-2 px-0 flex text-left">
+                      <td key={cellIndex} className="flex p-2 px-0 text-left">
                         {cell}
                       </td>
                     ))}

@@ -1,18 +1,18 @@
-import { configDefaults, defineConfig } from "vitest/config";
-import { loadEnvFile } from "process";
 import { join } from "path";
+import { loadEnvFile } from "process";
+import { configDefaults, defineConfig } from "vitest/config";
 
 export default defineConfig(({ mode: _ }) => {
-	loadEnvFile();
+  loadEnvFile();
 
-	return {
-		test: {
-			exclude: [...configDefaults.exclude, "**/e2e/**"],
-		},
-		resolve: {
-			alias: {
-				"~/": join(__dirname, "./src/"),
-			},
-		},
-	};
+  return {
+    test: {
+      exclude: [...configDefaults.exclude, "**/e2e/**"],
+    },
+    resolve: {
+      alias: {
+        "~/": join(__dirname, "./src/"),
+      },
+    },
+  };
 });

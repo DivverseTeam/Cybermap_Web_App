@@ -1,4 +1,4 @@
-import { clsx, type ClassValue } from "clsx";
+import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
@@ -10,7 +10,7 @@ export const unslugify = (slug: string) =>
     .replace(/\-/g, " ")
     .replace(
       /\w\S*/g,
-      (text) => text.charAt(0).toUpperCase() + text.slice(1).toLowerCase()
+      (text) => text.charAt(0).toUpperCase() + text.slice(1).toLowerCase(),
     );
 
 export const slugify = (str: string) => {
@@ -25,7 +25,7 @@ export const slugify = (str: string) => {
 
 export function formatDate(
   date: Date | string | number,
-  opts: Intl.DateTimeFormatOptions = {}
+  opts: Intl.DateTimeFormatOptions = {},
 ) {
   return new Intl.DateTimeFormat("en-US", {
     month: opts.month ?? "long",
@@ -42,7 +42,7 @@ export function formatDate(
 export function composeEventHandlers<E>(
   originalEventHandler?: (event: E) => void,
   ourEventHandler?: (event: E) => void,
-  { checkForDefaultPrevented = true } = {}
+  { checkForDefaultPrevented = true } = {},
 ) {
   return function handleEvent(event: E) {
     originalEventHandler?.(event);

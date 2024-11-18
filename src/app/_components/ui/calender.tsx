@@ -1,11 +1,11 @@
 "use client";
 
-import * as React from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import type * as React from "react";
 import { DayPicker } from "react-day-picker";
 
-import { cn } from "~/lib/utils";
 import { buttonVariants } from "~/app/_components/ui/button";
+import { cn } from "~/lib/utils";
 
 export type CalendarProps = React.ComponentProps<typeof DayPicker>;
 
@@ -54,9 +54,11 @@ function Calendar({
         ...classNames,
       }}
       components={{
+        // biome-ignore lint/correctness/noUnusedVariables: <explanation>
         PreviousMonthButton: ({ ...props }) => (
           <ChevronLeft className="h-4 w-4" />
         ),
+        // biome-ignore lint/correctness/noUnusedVariables: <explanation>
         NextMonthButton: ({ ...props }) => <ChevronRight className="h-4 w-4" />,
       }}
       {...props}

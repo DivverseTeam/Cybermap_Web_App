@@ -1,8 +1,6 @@
 // /app/dashboard/evidences/page.js
 "use client";
 
-import { useState, useEffect, useTransition } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
 // import { Pagination, Table, Button, Input } from '@shadcn/ui';
 import {
   createColumnHelper,
@@ -10,6 +8,9 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { Search01Icon } from "hugeicons-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState, useTransition } from "react";
 // import { evidences } from "../evidence-libraryOLD/_lib/constant";
 import { Input } from "~/app/_components/ui/input";
 import {
@@ -20,16 +21,14 @@ import {
   TableHeader,
   TableRow,
 } from "~/app/_components/ui/table";
-import { formatDate } from "~/lib/utils";
-import { Search01Icon } from "hugeicons-react";
-import { NewEvidenceSheet } from "./components/new-evidence-sheet";
 import PageTitle from "~/components/PageTitle";
-import { IEvidence } from "./types";
+import type { IEvidence } from "./types";
 
-import { columns } from "./components/evidence-table-columns";
 import { PaginationWithLinks } from "~/app/_components/ui/pagination-with-links";
 import { Tabs, TabsList, TabsTrigger } from "~/app/_components/ui/tabs";
 import { evidences } from "./_lib/constant";
+import { columns } from "./components/evidence-table-columns";
+import { NewEvidenceSheet } from "./components/new-evidence-sheet";
 
 interface EvidencesTableProps {
   searchParams: { [key: string]: string | undefined };
@@ -52,7 +51,7 @@ export default function EvidenceLibraryPage({
   // const [itemsPerPage, setItemsPerPage] = useState(10);
 
   // Status filter goes here
-  const [statusFilter, setStatusFilter] = useState<any>(null);
+  const [statusFilter, setStatusFilter] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -61,16 +60,18 @@ export default function EvidenceLibraryPage({
       //   { cache: "no-store" }
       // );
       // const { evidences, total } = await res.json();
-      const data = evidences;
-      const filteredData = ["needs artifact", "updated"].includes(
-        statusFilter?.toLocaleLowerCase()
-      )
-        ? evidences.filter(
-            (evidence) =>
-              evidence.status.toLocaleLowerCase() ===
-              statusFilter.toLocaleLowerCase()
-          )
-        : evidences;
+      // const data = evidences;
+      const filteredData =
+        statusFilter &&
+        ["needs artifact", "updated"].includes(
+          statusFilter?.toLocaleLowerCase()
+        )
+          ? evidences.filter(
+              (evidence) =>
+                evidence.status.toLocaleLowerCase() ===
+                statusFilter.toLocaleLowerCase()
+            )
+          : evidences;
 
       setData(filteredData);
       // setTotal(total);
@@ -135,7 +136,7 @@ export default function EvidenceLibraryPage({
             <Tabs
               defaultValue="All"
               className="w-[400px]"
-              onValueChange={(value) =>
+              onValueChange={(value: string | null) =>
                 setStatusFilter(value === "All" ? null : value)
               }
             >
@@ -151,7 +152,7 @@ export default function EvidenceLibraryPage({
             placeholder="Search for a file"
             // onChange={handleSearch}
             // defaultValue={search}
-            className="bg-[#F9F9FB] w-72"
+            className="w-54 [@media(min-width:1400px)]:w-72 bg-[#F9F9FB]"
             suffix={
               <span className="cursor-pointer">
                 <Search01Icon size="12" />
@@ -160,8 +161,8 @@ export default function EvidenceLibraryPage({
           />
         </div>
 
-        <Table>
-          <TableHeader className="bg-gray-100 text-[#40566D]">
+        <Table className="border ">
+          <TableHeader className="bg-muted border text-[#40566D] text-xs [@media(min-width:1400px)]:text-sm">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (

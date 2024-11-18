@@ -20,7 +20,7 @@ export const env = createEnv({
       // Since NextAuth.js automatically uses the VERCEL_URL if present.
       (str) => process.env.VERCEL_URL ?? str,
       // VERCEL_URL doesn't include `https` so it cant be validated as a URL
-      process.env.VERCEL ? z.string() : z.string().url(),
+      process.env.VERCEL ? z.string() : z.string().url().optional()
     ),
     DISCORD_CLIENT_ID: z.string(),
     DISCORD_CLIENT_SECRET: z.string(),
@@ -28,6 +28,10 @@ export const env = createEnv({
     S3_ACCESS_KEY: z.string(),
     S3_SECRET_KEY: z.string(),
     S3_BUCKET_NAME: z.string(),
+    AZURE_CLIENT_ID: z.string(),
+    AZURE_CLIENT_SECRET: z.string(),
+    AZURE_AD_TENANT_ID: z.string(),
+    BASE_URL: z.string().url().optional(),
   },
 
   /**
@@ -54,6 +58,10 @@ export const env = createEnv({
     S3_ACCESS_KEY: process.env.S3_ACCESS_KEY,
     S3_SECRET_KEY: process.env.S3_SECRET_KEY,
     S3_BUCKET_NAME: process.env.S3_BUCKET_NAME,
+    AZURE_CLIENT_ID: process.env.AZURE_CLIENT_ID,
+    AZURE_CLIENT_SECRET: process.env.AZURE_CLIENT_SECRET,
+    AZURE_AD_TENANT_ID: process.env.AZURE_AD_TENANT_ID,
+    BASE_URL: process.env.BASE_URL,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

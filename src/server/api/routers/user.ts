@@ -1,101 +1,81 @@
 import { z } from "zod";
 import {
-	OrganizationIndustry,
-	OrganizationKind,
-	OrganizationSize,
-	UserRole,
+  OrganisationIndustry,
+  OrganisationKind,
+  OrganisationSize,
+  UserRole,
 } from "~/lib/types";
-import bcrypt from "bcrypt";
 
-import {
-	createTRPCRouter,
-	protectedProcedure,
-	publicProcedure,
-} from "~/server/api/trpc";
-import User, { User as UserSchema } from "~/server/models/User";
-import Organization from "~/server/models/Organization";
 import mongoose from "mongoose";
-import { signIn } from "./actions";
+import {
+  createTRPCRouter,
+  protectedProcedure,
+  publicProcedure,
+} from "~/server/api/trpc";
+import Organisation from "~/server/models/Organisation";
+import User, { User as UserSchema } from "~/server/models/User";
+import { signIn, signUp } from "./actions";
+
+export const SignInProps = z.object({
+  email: z.string(),
+  password: z.string(),
+});
+
+export type SignInProps = z.infer<typeof SignInProps>;
+
+export const SignUpProps = SignInProps.extend({
+  name: z.string(),
+  role: UserRole.default("ADMIN"),
+});
+
+export type SignUpProps = z.infer<typeof SignUpProps>;
 
 export const userRouter = createTRPCRouter({
-	signUp: publicProcedure
-		.input(
-			z.object({
-				name: z.string(),
-				email: z.string(),
-				password: z.string(),
-				role: UserRole.default("ADMIN"),
-			}),
-		)
-		.mutation(async ({ ctx: _, input }) => {
-			const { name, email, role, password } = input;
+  signUp: publicProcedure
+    .input(SignUpProps)
+    .mutation(async ({ ctx: _, input }) => {
+      return await signUp(input);
+    }),
 
-			const isEmailTaken = await User.findOne({ email });
+  signIn: publicProcedure
+    .input(SignInProps)
+    .mutation(async ({ ctx: _, input }) => {
+      return await signIn(input);
+    }),
 
-			if (isEmailTaken) {
-				throw new Error("Email address is already taken");
-			}
+  completeOnboarding: protectedProcedure
+    .input(
+      z.object({
+        logoUrl: z.any(),
+        name: z.string(),
+        size: OrganisationSize,
+        kind: OrganisationKind,
+        industry: OrganisationIndustry,
+        frameworkIds: z.array(z.string()).optional(),
+        integrations: z.array(z.any()).optional(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const {
+        session: {
+          user: { id: userId },
+        },
+      } = ctx;
 
-			const hashPassword = bcrypt.hashSync(password, 12);
+      const organisationId = new mongoose.Types.ObjectId().toString();
 
-			let user = await User.create({
-				name,
-				email,
-				role,
-				password: hashPassword,
-			});
+      const [_, updatedUser] = await Promise.all([
+        Organisation.create({
+          _id: organisationId,
+          ...input,
+        }),
+        User.findByIdAndUpdate(userId, { organisationId }, { new: true }),
+      ]);
 
-			user = user.toJSON();
+      return updatedUser?.toObject();
+    }),
 
-			return UserSchema.parse(user);
-		}),
-
-	signIn: publicProcedure
-		.input(
-			z.object({
-				email: z.string(),
-				password: z.string(),
-			}),
-		)
-		.mutation(async ({ ctx: _, input }) => {
-			const { email, password } = input;
-
-			return await signIn({ email, password });
-		}),
-
-	completeOnboarding: protectedProcedure
-		.input(
-			z.object({
-				logoUrl: z.any(),
-				name: z.string(),
-				size: OrganizationSize,
-				kind: OrganizationKind,
-				industry: OrganizationIndustry,
-				frameworks: z.array(z.string()).optional(),
-				integrations: z.array(z.string()).optional(),
-			}),
-		)
-		.mutation(async ({ ctx, input }) => {
-			const {
-				session: {
-					user: { id: userId },
-				},
-			} = ctx;
-
-			const organizationId = new mongoose.Types.ObjectId().toString();
-
-			const [_, updatedUser] = await Promise.all([
-				Organization.create({
-					_id: organizationId,
-					...input,
-				}),
-				User.findByIdAndUpdate(userId, { organizationId }, { new: true }),
-			]);
-
-			return updatedUser?.toObject();
-		}),
-
-	getSecretMessage: protectedProcedure.query(() => {
-		return "you can now see this secret message!";
-	}),
+  getSecretMessage: protectedProcedure.query(() => {
+    return "you can now see this secret message!";
+  }),
 });

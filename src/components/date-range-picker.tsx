@@ -1,20 +1,20 @@
 "use client";
 
-import * as React from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { CalendarIcon } from "@radix-ui/react-icons";
 import { addDays, format } from "date-fns";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import * as React from "react";
 import type { DateRange } from "react-day-picker";
 
-import { cn } from "~/lib/utils";
 import { Button, type ButtonProps } from "~/app/_components/ui/button";
+import { Calendar } from "~/app/_components/ui/calender";
 // import { Calendar } from "~/app/_components/ui/calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "~/app/_components/ui/popover";
-import { Calendar } from "~/app/_components/ui/calender";
+import { cn } from "~/lib/utils";
 
 interface DateRangePickerProps
   extends React.ComponentPropsWithoutRef<typeof PopoverContent> {
@@ -131,7 +131,7 @@ export function DateRangePicker({
             className={cn(
               "w-full justify-start truncate text-left font-normal",
               !date && "text-muted-foreground",
-              triggerClassName
+              triggerClassName,
             )}
           >
             <CalendarIcon className="mr-2 size-4" />

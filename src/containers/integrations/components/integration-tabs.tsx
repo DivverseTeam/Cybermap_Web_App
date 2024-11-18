@@ -16,20 +16,27 @@ import {
   TabsTrigger,
 } from "~/app/_components/ui/tabs";
 
-export function IntegrationTabs({ setActiveList }: any) {
+type Props = {
+  setActiveList: React.Dispatch<React.SetStateAction<string>>;
+};
+
+export function IntegrationTabs({ setActiveList }: Props) {
   return (
-    <Tabs defaultValue="connected" className="w-[266px] h-[886px] 2xl:w-[22%]">
-      <TabsList className="grid w-full grid-cols-2 border z-10 rounded-2xl rounded-b-none bg-muted">
+    <Tabs
+      defaultValue="connected"
+      className="h-[500px] [@media(min-width:1400px)]:h-[886px] w-[200px] [@media(min-width:1400px)]:w-[270px] 2xl:w-[22%]"
+    >
+      <TabsList className="z-10 flex w-full rounded-2xl rounded-b-none border bg-muted">
         <TabsTrigger
           value="connected"
-          className="rounded-2xl rounded-tr-none rounded-b-none"
+          className="rounded-2xl rounded-b-none rounded-tr-none"
           onClick={() => setActiveList("connected")}
         >
           Connected ({4})
         </TabsTrigger>
         <TabsTrigger
           value="available"
-          className="rounded-2xl rounded-tl-none rounded-b-none"
+          className="rounded-2xl rounded-b-none rounded-tl-none"
           onClick={() => setActiveList("available")}
         >
           Available ({200})
@@ -40,6 +47,11 @@ export function IntegrationTabs({ setActiveList }: any) {
         <Card className="rounded-t-none">
           <CardHeader>
             <CardTitle>Connected</CardTitle>
+            {/* <CardDescription>
+      <TabsContent value="connected">
+        <Card className="rounded-t-none">
+          <CardHeader>
+            <CardTitle className="text-sm">Connected</CardTitle>
             {/* <CardDescription>
               Make changes to your account here. Click save when you're done.
             </CardDescription> */}
@@ -55,6 +67,11 @@ export function IntegrationTabs({ setActiveList }: any) {
         <Card className="rounded-t-none">
           <CardHeader>
             <CardTitle>Available</CardTitle>
+            {/* <CardDescription>
+      <TabsContent value="available">
+        <Card className="rounded-t-none">
+          <CardHeader>
+            <CardTitle className="text-sm">Available</CardTitle>
             {/* <CardDescription>
               Change your password here. After saving, you'll be logged out.
             </CardDescription> */}

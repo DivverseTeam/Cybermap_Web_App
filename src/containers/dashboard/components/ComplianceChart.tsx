@@ -27,11 +27,9 @@ const data = [
 
 export default function ComplianceChart() {
   return (
-    <div className="w-full h-[259.59px] px-5">
+    <div className="h-[330px] w-full px-5">
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart
-          width={500}
-          height={400}
           data={data}
           margin={{
             top: 10,
@@ -40,7 +38,7 @@ export default function ComplianceChart() {
             bottom: 0,
           }}
         >
-          <defs>
+          {/* <defs>
             <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor="#962DFF" stopOpacity={1} />
               <stop offset="48.25%" stopColor="#F1CAFF" stopOpacity={1} />
@@ -50,6 +48,19 @@ export default function ComplianceChart() {
             <linearGradient id="colorPv" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor="#962DFF" stopOpacity={1} />
               <stop offset="48.25%" stopColor="#F1CAFF" stopOpacity={1} />
+              <stop offset="103.37%" stopColor="#FFFFFF" stopOpacity={1} />
+            </linearGradient>
+          </defs> */}
+          <defs>
+            <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#74E0AD" stopOpacity={1} />
+              <stop offset="48.25%" stopColor="#B6FFD3" stopOpacity={1} />
+              <stop offset="103.37%" stopColor="#FFFFFF" stopOpacity={1} />
+            </linearGradient>
+
+            <linearGradient id="colorPv" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#74E0AD" stopOpacity={1} />
+              <stop offset="48.25%" stopColor="#B6FFD3" stopOpacity={1} />
               <stop offset="103.37%" stopColor="#FFFFFF" stopOpacity={1} />
             </linearGradient>
           </defs>
@@ -78,7 +89,7 @@ export default function ComplianceChart() {
           <Area
             type="monotone"
             dataKey="compliance"
-            stroke="rgba(150, 45, 255, 1)"
+            stroke="#09D886"
             // width={100}
             fill="url(#colorPv)"
           />

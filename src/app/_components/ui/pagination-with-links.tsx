@@ -1,6 +1,8 @@
 "use client";
 
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { type ReactNode, useCallback } from "react";
+import { cn } from "~/lib/utils";
 import {
   Pagination,
   PaginationContent,
@@ -17,8 +19,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./select";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { cn } from "~/lib/utils";
 
 export interface PaginationWithLinksProps {
   pageSizeSelectOptions?: {
@@ -64,7 +64,7 @@ export function PaginationWithLinks({
       newSearchParams.set(key, String(newPage));
       return `${pathname}?${newSearchParams.toString()}`;
     },
-    [searchParams, pathname]
+    [searchParams, pathname],
   );
 
   const navToPageSize = useCallback(
@@ -74,7 +74,7 @@ export function PaginationWithLinks({
       newSearchParams.set(key, String(newPageSize));
       router.push(`${pathname}?${newSearchParams.toString()}`);
     },
-    [searchParams, pathname]
+    [searchParams, pathname],
   );
 
   const renderPageNumbers = () => {
@@ -88,7 +88,7 @@ export function PaginationWithLinks({
             <PaginationLink href={buildLink(i)} isActive={page === i}>
               {i}
             </PaginationLink>
-          </PaginationItem>
+          </PaginationItem>,
         );
       }
     } else {
@@ -97,14 +97,14 @@ export function PaginationWithLinks({
           <PaginationLink href={buildLink(1)} isActive={page === 1}>
             1
           </PaginationLink>
-        </PaginationItem>
+        </PaginationItem>,
       );
 
       if (page > 3) {
         items.push(
           <PaginationItem key="ellipsis-start">
             <PaginationEllipsis />
-          </PaginationItem>
+          </PaginationItem>,
         );
       }
 
@@ -117,7 +117,7 @@ export function PaginationWithLinks({
             <PaginationLink href={buildLink(i)} isActive={page === i}>
               {i}
             </PaginationLink>
-          </PaginationItem>
+          </PaginationItem>,
         );
       }
 
@@ -125,7 +125,7 @@ export function PaginationWithLinks({
         items.push(
           <PaginationItem key="ellipsis-end">
             <PaginationEllipsis />
-          </PaginationItem>
+          </PaginationItem>,
         );
       }
 
@@ -137,7 +137,7 @@ export function PaginationWithLinks({
           >
             {totalPageCount}
           </PaginationLink>
-        </PaginationItem>
+        </PaginationItem>,
       );
     }
 
@@ -145,9 +145,9 @@ export function PaginationWithLinks({
   };
 
   return (
-    <div className="flex flex-col md:flex-row items-center gap-3 w-full">
+    <div className="flex w-full flex-col items-center gap-3 md:flex-row">
       {pageSizeSelectOptions && (
-        <div className="flex flex-col gap-4 flex-1">
+        <div className="flex flex-1 flex-col gap-4">
           <SelectRowsPerPage
             options={pageSizeSelectOptions.pageSizeOptions}
             setPageSize={navToPageSize}

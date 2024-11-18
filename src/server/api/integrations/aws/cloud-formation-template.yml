@@ -1,0 +1,43 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Template to create a cross-account IAM role with read-only permissions and trust policy.
+
+Parameters:
+  ExternalAccountId:
+    Type: String
+    Description: "The AWS account ID of the application that will assume this role."
+    Default: "<your-account-id>"
+
+Resources:
+  CrossAccountReadOnlyRole:
+    Type: "AWS::IAM::Role"
+    Properties: 
+      RoleName: "CrossAccountReadOnlyRole"
+      AssumeRolePolicyDocument: 
+        Version: "2012-10-17"
+        Statement: 
+          - Effect: "Allow"
+            Principal: 
+              AWS: 
+                - !Sub "arn:aws:iam::${ExternalAccountId}:root"
+            Action: "sts:AssumeRole"
+      Policies:
+        - PolicyName: "ReadOnlyPolicy"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "s3:ListBucket"
+                  - "s3:GetObject"
+                  - "dynamodb:Scan"
+                  - "dynamodb:Query"
+                  - "ec2:DescribeInstances"
+                  - "rds:DescribeDBInstances"
+                Resource: "*"
+
+Outputs:
+  RoleARN:
+    Description: "The ARN of the cross-account IAM role."
+    Value: !GetAtt CrossAccountReadOnlyRole.Arn
+    Export:
+      Name: "CrossAccountReadOnlyRoleARN"

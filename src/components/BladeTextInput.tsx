@@ -1,5 +1,9 @@
 import { TextInput, type TextInputProps } from "@razorpay/blade/components";
-import { Controller, type FieldError, type UseControllerProps } from "react-hook-form";
+import {
+  Controller,
+  type FieldError,
+  type UseControllerProps,
+} from "react-hook-form";
 
 type InputProps = UseControllerProps<any> & {
   name: string;
@@ -19,7 +23,7 @@ export function AppInput({
 }: InputProps) {
   return (
     <div className="flex flex-col gap-3">
-      <span className="font-semibold text-base text-[#40566D]">{label}</span>
+      <span className="font-semibold text-[#40566D] text-base">{label}</span>
       <Controller
         name={name}
         {...controllerProps}

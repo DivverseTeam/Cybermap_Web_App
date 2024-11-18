@@ -1,7 +1,7 @@
 export const controls = [
   {
-    id: "adadcecefadfaf",
-    name: "Clerissa",
+    id: "adadcecefadfaf ",
+    name: "Clerissa The quick brown fox jumps over the lazy dog  The quick brown fox jumps over the lazy dog",
     description:
       "Integer pede justo, lacinia eget, tincidunt eget, tempus vel, pede.",
     mappedControls: ["SOC 2 II", "HIPAA", "HIPAA"],
@@ -89,7 +89,7 @@ export const controls = [
     id: "adsjajfoauhngjk",
     name: "Ollie",
     description: "Nunc purus. Phasellus in felis.",
-    mappedControls: ["SOC 2 II", "HIPAA", "HIPAA"],
+    mappedControls: ["SOC 2 II", "GDPR", "HIPAA"],
     status: "Fully implemented",
     createdAt: "12/21/2023",
     updatedAt: "12/13/2023",
@@ -127,7 +127,7 @@ export const controls = [
     id: "dlaidjoau983yhu",
     name: "Ollie",
     description: "Nunc purus. Phasellus in felis.",
-    mappedControls: ["SOC 2 II", "HIPAA", "HIPAA"],
+    mappedControls: ["SOC 2 II", "NIST", "HIPAA"],
     status: "Fully implemented",
     createdAt: "12/21/2023",
     updatedAt: "12/13/2023",

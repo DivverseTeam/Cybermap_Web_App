@@ -1,6 +1,6 @@
-import * as React from "react";
 import { ReloadIcon, TrashIcon } from "@radix-ui/react-icons";
-import { type Row } from "@tanstack/react-table";
+import type { Row } from "@tanstack/react-table";
+import * as React from "react";
 import { toast } from "sonner";
 
 // import { useMediaQuery } from "~/hooks/use-media-query";
@@ -25,8 +25,8 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "~/app/_components/ui/drawer";
-import { IEvidence } from "../types";
 import { useMediaQuery } from "~/hooks/use-media-query";
+import type { IEvidence } from "../types";
 // import { Evidence } from "../_lib/queries";
 
 // import { deleteEvidences } from "../_lib/actions";
@@ -46,7 +46,7 @@ export function DeleteEvidenceDialog({
   onOpenChange,
   ...props
 }: DeleteEvidenceDialogProps) {
-  const [isDeletePending, startDeleteTransition] = React.useTransition();
+  const [isDeletePending, _startDeleteTransition] = React.useTransition();
   const isDesktop = useMediaQuery("(min-width: 640px)");
 
   function onDelete() {
