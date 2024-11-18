@@ -50,10 +50,16 @@ export default function useOnboarding() {
   });
 
   const onSubmit = (data: FormData) => {
+    const { name, kind, frameworks, size, industry, integrations } = data;
     console.log("Form submitted successfully:", data, step);
     onboardingMutate(
       {
-        ...data,
+        name,
+        kind,
+        size,
+        frameworkIds: frameworks,
+        industry,
+        integrations,
       },
       {
         onSuccess: () => {

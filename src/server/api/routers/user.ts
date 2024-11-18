@@ -51,8 +51,8 @@ export const userRouter = createTRPCRouter({
         size: OrganisationSize,
         kind: OrganisationKind,
         industry: OrganisationIndustry,
-        frameworks: z.array(z.string()).optional(),
-        integrations: z.array(z.string()).optional(),
+        frameworkIds: z.array(z.string()).optional(),
+        integrations: z.array(z.any()).optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {

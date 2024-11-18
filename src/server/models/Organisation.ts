@@ -30,7 +30,7 @@ export const Organisation = z.object({
   kind: OrganisationKind,
   industry: OrganisationIndustry,
   frameworkIds: z.array(z.string()).optional().default([]),
-  integrations: z.array(OrganisationIntegration),
+  integrations: z.array(OrganisationIntegration).default([]),
 });
 
 export type Organisation = z.infer<typeof Organisation>;
