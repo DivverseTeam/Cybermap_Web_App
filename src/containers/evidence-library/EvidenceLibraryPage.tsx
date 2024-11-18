@@ -162,7 +162,7 @@ export default function EvidenceLibraryPage({
         </div>
 
         <Table className="border ">
-          <TableHeader className="bg-white border text-[#40566D] text-xs [@media(min-width:1400px)]:text-sm">
+          <TableHeader className="bg-muted border text-[#40566D] text-xs [@media(min-width:1400px)]:text-sm">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (

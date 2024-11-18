@@ -2,11 +2,11 @@ import React from "react";
 
 export default function CategoryList() {
   return (
-    <div className="flex flex-col gap-4 text-sm">
+    <div className="flex flex-col gap-2 text-xs">
       <h3 className="font-semibold text-secondary uppercase">
         REQUIREMENT CATEGORIES
       </h3>
-      <ul className="flex list-none flex-col gap-4 text-secondary">
+      <ul className="flex list-none flex-col gap-2 text-secondary">
         <li>CC1.0 Control Environment</li>
         <li>CC2.0 Communication and information</li>
         <li>CC3.0 Risk Assessment</li>

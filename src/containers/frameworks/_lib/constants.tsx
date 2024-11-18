@@ -5,6 +5,7 @@ import { twMerge } from "tailwind-merge";
 import { z } from "zod";
 import { Button } from "~/app/_components/ui/button";
 import TagsContainer from "~/components/TagContainer";
+import type { IFrameworkData } from "../types";
 
 const FrameworkStatus = z.enum([
   "FULLY_IMPLEMENTED",
@@ -151,50 +152,183 @@ export const frameworkIcons = {
   gdpr: "/frameworkIcons/gdpr.svg",
 };
 
-export const frameworklist = [
+export const frameworkList: IFrameworkData[] = [
   {
-    framework: "HIPAA",
+    name: "HIPAA",
     keyVal: "hipaa",
-    progress: "72",
-    score: "120/160",
+    icon: "/frameworkIcons/hipaa.svg",
+    complianceScore: [
+      {
+        name: "Passing",
+        value: 120,
+        color: "#09D886",
+        // icon: <CircleCheck className="text-[#09D886]" />,
+      },
+      {
+        name: "Failing",
+        value: 35,
+        color: "#D92D20",
+        // icon: <CircleX className="text-destructive" />,
+      },
+      {
+        name: "At risk",
+        value: 5,
+        color: "#FFDC00",
+        // icon: <TriangleAlert className="text-[#FFDC00]" />,
+      },
+    ],
   },
   {
-    framework: "HITECH",
+    name: "HITECH",
     keyVal: "hitech",
-    progress: "0",
-    score: "0/120",
+    icon: "/frameworkIcons/hitech.svg",
+    complianceScore: [
+      {
+        name: "Passing",
+        value: 65,
+        color: "#09D886",
+        // icon: <CircleCheck className="text-[#09D886]" />,
+      },
+      {
+        name: "Failing",
+        value: 75,
+        color: "#D92D20",
+        // icon: <CircleX className="text-destructive" />,
+      },
+      {
+        name: "At risk",
+        value: 20,
+        color: "#FFDC00",
+        // icon: <TriangleAlert className="text-[#FFDC00]" />,
+      },
+    ],
   },
   {
-    framework: "SOC 2 I",
+    name: "SOC 2 I",
     keyVal: "soc2I",
-    progress: "72",
-    score: "120/160",
+    icon: "/frameworkIcons/soc2I.svg",
+    complianceScore: [
+      {
+        name: "Passing",
+        value: 80,
+        color: "#09D886",
+        // icon: <CircleCheck className="text-[#09D886]" />,
+      },
+      {
+        name: "Failing",
+        value: 20,
+        color: "#D92D20",
+        // icon: <CircleX className="text-destructive" />,
+      },
+      {
+        name: "At risk",
+        value: 60,
+        color: "#FFDC00",
+        // icon: <TriangleAlert className="text-[#FFDC00]" />,
+      },
+    ],
   },
   {
-    framework: "SOC 2 II",
+    name: "SOC 2 II",
     keyVal: "soc2II",
-    progress: "72",
-    score: "120/160",
+    icon: "/frameworkIcons/soc2I.svg",
+    complianceScore: [
+      {
+        name: "Passing",
+        value: 60,
+        color: "#09D886",
+        // icon: <CircleCheck className="text-[#09D886]" />,
+      },
+      {
+        name: "Failing",
+        value: 80,
+        color: "#D92D20",
+        // icon: <CircleX className="text-destructive" />,
+      },
+      {
+        name: "At risk",
+        value: 20,
+        color: "#FFDC00",
+        // icon: <TriangleAlert className="text-[#FFDC00]" />,
+      },
+    ],
   },
   {
-    framework: "ISO 27001",
+    name: "ISO 27001",
     keyVal: "iso27001",
-    progress: "5",
-    score: "120/160",
+    icon: "/frameworkIcons/iso27001.svg",
+    complianceScore: [
+      {
+        name: "Passing",
+        value: 140,
+        color: "#09D886",
+        // icon: <CircleCheck className="text-[#09D886]" />,
+      },
+      {
+        name: "Failing",
+        value: 15,
+        color: "#D92D20",
+        // icon: <CircleX className="text-destructive" />,
+      },
+      {
+        name: "At risk",
+        value: 5,
+        color: "#FFDC00",
+        // icon: <TriangleAlert className="text-[#FFDC00]" />,
+      },
+    ],
   },
   {
-    framework: "PCI DSS",
+    name: "PCI DSS",
     keyVal: "pcidss",
-    progress: "72",
-    score: "120/160",
+    icon: "/frameworkIcons/pcidss.svg",
+    complianceScore: [
+      {
+        name: "Passing",
+        value: 100,
+        color: "#09D886",
+        // icon: <CircleCheck className="text-[#09D886]" />,
+      },
+      {
+        name: "Failing",
+        value: 30,
+        color: "#D92D20",
+        // icon: <CircleX className="text-destructive" />,
+      },
+      {
+        name: "At risk",
+        value: 30,
+        color: "#FFDC00",
+        // icon: <TriangleAlert className="text-[#FFDC00]" />,
+      },
+    ],
   },
   {
-    framework: "GDPR",
+    name: "GDPR",
     keyVal: "gdpr",
-    progress: "93",
-    score: "155/160",
+    icon: "/frameworkIcons/gdpr.svg",
+    complianceScore: [
+      {
+        name: "Passing",
+        value: 150,
+        color: "#09D886",
+        // icon: <CircleCheck className="text-[#09D886]" />,
+      },
+      {
+        name: "Failing",
+        value: 0,
+        color: "#D92D20",
+        // icon: <CircleX className="text-destructive" />,
+      },
+      {
+        name: "At risk",
+        value: 10,
+        color: "#FFDC00",
+        // icon: <TriangleAlert className="text-[#FFDC00]" />,
+      },
+    ],
   },
-] as const;
+];
 
 export const getProgressColor = (progress: number) => {
   if (progress > 80) return "#218358";

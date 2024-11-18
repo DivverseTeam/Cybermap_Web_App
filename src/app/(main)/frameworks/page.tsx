@@ -1,4 +1,4 @@
-import FrameworksPage from "~/containers/dashboard/Frameworks";
+import FrameworksPage from "~/containers/frameworks/Frameworks";
 
 export default function HomePage() {
   return <FrameworksPage />;

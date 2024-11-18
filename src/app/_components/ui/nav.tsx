@@ -44,7 +44,7 @@ export function Nav({ links, groupName, isCollapsed }: NavProps) {
         </span>
       )}
       {groupName.toLocaleLowerCase() === "actions" && (
-        <div className="mt-1 [@media(min-width:1400px)]:mt-8 2xl:mt-11"></div>
+        <div className="mt-1 [@media(min-width:1400px)]:mt-4 2xl:mt-11"></div>
       )}
       <nav className=" grid mx-auto gap-[1px] [@media(min-width:1400px)]:gap-1 group-[[data-collapsed=true]]:justify-center group-[[data-collapsed=true]]:px-2">
         {links.map((link: LinkProp, index) => {

@@ -33,7 +33,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <Table className="text-xs [@media(min-width:1400px)]:text-sm">
-      <TableHeader className="bg-white border text-[#40566D] ">
+      <TableHeader className="bg-muted border text-[#40566D] ">
         {table.getHeaderGroups().map((headerGroup) => (
           <TableRow key={headerGroup.id}>
             {headerGroup.headers.map((header) => {

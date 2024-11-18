@@ -58,19 +58,7 @@ export const columns: ColumnDef<IControl>[] = [
         STATUS
       </span>
     ), // Wrap in span
-    // cell: ({ cell }) => (
-    //   <span
-    //     className={`flex w-max w-[150px] items-center justify-center rounded-xl px-2 py-[2px] font-medium text-xs ${
-    //       cell.getValue() === "Not implemented"
-    //         ? "bg-destructive/20 text-destructive"
-    //         : cell.getValue() === "Partially implemented"
-    //         ? "bg-[#C65C10]/20 text-[#C65C10]"
-    //         : "bg-green-700/20 text-green-700 "
-    //     }`}
-    //   >
-    //     {cell.getValue() as string}
-    //   </span>
-    // ),
+
     cell: ({ cell }) => {
       const status = cell.getValue() as string;
       let badgeVariant: VariantProps<typeof badgeVariants>["variant"];
@@ -86,13 +74,6 @@ export const columns: ColumnDef<IControl>[] = [
         badgeVariant = "warning";
       }
       return (
-        // <span
-        //   className={`flex w-max items-center justify-center rounded-xl px-2 py-[2px] font-medium text-xs ${
-        //     cell.getValue() === "Needs artifact"
-        //       ? "bg-destructive/20 text-destructive"
-        //       : "bg-green-700/20 text-green-700 "
-        //   }`}
-        // >{cell.getValue() as string}</span>
         <Badge className="w-max font-semibold" variant={badgeVariant}>
           {status}
         </Badge>
