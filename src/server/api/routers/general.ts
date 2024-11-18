@@ -6,6 +6,10 @@ import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { Resource } from "sst";
+import { AuthorizationCode } from "simple-oauth2";
+import { Oauth2Provider } from "~/lib/types/integrations";
+import { Oauth2ProviderConfigMap } from "~/lib/constants/integrations";
+import { env } from "~/env";
 
 export const generalRouter = createTRPCRouter({
   getS3PresignedUrl: protectedProcedure
@@ -46,4 +50,21 @@ export const generalRouter = createTRPCRouter({
         id,
       };
     }),
+
+  oauth2: createTRPCRouter({
+    authorization: protectedProcedure
+      .input(Oauth2Provider)
+      .mutation(({ input: provider }) => {
+        const client = new AuthorizationCode(Oauth2ProviderConfigMap[provider]);
+
+        const authorizationUri = client.authorizeURL({
+          redirect_uri: `${env.BASE_URL || "http://localhost:3000"}/api/integrations/callback/${provider.toLowerCase()}`,
+          scope:
+            "offline_access User.Read Directory.Read.All AuditLog.Read.All",
+          state: "test",
+        });
+
+        return authorizationUri;
+      }),
+  }),
 });
