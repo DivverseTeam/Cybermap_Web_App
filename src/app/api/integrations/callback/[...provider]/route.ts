@@ -37,11 +37,9 @@ export async function GET(req: NextRequest) {
 
   const session = await getServerAuthSession();
 
-  if (!session) {
+  if (!session || !session?.user?.organisationId) {
     return NextResponse.redirect(new URL("/signin", req.url));
   }
-
-  console.log(session);
 
   const code = searchParams.get("code");
   if (!code) {
@@ -81,31 +79,20 @@ export async function GET(req: NextRequest) {
       },
     }));
 
-    await Organisation.updateOne(
-      { id: session.user.organisationId },
-      {
-        $push: {
-          integrations: {
-            $each: integrationsToAdd,
-          },
-        },
-      },
+    const organisation = await Organisation.findById(
+      session.user.organisationId,
     );
 
-    // const organisation = await Organisation.findById(
-    //   session.user.organisationId,
-    // );
+    if (!organisation) {
+      return NextResponse.redirect(
+        new URL("/error?message=organisation_not_found", req.url),
+      );
+    }
 
-    // if (!organisation) {
-    //   return NextResponse.redirect(
-    //     new URL("/error?message=organisation_not_found", req.url),
-    //   );
-    // }
+    organisation.integrations =
+      organisation.integrations.concat(integrationsToAdd);
 
-    // organisation.integrations =
-    //   organisation.integrations.concat(integrationsToAdd);
-
-    // await organisation.save();
+    await organisation.save();
 
     const user = await getUserDetails(access_token as string);
 

@@ -44,7 +44,11 @@ export const authOptions: NextAuthOptions = {
         },
       };
     },
-    jwt: ({ token, user, account }) => {
+    jwt: ({ token, user, account, trigger, session }) => {
+      if (trigger === "update" && session?.organisationId) {
+        token.organisationId = session.organisationId;
+      }
+
       if (account && user) {
         token.id = user.id;
         token.sub = user.id;
@@ -55,9 +59,10 @@ export const authOptions: NextAuthOptions = {
           const { id, role, organisationId } = parsedUser.data;
           token.id = id;
           token.role = role;
-          token.organisationId = organisationId;
+          if (organisationId) token.organisationId = organisationId;
         }
       }
+
       return token;
     },
   },

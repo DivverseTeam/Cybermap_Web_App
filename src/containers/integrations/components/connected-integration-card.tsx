@@ -19,12 +19,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/app/_components/ui/select";
+import type { Integration } from "~/lib/types/integrations";
 
-type Integration = {
-  id: string;
-  name: string;
-  icon: string;
-};
 type Props = {
   integration: Integration;
 };
@@ -38,7 +34,7 @@ export function ConnectedIntegrationCard({ integration }: Props) {
             <div className="flex items-start justify-between gap-1 px-3 [@media(min-width:1400px)]:px-4 ">
               <div className="flex flex-col items-start justify-center gap-1 [@media(min-width:1400px)]:gap-2 ">
                 <Image
-                  src={integration.icon}
+                  src={integration.image}
                   alt="image"
                   width={70}
                   height={70}
@@ -48,9 +44,9 @@ export function ConnectedIntegrationCard({ integration }: Props) {
                   className="flex items-center justify-center "
                 />
                 {["Github", "Github Enterprise Server"].includes(
-                  integration.name
+                  integration.name,
                 ) && (
-                  <span className="font-semibold whitespace-nowrap text-[7px] [@media(min-width:1400px)]:text-xs">
+                  <span className="whitespace-nowrap font-semibold text-[7px] [@media(min-width:1400px)]:text-xs">
                     {integration.name}
                   </span>
                 )}

@@ -19,13 +19,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/app/_components/ui/select";
+import type { Integration } from "~/lib/types/integrations";
 import { api } from "~/trpc/react";
 
-type Integration = {
-  id: string;
-  name: string;
-  icon: string;
-};
 type Props = {
   integration: Integration;
 };
@@ -50,11 +46,11 @@ export function AvailableIntegrationCard({ integration }: Props) {
         <CardTitle>Create project</CardTitle>
         <CardDescription>Deploy your new project in one-click.</CardDescription>
       </CardHeader> */}
-      <div className="mx-auto my-auto flex h-[180px] [@media(min-width:1400px)]:h-[200px] flex-col justify-between px-0 2xl:w-[266px]">
+      <div className="mx-auto my-auto flex h-[180px] flex-col justify-between px-0 2xl:w-[266px] [@media(min-width:1400px)]:h-[200px]">
         <CardContent className="my-auto p-0">
           <div className="flex flex-col items-center justify-center gap-2 ">
             <Image
-              src={integration.icon}
+              src={integration.image}
               alt="image"
               width={80}
               height={80}

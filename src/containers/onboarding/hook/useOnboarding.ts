@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -34,6 +35,7 @@ export default function useOnboarding() {
     isPending,
     error,
   } = api.user.completeOnboarding.useMutation();
+  const { update: updateSession } = useSession();
 
   const router = useRouter();
 
@@ -62,8 +64,13 @@ export default function useOnboarding() {
         integrations,
       },
       {
-        onSuccess: () => {
-          // form.reset();
+        onSuccess: (data) => {
+          if (data?.organisationId) {
+            updateSession({
+              organisationId: data.organisationId,
+            });
+          }
+
           router.push("/policies");
         },
         onError: (error: any) => {

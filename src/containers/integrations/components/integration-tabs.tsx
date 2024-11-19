@@ -15,12 +15,20 @@ import {
   TabsList,
   TabsTrigger,
 } from "~/app/_components/ui/tabs";
+import { api } from "~/trpc/react";
 
 type Props = {
   setActiveList: React.Dispatch<React.SetStateAction<string>>;
+  count: {
+    all: number;
+    connected: number;
+  };
 };
 
-export function IntegrationTabs({ setActiveList }: Props) {
+export function IntegrationTabs({
+  setActiveList,
+  count: { all, connected },
+}: Props) {
   return (
     <Tabs
       defaultValue="connected"
@@ -32,14 +40,14 @@ export function IntegrationTabs({ setActiveList }: Props) {
           className="rounded-2xl rounded-b-none rounded-tr-none"
           onClick={() => setActiveList("connected")}
         >
-          Connected ({4})
+          Connected ({connected})
         </TabsTrigger>
         <TabsTrigger
           value="available"
           className="rounded-2xl rounded-b-none rounded-tl-none"
           onClick={() => setActiveList("available")}
         >
-          Available ({200})
+          Available ({all})
         </TabsTrigger>
       </TabsList>
 
