@@ -37,7 +37,7 @@ const ForgotPassword = () => {
       }
 
       const data: unknown = await res.json(); // `unknown` type for strict handling
-      console.log(data);
+      // console.log(data);
 
       if (isForgotPasswordResponse(data)) {
         setMessage(data.message);

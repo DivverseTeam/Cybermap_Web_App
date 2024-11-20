@@ -1,11 +1,12 @@
-import type { NextApiRequest, NextApiResponse } from "next";
+import { NextResponse } from "next/server";
 import {
   AdminUpdateUserAttributesCommand,
   CognitoIdentityProviderClient,
 } from "@aws-sdk/client-cognito-identity-provider";
 import { Resource } from "sst";
-import jwt, { JwtHeader } from "jsonwebtoken"; // Import if using JSON Web Tokens (JWT)
+import jwt, { type JwtHeader } from "jsonwebtoken"; // Import if using JSON Web Tokens (JWT)
 
+// Initialize Cognito Client
 const cognitoClient = new CognitoIdentityProviderClient({
   region: process.env.AWS_REGION || "us-east-1",
 });
@@ -30,45 +31,45 @@ interface JwkSet {
   keys: Jwk[];
 }
 
-async function getPublicKey(userPoolId: string, region: string) {
-  const jwksUrl = `https://cognito-idp.${region}.amazonaws.com/${userPoolId}/.well-known/jwks.json`;
-  const response = await fetch(jwksUrl);
-  const data = await response.json();
-  // Type the response data as JwkSet
-  const jwks = data as JwkSet;
-
-  return jwks.keys;
+// Define the expected structure of the request body
+interface RequestBody {
+  token: string;
 }
 
-console.log(Resource);
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  if (req.method !== "POST") {
-    return res
-      .status(405)
-      .json({ success: false, message: "Method not allowed" });
-  }
+async function getPublicKey(
+  userPoolId: string,
+  region: string
+): Promise<Jwk[]> {
+  const jwksUrl = `https://cognito-idp.${region}.amazonaws.com/${userPoolId}/.well-known/jwks.json`;
+  const response = await fetch(jwksUrl);
+  const data = (await response.json()) as JwkSet;
+  return data.keys;
+}
 
-  const { token } = req.body;
-
-  if (!token) {
-    return res
-      .status(400)
-      .json({ success: false, message: "Token is required" });
-  }
-
+export async function POST(request: Request) {
   try {
+    // Parse the JSON request body and assert its type
+    const body = (await request.json()) as RequestBody; // Explicitly cast to RequestBody
+    const token: string = body.token;
+
+    if (!token) {
+      return NextResponse.json(
+        { success: false, message: "Token is required" },
+        { status: 400 }
+      );
+    }
+
     // Get the User Pool ID dynamically from SST's resources
     const userPoolId = Resource.user.id; // Access UserPool ID directly from the SST resource
     const region = process.env.AWS_REGION || "us-east-1"; // Use region from environment or default
 
     if (!userPoolId || !region) {
-      return res
-        .status(500)
-        .json({ success: false, message: "User Pool ID or Region missing" });
+      return NextResponse.json(
+        { success: false, message: "User Pool ID or Region missing" },
+        { status: 500 }
+      );
     }
+
     // Get public keys from Cognito's JWKS endpoint
     const keys = await getPublicKey(userPoolId, region);
 
@@ -79,17 +80,19 @@ export default async function handler(
     const header = decodedHeader as JwtHeader | null;
 
     if (!header || !header.kid) {
-      return res
-        .status(401)
-        .json({ success: false, message: "Invalid JWT header" });
+      return NextResponse.json(
+        { success: false, message: "Invalid JWT header" },
+        { status: 401 }
+      );
     }
 
     const key = keys.find((k) => k.kid === header.kid);
 
     if (!key) {
-      return res
-        .status(401)
-        .json({ success: false, message: "Unable to find matching key" });
+      return NextResponse.json(
+        { success: false, message: "Unable to find matching key" },
+        { status: 401 }
+      );
     }
 
     // Convert the key to a usable public key format
@@ -103,7 +106,7 @@ export default async function handler(
       throw new Error("Invalid token structure");
     }
 
-    const { email, sub } = decoded as DecodedToken;
+    const { email, sub } = decoded;
 
     if (!email || !sub) {
       throw new Error("Missing required fields in token");
@@ -111,20 +114,22 @@ export default async function handler(
 
     // Mark email as verified in Cognito
     const command = new AdminUpdateUserAttributesCommand({
-      UserPoolId: Resource.user.id!,
+      UserPoolId: userPoolId,
       Username: sub,
       UserAttributes: [{ Name: "email_verified", Value: "true" }],
     });
 
     await cognitoClient.send(command);
 
-    return res
-      .status(200)
-      .json({ success: true, message: "Email verified successfully" });
+    return NextResponse.json(
+      { success: true, message: "Email verified successfully" },
+      { status: 200 }
+    );
   } catch (error) {
     console.error("Error verifying email:", error);
-    return res
-      .status(500)
-      .json({ success: false, message: "Internal server error" });
+    return NextResponse.json(
+      { success: false, message: "Internal server error" },
+      { status: 500 }
+    );
   }
 }
