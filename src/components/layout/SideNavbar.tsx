@@ -59,7 +59,7 @@ export default function SideNavbar({}: Props) {
           variant: `${pathname === "/dashboard" ? "lightBlue" : "ghost"}`,
         },
         {
-          title: "Starter guide",
+          title: "Compliance guide",
           href: "/starter-guide",
 
           icon: CurvyRightDirectionIcon,
@@ -68,7 +68,7 @@ export default function SideNavbar({}: Props) {
       ],
     },
     {
-      groupName: "Compliance",
+      groupName: "Governance",
       items: [
         {
           title: "Frameworks",
@@ -97,7 +97,7 @@ export default function SideNavbar({}: Props) {
           }`,
         },
         {
-          title: "Police templates",
+          title: "Policies",
           icon: PolicyIcon,
           href: "/policies",
           variant: `${pathname === "/policies" ? "lightBlue" : "ghost"}`,
@@ -108,10 +108,10 @@ export default function SideNavbar({}: Props) {
       groupName: "Management",
       items: [
         {
-          title: "Personnel",
+          title: "Employees",
           icon: UserMultipleIcon,
-          href: "/personnel",
-          variant: `${pathname === "/personnel" ? "lightBlue" : "ghost"}`,
+          href: "/employees",
+          variant: `${pathname === "/employees" ? "lightBlue" : "ghost"}`,
         },
         {
           title: "Integrations",
@@ -119,14 +119,14 @@ export default function SideNavbar({}: Props) {
           href: "/integrations",
           variant: `${pathname === "/integrations" ? "lightBlue" : "ghost"}`,
         },
-        {
-          title: "Training modules",
-          icon: OnlineLearning01Icon,
-          href: "/training-modules",
-          variant: `${
-            pathname === "/training-modules" ? "lightBlue" : "ghost"
-          }`,
-        },
+        // {
+        //   title: "Training modules",
+        //   icon: OnlineLearning01Icon,
+        //   href: "/training-modules",
+        //   variant: `${
+        //     pathname === "/training-modules" ? "lightBlue" : "ghost"
+        //   }`,
+        // },
         {
           title: "Audit center",
           icon: Audit02Icon,
