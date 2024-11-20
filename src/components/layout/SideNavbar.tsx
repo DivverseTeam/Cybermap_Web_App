@@ -82,12 +82,12 @@ export default function SideNavbar({}: Props) {
           href: "/controls",
           variant: `${pathname === "/controls" ? "lightBlue" : "ghost"}`,
         },
-        {
-          title: "Regulations",
-          icon: PolicyIcon,
-          href: "/regulations",
-          variant: `${pathname === "/regulations" ? "lightBlue" : "ghost"}`,
-        },
+        // {
+        //   title: "Regulations",
+        //   icon: PolicyIcon,
+        //   href: "/regulations",
+        //   variant: `${pathname === "/regulations" ? "lightBlue" : "ghost"}`,
+        // },
         {
           title: "Evidence Library",
           icon: LibraryIcon,
@@ -127,12 +127,12 @@ export default function SideNavbar({}: Props) {
         //     pathname === "/training-modules" ? "lightBlue" : "ghost"
         //   }`,
         // },
-        {
-          title: "Audit center",
-          icon: Audit02Icon,
-          href: "/audit-center",
-          variant: `${pathname === "/audit-center" ? "lightBlue" : "ghost"}`,
-        },
+        // {
+        //   title: "Audit center",
+        //   icon: Audit02Icon,
+        //   href: "/audit-center",
+        //   variant: `${pathname === "/audit-center" ? "lightBlue" : "ghost"}`,
+        // },
       ],
     },
     {
