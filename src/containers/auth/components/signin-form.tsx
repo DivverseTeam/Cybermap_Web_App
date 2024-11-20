@@ -64,7 +64,7 @@ export default function SignInForm({
 
       <Form {...form}>
         <div className="flex max-h-[679px] w-full flex-col gap-[1rem]">
-          <GoogleSignInButton />
+          {/* <GoogleSignInButton /> */}
           <div className=" mx-auto flex w-full items-center justify-evenly text-[#CBD5E2] before:mr-4 before:block before:h-px before:flex-grow before:bg-[#CBD5E2] after:ml-4 after:block after:h-px after:flex-grow after:bg-[#CBD5E2]">
             OR
           </div>
@@ -103,8 +103,9 @@ export default function SignInForm({
                   </FormItem>
                 )}
               />
+
               <p className="ml-auto flex w-fit cursor-pointer select-none justify-between font-semibold text-primary hover:underline">
-                Forgot Password
+                <Link href={"/forgot-password"}>Forgot Password</Link>
               </p>
 
               <FormError

@@ -3,5 +3,7 @@ export const AppRoutes = {
     LOGIN: "/signin",
     REGISTER: "/signup",
     ONBOARDING: "/onboarding",
+    EMAIL_VERIFY: "/verify-email",
+    RESEND_VERIFICATION: "/resend-verification",
   },
 };

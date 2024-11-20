@@ -11,9 +11,37 @@ import {
 import { Input } from "~/app/_components/ui/input";
 import { Separator } from "~/app/_components/ui/seperator";
 import { CyberMapBrand } from "../svgs/CyberMapBrand";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 
 export default function Header() {
   const { data } = useSession();
+  // const [isEmailVerified, setIsEmailVerified] = useState<boolean | null>(null);
+
+  const user = data?.user; // Safely extract user object
+
+  // useEffect(() => {
+  //   const checkEmailVerification = async () => {
+  //     if (!data?.user) return;
+
+  //     try {
+  //       const response = await fetch("/api/check-email-verified", {
+  //         method: "POST",
+  //         headers: { "Content-Type": "application/json" },
+  //         body: JSON.stringify({ accessToken: user?.token }), // Adjust if the token is stored differently
+  //       });
+
+  //       const result = (await response.json()) as { emailVerified: boolean };
+  //       setIsEmailVerified(result.emailVerified);
+  //     } catch (error) {
+  //       console.error("Error checking email verification status:", error);
+  //       setIsEmailVerified(null); // Handle as unknown
+  //     }
+  //   };
+
+  //   checkEmailVerification();
+  // }, [data]);
+
   return (
     <header className="fixed inset-x-0 top-0 z-10 ml-[250px] [@media(min-width:1400px)]:ml-[280px] w-[calc(100vw-250px)] [@media(min-width:1400px)]:w-[calc(100vw-280px)] border-b-2 border-b-[#E8E8EC] bg-white py-2 px-4  [@media(min-width:1400px)]:py-4 [@media(min-width:1400px)]:px-6 ">
       <nav className="flex items-center">
@@ -34,21 +62,30 @@ export default function Header() {
               </span>
               <Separator orientation="vertical" className="mx-1 2xl:mx-2" />
               <Avatar className="h-7 w-7 rounded-xs">
-                <AvatarImage src="" />
+                <AvatarImage src={user?.image || ""} />
                 <AvatarFallback>
-                  {data?.user.name
-                    .split(" ")
-                    .map((word) => word[0])
-                    .join("")}
+                  {user?.name
+                    ? user.name
+                        .split(" ")
+                        .map((word) => word[0])
+                        .join("")
+                    : "?"}
                 </AvatarFallback>
               </Avatar>
               <span className="flex flex-col">
                 <span className="text-[#80828D] text-sm">
-                  {data?.user.name}
+                  {user?.name || "Guest"}
                 </span>
-                <span className="text-[#B9BBC6] text-xs">
-                  {data?.user?.email}
-                </span>
+                <span className="text-[#B9BBC6] text-xs">{user?.email}</span>
+                {/* Conditionally render the "Verify Email" link */}
+                {/* {isEmailVerified === false && (
+                  <Link
+                    href="/resend-verification"
+                    className="text-red-500 italic text-xs hover:underline"
+                  >
+                    Verify Email
+                  </Link>
+                )} */}
               </span>
             </span>
           </div>

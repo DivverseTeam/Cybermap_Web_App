@@ -89,7 +89,7 @@ export default function SideNavbar({}: Props) {
           variant: `${pathname === "/regulations" ? "lightBlue" : "ghost"}`,
         },
         {
-          title: "Evidence Library",
+          title: "Evidence library",
           icon: LibraryIcon,
           href: "/evidence-library",
           variant: `${

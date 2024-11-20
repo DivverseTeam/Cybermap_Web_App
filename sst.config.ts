@@ -36,6 +36,15 @@ export default $config({
 
     new sst.aws.Nextjs("cybermap", {
       link: [bucket, userPool, userPoolClient],
+      bind: {
+        NEXT_PUBLIC_AWS_REGION: sst.Config.region,
+      },
+    });
+    // Add private environment variables (only accessible to API/server)
+    sst.Function.addEnvironment({
+      COGNITO_USER_POOL_ID: userPool.id, // Private: only accessible to API
+      COGNITO_APP_CLIENT_ID: userPoolClient.id, // Private: avoid exposing this unnecessarily
+      AWS_REGION: sst.Config.region,
     });
   },
 });

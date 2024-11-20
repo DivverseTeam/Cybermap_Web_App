@@ -7,6 +7,26 @@ import CredentialsProvider from "next-auth/providers/credentials";
 
 import { signIn } from "./api/routers/actions";
 import { User } from "./models/User";
+import {
+  AdminGetUserCommand,
+  CognitoIdentityProviderClient,
+} from "@aws-sdk/client-cognito-identity-provider";
+
+declare module "next-auth" {
+  interface Session {
+    user: {
+      name?: string | null;
+      email?: string | null;
+      image?: string | null;
+      isEmailVerified?: boolean; // Add custom fields here
+      token?: string; // Add token if needed
+    };
+  }
+}
+
+const cognitoClient = new CognitoIdentityProviderClient({
+  region: process.env.AWS_REGION,
+});
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -14,16 +34,16 @@ import { User } from "./models/User";
  *
  * @see https://next-auth.js.org/getting-started/typescript#module-augmentation
  */
-declare module "next-auth" {
-  interface Session extends DefaultSession {
-    user: User & DefaultSession["user"];
-  }
+// declare module "next-auth" {
+//   interface Session extends DefaultSession {
+//     user: User & DefaultSession["user"];
+//   }
 
-  // interface User {
-  //   // ...other properties
-  //   // role: UserRole;
-  // }
-}
+//   // interface User {
+//   //   // ...other properties
+//   //   // role: UserRole;
+//   // }
+// }
 
 /**
  * Options for NextAuth.js used to configure adapters, providers, callbacks, etc.
@@ -32,15 +52,18 @@ declare module "next-auth" {
  */
 export const authOptions: NextAuthOptions = {
   callbacks: {
+    // This runs when the session is being created or updated
     session: ({ session, token }) => {
-      const { id, role, organisationId } = token;
+      // Add custom attributes to the session
       return {
         ...session,
         user: {
           ...session.user,
-          id,
-          role,
-          organisationId,
+          id: token.id as string,
+          role: token.role as string,
+          organisationId: token.organisationId as string | undefined,
+          isEmailVerified: token.isEmailVerified as boolean | undefined,
+          token: token.token as string,
         },
       };
     },
@@ -53,9 +76,21 @@ export const authOptions: NextAuthOptions = {
 
         if (parsedUser.success) {
           const { id, role, organisationId } = parsedUser.data;
+
+          // Add fields to the token
           token.id = id;
           token.role = role;
           token.organisationId = organisationId;
+
+          // Add email verification status if provided
+          if (parsedUser.data.isEmailVerified !== undefined) {
+            token.isEmailVerified = parsedUser.data.isEmailVerified;
+          }
+
+          // Add accessToken if available
+          if (account.access_token) {
+            token.token = account?.access_token;
+          }
         }
       }
       return token;
@@ -90,9 +125,27 @@ export const authOptions: NextAuthOptions = {
         }
         const { email, password } = credentials;
         try {
+          // Sign in the user
           const user = await signIn({ email, password });
 
-          return user;
+          if (!user) {
+            throw new Error("Invalid credentials");
+          }
+
+          // Check if the user's email is verified in Cognito
+          const command = new AdminGetUserCommand({
+            UserPoolId: process.env.COGNITO_USER_POOL_ID!,
+            Username: email,
+          });
+          const result = await cognitoClient.send(command);
+          const isEmailVerified =
+            result.UserAttributes?.find(
+              (attr) => attr.Name === "email_verified"
+            )?.Value === "true";
+
+          // Attach the verification status to the user object
+
+          return { ...user, isEmailVerified };
         } catch (error) {
           console.log(error);
           return null;
