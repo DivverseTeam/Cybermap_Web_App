@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const INTEGRATION_CATEGORIES = ["CLOUD_PLATFORM"] as const;
+export const INTEGRATION_CATEGORIES = ["CLOUD", "IDENTITY"] as const;
 export const IntegrationCategory = z.enum(INTEGRATION_CATEGORIES);
 export type IntegrationCategory = z.infer<typeof IntegrationCategory>;
 
