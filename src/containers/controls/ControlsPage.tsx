@@ -7,11 +7,9 @@ import {
 } from "@tanstack/react-table";
 import { Search01Icon } from "hugeicons-react";
 import { ArrowUpToLine, Check } from "lucide-react";
-import { useRouter } from "next/navigation";
 import type React from "react";
 import { useEffect, useState } from "react";
 import { Button } from "~/app/_components/ui/button";
-import { Checkbox } from "~/app/_components/ui/checkbox";
 import { Input } from "~/app/_components/ui/input";
 import {
   Table,
@@ -23,9 +21,14 @@ import {
 } from "~/app/_components/ui/table";
 import { Tabs, TabsList, TabsTrigger } from "~/app/_components/ui/tabs";
 import PageTitle from "~/components/PageTitle";
-import { controls } from "./_lib/constants";
 import { columns } from "./components/control-table-columns";
-import type { IControl } from "./types";
+// import type { IControl } from "./types";
+import {
+  CONTROL_STATUS_ENUM,
+  IUserControlResponse,
+  USER_CONTROL_MAPPING_DATA,
+} from "~/lib/constants/controls";
+import { FRAMEWORKS, IFramework } from "~/lib/constants/frameworks";
 import { NewControlSheet } from "./components/new-control-sheet";
 
 // const frameworksList = [
@@ -38,114 +41,25 @@ import { NewControlSheet } from "./components/new-control-sheet";
 // ];
 
 export default function ControlsPage({}) {
-  // Scroll to top button logic
-  const [isVisible, setIsVisible] = useState(false);
-
-  // Show button when page is scrolled down
-  useEffect(() => {
-    const toggleVisibility = () => {
-      if (window.scrollY > 300) {
-        setIsVisible(true);
-      } else {
-        setIsVisible(false);
-      }
-    };
-
-    window.addEventListener("scroll", toggleVisibility);
-    return () => window.removeEventListener("scroll", toggleVisibility);
-  }, []);
-
-  // Scroll to top function
-  const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
-  };
-
+  // const router = useRouter();
   // const searchParams = useSearchParams();
   // const search = searchParams.get("search") || "";
   // const sortColumn = searchParams.get("sortColumn") || "title";
   // const sortOrder = searchParams.get("sortOrder") || "asc";
 
-  // const router = useRouter();
-  const [data, setData] = useState<IControl[]>([]);
   // const [total, setTotal] = useState(0);
   // const [currentPage, setCurrentPage] = useState(1);
   // const [itemsPerPage, setItemsPerPage] = useState(10);
 
-  // Status filter goes here
+  const [isVisible, setIsVisible] = useState(false);
+  const [tableData, setTableData] = useState<IUserControlResponse[]>([]);
+  const [frameworks, setFrameworks] = useState<IFramework[]>([]);
+  const [controls, setControls] = useState<IUserControlResponse[]>([]);
   const [statusFilter, setStatusFilter] = useState<string>("");
-
   const [selectedFrameworks, setSelectedFrameworks] = useState<string[]>([]);
 
-  // Unique list of frameworks
-  const frameworks = Array.from(
-    new Set(controls.flatMap((control) => control.mappedControls))
-  );
-
-  const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { value, checked } = event.target;
-
-    if (value === "All frameworks") {
-      // Select all frameworks
-      setSelectedFrameworks(checked ? frameworks : []);
-    } else if (value === "No framework") {
-      // Select "No framework" only if checked, otherwise clear it
-      setSelectedFrameworks(checked ? ["No framework"] : []);
-    } else {
-      // Toggle individual frameworks
-      setSelectedFrameworks((prev) =>
-        checked
-          ? [...prev, value]
-          : prev.filter((framework) => framework !== value)
-      );
-    }
-  };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      // const res = await fetch(
-      //   `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/evidences?page=${page}&limit=${limit}&search=${search}&sortColumn=${sortColumn}&sortOrder=${sortOrder}`,
-      //   { cache: "no-store" }
-      // );
-      // const { evidences, total } = await res.json();
-      const filteredData = [
-        "partially implemented",
-        "fully implemented",
-        "not implemented",
-      ].includes(statusFilter?.toLocaleLowerCase())
-        ? controls.filter(
-            (control) =>
-              control.status.toLocaleLowerCase() ===
-              statusFilter.toLocaleLowerCase()
-          )
-        : controls;
-
-      // Filter controls based on selected frameworks
-      const filteredControlsData = filteredData.filter((control) => {
-        if (selectedFrameworks.includes("No framework")) {
-          return control.mappedControls.length === 0;
-        }
-        if (
-          selectedFrameworks.length === 0 ||
-          selectedFrameworks.includes("All frameworks")
-        ) {
-          return true; // Show all controls if no specific filter is applied
-        }
-        return selectedFrameworks.some((framework) =>
-          control.mappedControls.includes(framework)
-        );
-      });
-      setData(filteredControlsData);
-      // setTotal(total);
-      console.log(statusFilter);
-    };
-    fetchData();
-  }, [statusFilter, selectedFrameworks]);
-
   const table = useReactTable({
-    data,
+    data: tableData,
     columns: columns,
     manualPagination: true,
     manualSorting: true,
@@ -163,6 +77,65 @@ export default function ControlsPage({}) {
     // },
   });
 
+  const handleGetFrameworks = async () => {
+    // fetch frameworks
+    setFrameworks(FRAMEWORKS);
+  };
+
+  const handleGetControls = async () => {
+    // fetch controls
+    setControls(USER_CONTROL_MAPPING_DATA);
+  };
+
+  const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value, checked } = event.target;
+
+    if (value === "All frameworks") {
+      // Select all frameworks
+      const allFrameworksIds = frameworks.map((framework) => framework.name);
+      setSelectedFrameworks(checked ? allFrameworksIds : []);
+    } else if (value === "No framework") {
+      // Select "No framework" only if checked, otherwise clear it
+      setSelectedFrameworks(checked ? ["No framework"] : []);
+    } else {
+      // Toggle individual frameworks
+      setSelectedFrameworks((prev) =>
+        checked
+          ? [...prev, value]
+          : prev.filter((framework) => framework !== value)
+      );
+    }
+  };
+
+  const handleFilterUserControlMapping = async () => {
+    const filteredData = statusFilter
+      ? controls.filter(
+          (control) =>
+            control.status.toLocaleLowerCase() ===
+            statusFilter.toLocaleLowerCase()
+        )
+      : controls;
+
+    // Filter controls based on selected frameworks
+    const filteredControlsData = filteredData.filter((control) => {
+      if (selectedFrameworks.includes("No framework")) {
+        return control.mapped.length === 0;
+      }
+      if (
+        selectedFrameworks.length === 0 ||
+        selectedFrameworks.includes("All frameworks")
+      ) {
+        return true; // Show all controls if no specific filter is applied
+      }
+      return selectedFrameworks.some((framework) =>
+        control.mapped.includes(framework)
+      );
+    });
+    setTableData(filteredControlsData);
+    // setTotal(total);
+    console.log(statusFilter);
+  };
+
   // const handleSearch = (e: any) => {
   //   router.push(
   //     `/dashboard/evidences?page=1&limit=${itemsPerPage}&search=${e.target.value}`
@@ -177,6 +150,41 @@ export default function ControlsPage({}) {
   // };
 
   // Frameworks checked options
+
+  // Scroll to top function
+
+  // Scroll to top button logic
+
+  // Scroll to top button logic
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
+  useEffect(() => {
+    handleFilterUserControlMapping();
+  }, [statusFilter, selectedFrameworks, controls]);
+
+  useEffect(() => {
+    handleGetFrameworks();
+    handleGetControls();
+  }, []);
+
+  // Show button when page is scrolled down
+  useEffect(() => {
+    const toggleVisibility = () => {
+      if (window.scrollY > 300) {
+        setIsVisible(true);
+      } else {
+        setIsVisible(false);
+      }
+    };
+
+    window.addEventListener("scroll", toggleVisibility);
+    return () => window.removeEventListener("scroll", toggleVisibility);
+  }, []);
 
   return (
     <div className="flex flex-col gap-6">
@@ -202,22 +210,22 @@ export default function ControlsPage({}) {
             )}
             All frameworks
           </label>
-          {frameworks.map((framework: string) => (
+          {frameworks.map((framework: IFramework) => (
             <label
-              key={framework}
+              key={framework.id}
               className="flex items-center text-xs 2xl:text-sm"
             >
               <input
                 type="checkbox"
-                value={framework}
+                value={framework.name}
                 onChange={handleCheckboxChange}
-                checked={selectedFrameworks.includes(framework)}
+                checked={selectedFrameworks.includes(framework.name)}
                 className="mr-[6px] h-4 w-4 cursor-pointer appearance-none rounded-sm border border-primary checked:border-transparent checked:bg-primary focus:outline-none "
               />
-              {selectedFrameworks.includes(framework) && (
+              {selectedFrameworks.includes(framework.name) && (
                 <Check className="pointer-events-none absolute h-4 w-4 text-white" />
               )}
-              {framework}
+              {framework.name}
             </label>
           ))}
           <label className="flex items-center text-xs 2xl:text-sm">
@@ -247,13 +255,15 @@ export default function ControlsPage({}) {
               >
                 <TabsList>
                   <TabsTrigger value="All">All</TabsTrigger>
-                  <TabsTrigger value="Partially implemented">
+                  <TabsTrigger
+                    value={CONTROL_STATUS_ENUM.PARTIALLY_IMPLEMENTED}
+                  >
                     Partially implemented
                   </TabsTrigger>
-                  <TabsTrigger value="Fully implemented">
+                  <TabsTrigger value={CONTROL_STATUS_ENUM.FULLY_IMPLEMENTED}>
                     Fully implemented
                   </TabsTrigger>
-                  <TabsTrigger value="Not implemented">
+                  <TabsTrigger value={CONTROL_STATUS_ENUM.NOT_IMPLEMENTED}>
                     Not implemented
                   </TabsTrigger>
                 </TabsList>
