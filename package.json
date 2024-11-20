@@ -6,7 +6,7 @@
   "scripts": {
     "build": "next build",
     "dev": "next dev --turbopack",
-    "sst:dev": "sst dev",
+    "sst:dev": "sst dev --stage dev",
     "email": "email preview ./src/emails",
     "email:create": "email create --out=./src/emails",
     "lint": "next lint",

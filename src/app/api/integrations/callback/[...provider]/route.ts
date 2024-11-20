@@ -5,11 +5,9 @@ import { getServerAuthSession } from "~/server/auth";
 import { Client } from "@microsoft/microsoft-graph-client";
 import Organisation from "~/server/models/Organisation";
 import { Oauth2Provider } from "~/lib/types/integrations";
-import {
-  Oauth2ProviderConfigMap,
-  Oauth2ProviderIntegrationIdsMap,
-} from "~/lib/constants/integrations";
+import { Oauth2ProviderIntegrationIdsMap } from "~/lib/constants/integrations";
 import { env } from "~/env";
+import { Oauth2ProviderConfigMap } from "~/server/constants/integrations";
 
 async function getUserDetails(accessToken: string) {
   const client = Client.init({
@@ -29,24 +27,22 @@ export async function GET(req: NextRequest) {
   const parsedProvider = Oauth2Provider.safeParse(provider?.toUpperCase());
 
   if (!parsedProvider.success) {
-    return NextResponse.json(
-      { error: "Invalid provider specified in the callback URL" },
-      { status: 400 },
-    );
+    console.error("Invalid provider specified in the callback URL.");
+    throw new Error("Invalid provider specified in the callback URL.");
   }
 
   const session = await getServerAuthSession();
 
   if (!session || !session?.user?.organisationId) {
-    return NextResponse.redirect(new URL("/signin", req.url));
+    console.error("User session not found or organisation ID missing.");
+    throw new Error("User session not found or organisation ID missing.");
   }
 
   const code = searchParams.get("code");
+
   if (!code) {
     console.error("Authorization code is missing in the callback URL.");
-    return NextResponse.redirect(
-      new URL("/error?message=missing_code", req.url),
-    );
+    throw new Error("Authorization code is missing in the callback URL.");
   }
 
   const options = {
@@ -84,9 +80,7 @@ export async function GET(req: NextRequest) {
     );
 
     if (!organisation) {
-      return NextResponse.redirect(
-        new URL("/error?message=organisation_not_found", req.url),
-      );
+      throw new Error("Organisation not found");
     }
 
     organisation.integrations =
@@ -98,13 +92,52 @@ export async function GET(req: NextRequest) {
 
     console.log(user);
 
-    return NextResponse.redirect(
-      new URL(`/integrations?${provider}=success`, req.url),
-    );
-  } catch (error) {
-    console.error("Error during OAuth2 token exchange:", error);
-    return NextResponse.redirect(
-      new URL("/integrations?message=token_exchange_failed", req.url),
-    );
+    const html = `
+      <!DOCTYPE html>
+      <html lang="en">
+        <head>
+          <meta charset="UTF-8" />
+          <title>Authentication Success</title>
+        </head>
+        <body>
+          <script>
+            if (window.opener) {
+              window.opener.postMessage({ success: true }, "*");
+            }
+            window.close();
+          </script>
+          <p>Authentication successful. This window will close automatically.</p>
+        </body>
+      </html>
+    `;
+
+    return new NextResponse(html, {
+      headers: { "Content-Type": "text/html" },
+    });
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  } catch (error: any) {
+    console.error("OAuth2 callback error:", error);
+    const html = `
+      <!DOCTYPE html>
+      <html lang="en">
+        <head>
+          <meta charset="UTF-8" />
+          <title>Authentication Error</title>
+        </head>
+        <body>
+          <script>
+            if (window.opener) {
+              window.opener.postMessage({ success: false, error: "${error?.message}" }, "*");
+            }
+            window.close();
+          </script>
+          <p>Authentication failed: ${error?.message}. This window will close automatically.</p>
+        </body>
+      </html>
+    `;
+    return new NextResponse(html, {
+      headers: { "Content-Type": "text/html" },
+      status: 500,
+    });
   }
 }

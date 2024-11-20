@@ -12,20 +12,34 @@ import {
 } from "~/app/_components/ui/card";
 import { Input } from "~/app/_components/ui/input";
 import { Label } from "~/app/_components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "~/app/_components/ui/select";
 import type { Integration } from "~/lib/types/integrations";
+import { getProviderByIntegrationId } from "~/lib/utils";
+import { api } from "~/trpc/react";
 
 type Props = {
   integration: Integration;
 };
 
 export function ConnectedIntegrationCard({ integration }: Props) {
+  const { mutate, isPending } =
+    api.integrations.disconnectIntegration.useMutation();
+
+  const provider = getProviderByIntegrationId(integration.id);
+
+  const disconnectIntegration = () => {
+    mutate(
+      { integrationId: integration.id, ...(provider && { provider }) },
+      {
+        onSuccess: () => {
+          window.location.reload();
+        },
+        onError: (error) => {
+          console.log({ error });
+        },
+      },
+    );
+  };
+
   return (
     <Card className="p-0 [@media(min-width:1400px)]:p-1">
       <div className="mx-auto my-auto flex h-[200px] flex-col justify-center gap-0 p-0 px-0 2xl:w-[266px]">
@@ -73,10 +87,11 @@ export function ConnectedIntegrationCard({ integration }: Props) {
         </CardContent>
         <CardFooter className="flex items-center justify-between gap-1 p-2 [@media(min-width:1400px)]:p-3 2xl:gap-3 ">
           <Button
-            variant="outline"
-            className="h-8 w-[230px] 2xl:h-9 2xl:w-[230px]"
+            variant="destructive"
+            loading={isPending}
+            onClick={disconnectIntegration}
           >
-            View details
+            Disconnect
           </Button>
         </CardFooter>
       </div>
