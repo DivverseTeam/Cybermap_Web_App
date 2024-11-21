@@ -16,6 +16,39 @@ export const integrationsRouter = createTRPCRouter({
     return integrations;
   }),
 
+  getIntegrations: protectedProcedure.query(async ({ ctx }) => {
+    const {
+      session: {
+        user: { organisationId },
+      },
+    } = ctx;
+
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+    let organisationIntegrations: Array<any> = [];
+
+    if (organisationId) {
+      const organisation = await Organisation.findById(organisationId);
+      organisationIntegrations = organisation?.integrations || [];
+    }
+
+    const connectedIntegrationIds = new Set(
+      organisationIntegrations.map((integration) => integration.id),
+    );
+
+    const connectedIntegrations = integrations.filter((integration) =>
+      connectedIntegrationIds.has(integration.id),
+    );
+
+    const nonConnectedIntegrations = integrations.filter(
+      (integration) => !connectedIntegrationIds.has(integration.id),
+    );
+
+    return {
+      connectedIntegrations,
+      nonConnectedIntegrations,
+    };
+  }),
+
   getConnectedIntegrations: protectedProcedure.query(async ({ ctx }) => {
     const {
       session: {

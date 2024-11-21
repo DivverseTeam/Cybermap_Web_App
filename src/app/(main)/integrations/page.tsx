@@ -3,14 +3,13 @@ import IntegrationsPage from "~/containers/integrations/IntegrationsPage";
 import { api } from "~/trpc/server";
 
 export default async function page() {
-  const allIntegrations = await api.integrations.getAllIntegrations();
-  const connectedIntegrations =
-    await api.integrations.getConnectedIntegrations();
+  const { connectedIntegrations, nonConnectedIntegrations } =
+    await api.integrations.getIntegrations();
 
   return (
     <IntegrationsPage
       integrations={{
-        all: allIntegrations,
+        all: nonConnectedIntegrations,
         connected: connectedIntegrations,
       }}
     />

@@ -2,16 +2,7 @@ import Image from "next/image";
 import * as React from "react";
 
 import { Button } from "~/app/_components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "~/app/_components/ui/card";
-import { Input } from "~/app/_components/ui/input";
-import { Label } from "~/app/_components/ui/label";
+import { Card, CardContent, CardFooter } from "~/app/_components/ui/card";
 import type { Integration } from "~/lib/types/integrations";
 import { getProviderByIntegrationId } from "~/lib/utils";
 import { api } from "~/trpc/react";
@@ -90,6 +81,7 @@ export function ConnectedIntegrationCard({ integration }: Props) {
             variant="destructive"
             loading={isPending}
             onClick={disconnectIntegration}
+            className="w-full"
           >
             Disconnect
           </Button>
