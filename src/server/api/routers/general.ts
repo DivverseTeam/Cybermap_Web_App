@@ -8,8 +8,9 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { Resource } from "sst";
 import { AuthorizationCode } from "simple-oauth2";
 import { Oauth2Provider } from "~/lib/types/integrations";
-import { Oauth2ProviderConfigMap } from "~/lib/constants/integrations";
+
 import { env } from "~/env";
+import { Oauth2ProviderConfigMap } from "~/server/constants/integrations";
 
 export const generalRouter = createTRPCRouter({
   getS3PresignedUrl: protectedProcedure
