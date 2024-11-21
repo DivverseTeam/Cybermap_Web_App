@@ -14,6 +14,7 @@ import { formatDate } from "~/lib/utils";
 import type { IControl } from "../types";
 import type { VariantProps } from "class-variance-authority";
 import { Badge, type badgeVariants } from "~/app/_components/ui/badge";
+import { IUserControlResponse } from "~/lib/constants/controls";
 
 // interface RowData {
 //   name: string;
@@ -22,17 +23,17 @@ import { Badge, type badgeVariants } from "~/app/_components/ui/badge";
 // }
 // const columnHelper = createColumnHelper<RowData>();
 
-export const columns: ColumnDef<IControl>[] = [
+export const columns: ColumnDef<IUserControlResponse>[] = [
   {
     accessorKey: "name",
     header: () => <span>CONTROL</span>, // Wrap in span
     cell: ({ cell }) => <span className="">{cell.getValue() as string}</span>,
   },
   {
-    accessorKey: "mappedControls",
+    accessorKey: "mapped",
     header: () => <span>MAPPED</span>, // Wrap in span
     cell: ({ row }) => {
-      const mappedControls = row.getValue("mappedControls") as string[];
+      const mappedControls = row.getValue("mapped") as string[];
       return (
         <div className="flex flex-wrap gap-2">
           {mappedControls?.length ? (

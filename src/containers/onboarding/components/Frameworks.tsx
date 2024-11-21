@@ -1,6 +1,6 @@
 import { AutoCompleteComp } from "~/components/AutoComplete";
 import { Info } from "~/components/svgs/Info";
-import { FRAMEWORKS } from "../constants";
+import { FRAMEWORKS_ONBOARDING } from "../constants";
 import { BottomNav } from "./BottomNav";
 
 export default function Frameworks({
@@ -27,7 +27,7 @@ export default function Frameworks({
         </div>
         <div className="bgcolor-[red] flex flex-col gap-8">
           <AutoCompleteComp
-            listData={FRAMEWORKS}
+            listData={FRAMEWORKS_ONBOARDING}
             label="Find a framework"
             placeholder="Select your frameworks"
             name="frameworks"

@@ -1,10 +1,12 @@
-export const FRAMEWORKS = [
+import { FRAMEWORKS_ENUM } from "~/lib/constants/frameworks";
+
+export const FRAMEWORKS_ONBOARDING = [
   {
     title: "Industry recommendation",
-    list: ["SOC 2 Type I", "SOC 2 Type II", "ISO 27001"],
+    list: [FRAMEWORKS_ENUM.SOC2, FRAMEWORKS_ENUM.ISO27001],
   },
-  {
-    title: "More frameworks",
-    list: ["HIPAA", "GDPR", "PCI DSS"],
-  },
+  // {
+  //   title: "More frameworks",
+  //   list: [FRAMEWORKS_ENUM.HIPAA, FRAMEWORKS_ENUM.GDPR, FRAMEWORKS_ENUM.PCIDSS],
+  // },
 ];
