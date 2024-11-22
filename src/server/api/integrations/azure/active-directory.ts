@@ -104,4 +104,5 @@ export const getPasswordChangeLogs = async () => {
 const users = await listUserAuthenticationMethods(
   "2acff56d-6001-4432-96a0-a9482cf467e3",
 );
+
 console.log(users);

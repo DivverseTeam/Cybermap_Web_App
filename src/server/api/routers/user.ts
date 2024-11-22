@@ -15,6 +15,7 @@ import {
 import Organisation from "~/server/models/Organisation";
 import User, { User as UserSchema } from "~/server/models/User";
 import { signIn, signUp } from "./actions";
+import { getInformationSecurityPolicies } from "./controls/iso27001/informationSecurityPolicies/aws";
 
 export const SignInProps = z.object({
   email: z.string(),
@@ -31,6 +32,11 @@ export const SignUpProps = SignInProps.extend({
 export type SignUpProps = z.infer<typeof SignUpProps>;
 
 export const userRouter = createTRPCRouter({
+  test: publicProcedure
+    .query(async ({ ctx: _,}) => {
+      return await getInformationSecurityPolicies();
+    }),
+  
   signUp: publicProcedure
     .input(SignUpProps)
     .mutation(async ({ ctx: _, input }) => {

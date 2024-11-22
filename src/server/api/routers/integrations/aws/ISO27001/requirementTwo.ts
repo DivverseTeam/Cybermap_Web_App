@@ -41,18 +41,42 @@ const listUsers = async () => {
  * Evidence: Role-based access control (RBAC)
  * Retrieves user policies to confirm roles, permissions, and prevent excessive privileges.
  */
-const getUserPolicy = async (userName: string) => {
+const getUserPolicies = async () => {
   try {
-    const command = new GetUserPolicyCommand({
-      UserName: userName,
-      PolicyName: "UserPolicy",
+    // Fetch all user names
+    const userNames = await listUsers().then((users) => {
+      if (!users) return [];
+      return users.map((user) => user.UserName);
     });
-    const response = await iamClient.send(command);
-    return response.PolicyDocument;
+
+    if (userNames.length === 0) {
+      console.log("No users found.");
+      return;
+    }
+
+    // Fetch policies for each user
+    const policies = await Promise.all(
+      userNames.map(async (userName) => {
+        try {
+          const command = new GetUserPolicyCommand({
+            UserName: userName,
+            PolicyName: "UserPolicy",
+          });
+          const response = await iamClient.send(command);
+          return { userName, policy: response.PolicyDocument };
+        } catch (error) {
+          console.error(`Error getting policy for user ${userName}:`, error);
+          return { userName, policy: null }; // Return null for users with errors
+        }
+      })
+    );
+
+    return policies; // Returns an array of { userName, policy }
   } catch (error) {
-    console.error(`Error getting policy for user ${userName}:`, error);
+    console.error("Error listing users or fetching policies:", error);
   }
 };
+
 
 /**
  * Evidence: Third-party agreements (CloudTrail Tracking)

@@ -30,6 +30,7 @@ import {
 } from "~/lib/constants/controls";
 import { FRAMEWORKS, IFramework } from "~/lib/constants/frameworks";
 import { NewControlSheet } from "./components/new-control-sheet";
+import { api } from "~/trpc/react";
 
 // const frameworksList = [
 //   { name: "hipaa", label: "HIPAA" },
@@ -50,6 +51,10 @@ export default function ControlsPage({}) {
   // const [total, setTotal] = useState(0);
   // const [currentPage, setCurrentPage] = useState(1);
   // const [itemsPerPage, setItemsPerPage] = useState(10);
+
+  const {
+    data: userControlMappingData,
+    } = api.user.test.useQuery();
 
   const [isVisible, setIsVisible] = useState(false);
   const [tableData, setTableData] = useState<IUserControlResponse[]>([]);
@@ -171,6 +176,10 @@ export default function ControlsPage({}) {
     handleGetFrameworks();
     handleGetControls();
   }, []);
+
+  useEffect(() => {
+    console.log("userControlMappingData", userControlMappingData);
+  }, [userControlMappingData]);
 
   // Show button when page is scrolled down
   useEffect(() => {
