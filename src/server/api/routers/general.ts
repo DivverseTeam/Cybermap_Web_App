@@ -10,7 +10,10 @@ import { AuthorizationCode } from "simple-oauth2";
 import { Oauth2Provider } from "~/lib/types/integrations";
 
 import { env } from "~/env";
-import { Oauth2ProviderConfigMap } from "~/server/constants/integrations";
+import {
+  MICROSOFT_OAUTH_SCOPE,
+  Oauth2ProviderConfigMap,
+} from "~/server/constants/integrations";
 
 export const generalRouter = createTRPCRouter({
   getS3PresignedUrl: protectedProcedure
@@ -60,9 +63,7 @@ export const generalRouter = createTRPCRouter({
 
         const authorizationUri = client.authorizeURL({
           redirect_uri: `${env.BASE_URL || "http://localhost:3000"}/api/integrations/callback/${provider.toLowerCase()}`,
-          scope:
-            "offline_access User.Read Directory.Read.All AuditLog.Read.All",
-          state: "test",
+          scope: MICROSOFT_OAUTH_SCOPE,
         });
 
         return authorizationUri;

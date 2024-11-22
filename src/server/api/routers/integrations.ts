@@ -4,10 +4,7 @@ import {
   publicProcedure,
 } from "~/server/api/trpc";
 import Organisation from "~/server/models/Organisation";
-import {
-  integrations,
-  Oauth2ProviderIntegrationIdsMap,
-} from "~/lib/constants/integrations";
+import { integrations } from "~/lib/constants/integrations";
 import { z } from "zod";
 import { Oauth2Provider } from "~/lib/types/integrations";
 
@@ -27,7 +24,8 @@ export const integrationsRouter = createTRPCRouter({
     let organisationIntegrations: Array<any> = [];
 
     if (organisationId) {
-      const organisation = await Organisation.findById(organisationId);
+      const organisation =
+        await Organisation.findById(organisationId).select("integrations");
       organisationIntegrations = organisation?.integrations || [];
     }
 
@@ -56,7 +54,8 @@ export const integrationsRouter = createTRPCRouter({
       },
     } = ctx;
 
-    const organisation = await Organisation.findById(organisationId);
+    const organisation =
+      await Organisation.findById(organisationId).select("integrations");
 
     const organisationIntegrations = organisation?.integrations || [];
 
@@ -89,15 +88,18 @@ export const integrationsRouter = createTRPCRouter({
         },
       } = ctx;
 
-      let integrationIds = [];
+      let integrationIds: Array<string> = [];
 
       if (provider) {
-        integrationIds = Oauth2ProviderIntegrationIdsMap[provider];
+        integrationIds = integrations
+          .filter((integration) => integration?.oauthProvider === provider)
+          .map((integration) => integration.id);
       } else {
         integrationIds = [integrationId];
       }
 
-      const organisation = await Organisation.findById(organisationId);
+      const organisation =
+        await Organisation.findById(organisationId).select("integrations");
 
       if (!organisation) {
         throw new Error("Organisation not found");

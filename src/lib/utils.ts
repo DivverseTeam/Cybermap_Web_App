@@ -1,7 +1,7 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import type { Oauth2Provider } from "./types/integrations";
-import { Oauth2ProviderIntegrationIdsMap } from "./constants/integrations";
+import { integrations } from "./constants/integrations";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -65,12 +65,18 @@ export const toTitleCase = (str: string) => {
   );
 };
 
+export const titleCaseStatus = (input: string): string => {
+  return input
+    .toLowerCase()
+    .split("_")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+};
+
 export const getProviderByIntegrationId = (
   integrationId: string,
 ): Oauth2Provider | null => {
-  const entry = Object.entries(Oauth2ProviderIntegrationIdsMap).find(
-    ([_, ids]) => ids.includes(integrationId),
+  return (
+    integrations.find((i) => i.id === integrationId)?.oauthProvider ?? null
   );
-
-  return entry ? (entry[0] as Oauth2Provider) : null;
 };
