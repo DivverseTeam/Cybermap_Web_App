@@ -1,13 +1,26 @@
 import z from "zod";
-import { FRAMEWORK_NAMES } from "../constants/frameworks";
-
-export const FrameworkName = z.enum(FRAMEWORK_NAMES);
-export type FrameworkName = z.infer<typeof FrameworkName>;
+import { OrganisationControl } from "./controls";
+import { FrameworkName } from "../types";
 
 export const Framework = z.object({
   id: z.string(),
   name: FrameworkName,
   code: z.string(),
+  logo: z.string().optional(),
 });
 
 export type Framework = z.infer<typeof Framework>;
+
+export const OrganisationFramework = z.object({
+  name: z.string(),
+  logo: z.string().optional(),
+  controls: OrganisationControl.array(),
+  completionLevel: z.number(),
+  complianceScore: z.object({
+    passing: z.number(),
+    failing: z.number(),
+    risk: z.number(),
+  }),
+});
+
+export type OrganisationFramework = z.infer<typeof OrganisationFramework>;

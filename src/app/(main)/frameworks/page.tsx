@@ -1,5 +1,14 @@
 import FrameworksPage from "~/containers/frameworks/Frameworks";
+import type { Metadata } from "next";
+import { api } from "~/trpc/server";
 
-export default function HomePage() {
-  return <FrameworksPage />;
+export const metadata: Metadata = {
+  title: "Frameworks",
+};
+
+export default async function Page() {
+  const frameworksWithCompletion =
+    await api.frameworks.getFrameworksWithCompletion();
+
+  return <FrameworksPage frameworks={frameworksWithCompletion} />;
 }

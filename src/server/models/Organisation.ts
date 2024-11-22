@@ -9,7 +9,7 @@ import {
   OrganisationSize,
 } from "~/lib/types";
 import { BaseSchema } from "./base";
-import { FrameworkName } from "~/lib/types/frameworks";
+import { FrameworkName } from "~/lib/types";
 
 export const OrganisationIntegration = z.object({
   id: z.string(),

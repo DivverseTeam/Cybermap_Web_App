@@ -13,7 +13,10 @@ import { redirect } from "next/navigation";
 import { AppRoutes } from "~/routes";
 
 export const metadata: Metadata = {
-  title: "CYBERMAP",
+  title: {
+    template: "%s | CYBERMAP",
+    default: "CYBERMAP",
+  },
   description: "Cybermap",
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
