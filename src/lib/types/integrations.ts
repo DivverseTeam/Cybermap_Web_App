@@ -13,16 +13,18 @@ export const INTEGRATION_PLATFORMS = [
 export const IntegrationPlatform = z.enum(INTEGRATION_PLATFORMS);
 export type IntegrationPlatform = z.infer<typeof IntegrationPlatform>;
 
+export const OAUTH2_PROVIDERS = ["GOOGLE", "MICROSOFT"] as const;
+export const Oauth2Provider = z.enum(OAUTH2_PROVIDERS);
+export type Oauth2Provider = z.infer<typeof Oauth2Provider>;
+
 export const Integration = z.object({
   id: z.string(),
-  image: z.string().url(),
+  image: z.string(),
   name: z.string(),
+  slug: z.string(),
   category: IntegrationCategory,
+  oauthProvider: Oauth2Provider.optional(),
   description: z.string(),
 });
 
 export type Integration = z.infer<typeof Integration>;
-
-export const OAUTH2_PROVIDERS = ["GOOGLE", "MICROSOFT"] as const;
-export const Oauth2Provider = z.enum(OAUTH2_PROVIDERS);
-export type Oauth2Provider = z.infer<typeof Oauth2Provider>;

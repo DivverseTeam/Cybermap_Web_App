@@ -24,3 +24,6 @@ export const Oauth2ProviderConfigMap: Record<Oauth2Provider, ModuleOptions> = {
     },
   },
 };
+
+export const MICROSOFT_OAUTH_SCOPE =
+  "User.Read User.Read.All Directory.Read.All AuditLog.Read.All UserAuthenticationMethod.Read.All";

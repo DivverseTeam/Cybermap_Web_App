@@ -5,7 +5,7 @@ import { getServerAuthSession } from "~/server/auth";
 import { Client } from "@microsoft/microsoft-graph-client";
 import Organisation from "~/server/models/Organisation";
 import { Oauth2Provider } from "~/lib/types/integrations";
-import { Oauth2ProviderIntegrationIdsMap } from "~/lib/constants/integrations";
+import { integrations } from "~/lib/constants/integrations";
 import { env } from "~/env";
 import { Oauth2ProviderConfigMap } from "~/server/constants/integrations";
 
@@ -63,17 +63,25 @@ export async function GET(req: NextRequest) {
     const { token } = accessToken;
     const { access_token, refresh_token, expires_at } = token;
 
-    const integrationIds = Oauth2ProviderIntegrationIdsMap[parsedProvider.data];
+    const providerIntegrations = integrations.filter(
+      (integration) => integration?.oauthProvider === parsedProvider.data,
+    );
 
-    const integrationsToAdd = integrationIds.map((id) => ({
-      id,
-      connectedAt: new Date(),
-      authData: {
-        accessToken: access_token as string,
-        refreshToken: refresh_token as string,
-        expiry: new Date(expires_at as string),
-      },
-    }));
+    const integrationsToAdd = providerIntegrations.map((integration) => {
+      const { id, name, slug } = integration;
+
+      return {
+        id,
+        connectedAt: new Date(),
+        name,
+        slug,
+        authData: {
+          accessToken: access_token as string,
+          refreshToken: refresh_token as string,
+          expiry: new Date(expires_at as string),
+        },
+      };
+    });
 
     const organisation = await Organisation.findById(
       session.user.organisationId,

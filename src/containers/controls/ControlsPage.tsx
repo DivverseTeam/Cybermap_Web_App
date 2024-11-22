@@ -22,39 +22,19 @@ import {
 import { Tabs, TabsList, TabsTrigger } from "~/app/_components/ui/tabs";
 import PageTitle from "~/components/PageTitle";
 import { columns } from "./components/control-table-columns";
-// import type { IControl } from "./types";
-import {
-  CONTROL_STATUS_ENUM,
-  IUserControlResponse,
-  USER_CONTROL_MAPPING_DATA,
-} from "~/lib/constants/controls";
-import { FRAMEWORKS, IFramework } from "~/lib/constants/frameworks";
+
 import { NewControlSheet } from "./components/new-control-sheet";
+import type { Framework } from "~/lib/types/frameworks";
+import type { OrganisationControl } from "~/lib/types/controls";
 
-// const frameworksList = [
-//   { name: "hipaa", label: "HIPAA" },
-//   { name: "gdpr", label: "GDPR" },
-//   { name: "iso27001", label: "ISO 27001" },
-//   { name: "soc2ii", label: "SOC 2 II" },
-//   { name: "pcidss", label: "PCI DSS" },
-//   { name: "nist", label: "NIST" },
-// ];
+type Props = {
+  controls: Array<OrganisationControl>;
+  frameworks: Array<Framework>;
+};
 
-export default function ControlsPage({}) {
-  // const router = useRouter();
-  // const searchParams = useSearchParams();
-  // const search = searchParams.get("search") || "";
-  // const sortColumn = searchParams.get("sortColumn") || "title";
-  // const sortOrder = searchParams.get("sortOrder") || "asc";
-
-  // const [total, setTotal] = useState(0);
-  // const [currentPage, setCurrentPage] = useState(1);
-  // const [itemsPerPage, setItemsPerPage] = useState(10);
-
+export default function ControlsPage({ controls, frameworks }: Props) {
   const [isVisible, setIsVisible] = useState(false);
-  const [tableData, setTableData] = useState<IUserControlResponse[]>([]);
-  const [frameworks, setFrameworks] = useState<IFramework[]>([]);
-  const [controls, setControls] = useState<IUserControlResponse[]>([]);
+  const [tableData, setTableData] = useState<Array<OrganisationControl>>([]);
   const [statusFilter, setStatusFilter] = useState<string>("");
   const [selectedFrameworks, setSelectedFrameworks] = useState<string[]>([]);
 
@@ -77,16 +57,6 @@ export default function ControlsPage({}) {
     // },
   });
 
-  const handleGetFrameworks = async () => {
-    // fetch frameworks
-    setFrameworks(FRAMEWORKS);
-  };
-
-  const handleGetControls = async () => {
-    // fetch controls
-    setControls(USER_CONTROL_MAPPING_DATA);
-  };
-
   const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value, checked } = event.target;
 
@@ -102,18 +72,14 @@ export default function ControlsPage({}) {
       setSelectedFrameworks((prev) =>
         checked
           ? [...prev, value]
-          : prev.filter((framework) => framework !== value)
+          : prev.filter((framework) => framework !== value),
       );
     }
   };
 
   const handleFilterUserControlMapping = async () => {
     const filteredData = statusFilter
-      ? controls.filter(
-          (control) =>
-            control.status.toLocaleLowerCase() ===
-            statusFilter.toLocaleLowerCase()
-        )
+      ? controls.filter((control) => control.status === statusFilter)
       : controls;
 
     // Filter controls based on selected frameworks
@@ -128,7 +94,7 @@ export default function ControlsPage({}) {
         return true; // Show all controls if no specific filter is applied
       }
       return selectedFrameworks.some((framework) =>
-        control.mapped.includes(framework)
+        control.mapped.includes(framework),
       );
     });
     setTableData(filteredControlsData);
@@ -166,11 +132,6 @@ export default function ControlsPage({}) {
   useEffect(() => {
     handleFilterUserControlMapping();
   }, [statusFilter, selectedFrameworks, controls]);
-
-  useEffect(() => {
-    handleGetFrameworks();
-    handleGetControls();
-  }, []);
 
   // Show button when page is scrolled down
   useEffect(() => {
@@ -210,7 +171,7 @@ export default function ControlsPage({}) {
             )}
             All frameworks
           </label>
-          {frameworks.map((framework: IFramework) => (
+          {frameworks.map((framework: Framework) => (
             <label
               key={framework.id}
               className="flex items-center text-xs 2xl:text-sm"
@@ -243,7 +204,7 @@ export default function ControlsPage({}) {
           </label>
         </div>
 
-        <div className="container flex flex-col gap-4 [@media(min-width:1400px)]:gap-6 bg-white p-3 [@media(min-width:1400px)]:p-4 py-4 [@media(min-width:1400px)]:py-6">
+        <div className="container flex flex-col gap-4 bg-white p-3 py-4 [@media(min-width:1400px)]:gap-6 [@media(min-width:1400px)]:p-4 [@media(min-width:1400px)]:py-6">
           <div className="flex justify-between">
             <div>
               <Tabs
@@ -255,15 +216,13 @@ export default function ControlsPage({}) {
               >
                 <TabsList>
                   <TabsTrigger value="All">All</TabsTrigger>
-                  <TabsTrigger
-                    value={CONTROL_STATUS_ENUM.PARTIALLY_IMPLEMENTED}
-                  >
+                  <TabsTrigger value={"PARTIALLY_IMPLEMENTED"}>
                     Partially implemented
                   </TabsTrigger>
-                  <TabsTrigger value={CONTROL_STATUS_ENUM.FULLY_IMPLEMENTED}>
+                  <TabsTrigger value={"FULLY_IMPLEMENTED"}>
                     Fully implemented
                   </TabsTrigger>
-                  <TabsTrigger value={CONTROL_STATUS_ENUM.NOT_IMPLEMENTED}>
+                  <TabsTrigger value={"NOT_IMPLEMENTED"}>
                     Not implemented
                   </TabsTrigger>
                 </TabsList>
@@ -274,7 +233,7 @@ export default function ControlsPage({}) {
               placeholder="Search for a file"
               // onChange={handleSearch}
               // defaultValue={search}
-              className="w-54 [@media(min-width:1400px)]:w-72 bg-[#F9F9FB]"
+              className="w-54 bg-[#F9F9FB] [@media(min-width:1400px)]:w-72"
               suffix={
                 <span className="cursor-pointer">
                   <Search01Icon size="12" />
@@ -284,7 +243,7 @@ export default function ControlsPage({}) {
           </div>
 
           <Table className="border">
-            <TableHeader className="bg-muted border text-[#40566D] text-xs [@media(min-width:1400px)]:text-sm">
+            <TableHeader className="border bg-muted text-[#40566D] text-xs [@media(min-width:1400px)]:text-sm">
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
@@ -293,8 +252,10 @@ export default function ControlsPage({}) {
                         {header.isPlaceholder
                           ? null
                           : typeof header.column.columnDef.header === "function"
-                          ? header.column.columnDef.header(header.getContext()) // Call the function to get the rendered header
-                          : header.column.columnDef.header}
+                            ? header.column.columnDef.header(
+                                header.getContext(),
+                              ) // Call the function to get the rendered header
+                            : header.column.columnDef.header}
                       </button>
                     </TableHead>
                   ))}
@@ -320,7 +281,7 @@ export default function ControlsPage({}) {
                     <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}
