@@ -1,4 +1,4 @@
-import type { FrameworkName } from "~/lib/types/frameworks";
+import type { FrameworkName } from "~/lib/types";
 
 export const FRAMEWORKS_ONBOARDING: Array<{
   title: string;

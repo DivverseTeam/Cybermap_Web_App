@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { CONTROL_STATUSES } from "../constants/controls";
-import { FrameworkName } from "./frameworks";
+import { FrameworkName } from "../types";
 
 export const ControlStatus = z.enum(CONTROL_STATUSES);
 export type ControlStatus = z.infer<typeof ControlStatus>;

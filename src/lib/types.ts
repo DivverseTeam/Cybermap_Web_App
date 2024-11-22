@@ -49,3 +49,13 @@ export const OrganisationSize = z.enum([...ORGANISATION_SIZES]);
 export type OrganisationSize = z.infer<typeof OrganisationSize>;
 
 export const PRESIGNED_URL_TYPES = ["ORGANISATION_LOGO"] as const;
+
+export const FRAMEWORK_NAMES = [
+  "SOC2",
+  "ISO27001",
+  "HIPAA",
+  "GDPR",
+  "PCI-DSS",
+] as const;
+export const FrameworkName = z.enum(FRAMEWORK_NAMES);
+export type FrameworkName = z.infer<typeof FrameworkName>;
