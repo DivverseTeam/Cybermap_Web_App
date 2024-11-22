@@ -36,17 +36,17 @@ export function Nav({ links, groupName, isCollapsed }: NavProps) {
   return (
     <div
       data-collapsed={isCollapsed}
-      className="group flex flex-col gap-2 py-2 data-[collapsed=true]:py-2 text-xs xl:text-sm text-[#80828D] "
+      className="group flex flex-col gap-2 py-2 text-[#80828D] text-xs data-[collapsed=true]:py-2 xl:text-sm "
     >
       {!["home", "actions"].includes(groupName.toLocaleLowerCase()) && (
-        <span className="uppercase font-[500] text-[#B9BBC6] text-sm mt-[-20px] [@media(min-width:1400px)]:mt-[-10px]">
+        <span className="mt-[-20px] font-[500] text-[#B9BBC6] text-sm uppercase [@media(min-width:1400px)]:mt-[-10px]">
           {groupName}
         </span>
       )}
       {groupName.toLocaleLowerCase() === "actions" && (
-        <div className="mt-1 [@media(min-width:1400px)]:mt-4 2xl:mt-11"></div>
+        <div className="mt-1 2xl:mt-11 [@media(min-width:1400px)]:mt-4"></div>
       )}
-      <nav className=" grid mx-auto gap-[1px] [@media(min-width:1400px)]:gap-1 group-[[data-collapsed=true]]:justify-center group-[[data-collapsed=true]]:px-2">
+      <nav className=" mx-auto grid gap-[1px] group-[[data-collapsed=true]]:justify-center group-[[data-collapsed=true]]:px-2 [@media(min-width:1400px)]:gap-1">
         {links.map((link: LinkProp, index) => {
           let isActive = false;
 
@@ -56,50 +56,46 @@ export function Nav({ links, groupName, isCollapsed }: NavProps) {
             // For other routes like /dashboard/frameworks and /settings
             isActive = pathname.startsWith(link.href!);
           }
+          const WrapperComponent = link.href ? Link : "span";
+
           return (
-            <div className="flex items-center relative" key={index}>
-              {isActive && (
-                <div className="absolute right-[221px] [@media(min-width:1400px)]:right-[245px] h-7 [@media(min-width:1400px)]:h-9 w-1 rounded-md bg-primary 2xl:w-1.5"></div>
+            <WrapperComponent
+              key={index}
+              href={link.href || ""}
+              onClick={link.onClick}
+              className={cn(
+                "w-[200px] cursor-pointer [@media(min-width:1400px)]:w-[220px]",
+                isActive && "text-white",
+                buttonVariants({
+                  variant: isActive ? "lightBlue" : "linkGhost",
+                  size: "linkSm",
+                }),
+                link.variant === "default" &&
+                  "dark:bg-muted dark:text-white dark:hover:bg-muted-foreground dark:hover:text-white",
+                link.variant === "lightBlue" && "text-white",
+                "justify-start",
               )}
-              <div className="flex items-center">
-                <Link
-                  key={index}
-                  href={`${link.href}`}
+            >
+              {link.icon && (
+                <link.icon
+                  className={`${
+                    isActive && "text-primary"
+                  } "mr-2 h-4 w-4" pr-2`}
+                />
+              )}
+              {link.title}
+              {link.label && (
+                <span
                   className={cn(
-                    "w-[200px] [@media(min-width:1400px)]:w-[220px]",
-                    isActive && "text-white",
-                    buttonVariants({
-                      variant: isActive ? "lightBlue" : "linkGhost",
-                      size: "linkSm",
-                    }),
+                    "ml-auto",
                     link.variant === "default" &&
-                      "dark:bg-muted dark:text-white dark:hover:bg-muted-foreground  dark:hover:text-white",
-                    link.variant === "lightBlue" && "text-white",
-                    "justify-start"
+                      "text-background dark:text-white",
                   )}
                 >
-                  {link.icon && (
-                    <link.icon
-                      className={`${
-                        isActive && "text-primary"
-                      } "mr-2 pr-2 h-4 w-4"`}
-                    />
-                  )}
-                  {link.title}
-                  {link.label && (
-                    <span
-                      className={cn(
-                        "ml-auto",
-                        link.variant === "default" &&
-                          "text-background dark:text-white"
-                      )}
-                    >
-                      {link.label}
-                    </span>
-                  )}
-                </Link>
-              </div>
-            </div>
+                  {link.label}
+                </span>
+              )}
+            </WrapperComponent>
           );
         })}
       </nav>
