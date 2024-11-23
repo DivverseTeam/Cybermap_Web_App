@@ -18,9 +18,11 @@ export default $config({
   },
   // biome-ignore lint/suspicious/useAwait: <explanation>
   async run() {
-    const bucket = new sst.aws.Bucket("images", {
+    const imagesBucket = new sst.aws.Bucket("images", {
       access: "public",
     });
+
+    const evidencesBucket = new sst.aws.Bucket("evidences", {});
 
     const userPool = new sst.aws.CognitoUserPool("user", {
       usernames: ["email"],
@@ -35,16 +37,7 @@ export default $config({
     });
 
     new sst.aws.Nextjs("cybermap", {
-      link: [bucket, userPool, userPoolClient],
-      bind: {
-        NEXT_PUBLIC_AWS_REGION: sst.Config.region,
-      },
-    });
-    // Add private environment variables (only accessible to API/server)
-    sst.Function.addEnvironment({
-      COGNITO_USER_POOL_ID: userPool.id, // Private: only accessible to API
-      COGNITO_APP_CLIENT_ID: userPoolClient.id, // Private: avoid exposing this unnecessarily
-      AWS_REGION: sst.Config.region,
+      link: [imagesBucket, userPool, userPoolClient, evidencesBucket],
     });
   },
 });

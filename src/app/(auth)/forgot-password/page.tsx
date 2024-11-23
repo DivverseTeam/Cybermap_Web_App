@@ -50,8 +50,8 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div>
-      <h2>Forgot Password</h2>
+    <div className="max-w-lg mx-auto p-6">
+      <h1 className="text-2xl font-bold text-center mb-4">Forgot Password</h1>
       <form onSubmit={handleSubmit}>
         <input
           type="email"
@@ -59,8 +59,14 @@ const ForgotPassword = () => {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
+          className="p-2 border border-gray-300 rounded-md mb-4 w-full"
         />
-        <button type="submit">Send Reset Email</button>
+        <button
+          type="submit"
+          className="w-full py-2 px-4 text-white rounded-md bg-primary hover:bg-blue-500"
+        >
+          Send Reset Email
+        </button>
       </form>
       <p>{message}</p>
     </div>

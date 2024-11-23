@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 
 // Define the expected response structure
@@ -59,8 +61,10 @@ const ResetPassword = () => {
   }
 
   return (
-    <div>
-      <h2>Reset Password</h2>
+    <div className="max-w-lg mx-auto p-6">
+      <h1 className="text-2xl font-bold text-center mb-4">
+        Reset Your Password
+      </h1>
       <form onSubmit={handleSubmit}>
         <input
           type="email"
@@ -68,6 +72,7 @@ const ResetPassword = () => {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
+          className="p-2 border border-gray-300 rounded-md mb-4 w-full"
         />
         <input
           type="text"
@@ -75,6 +80,7 @@ const ResetPassword = () => {
           value={verificationCode}
           onChange={(e) => setVerificationCode(e.target.value)}
           required
+          className="p-2 border border-gray-300 rounded-md mb-4 w-full"
         />
         <input
           type="password"
@@ -82,8 +88,14 @@ const ResetPassword = () => {
           value={newPassword}
           onChange={(e) => setNewPassword(e.target.value)}
           required
+          className="p-2 border border-gray-300 rounded-md mb-4 w-full"
         />
-        <button type="submit">Reset Password</button>
+        <button
+          type="submit"
+          className="w-full py-2 px-4 text-white rounded-md bg-primary hover:bg-blue-500"
+        >
+          Reset Password
+        </button>
       </form>
       <p>{message}</p>
     </div>

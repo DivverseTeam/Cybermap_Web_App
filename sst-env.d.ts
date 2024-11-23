@@ -10,6 +10,10 @@ declare module "sst" {
       "type": "sst.aws.Nextjs"
       "url": string
     }
+    "evidences": {
+      "name": string
+      "type": "sst.aws.Bucket"
+    }
     "images": {
       "name": string
       "type": "sst.aws.Bucket"

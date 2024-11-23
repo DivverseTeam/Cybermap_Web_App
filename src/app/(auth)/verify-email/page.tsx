@@ -1,6 +1,8 @@
+"use client";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useRouter } from "next/router";
+// import { useRouter } from "next/router";
 import { AppRoutes } from "~/routes";
 
 // Define the expected response type from the backend
@@ -106,7 +108,7 @@ const VerifyEmailPage: React.FC = () => {
         className={`w-full py-2 px-4 text-white rounded-md ${
           isLoading
             ? "bg-blue-400 cursor-not-allowed"
-            : "bg-blue-500 hover:bg-blue-600"
+            : "bg-blue-500 hover:bg-primary"
         }`}
       >
         {isLoading ? "Verifying..." : "Verify Email"}
