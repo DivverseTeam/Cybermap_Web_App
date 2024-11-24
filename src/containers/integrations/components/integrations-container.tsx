@@ -1,8 +1,12 @@
 import { Search01Icon } from "hugeicons-react";
-import React from "react";
+import React, { useState } from "react";
 import { Input } from "~/app/_components/ui/input";
 import { IntegrationCard } from "./integration-card";
 import type { Integration } from "~/lib/types/integrations";
+import IntegrationModal from "./integration-modal";
+import { z } from "zod";
+import { useConnectIntegration } from "~/hooks/use-connect-integration";
+import { useDisconnectIntegration } from "~/hooks/use-disconnect-integration";
 
 type Props = {
   integrations: Array<Integration & { isConnected?: boolean }>;
@@ -13,6 +17,28 @@ export default function IntegrationsContainer({
   integrations,
   isConnected,
 }: Props) {
+  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
+  const [selectedIntegration, setSelectedIntegration] = useState<
+    (Integration & { isConnected: boolean }) | null
+  >(null);
+
+  const { onConnectIntegration, isPending: isConnectPending } =
+    useConnectIntegration();
+  const { onDisconnectIntegration, isPending: isDisconnectPending } =
+    useDisconnectIntegration();
+  const isPending = isConnectPending || isDisconnectPending;
+
+  const onIntegrationCardActionClick = (
+    integration: Integration & { isConnected: boolean },
+  ) => {
+    if (!integration?.isConnected) {
+      setSelectedIntegration(integration);
+      setDialogOpen(true);
+    } else {
+      onDisconnectIntegration(integration);
+    }
+  };
+
   return (
     <div className="flex grow flex-col">
       <div className="mx-auto flex w-full justify-between rounded-2xl rounded-b-none border bg-muted p-2 2xl:p-5 [@media(min-width:1400px)]:p-4">
@@ -45,10 +71,32 @@ export default function IntegrationsContainer({
                 ...integration,
                 isConnected: integration.isConnected || isConnected,
               }}
+              onClickAction={onIntegrationCardActionClick}
+              isPending={isPending}
             />
           ))}
         </div>
       </div>
+      {selectedIntegration && (
+        <IntegrationModal
+          open={dialogOpen}
+          onOpenChange={setDialogOpen}
+          logo={selectedIntegration.image}
+          name="Test"
+          description="Test"
+          input={[
+            {
+              name: "test",
+              label: "Test",
+              placeholder: "Test",
+            },
+          ]}
+          schema={z.object({
+            test: z.string().min(1),
+          })}
+          onSubmit={() => onConnectIntegration(selectedIntegration)}
+        />
+      )}
     </div>
   );
 }

@@ -66,7 +66,7 @@ export const generalRouter = createTRPCRouter({
           scope: MICROSOFT_OAUTH_SCOPE,
         });
 
-        return authorizationUri;
+        return { url: authorizationUri };
       }),
   }),
 });

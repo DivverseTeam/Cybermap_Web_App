@@ -8,15 +8,16 @@ export const metadata: Metadata = {
 };
 
 export default async function page() {
-  const { connectedIntegrations, all } =
-    await api.integrations.getIntegrations();
+  const { connectedIntegrations, all } = await api.integrations.get();
 
   return (
-    <IntegrationsPage
-      integrations={{
-        all,
-        connected: connectedIntegrations,
-      }}
-    />
+    <>
+      <IntegrationsPage
+        integrations={{
+          all,
+          connected: connectedIntegrations,
+        }}
+      />
+    </>
   );
 }

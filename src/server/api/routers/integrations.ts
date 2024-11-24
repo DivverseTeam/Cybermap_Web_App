@@ -6,14 +6,10 @@ import {
 import Organisation from "~/server/models/Organisation";
 import { integrations } from "~/lib/constants/integrations";
 import { z } from "zod";
-import { Integration, Oauth2Provider } from "~/lib/types/integrations";
+import { type Integration, Oauth2Provider } from "~/lib/types/integrations";
 
 export const integrationsRouter = createTRPCRouter({
-  getAllIntegrations: publicProcedure.query(({ ctx: _ }) => {
-    return integrations;
-  }),
-
-  getIntegrations: protectedProcedure.query(async ({ ctx }) => {
+  get: protectedProcedure.query(async ({ ctx }) => {
     const {
       session: {
         user: { organisationId },
@@ -51,7 +47,7 @@ export const integrationsRouter = createTRPCRouter({
     };
   }),
 
-  getConnectedIntegrations: protectedProcedure.query(async ({ ctx }) => {
+  getConnected: protectedProcedure.query(async ({ ctx }) => {
     const {
       session: {
         user: { organisationId },
@@ -72,7 +68,7 @@ export const integrationsRouter = createTRPCRouter({
     );
   }),
 
-  disconnectIntegration: protectedProcedure
+  disconnect: protectedProcedure
     .input(
       z.union([
         z.object({

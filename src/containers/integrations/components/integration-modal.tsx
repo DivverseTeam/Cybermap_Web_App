@@ -25,6 +25,8 @@ interface IntegrationModalProps<TSchema> {
   input: Array<InputField>;
   schema: ZodSchema<TSchema>;
   onSubmit: (data: TSchema) => void;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 }
 
 // biome-ignore lint/suspicious/noExplicitAny: <explanation>
@@ -35,6 +37,8 @@ const IntegrationModal = <TSchema extends Record<string, any>>({
   input,
   schema,
   onSubmit,
+  open,
+  onOpenChange,
 }: IntegrationModalProps<TSchema>) => {
   const {
     register,
@@ -49,7 +53,7 @@ const IntegrationModal = <TSchema extends Record<string, any>>({
   };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         {/* Header */}
         <DialogHeader>
@@ -73,11 +77,13 @@ const IntegrationModal = <TSchema extends Record<string, any>>({
               <Input
                 id={field.name}
                 placeholder={field.placeholder}
+                // @ts-ignore
                 {...register(field.name)}
                 className="mt-1"
               />
               {errors[field.name] && (
                 <p className="mt-1 text-red-600 text-sm">
+                  {/* @ts-ignore */}
                   {errors[field.name]?.message || "This field is invalid."}
                 </p>
               )}
@@ -86,7 +92,7 @@ const IntegrationModal = <TSchema extends Record<string, any>>({
 
           {/* Submit Button */}
           <div className="mt-6">
-            <Button type="submit" className="w-full">
+            <Button type="submit" variant="outline">
               Connect with OAuth 2.0
             </Button>
           </div>
