@@ -12,6 +12,7 @@ import {
 } from "@aws-sdk/client-cognito-identity-provider";
 import type { SignInProps, SignUpProps } from "./user";
 import { mongoosePromise } from "~/server/db";
+import { useAuth } from "~/context/AuthContext";
 
 const cognitoClient = new CognitoIdentityProviderClient();
 await mongoosePromise;
@@ -33,14 +34,14 @@ export const signUp = async (props: SignUpProps) => {
         Username: email,
         Password: password,
         UserAttributes: attributes,
-      }),
+      })
     );
 
     await cognitoClient.send(
       new AdminConfirmSignUpCommand({
         UserPoolId: Resource.user.id,
         Username: email,
-      }),
+      })
     );
 
     let user = await User.create({
@@ -64,6 +65,8 @@ export const signUp = async (props: SignUpProps) => {
 };
 
 export const signIn = async (props: SignInProps) => {
+  const { setToken } = useAuth();
+
   try {
     const { email, password } = props;
 
@@ -75,7 +78,7 @@ export const signIn = async (props: SignInProps) => {
           USERNAME: email,
           PASSWORD: password,
         },
-      }),
+      })
     );
 
     if (!initiateAuthOutput || !initiateAuthOutput.AuthenticationResult) {
@@ -83,7 +86,7 @@ export const signIn = async (props: SignInProps) => {
     }
 
     const { sub: cognitoId }: { sub: string } = jwtDecode(
-      initiateAuthOutput?.AuthenticationResult?.IdToken || "",
+      initiateAuthOutput?.AuthenticationResult?.IdToken || ""
     );
 
     let user = await User.findOne({ cognitoId });
@@ -93,6 +96,11 @@ export const signIn = async (props: SignInProps) => {
     }
 
     user = user.toJSON();
+
+    // Extract the token from the response
+    const token = initiateAuthOutput.AuthenticationResult?.AccessToken;
+
+    setToken(token);
 
     return UserSchema.parse(user);
   } catch (error) {

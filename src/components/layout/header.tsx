@@ -14,6 +14,7 @@ import { CyberMapBrand } from "../svgs/CyberMapBrand";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { api } from "~/trpc/react";
+import { useAuth } from "~/context/AuthContext";
 
 export default function Header() {
   const { mutateAsync: checkEmailVerified } =
@@ -24,12 +25,15 @@ export default function Header() {
 
   const user = data?.user; // Safely extract user object
 
+  // extract token here
+  const { token } = useAuth();
+
   useEffect(() => {
     const checkEmailVerification = async () => {
       if (!data?.user) return;
 
       try {
-        const response = await checkEmailVerified({ accessToken: user?.token });
+        const response = await checkEmailVerified({ accessToken: token });
         console.log(
           response.emailVerified ? "Email is verified" : "Email is not verified"
         );

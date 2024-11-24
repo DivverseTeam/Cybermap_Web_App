@@ -211,7 +211,7 @@ export const userRouter = createTRPCRouter({
   checkEmailVerified: protectedProcedure
     .input(
       z.object({
-        accessToken: z.string(),
+        accessToken: z.string().optional(),
       })
     )
     .mutation(async ({ input }) => {
