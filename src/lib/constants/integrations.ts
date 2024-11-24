@@ -1,4 +1,4 @@
-import type { Integration, Oauth2Provider } from "../types/integrations";
+import type { Integration, IntegrationCategory } from "../types/integrations";
 
 export const integrations: Array<Integration> = [
   {
@@ -31,3 +31,9 @@ export const integrations: Array<Integration> = [
     description: "",
   },
 ];
+
+export const IntegrationCategoryValueMap: Record<IntegrationCategory, string> =
+  {
+    CLOUD: "Cloud Provider",
+    IDENTITY: "Identity Provider",
+  };

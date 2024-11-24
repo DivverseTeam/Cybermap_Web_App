@@ -2,18 +2,17 @@
 
 import React, { useState } from "react";
 import PageTitle from "~/components/PageTitle";
-import AvailableIntegrationsContainer from "./components/available-integrations-container";
-import ConnectedIntegrationsContainer from "./components/connected-integrations-container";
 import { IntegrationTabs } from "./components/integration-tabs";
 import type {
   Integration,
   IntegrationCategory,
 } from "~/lib/types/integrations";
+import IntegrationsContainer from "./components/integrations-container";
 // import IntegrationList from "./components/available-integrations-list";
 
 type Props = {
   integrations: {
-    all: Array<Integration>;
+    all: Array<Integration & { isConnected: boolean }>;
     connected: Array<Integration>;
   };
 };
@@ -48,10 +47,16 @@ export default function IntegrationsPage({
           connected={connected}
         />
         {activeList === "available" ? (
-          <AvailableIntegrationsContainer integrations={filteredAll} />
+          <IntegrationsContainer
+            integrations={filteredAll}
+            isConnected={false}
+          />
         ) : (
           activeList === "connected" && (
-            <ConnectedIntegrationsContainer integrations={filteredConnected} />
+            <IntegrationsContainer
+              integrations={filteredConnected}
+              isConnected={true}
+            />
           )
         )}
       </div>

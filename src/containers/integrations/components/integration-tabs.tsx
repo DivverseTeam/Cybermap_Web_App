@@ -6,11 +6,12 @@ import {
   TabsList,
   TabsTrigger,
 } from "~/app/_components/ui/tabs";
+import { IntegrationCategoryValueMap } from "~/lib/constants/integrations";
 import type {
   Integration,
   IntegrationCategory,
 } from "~/lib/types/integrations";
-import { cn, toTitleCase } from "~/lib/utils";
+import { cn } from "~/lib/utils";
 
 type Props = {
   setActiveList: React.Dispatch<React.SetStateAction<string>>;
@@ -20,10 +21,6 @@ type Props = {
   activeCategory: IntegrationCategory | string;
   all: Array<Integration>;
   connected: Array<Integration>;
-};
-
-const transformCategory = (category: IntegrationCategory) => {
-  return `${toTitleCase(category)} Provider`;
 };
 
 export function IntegrationTabs({
@@ -43,7 +40,7 @@ export function IntegrationTabs({
       .sort()
       .map((category) => ({
         key: category,
-        value: transformCategory(category),
+        value: IntegrationCategoryValueMap[category],
       })),
   ];
 
@@ -57,7 +54,7 @@ export function IntegrationTabs({
       .sort()
       .map((category) => ({
         key: category,
-        value: transformCategory(category),
+        value: IntegrationCategoryValueMap[category],
       })),
   ];
 

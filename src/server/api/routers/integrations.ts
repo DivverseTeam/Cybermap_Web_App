@@ -6,7 +6,7 @@ import {
 import Organisation from "~/server/models/Organisation";
 import { integrations } from "~/lib/constants/integrations";
 import { z } from "zod";
-import { Oauth2Provider } from "~/lib/types/integrations";
+import { Integration, Oauth2Provider } from "~/lib/types/integrations";
 
 export const integrationsRouter = createTRPCRouter({
   getAllIntegrations: publicProcedure.query(({ ctx: _ }) => {
@@ -33,17 +33,21 @@ export const integrationsRouter = createTRPCRouter({
       organisationIntegrations.map((integration) => integration.id),
     );
 
-    const connectedIntegrations = integrations.filter((integration) =>
-      connectedIntegrationIds.has(integration.id),
-    );
+    const allIntegrations: Array<Integration & { isConnected: boolean }> = [];
+    const connectedIntegrations: Array<Integration> = [];
 
-    const nonConnectedIntegrations = integrations.filter(
-      (integration) => !connectedIntegrationIds.has(integration.id),
-    );
+    for (const integration of integrations) {
+      if (connectedIntegrationIds.has(integration.id)) {
+        allIntegrations.push({ ...integration, isConnected: true });
+        connectedIntegrations.push(integration);
+      } else {
+        allIntegrations.push({ ...integration, isConnected: false });
+      }
+    }
 
     return {
       connectedIntegrations,
-      nonConnectedIntegrations,
+      all: allIntegrations,
     };
   }),
 

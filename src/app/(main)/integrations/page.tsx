@@ -8,13 +8,13 @@ export const metadata: Metadata = {
 };
 
 export default async function page() {
-  const { connectedIntegrations, nonConnectedIntegrations } =
+  const { connectedIntegrations, all } =
     await api.integrations.getIntegrations();
 
   return (
     <IntegrationsPage
       integrations={{
-        all: nonConnectedIntegrations,
+        all,
         connected: connectedIntegrations,
       }}
     />

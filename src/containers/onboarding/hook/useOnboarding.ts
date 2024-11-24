@@ -1,10 +1,11 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import {
+  FrameworkName,
   OrganisationIndustry,
   OrganisationKind,
   OrganisationSize,
@@ -20,7 +21,7 @@ const schema = z.object({
     .max(50, { message: "Organisation name cannot exceed 50 characters" }),
   kind: OrganisationKind,
   industry: OrganisationIndustry,
-  frameworks: z.array(z.string()).optional(),
+  frameworks: z.array(FrameworkName).optional(),
   integrations: z.array(z.string()).optional(),
   size: OrganisationSize,
   logoUrl: z.string().optional(),
@@ -59,8 +60,8 @@ export default function useOnboarding() {
         name,
         kind,
         size,
-        frameworkIds: frameworks,
         industry,
+        frameworks,
         integrations,
       },
       {
