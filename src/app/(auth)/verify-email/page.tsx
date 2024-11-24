@@ -2,15 +2,8 @@
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-// import { useRouter } from "next/router";
 import { AppRoutes } from "~/routes";
-
-// Define the expected response type from the backend
-interface VerifyEmailResponse {
-  message: string;
-  success: boolean;
-  error?: string;
-}
+import { api } from "~/trpc/react";
 
 const VerifyEmailPage: React.FC = () => {
   const { data, status } = useSession();
@@ -20,6 +13,8 @@ const VerifyEmailPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+
+  const { mutateAsync: verifyEmail } = api.user.verifyEmail.useMutation();
 
   // Handle loading and unauthenticated states
   if (status === "loading") return <p>Loading...</p>;
@@ -32,7 +27,9 @@ const VerifyEmailPage: React.FC = () => {
   // Extract user email from session
   const email = data?.user?.email;
 
-  const handleVerify = async () => {
+  const handleVerify = async (e: React.FormEvent) => {
+    e.preventDefault();
+
     if (!email) {
       setError("Email is missing from the session.");
       return;
@@ -48,28 +45,18 @@ const VerifyEmailPage: React.FC = () => {
     setSuccess(null);
 
     try {
-      const res = await fetch("/api/verify-email", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, token }),
-      });
+      const response = await verifyEmail({ token });
 
       // Parse response and handle success/failure
-      const result = (await res.json()) as VerifyEmailResponse;
-
-      if (res.ok && result.success) {
+      if (response.success) {
         setSuccess(
-          result.message || "Your email has been successfully verified!"
+          response.message || "Your email has been successfully verified!"
         );
         setTimeout(() => {
           router.push(AppRoutes.AUTH.ONBOARDING); // Redirect after success
         }, 2000);
       } else {
-        setError(
-          result.error || "Token verification failed. Please try again."
-        );
+        setError("Token verification failed. Please try again.");
       }
     } catch (error) {
       console.error("Verification error:", error);

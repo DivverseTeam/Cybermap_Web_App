@@ -63,11 +63,12 @@ export const authOptions: NextAuthOptions = {
           role: token.role as string,
           organisationId: token.organisationId as string | undefined,
           isEmailVerified: token.isEmailVerified as boolean | undefined,
-          token: token.token as string,
         },
+        accessToken: token.accessToken as string,
       };
     },
     jwt: ({ token, user, account }) => {
+      // console.log("JWT before:", token.jti);
       if (account && user) {
         token.id = user.id;
         token.sub = user.id;
@@ -89,10 +90,11 @@ export const authOptions: NextAuthOptions = {
 
           // Add accessToken if available
           if (account.access_token) {
-            token.token = account?.access_token;
+            token.accessToken = account?.access_token;
           }
         }
       }
+      // console.log("JWT after:", token.jti);
       return token;
     },
   },

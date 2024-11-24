@@ -1,51 +1,32 @@
 "use client";
 
 import { useState } from "react";
-
-interface ForgotPasswordResponse {
-  message: string;
-}
-
-// Type guard for response validation
-function isForgotPasswordResponse(
-  data: unknown
-): data is ForgotPasswordResponse {
-  return (
-    typeof data === "object" &&
-    data !== null &&
-    "message" in data &&
-    typeof (data as { message: unknown }).message === "string"
-  );
-}
+import { api } from "~/trpc/react";
 
 const ForgotPassword = () => {
+  const { mutateAsync: forgotPassword } = api.user.forgotPassword.useMutation();
+
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setMessage(""); // Clear previous messages
+    setIsLoading(true);
+
     try {
-      const res = await fetch("/api/forgot-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
-
-      // Ensure the response is successful
-      if (!res.ok) {
-        throw new Error("Failed to send reset email");
-      }
-
-      const data: unknown = await res.json(); // `unknown` type for strict handling
-      // console.log(data);
-
-      if (isForgotPasswordResponse(data)) {
-        setMessage(data.message);
+      // Call the tRPC mutation
+      const response = await forgotPassword({ email });
+      if (response.success) {
+        setMessage(response.message);
       } else {
-        throw new Error("Invalid response structure");
+        setMessage("Failed to send password reset email.");
       }
     } catch (_error) {
-      setMessage("An error occurred. Please try again.");
+      setMessage(
+        "An error occurred, please try again. Contact support if error persists."
+      );
     }
   };
 
@@ -63,9 +44,10 @@ const ForgotPassword = () => {
         />
         <button
           type="submit"
+          disabled={isLoading}
           className="w-full py-2 px-4 text-white rounded-md bg-primary hover:bg-blue-500"
         >
-          Send Reset Email
+          {isLoading ? "Sending..." : "Send Reset Email"}
         </button>
       </form>
       <p>{message}</p>
