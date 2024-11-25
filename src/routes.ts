@@ -3,6 +3,7 @@ export const AppRoutes = {
     LOGIN: "/signin",
     REGISTER: "/signup",
     ONBOARDING: "/onboarding",
-    RESET_PASSWORD: "/reset_password",
+    RESET_PASSWORD: "/reset-password",
+    FORGOT_PASSWORD: "/forgot-password",
   },
 };

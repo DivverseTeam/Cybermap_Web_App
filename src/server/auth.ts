@@ -1,31 +1,12 @@
+import CredentialsProvider from "next-auth/providers/credentials";
 import {
+  getServerSession,
   type DefaultSession,
   type NextAuthOptions,
-  getServerSession,
 } from "next-auth";
-import CredentialsProvider from "next-auth/providers/credentials";
 
-import { signIn } from "./api/routers/actions";
 import { User } from "./models/User";
-import {
-  AdminGetUserCommand,
-  CognitoIdentityProviderClient,
-} from "@aws-sdk/client-cognito-identity-provider";
-
-declare module "next-auth" {
-  interface Session {
-    user: {
-      name?: string | null;
-      email?: string | null;
-      image?: string | null;
-      token?: string; // Add token if needed
-    };
-  }
-}
-
-const cognitoClient = new CognitoIdentityProviderClient({
-  region: process.env.AWS_REGION,
-});
+import { signIn } from "./api/routers/actions";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -33,16 +14,16 @@ const cognitoClient = new CognitoIdentityProviderClient({
  *
  * @see https://next-auth.js.org/getting-started/typescript#module-augmentation
  */
-// declare module "next-auth" {
-//   interface Session extends DefaultSession {
-//     user: User & DefaultSession["user"];
-//   }
+declare module "next-auth" {
+  interface Session extends DefaultSession {
+    user: User & DefaultSession["user"];
+  }
 
-//   // interface User {
-//   //   // ...other properties
-//   //   // role: UserRole;
-//   // }
-// }
+  // interface User {
+  //   // ...other properties
+  //   // role: UserRole;
+  // }
+}
 
 /**
  * Options for NextAuth.js used to configure adapters, providers, callbacks, etc.
@@ -51,27 +32,19 @@ const cognitoClient = new CognitoIdentityProviderClient({
  */
 export const authOptions: NextAuthOptions = {
   callbacks: {
-    // This runs when the session is being created or updated
     session: ({ session, token }) => {
-      // Add custom attributes to the session
+      const { id, role, organizationId } = token;
       return {
         ...session,
         user: {
           ...session.user,
-          id: token.id as string,
-          role: token.role as string,
-          organisationId: token.organisationId as string | undefined,
-          isEmailVerified: token.isEmailVerified as boolean | undefined,
+          id,
+          role,
+          organizationId,
         },
-        accessToken: token.accessToken as string,
       };
     },
-    jwt: ({ token, user, account, trigger, session }) => {
-      if (trigger === "update" && session?.organisationId) {
-        token.organisationId = session.organisationId;
-      }
-
-      // console.log("JWT before:", token.jti);
+    jwt: ({ token, user, account }) => {
       if (account && user) {
         token.id = user.id;
         token.sub = user.id;
@@ -79,12 +52,10 @@ export const authOptions: NextAuthOptions = {
         const parsedUser = User.safeParse(user);
 
         if (parsedUser.success) {
-          const { id, role, organisationId } = parsedUser.data;
-
-          // Add fields to the token
+          const { id, role, organizationId } = parsedUser.data;
           token.id = id;
           token.role = role;
-          token.organisationId = organisationId;
+          token.organizationId = organizationId;
         }
       }
       return token;
@@ -119,27 +90,9 @@ export const authOptions: NextAuthOptions = {
         }
         const { email, password } = credentials;
         try {
-          // Sign in the user
           const user = await signIn({ email, password });
 
-          if (!user) {
-            throw new Error("Invalid credentials");
-          }
-
-          // Check if the user's email is verified in Cognito
-          const command = new AdminGetUserCommand({
-            UserPoolId: process.env.COGNITO_USER_POOL_ID!,
-            Username: email,
-          });
-          const result = await cognitoClient.send(command);
-          const isEmailVerified =
-            result.UserAttributes?.find(
-              (attr) => attr.Name === "email_verified"
-            )?.Value === "true";
-
-          // Attach the verification status to the user object
-
-          return { ...user, isEmailVerified };
+          return user;
         } catch (error) {
           console.log(error);
           return null;

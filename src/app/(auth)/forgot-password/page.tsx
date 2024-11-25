@@ -2,6 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { DayButton } from "react-day-picker";
+import { Button } from "~/app/_components/ui/button";
 import { AppRoutes } from "~/routes";
 import { api } from "~/trpc/react";
 
@@ -11,6 +13,8 @@ const ForgotPassword = () => {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [isError, setIsError] = useState(false);
 
   const router = useRouter();
 
@@ -18,20 +22,23 @@ const ForgotPassword = () => {
     e.preventDefault();
     setMessage(""); // Clear previous messages
     setIsLoading(true);
+    setIsSuccess(false);
+    setIsError(false);
 
     try {
       // Call the tRPC mutation
       const response = await forgotPassword({ email });
       if (response.success) {
+        setIsSuccess(true);
         setMessage(response.message);
 
-        setTimeout(() => {
-          router.push(AppRoutes.AUTH.RESET_PASSWORD); // Redirect after success
-        }, 2000);
+        router.push(AppRoutes.AUTH.RESET_PASSWORD); // Redirect after success
       } else {
+        setIsError(true);
         setMessage("Failed to send password reset email.");
       }
     } catch (_error) {
+      setIsError(true);
       setMessage(
         "An error occurred, please try again. Contact support if error persists."
       );
@@ -52,15 +59,26 @@ const ForgotPassword = () => {
           required
           className="p-2 border border-gray-300 rounded-md mb-4 w-full"
         />
-        <button
+        <Button
           type="submit"
           disabled={isLoading}
+          loading={isLoading}
           className="w-full py-2 px-4 text-white rounded-md bg-primary hover:bg-blue-500"
         >
-          {isLoading ? "Sending..." : "Send Reset Email"}
-        </button>
+          Send Reset Email
+        </Button>
       </form>
-      <p>{message}</p>
+      <p
+        className={`${
+          isSuccess
+            ? "text-green-500"
+            : isError
+            ? "text-destructive"
+            : "text-black"
+        }`}
+      >
+        {message}
+      </p>
     </div>
   );
 };

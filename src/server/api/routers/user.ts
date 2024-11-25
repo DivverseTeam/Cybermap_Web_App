@@ -107,15 +107,14 @@ export const userRouter = createTRPCRouter({
 
         return {
           success: true,
-          message:
-            "Password reset email sent successfully. Please check your inbox.",
+          message: "A password reset code has been sent your mail.",
         };
       } catch (error) {
         console.error("Error initiating forgot password:", error);
 
         return {
           success: false,
-          message: "Failed to initiate password reset.",
+          message: "Failed to initiate password reset. Try again later",
         };
       }
     }),
