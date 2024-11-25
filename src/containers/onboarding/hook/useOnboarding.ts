@@ -31,11 +31,8 @@ type FormData = z.infer<typeof schema>;
 
 export default function useOnboarding() {
   const [step, setStep] = useState(1);
-  const {
-    mutate: onboardingMutate,
-    isPending,
-    error,
-  } = api.user.completeOnboarding.useMutation();
+  const { mutate: onboardingMutate, isPending } =
+    api.user.completeOnboarding.useMutation();
   const { update: updateSession } = useSession();
 
   const router = useRouter();
@@ -53,7 +50,7 @@ export default function useOnboarding() {
   });
 
   const onSubmit = (data: FormData) => {
-    const { name, kind, frameworks, size, industry, integrations } = data;
+    const { name, kind, frameworks, size, industry } = data;
     console.log("Form submitted successfully:", data, step);
     onboardingMutate(
       {
@@ -62,7 +59,6 @@ export default function useOnboarding() {
         size,
         industry,
         frameworks,
-        integrations,
       },
       {
         onSuccess: (data) => {

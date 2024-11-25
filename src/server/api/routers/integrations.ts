@@ -1,12 +1,8 @@
-import {
-  createTRPCRouter,
-  protectedProcedure,
-  publicProcedure,
-} from "~/server/api/trpc";
-import Organisation from "~/server/models/Organisation";
+import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { integrations } from "~/lib/constants/integrations";
 import { z } from "zod";
 import { type Integration, Oauth2Provider } from "~/lib/types/integrations";
+import OrganisationIntegration from "~/server/models/Integration";
 
 export const integrationsRouter = createTRPCRouter({
   get: protectedProcedure.query(async ({ ctx }) => {
@@ -16,56 +12,29 @@ export const integrationsRouter = createTRPCRouter({
       },
     } = ctx;
 
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-    let organisationIntegrations: Array<any> = [];
-
-    if (organisationId) {
-      const organisation =
-        await Organisation.findById(organisationId).select("integrations");
-      organisationIntegrations = organisation?.integrations || [];
-    }
+    const organisationIntegrations =
+      (await OrganisationIntegration.find({ organisationId })) || [];
 
     const connectedIntegrationIds = new Set(
-      organisationIntegrations.map((integration) => integration.id),
+      organisationIntegrations.map((integration) => integration.integrationId),
     );
 
     const allIntegrations: Array<Integration & { isConnected: boolean }> = [];
-    const connectedIntegrations: Array<Integration> = [];
+    const connected: Array<Integration & { isConnected: boolean }> = [];
 
     for (const integration of integrations) {
       if (connectedIntegrationIds.has(integration.id)) {
         allIntegrations.push({ ...integration, isConnected: true });
-        connectedIntegrations.push(integration);
+        connected.push({ ...integration, isConnected: true });
       } else {
         allIntegrations.push({ ...integration, isConnected: false });
       }
     }
 
     return {
-      connectedIntegrations,
+      connected,
       all: allIntegrations,
     };
-  }),
-
-  getConnected: protectedProcedure.query(async ({ ctx }) => {
-    const {
-      session: {
-        user: { organisationId },
-      },
-    } = ctx;
-
-    const organisation =
-      await Organisation.findById(organisationId).select("integrations");
-
-    const organisationIntegrations = organisation?.integrations || [];
-
-    const connectedIntegrationIds = new Set(
-      organisationIntegrations.map((integration) => integration.id),
-    );
-
-    return integrations.filter((integration) =>
-      connectedIntegrationIds.has(integration.id),
-    );
   }),
 
   disconnect: protectedProcedure
@@ -98,18 +67,9 @@ export const integrationsRouter = createTRPCRouter({
         integrationIds = [integrationId];
       }
 
-      const organisation =
-        await Organisation.findById(organisationId).select("integrations");
-
-      if (!organisation) {
-        throw new Error("Organisation not found");
-      }
-
-      // Remove integrations matching any ID in the `integrationIds` array
-      organisation.integrations = organisation.integrations.filter(
-        (integration) => !integrationIds.includes(integration.id),
-      );
-
-      await organisation.save();
+      await OrganisationIntegration.deleteMany({
+        organisationId,
+        integrationId: { $in: integrationIds },
+      });
     }),
 });

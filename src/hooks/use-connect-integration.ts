@@ -25,6 +25,7 @@ export const useConnectIntegration = () => {
     "idle",
   );
   const [authError, setAuthError] = useState<string | null>(null);
+  const utils = api.useUtils();
 
   const handleConnection = (url: string) => {
     const popup = openAuthPopup(url, "Login");
@@ -43,7 +44,7 @@ export const useConnectIntegration = () => {
       if (success) {
         setAuthStatus("success");
         popup.close();
-        window.location.reload();
+        utils.integrations.get.invalidate();
       } else {
         setAuthStatus("error");
         setAuthError(error || "An unknown error occurred");
@@ -68,17 +69,31 @@ export const useConnectIntegration = () => {
     error,
   } = api.general.oauth2.authorization.useMutation();
 
-  const onConnectIntegration = ({ oauthProvider }: Integration) => {
+  const onConnectIntegration = ({
+    integration,
+    data,
+  }: {
+    integration: Integration;
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+    data: any;
+  }) => {
+    const { oauthProvider } = integration;
     if (oauthProvider) {
-      oauth2AuthorizationMutation(oauthProvider, {
-        onSuccess: (data) => {
-          handleConnection(data.url);
+      oauth2AuthorizationMutation(
+        {
+          provider: oauthProvider,
+          ...data,
         },
-        onError: (error) => {
-          setAuthStatus("error");
-          setAuthError(error.message || "An unknown error occurred");
+        {
+          onSuccess: (data) => {
+            handleConnection(data.url);
+          },
+          onError: (error) => {
+            setAuthStatus("error");
+            setAuthError(error.message || "An unknown error occurred");
+          },
         },
-      });
+      );
     }
   };
 

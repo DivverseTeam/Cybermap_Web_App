@@ -8,18 +8,14 @@ import type {
   IntegrationCategory,
 } from "~/lib/types/integrations";
 import IntegrationsContainer from "./components/integrations-container";
+import { api } from "~/trpc/react";
 // import IntegrationList from "./components/available-integrations-list";
 
-type Props = {
-  integrations: {
-    all: Array<Integration & { isConnected: boolean }>;
-    connected: Array<Integration>;
-  };
-};
+type Props = {};
 
-export default function IntegrationsPage({
-  integrations: { all, connected },
-}: Props) {
+export default function IntegrationsPage({}: Props) {
+  const [{ connected, all }] = api.integrations.get.useSuspenseQuery();
+
   const [activeList, setActiveList] = useState<string>("connected");
   const [activeCategory, setActiveCategory] = useState<
     IntegrationCategory | string

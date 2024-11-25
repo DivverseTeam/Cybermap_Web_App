@@ -8,6 +8,7 @@ export const useDisconnectIntegration = () => {
     isError,
     error,
   } = api.integrations.disconnect.useMutation();
+  const utils = api.useUtils();
 
   const onDisconnectIntegration = ({
     id,
@@ -20,8 +21,8 @@ export const useDisconnectIntegration = () => {
       },
       {
         onSuccess: () => {
-          window.location.reload();
           console.log("Integration disconnected successfully");
+          utils.integrations.get.invalidate();
         },
         onError: (error) => {
           console.error("Error disconnecting integration:", error);

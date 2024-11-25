@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Input } from "~/app/_components/ui/input";
 import { IntegrationCard } from "./integration-card";
 import type { Integration } from "~/lib/types/integrations";
-import IntegrationModal from "./integration-modal";
+import IntegrationConnectionModal from "./integration-connection-modal";
 import { z } from "zod";
 import { useConnectIntegration } from "~/hooks/use-connect-integration";
 import { useDisconnectIntegration } from "~/hooks/use-disconnect-integration";
@@ -72,29 +72,22 @@ export default function IntegrationsContainer({
                 isConnected: integration.isConnected || isConnected,
               }}
               onClickAction={onIntegrationCardActionClick}
-              isPending={isPending}
+              isPending={
+                selectedIntegration?.id === integration.id && isPending
+              }
             />
           ))}
         </div>
       </div>
       {selectedIntegration && (
-        <IntegrationModal
+        <IntegrationConnectionModal
           open={dialogOpen}
           onOpenChange={setDialogOpen}
-          logo={selectedIntegration.image}
-          name="Test"
-          description="Test"
-          input={[
-            {
-              name: "test",
-              label: "Test",
-              placeholder: "Test",
-            },
-          ]}
-          schema={z.object({
-            test: z.string().min(1),
-          })}
-          onSubmit={() => onConnectIntegration(selectedIntegration)}
+          integration={selectedIntegration}
+          onSubmit={(data) => {
+            onConnectIntegration({ integration: selectedIntegration, data });
+            setDialogOpen(false);
+          }}
         />
       )}
     </div>
