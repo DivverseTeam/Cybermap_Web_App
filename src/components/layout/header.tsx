@@ -14,40 +14,11 @@ import { CyberMapBrand } from "../svgs/CyberMapBrand";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { api } from "~/trpc/react";
-import { useAuth } from "~/context/AuthContext";
 
 export default function Header() {
-  const { mutateAsync: checkEmailVerified } =
-    api.user.checkEmailVerified.useMutation();
-
   const { data } = useSession();
-  const [isEmailVerified, setIsEmailVerified] = useState<boolean | null>(null);
 
   const user = data?.user; // Safely extract user object
-
-  // extract token here
-  const { token } = useAuth();
-
-  useEffect(() => {
-    const checkEmailVerification = async () => {
-      if (!data?.user) return;
-
-      try {
-        const response = await checkEmailVerified({ accessToken: token });
-        console.log(
-          response.emailVerified ? "Email is verified" : "Email is not verified"
-        );
-
-        // const result = (await response.json()) as { emailVerified: boolean };
-        setIsEmailVerified(response.emailVerified);
-      } catch (error) {
-        console.error("Error checking email verification status:", error);
-        setIsEmailVerified(null); // Handle as unknown
-      }
-    };
-
-    checkEmailVerification();
-  }, [data]);
 
   return (
     <header className="fixed inset-x-0 top-0 z-10 ml-[250px] [@media(min-width:1400px)]:ml-[280px] w-[calc(100vw-250px)] [@media(min-width:1400px)]:w-[calc(100vw-280px)] border-b-2 border-b-[#E8E8EC] bg-white py-2 px-4  [@media(min-width:1400px)]:py-4 [@media(min-width:1400px)]:px-6 ">
@@ -84,15 +55,6 @@ export default function Header() {
                   {user?.name || "Guest"}
                 </span>
                 <span className="text-[#B9BBC6] text-xs">{user?.email}</span>
-                {/* Conditionally render the "Verify Email" link */}
-                {isEmailVerified === false && (
-                  <Link
-                    href="/resend-verification"
-                    className="text-red-500 italic text-xs hover:underline"
-                  >
-                    Verify Email
-                  </Link>
-                )}
               </span>
             </span>
           </div>

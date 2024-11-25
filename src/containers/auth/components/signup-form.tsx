@@ -60,7 +60,7 @@ export default function SignUpForm({ headerTitle, headerSubtitle }: Props) {
           signIn("credentials", {
             email,
             password,
-            callbackUrl: AppRoutes.AUTH.EMAIL_VERIFY,
+            callbackUrl: AppRoutes.AUTH.ONBOARDING,
           });
         },
         onError: (error) => {

@@ -9,10 +9,10 @@ import {
   SignUpCommand,
   UsernameExistsException,
   AdminConfirmSignUpCommand,
+  AdminUpdateUserAttributesCommand,
 } from "@aws-sdk/client-cognito-identity-provider";
 import type { SignInProps, SignUpProps } from "./user";
 import { mongoosePromise } from "~/server/db";
-import { useAuth } from "~/context/AuthContext";
 
 const cognitoClient = new CognitoIdentityProviderClient();
 await mongoosePromise;
@@ -44,6 +44,20 @@ export const signUp = async (props: SignUpProps) => {
       })
     );
 
+    await cognitoClient.send(
+      new AdminUpdateUserAttributesCommand({
+        //
+        UserPoolId: Resource.user.id,
+        Username: email,
+        UserAttributes: [
+          {
+            Name: "email_verified", // required
+            Value: "true",
+          },
+        ],
+      })
+    );
+
     let user = await User.create({
       name,
       email,
@@ -65,8 +79,6 @@ export const signUp = async (props: SignUpProps) => {
 };
 
 export const signIn = async (props: SignInProps) => {
-  const { setToken } = useAuth();
-
   try {
     const { email, password } = props;
 
@@ -96,11 +108,6 @@ export const signIn = async (props: SignInProps) => {
     }
 
     user = user.toJSON();
-
-    // Extract the token from the response
-    const token = initiateAuthOutput.AuthenticationResult?.AccessToken;
-
-    setToken(token);
 
     return UserSchema.parse(user);
   } catch (error) {

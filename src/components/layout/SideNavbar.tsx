@@ -158,8 +158,8 @@ export default function SideNavbar({}: Props) {
 
   return (
     <aside
-      className="fixed bg-[#192839] z-20 top-0 left-0 w-[250px] [@media(min-width:1400px)]:w-[280px] [@media(min-width:1400px)]:min-w-[280px] text-[14px] leading-4  
-    flex flex-col justify-start flex-grow min-h-screen"
+      className="fixed overflow-y-auto bg-[#192839] z-20 top-0 left-0 w-[250px] [@media(min-width:1400px)]:w-[280px] [@media(min-width:1400px)]:min-w-[280px] text-[14px] leading-4  
+    flex flex-col justify-start flex-grow h-screen"
     >
       <div className="w-full flex items-center justify-center mx-auto py-3 px-4  [@media(min-width:1400px)]:py-6 [@media(min-width:1400px)]:px-6 ">
         <CyberMapBrand />

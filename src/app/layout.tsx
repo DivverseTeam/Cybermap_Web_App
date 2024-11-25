@@ -5,7 +5,6 @@ import type { Metadata } from "next";
 import { Inter, Public_Sans } from "next/font/google";
 import { TRPCReactProvider } from "~/trpc/react";
 import { Wrapper } from "./_wrapper";
-import { AuthProvider } from "~/context/AuthContext";
 
 export const metadata: Metadata = {
   title: "Create T3 App",
@@ -25,11 +24,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${GeistSans.variable}`}>
       <body className={`${inter.variable}${publicSans.variable} font-sans`}>
-        <AuthProvider>
-          <TRPCReactProvider>
-            <Wrapper>{children}</Wrapper>
-          </TRPCReactProvider>
-        </AuthProvider>
+        <TRPCReactProvider>
+          <Wrapper>{children}</Wrapper>
+        </TRPCReactProvider>
       </body>
     </html>
   );

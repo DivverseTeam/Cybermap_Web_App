@@ -1,6 +1,8 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { AppRoutes } from "~/routes";
 import { api } from "~/trpc/react";
 
 const ForgotPassword = () => {
@@ -9,6 +11,8 @@ const ForgotPassword = () => {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,6 +24,10 @@ const ForgotPassword = () => {
       const response = await forgotPassword({ email });
       if (response.success) {
         setMessage(response.message);
+
+        setTimeout(() => {
+          router.push(AppRoutes.AUTH.RESET_PASSWORD); // Redirect after success
+        }, 2000);
       } else {
         setMessage("Failed to send password reset email.");
       }
@@ -27,6 +35,8 @@ const ForgotPassword = () => {
       setMessage(
         "An error occurred, please try again. Contact support if error persists."
       );
+    } finally {
+      setIsLoading(false);
     }
   };
 
