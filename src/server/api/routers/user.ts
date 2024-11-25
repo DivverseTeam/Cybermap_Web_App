@@ -16,15 +16,9 @@ import Organisation from "~/server/models/Organisation";
 import User, { User as UserSchema } from "~/server/models/User";
 import { signIn, signUp } from "./actions";
 import {
-  AdminGetUserCommand,
-  AdminUpdateUserAttributesCommand,
   CognitoIdentityProviderClient,
   ConfirmForgotPasswordCommand,
-  ConfirmSignUpCommand,
   ForgotPasswordCommand,
-  GetUserCommand,
-  ResendConfirmationCodeCommand,
-  VerifyUserAttributeCommand,
 } from "@aws-sdk/client-cognito-identity-provider";
 import { Resource } from "sst";
 

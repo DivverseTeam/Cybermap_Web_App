@@ -11,7 +11,6 @@ export const User = z.object({
   cognitoId: z.string(),
   email: z.string(),
   organisationId: z.string().optional(),
-  isEmailVerified: z.boolean().optional(), // isEmailVerified is now optional
 });
 
 export type User = z.infer<typeof User>;
