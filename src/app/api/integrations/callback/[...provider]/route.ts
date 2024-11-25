@@ -76,9 +76,12 @@ export async function GET(req: NextRequest) {
     const savePromises: Array<Promise<Document<unknown>>> = [];
 
     organisationIntegrations.forEach((integration) => {
-      integration.authData.accessToken = access_token as string;
-      integration.authData.refreshToken = refresh_token as string;
-      integration.authData.expiry = new Date(expires_at as string);
+      integration.authData = {
+        accessToken: access_token as string,
+        refreshToken: refresh_token as string,
+        expiry: new Date(expires_at as string),
+      };
+      integration.connectedAt = new Date();
 
       savePromises.push(integration.save());
     });

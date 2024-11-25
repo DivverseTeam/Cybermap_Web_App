@@ -103,7 +103,6 @@ export const generalRouter = createTRPCRouter({
                     slug: integration.slug,
                     oauthProvider: provider,
                     authData: {},
-                    connectedAt: new Date(),
                     organisationId,
                     ...restInput,
                   },

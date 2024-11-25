@@ -4,6 +4,9 @@ import { Button } from "~/app/_components/ui/button";
 import { IntegrationCategoryValueMap } from "~/lib/constants/integrations";
 import type { Integration } from "~/lib/types/integrations";
 import { cn } from "~/lib/utils";
+import { api } from "~/trpc/react";
+import { useIsFetching } from "@tanstack/react-query";
+import { getQueryKey } from "@trpc/react-query";
 
 type Props = {
   integration: Integration & { isConnected: boolean };
@@ -17,6 +20,13 @@ export function IntegrationCard({
   isPending,
 }: Props) {
   const { image, name, category, isConnected } = integration;
+  const utils = api.useUtils();
+
+  const isFetching = useIsFetching({
+    queryKey: getQueryKey(api.integrations.get),
+  });
+
+  const isMutating = utils.general.oauth2.authorization.isMutating();
 
   return (
     <div className="w-full rounded-lg border bg-white p-4 shadow-md">
@@ -33,6 +43,7 @@ export function IntegrationCard({
             size="sm"
             variant="outline"
             loading={isPending}
+            disabled={Boolean(isFetching) || Boolean(isMutating)}
             onClick={() => onClickAction(integration)}
             className={cn("border-2", {
               "border-red-500 text-red-500 hover:bg-red-500 hover:text-white":

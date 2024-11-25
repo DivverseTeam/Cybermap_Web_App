@@ -16,7 +16,9 @@ export const integrationsRouter = createTRPCRouter({
       (await OrganisationIntegration.find({ organisationId })) || [];
 
     const connectedIntegrationIds = new Set(
-      organisationIntegrations.map((integration) => integration.integrationId),
+      organisationIntegrations
+        .filter((integration) => integration?.connectedAt)
+        .map((integration) => integration.integrationId),
     );
 
     const allIntegrations: Array<Integration & { isConnected: boolean }> = [];
