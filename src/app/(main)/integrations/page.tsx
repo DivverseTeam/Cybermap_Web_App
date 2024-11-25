@@ -7,16 +7,8 @@ export const metadata: Metadata = {
   title: "Integrations",
 };
 
-export default async function page() {
-  const { connectedIntegrations, nonConnectedIntegrations } =
-    await api.integrations.getIntegrations();
+export default function page() {
+  void api.integrations.get.prefetch();
 
-  return (
-    <IntegrationsPage
-      integrations={{
-        all: nonConnectedIntegrations,
-        connected: connectedIntegrations,
-      }}
-    />
-  );
+  return <IntegrationsPage />;
 }

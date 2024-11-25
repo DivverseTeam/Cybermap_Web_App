@@ -7,11 +7,9 @@ export const metadata: Metadata = {
   title: "Controls",
 };
 
-export default async function page() {
-  const [controls, frameworks] = await Promise.all([
-    api.controls.getControls(),
-    api.frameworks.getFrameworks(),
-  ]);
+export default function page() {
+  void api.frameworks.get.prefetch();
+  void api.controls.get.prefetch();
 
-  return <ControlsPage controls={controls} frameworks={frameworks} />;
+  return <ControlsPage />;
 }

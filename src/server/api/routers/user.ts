@@ -15,6 +15,7 @@ import {
 import Organisation from "~/server/models/Organisation";
 import User, { User as UserSchema } from "~/server/models/User";
 import { signIn, signUp } from "./actions";
+import { FrameworkName } from "~/lib/types";
 
 export const SignInProps = z.object({
   email: z.string(),
@@ -51,8 +52,7 @@ export const userRouter = createTRPCRouter({
         size: OrganisationSize,
         kind: OrganisationKind,
         industry: OrganisationIndustry,
-        frameworkIds: z.array(z.string()).optional(),
-        integrations: z.array(z.any()).optional(),
+        frameworks: z.array(FrameworkName).optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {

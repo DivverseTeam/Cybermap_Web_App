@@ -1,19 +1,36 @@
 import { z } from "zod";
 import { PRESIGNED_URL_TYPES } from "~/lib/types";
 
-import mongoose from "mongoose";
+import mongoose, { Document, Query, UpdateWriteOpResult } from "mongoose";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { Resource } from "sst";
 import { AuthorizationCode } from "simple-oauth2";
-import { Oauth2Provider } from "~/lib/types/integrations";
 
 import { env } from "~/env";
 import {
+  getOauth2Config,
   MICROSOFT_OAUTH_SCOPE,
-  Oauth2ProviderConfigMap,
 } from "~/server/constants/integrations";
+import { integrations } from "~/lib/constants/integrations";
+import Integration, {
+  OrganisationIntegration,
+} from "~/server/models/Integration";
+
+export const IntegrationOauth2Props = z.union([
+  z.object({
+    provider: z.literal("MICROSOFT"),
+    tenantId: z.string().uuid(),
+    workspaceId: z.string().optional(),
+  }),
+  z.object({
+    provider: z.literal("GOOGLE"),
+    projectId: z.string(),
+  }),
+]);
+
+export type IntegrationOauth2Props = z.infer<typeof IntegrationOauth2Props>;
 
 export const generalRouter = createTRPCRouter({
   getS3PresignedUrl: protectedProcedure
@@ -57,16 +74,55 @@ export const generalRouter = createTRPCRouter({
 
   oauth2: createTRPCRouter({
     authorization: protectedProcedure
-      .input(Oauth2Provider)
-      .mutation(({ input: provider }) => {
-        const client = new AuthorizationCode(Oauth2ProviderConfigMap[provider]);
+      .input(IntegrationOauth2Props)
+      .mutation(async ({ input, ctx }) => {
+        const { provider, ...restInput } = input;
+
+        const {
+          session: {
+            user: { organisationId },
+          },
+        } = ctx;
+
+        if (!organisationId) {
+          throw new Error("No organisation found");
+        }
+
+        const upsertPromises: Array<Promise<unknown>> = [];
+
+        integrations
+          .filter((integration) => integration?.oauthProvider === provider)
+          .forEach((integration) => {
+            upsertPromises.push(
+              Integration.updateOne(
+                { integrationId: integration.id },
+                {
+                  $set: {
+                    integrationId: integration.id,
+                    name: integration.name,
+                    slug: integration.slug,
+                    oauthProvider: provider,
+                    authData: {},
+                    connectedAt: new Date(),
+                    organisationId,
+                    ...restInput,
+                  },
+                },
+                { upsert: true },
+              ),
+            );
+          });
+
+        await Promise.all(upsertPromises);
+
+        const client = new AuthorizationCode(getOauth2Config(input));
 
         const authorizationUri = client.authorizeURL({
           redirect_uri: `${env.BASE_URL || "http://localhost:3000"}/api/integrations/callback/${provider.toLowerCase()}`,
           scope: MICROSOFT_OAUTH_SCOPE,
         });
 
-        return authorizationUri;
+        return { url: authorizationUri };
       }),
   }),
 });

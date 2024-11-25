@@ -1,3 +1,4 @@
+import React from "react";
 import { twMerge } from "tailwind-merge";
 import { CompletedIcon } from "~/components/svgs/Completed";
 import { CyberMapLogo } from "~/components/svgs/CyberMapLogo";
@@ -29,7 +30,7 @@ export default function SideBar({ step }: { step: number }) {
               subtitle: "Finalize setup and start running",
             },
           ].map(({ title, subtitle }, index, arr) => (
-            <>
+            <React.Fragment key={title}>
               {(() => {
                 const active = step === index + 1;
                 const completed = step > index + 1;
@@ -86,7 +87,7 @@ export default function SideBar({ step }: { step: number }) {
                   </div>
                 );
               })()}
-            </>
+            </React.Fragment>
           ))}
         </div>
       </div>
