@@ -1,2 +1,2 @@
 # Cybermap_API
-The API for Cybermaps AI
+The API for Cybermaps AI Web Application

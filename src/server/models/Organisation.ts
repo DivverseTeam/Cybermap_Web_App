@@ -9,9 +9,12 @@ import {
   OrganisationSize,
 } from "~/lib/types";
 import { BaseSchema } from "./base";
+import { FrameworkName } from "~/lib/types";
 
 export const OrganisationIntegration = z.object({
   id: z.string(),
+  name: z.string(),
+  slug: z.string(),
   connectedAt: z.coerce.date(),
   authData: z.object({
     accessToken: z.string(),
@@ -29,7 +32,7 @@ export const Organisation = z.object({
   size: OrganisationSize,
   kind: OrganisationKind,
   industry: OrganisationIndustry,
-  frameworkIds: z.array(z.string()).optional().default([]),
+  frameworks: z.array(FrameworkName).optional().default([]),
   integrations: z.array(OrganisationIntegration).default([]),
 });
 
@@ -51,7 +54,7 @@ const OrganisationSchema = new BaseSchema<OrganisationWithDocument>({
     enum: ORGANISATION_INDUSTRIES,
     required: true,
   },
-  frameworkIds: {
+  frameworks: {
     type: [{ type: String }],
     required: false,
     default: [],
@@ -60,6 +63,8 @@ const OrganisationSchema = new BaseSchema<OrganisationWithDocument>({
     type: [
       {
         id: { type: String, required: true },
+        name: { type: String, required: true },
+        slug: { type: String, required: true },
         connectedAt: { type: Date, required: true },
         authData: {
           type: Object,

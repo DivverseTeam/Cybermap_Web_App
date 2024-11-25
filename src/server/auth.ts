@@ -18,7 +18,6 @@ declare module "next-auth" {
       name?: string | null;
       email?: string | null;
       image?: string | null;
-      isEmailVerified?: boolean; // Add custom fields here
       token?: string; // Add token if needed
     };
   }
@@ -67,7 +66,11 @@ export const authOptions: NextAuthOptions = {
         accessToken: token.accessToken as string,
       };
     },
-    jwt: ({ token, user, account }) => {
+    jwt: ({ token, user, account, trigger, session }) => {
+      if (trigger === "update" && session?.organisationId) {
+        token.organisationId = session.organisationId;
+      }
+
       // console.log("JWT before:", token.jti);
       if (account && user) {
         token.id = user.id;
@@ -82,19 +85,8 @@ export const authOptions: NextAuthOptions = {
           token.id = id;
           token.role = role;
           token.organisationId = organisationId;
-
-          // Add email verification status if provided
-          if (parsedUser.data.isEmailVerified !== undefined) {
-            token.isEmailVerified = parsedUser.data.isEmailVerified;
-          }
-
-          // Add accessToken if available
-          if (account.access_token) {
-            token.accessToken = account?.access_token;
-          }
         }
       }
-      // console.log("JWT after:", token.jti);
       return token;
     },
   },

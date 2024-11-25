@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import { Inter, Public_Sans } from "next/font/google";
 import { TRPCReactProvider } from "~/trpc/react";
 import { Wrapper } from "./_wrapper";
+import { getServerAuthSession } from "~/server/auth";
 
 export const metadata: Metadata = {
   title: "Create T3 App",
@@ -18,14 +19,16 @@ const publicSans = Public_Sans({
   variable: "--font-public-sans",
 });
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const session = await getServerAuthSession();
+
   return (
     <html lang="en" className={`${GeistSans.variable}`}>
       <body className={`${inter.variable}${publicSans.variable} font-sans`}>
         <TRPCReactProvider>
-          <Wrapper>{children}</Wrapper>
+          <Wrapper session={session}>{children}</Wrapper>
         </TRPCReactProvider>
       </body>
     </html>

@@ -1,20 +1,37 @@
+"use client";
+
 import SemiCircleProgressBar from "react-progressbar-semicircle";
 import { getProgressColor } from "../_lib/constants";
 import { Cell, Label, Pie, PieChart, Tooltip } from "recharts";
-import type { FrameworkComplianceScore } from "../types";
+import { toTitleCase } from "~/lib/utils";
 
 interface FrameworkComplianceProgressProps {
-  complianceScore: FrameworkComplianceScore[];
-  // icon: JSX.Element;
+  complianceScore: {
+    passing: number;
+    failing: number;
+    risk: number;
+  };
 }
+
+const KeyProgressColorMap: Record<string, string> = {
+  passing: "#09D886",
+  failing: "#D92D20",
+  risk: "#FFDC00",
+};
 
 export default function FrameworkComplianceProgress({
   complianceScore,
 }: FrameworkComplianceProgressProps) {
+  const chartData = Object.entries(complianceScore).map(([key, value]) => ({
+    name: toTitleCase(key),
+    value: value,
+    color: KeyProgressColorMap[key],
+  }));
+
   return (
     <PieChart width={180} height={180}>
       <Pie
-        data={complianceScore}
+        data={chartData}
         dataKey="value"
         nameKey="name"
         cx="50%"
@@ -26,19 +43,18 @@ export default function FrameworkComplianceProgress({
         cornerRadius={10} // Rounded edges for each segment
         paddingAngle={-10} // Creates slight overlap by negative padding
       >
-        {complianceScore.map((entry, index) => (
+        {chartData.map((entry, index) => (
           <Cell key={`cell-${index}`} fill={entry.color} />
         ))}
         {/* First text with larger font size and bold style */}
         <Label
           value={`${Math.ceil(
             (+(
-              complianceScore.find(
-                (item) => item.name.toLowerCase() === "passing"
-              )?.value ?? 0
+              chartData.find((item) => item.name.toLowerCase() === "passing")
+                ?.value ?? 0
             ) /
-              +complianceScore.reduce((acc, item) => acc + item.value, 0)) *
-              100
+              +chartData.reduce((acc, item) => acc + item.value, 0)) *
+              100,
           )}%`}
           position="center"
           fontSize={20}

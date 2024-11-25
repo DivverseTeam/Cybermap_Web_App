@@ -1,19 +1,9 @@
-import { type ColumnDef, createColumnHelper } from "@tanstack/react-table";
-import { useEffect, useState, useTransition } from "react";
+import type { ColumnDef } from "@tanstack/react-table";
 
-import { Button } from "~/app/_components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuTrigger,
-} from "~/app/_components/ui/dropdown-menu";
-import { formatDate } from "~/lib/utils";
-import type { IControl } from "../types";
+import { titleCaseStatus } from "~/lib/utils";
 import type { VariantProps } from "class-variance-authority";
 import { Badge, type badgeVariants } from "~/app/_components/ui/badge";
+import type { ControlStatus, OrganisationControl } from "~/lib/types/controls";
 
 // interface RowData {
 //   name: string;
@@ -22,17 +12,17 @@ import { Badge, type badgeVariants } from "~/app/_components/ui/badge";
 // }
 // const columnHelper = createColumnHelper<RowData>();
 
-export const columns: ColumnDef<IControl>[] = [
+export const columns: ColumnDef<OrganisationControl>[] = [
   {
     accessorKey: "name",
     header: () => <span>CONTROL</span>, // Wrap in span
     cell: ({ cell }) => <span className="">{cell.getValue() as string}</span>,
   },
   {
-    accessorKey: "mappedControls",
+    accessorKey: "mapped",
     header: () => <span>MAPPED</span>, // Wrap in span
     cell: ({ row }) => {
-      const mappedControls = row.getValue("mappedControls") as string[];
+      const mappedControls = row.getValue("mapped") as string[];
       return (
         <div className="flex flex-wrap gap-2">
           {mappedControls?.length ? (
@@ -60,22 +50,23 @@ export const columns: ColumnDef<IControl>[] = [
     ), // Wrap in span
 
     cell: ({ cell }) => {
-      const status = cell.getValue() as string;
+      const status = cell.getValue() as ControlStatus;
       let badgeVariant: VariantProps<typeof badgeVariants>["variant"];
 
-      if (status.toLowerCase() === "not implemented") {
+      if (status === "NOT_IMPLEMENTED") {
         badgeVariant = "destructive";
       }
 
-      if (status.toLowerCase() === "fully implemented") {
+      if (status === "FULLY_IMPLEMENTED") {
         badgeVariant = "success";
       }
-      if (status.toLowerCase() === "partially implemented") {
+      if (status === "PARTIALLY_IMPLEMENTED") {
         badgeVariant = "warning";
       }
+
       return (
         <Badge className="w-max font-semibold" variant={badgeVariant}>
-          {status}
+          {titleCaseStatus(status)}
         </Badge>
       );
     },
