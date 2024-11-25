@@ -65,7 +65,7 @@ const ForgotPassword = () => {
           loading={isLoading}
           className="w-full py-2 px-4 text-white rounded-md bg-primary hover:bg-blue-500"
         >
-          Send Reset Email
+          Send reset code
         </Button>
       </form>
       <p

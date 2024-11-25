@@ -1,12 +1,12 @@
-import CredentialsProvider from "next-auth/providers/credentials";
 import {
-  getServerSession,
   type DefaultSession,
   type NextAuthOptions,
+  getServerSession,
 } from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
 
-import { User } from "./models/User";
 import { signIn } from "./api/routers/actions";
+import { User } from "./models/User";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -33,18 +33,22 @@ declare module "next-auth" {
 export const authOptions: NextAuthOptions = {
   callbacks: {
     session: ({ session, token }) => {
-      const { id, role, organizationId } = token;
+      const { id, role, organisationId } = token;
       return {
         ...session,
         user: {
           ...session.user,
           id,
           role,
-          organizationId,
+          organisationId,
         },
       };
     },
-    jwt: ({ token, user, account }) => {
+    jwt: ({ token, user, account, trigger, session }) => {
+      if (trigger === "update" && session?.organisationId) {
+        token.organisationId = session.organisationId;
+      }
+
       if (account && user) {
         token.id = user.id;
         token.sub = user.id;
@@ -52,12 +56,13 @@ export const authOptions: NextAuthOptions = {
         const parsedUser = User.safeParse(user);
 
         if (parsedUser.success) {
-          const { id, role, organizationId } = parsedUser.data;
+          const { id, role, organisationId } = parsedUser.data;
           token.id = id;
           token.role = role;
-          token.organizationId = organizationId;
+          if (organisationId) token.organisationId = organisationId;
         }
       }
+
       return token;
     },
   },
