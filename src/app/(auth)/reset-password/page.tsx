@@ -2,7 +2,6 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "~/app/_components/ui/button";
@@ -15,16 +14,18 @@ import {
 } from "~/app/_components/ui/form";
 import { Input } from "~/app/_components/ui/input";
 import { PasswordInput } from "~/app/_components/ui/password-input";
+import { cn } from "~/lib/utils";
 import { AppRoutes } from "~/routes";
 import { api } from "~/trpc/react";
 
 const ResetPassword = () => {
-  const [message, setMessage] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [isError, setIsError] = useState(false);
-
-  const { mutateAsync: resetPassword } = api.user.resetPassword.useMutation();
+  const {
+    mutate: resetPassword,
+    isPending,
+    isError,
+    isSuccess,
+    error,
+  } = api.user.resetPassword.useMutation();
 
   const router = useRouter();
 
@@ -58,38 +59,24 @@ const ResetPassword = () => {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     const { email, verificationCode, newPassword } = values;
 
-    setMessage(""); // Clear previous messages
-    setIsLoading(true);
-    try {
-      const response = await resetPassword({
-        email,
-        verificationCode,
-        newPassword,
-      });
-      if (response.success) {
-        setIsSuccess(true);
-        setMessage(response.message);
-        setTimeout(() => {
-          router.push(AppRoutes.AUTH.LOGIN);
-        }, 500);
-      } else {
-        setIsError(true);
-        setMessage("Failed to send password reset email.");
-      }
-    } catch (error) {
-      console.error("Error:", error);
-      setIsError(true);
-      setMessage(
-        "Failed to reset password. Please try again. Contact support if issue persists"
-      );
-    } finally {
-      setIsLoading(false);
-    }
+    resetPassword(
+      { email, verificationCode, newPassword },
+      {
+        onSuccess: () => {
+          setTimeout(() => {
+            router.push(AppRoutes.AUTH.LOGIN);
+          }, 500);
+        },
+        onError: (error) => {
+          console.error("Error:", error);
+        },
+      },
+    );
   };
 
   return (
-    <div className="max-w-lg mx-auto p-6">
-      <h1 className="text-2xl font-bold text-center mb-4">
+    <div className="mx-auto max-w-lg p-6">
+      <h1 className="mb-4 text-center font-bold text-2xl">
         Reset Your Password
       </h1>
       <Form {...form}>
@@ -142,9 +129,8 @@ const ResetPassword = () => {
           />
           <Button
             type="submit"
-            disabled={isLoading}
-            loading={isLoading}
-            className="w-full py-2 px-4 text-white rounded-md bg-primary hover:bg-blue-500"
+            loading={isPending}
+            className="w-full rounded-md bg-primary px-4 py-2 text-white hover:bg-blue-500"
           >
             Reset Password
           </Button>
@@ -152,22 +138,19 @@ const ResetPassword = () => {
       </Form>
       {/* Optional Resend Token */}
       <p
-        className="text-gray-500 text-center mt-4 italic hover:underline hover:text-black cursor-pointer"
+        className="mt-4 cursor-pointer text-center text-gray-500 italic hover:text-black hover:underline"
         onClick={() => router.push(AppRoutes.AUTH.FORGOT_PASSWORD)}
       >
         Didn’t receive a token?
       </p>
 
       <p
-        className={`${
-          isSuccess
-            ? "text-green-500"
-            : isError
-            ? "text-destructive"
-            : "text-black"
-        }`}
+        className={cn({
+          "text-green-500": isSuccess,
+          "text-destructive": isError,
+        })}
       >
-        {message}
+        {isSuccess ? "Password reset successful" : isError ? error.message : ""}
       </p>
     </div>
   );

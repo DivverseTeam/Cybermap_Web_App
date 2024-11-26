@@ -2,54 +2,43 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { DayButton } from "react-day-picker";
 import { Button } from "~/app/_components/ui/button";
+import { cn } from "~/lib/utils";
 import { AppRoutes } from "~/routes";
 import { api } from "~/trpc/react";
 
 const ForgotPassword = () => {
-  const { mutateAsync: forgotPassword } = api.user.forgotPassword.useMutation();
+  const {
+    mutate: forgotPassword,
+    isPending,
+    isSuccess,
+    isError,
+    error,
+  } = api.user.forgotPassword.useMutation();
 
   const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [isError, setIsError] = useState(false);
 
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setMessage(""); // Clear previous messages
-    setIsLoading(true);
-    setIsSuccess(false);
-    setIsError(false);
 
-    try {
-      // Call the tRPC mutation
-      const response = await forgotPassword({ email });
-      if (response.success) {
-        setIsSuccess(true);
-        setMessage(response.message);
-
-        router.push(AppRoutes.AUTH.RESET_PASSWORD); // Redirect after success
-      } else {
-        setIsError(true);
-        setMessage("Failed to send password reset email.");
-      }
-    } catch (_error) {
-      setIsError(true);
-      setMessage(
-        "An error occurred, please try again. Contact support if error persists."
-      );
-    } finally {
-      setIsLoading(false);
-    }
+    forgotPassword(
+      { email },
+      {
+        onSuccess: () => {
+          router.push(AppRoutes.AUTH.RESET_PASSWORD);
+        },
+        onError: (error) => {
+          console.error("Error:", error);
+        },
+      },
+    );
   };
 
   return (
-    <div className="max-w-lg mx-auto p-6">
-      <h1 className="text-2xl font-bold text-center mb-4">Forgot Password</h1>
+    <div className="mx-auto max-w-lg p-6">
+      <h1 className="mb-4 text-center font-bold text-2xl">Forgot Password</h1>
       <form onSubmit={handleSubmit}>
         <input
           type="email"
@@ -57,27 +46,23 @@ const ForgotPassword = () => {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
-          className="p-2 border border-gray-300 rounded-md mb-4 w-full"
+          className="mb-4 w-full rounded-md border border-gray-300 p-2"
         />
         <Button
           type="submit"
-          disabled={isLoading}
-          loading={isLoading}
-          className="w-full py-2 px-4 text-white rounded-md bg-primary hover:bg-blue-500"
+          loading={isPending}
+          className="w-full rounded-md bg-primary px-4 py-2 text-white hover:bg-blue-500"
         >
           Send reset code
         </Button>
       </form>
       <p
-        className={`${
-          isSuccess
-            ? "text-green-500"
-            : isError
-            ? "text-destructive"
-            : "text-black"
-        }`}
+        className={cn({
+          "text-green-500": isSuccess,
+          "text-destructive": isError,
+        })}
       >
-        {message}
+        {error?.message}
       </p>
     </div>
   );

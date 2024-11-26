@@ -34,29 +34,29 @@ export const signUp = async (props: SignUpProps) => {
         Username: email,
         Password: password,
         UserAttributes: attributes,
-      })
+      }),
     );
 
-    await cognitoClient.send(
-      new AdminConfirmSignUpCommand({
-        UserPoolId: Resource.user.id,
-        Username: email,
-      })
-    );
-
-    await cognitoClient.send(
-      new AdminUpdateUserAttributesCommand({
-        //
-        UserPoolId: Resource.user.id,
-        Username: email,
-        UserAttributes: [
-          {
-            Name: "email_verified", // required
-            Value: "true",
-          },
-        ],
-      })
-    );
+    await Promise.all([
+      cognitoClient.send(
+        new AdminConfirmSignUpCommand({
+          UserPoolId: Resource.user.id,
+          Username: email,
+        }),
+      ),
+      cognitoClient.send(
+        new AdminUpdateUserAttributesCommand({
+          UserPoolId: Resource.user.id,
+          Username: email,
+          UserAttributes: [
+            {
+              Name: "email_verified",
+              Value: "true",
+            },
+          ],
+        }),
+      ),
+    ]);
 
     let user = await User.create({
       name,
@@ -69,7 +69,6 @@ export const signUp = async (props: SignUpProps) => {
 
     return UserSchema.parse(user);
   } catch (error) {
-    console.log(error);
     if (error instanceof UsernameExistsException) {
       throw new Error("Email already exists");
     } else {
@@ -90,7 +89,7 @@ export const signIn = async (props: SignInProps) => {
           USERNAME: email,
           PASSWORD: password,
         },
-      })
+      }),
     );
 
     if (!initiateAuthOutput || !initiateAuthOutput.AuthenticationResult) {
@@ -98,7 +97,7 @@ export const signIn = async (props: SignInProps) => {
     }
 
     const { sub: cognitoId }: { sub: string } = jwtDecode(
-      initiateAuthOutput?.AuthenticationResult?.IdToken || ""
+      initiateAuthOutput?.AuthenticationResult?.IdToken || "",
     );
 
     let user = await User.findOne({ cognitoId });
@@ -111,7 +110,6 @@ export const signIn = async (props: SignInProps) => {
 
     return UserSchema.parse(user);
   } catch (error) {
-    console.log(error);
     throw error;
   }
 };

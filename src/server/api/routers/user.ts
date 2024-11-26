@@ -13,12 +13,15 @@ import {
   publicProcedure,
 } from "~/server/api/trpc";
 import Organisation from "~/server/models/Organisation";
-import User, { User as UserSchema } from "~/server/models/User";
+import User from "~/server/models/User";
 import { signIn, signUp } from "./actions";
 import {
+  CodeMismatchException,
   CognitoIdentityProviderClient,
   ConfirmForgotPasswordCommand,
+  ExpiredCodeException,
   ForgotPasswordCommand,
+  UserNotFoundException,
 } from "@aws-sdk/client-cognito-identity-provider";
 import { Resource } from "sst";
 
@@ -62,7 +65,7 @@ export const userRouter = createTRPCRouter({
         industry: OrganisationIndustry,
         frameworkIds: z.array(z.string()).optional(),
         integrations: z.array(z.any()).optional(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const {
@@ -87,29 +90,25 @@ export const userRouter = createTRPCRouter({
   forgotPassword: publicProcedure
     .input(
       z.object({
-        email: z.string().email(), // Validate email
-      })
+        email: z.string().email(),
+      }),
     )
     .mutation(async ({ input }) => {
       try {
         const command = new ForgotPasswordCommand({
-          ClientId: Resource["user-client"].id, // Replace with your Cognito App Client ID
+          ClientId: Resource["user-client"].id,
           Username: input.email,
         });
 
         await cognitoClient.send(command);
-
-        return {
-          success: true,
-          message: "A password reset code has been sent your mail.",
-        };
       } catch (error) {
-        console.error("Error initiating forgot password:", error);
-
-        return {
-          success: false,
-          message: "Failed to initiate password reset. Try again later",
-        };
+        if (error instanceof UserNotFoundException) {
+          throw new Error("Email address is not registered");
+        } else {
+          throw new Error(
+            "Failed to send password reset email. Please try again.",
+          );
+        }
       }
     }),
   resetPassword: publicProcedure
@@ -118,33 +117,30 @@ export const userRouter = createTRPCRouter({
         email: z.string().email(),
         verificationCode: z.string(),
         newPassword: z.string(),
-      })
+      }),
     )
     .mutation(async ({ input }) => {
       const { email, verificationCode, newPassword } = input;
 
       try {
-        // Send the Cognito ConfirmForgotPasswordCommand
         const command = new ConfirmForgotPasswordCommand({
-          ClientId: Resource["user-client"].id, // Replace with your Cognito App Client ID
+          ClientId: Resource["user-client"].id,
           Username: email,
           ConfirmationCode: verificationCode,
           Password: newPassword,
         });
 
         await cognitoClient.send(command);
-
-        return {
-          success: true,
-          message: "Your password has been reset successfully.",
-        };
       } catch (error) {
-        console.error("Error confirming forgot password:", error);
-        throw new Error("Failed to reset password. Please try again.");
+        if (error instanceof CodeMismatchException) {
+          throw new Error("Invalid reset code");
+        } else if (error instanceof ExpiredCodeException) {
+          throw new Error("Password reset code expired");
+        } else {
+          throw new Error(
+            "Failed to send password reset email. Please try again.",
+          );
+        }
       }
     }),
-
-  getSecretMessage: protectedProcedure.query(() => {
-    return "you can now see this secret message!";
-  }),
 });
