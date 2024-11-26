@@ -3,11 +3,12 @@ import { AuthorizationCode } from "simple-oauth2";
 
 import { getServerAuthSession } from "~/server/auth";
 import { Client } from "@microsoft/microsoft-graph-client";
-import Organisation from "~/server/models/Organisation";
 import { Oauth2Provider } from "~/lib/types/integrations";
-import { integrations } from "~/lib/constants/integrations";
+import type { Document } from "mongoose";
 import { env } from "~/env";
-import { Oauth2ProviderConfigMap } from "~/server/constants/integrations";
+import { getOauth2Config } from "~/server/constants/integrations";
+import { IntegrationOauth2Props } from "~/server/api/routers/general";
+import Integration from "~/server/models/Integration";
 
 async function getUserDetails(accessToken: string) {
   const client = Client.init({
@@ -20,40 +21,49 @@ async function getUserDetails(accessToken: string) {
 }
 
 export async function GET(req: NextRequest) {
-  const searchParams = req.nextUrl.searchParams;
-  const { provider } =
-    req.nextUrl.pathname.match(/callback\/(?<provider>\w+)/)?.groups || {};
-
-  const parsedProvider = Oauth2Provider.safeParse(provider?.toUpperCase());
-
-  if (!parsedProvider.success) {
-    console.error("Invalid provider specified in the callback URL.");
-    throw new Error("Invalid provider specified in the callback URL.");
-  }
-
-  const session = await getServerAuthSession();
-
-  if (!session || !session?.user?.organisationId) {
-    console.error("User session not found or organisation ID missing.");
-    throw new Error("User session not found or organisation ID missing.");
-  }
-
-  const code = searchParams.get("code");
-
-  if (!code) {
-    console.error("Authorization code is missing in the callback URL.");
-    throw new Error("Authorization code is missing in the callback URL.");
-  }
-
-  const options = {
-    code,
-    redirect_uri: `${env.BASE_URL || "http://localhost:3000"}/api/integrations/callback/${provider}`,
-  };
-
   try {
-    const client = new AuthorizationCode(
-      Oauth2ProviderConfigMap[parsedProvider.data],
-    );
+    const searchParams = req.nextUrl.searchParams;
+    const { provider } =
+      req.nextUrl.pathname.match(/callback\/(?<provider>\w+)/)?.groups || {};
+
+    const parsedProvider = Oauth2Provider.parse(provider?.toUpperCase());
+
+    const session = await getServerAuthSession();
+
+    if (!session || !session?.user?.organisationId) {
+      console.error("User session not found or organisation ID missing.");
+      throw new Error("User session not found or organisation ID missing.");
+    }
+
+    const code = searchParams.get("code");
+
+    if (!code) {
+      console.error("Authorization code is missing in the callback URL.");
+      throw new Error("Authorization code is missing in the callback URL.");
+    }
+
+    const options = {
+      code,
+      redirect_uri: `${env.BASE_URL || "http://localhost:3000"}/api/integrations/callback/${provider}`,
+    };
+
+    const organisationIntegrations =
+      (await Integration.find({
+        organisationId: session.user.organisationId,
+        oauthProvider: parsedProvider,
+      })) || [];
+
+    const { oauthProvider, projectId, tenantId, workspaceId } =
+      organisationIntegrations[0] || {};
+
+    const oauth2Props = IntegrationOauth2Props.parse({
+      provider: oauthProvider,
+      projectId,
+      tenantId,
+      workspaceId,
+    });
+
+    const client = new AuthorizationCode(getOauth2Config(oauth2Props));
 
     console.log("Attempting to exchange code for an access token...");
     const accessToken = await client.getToken(options);
@@ -63,38 +73,20 @@ export async function GET(req: NextRequest) {
     const { token } = accessToken;
     const { access_token, refresh_token, expires_at } = token;
 
-    const providerIntegrations = integrations.filter(
-      (integration) => integration?.oauthProvider === parsedProvider.data,
-    );
+    const savePromises: Array<Promise<Document<unknown>>> = [];
 
-    const integrationsToAdd = providerIntegrations.map((integration) => {
-      const { id, name, slug } = integration;
-
-      return {
-        id,
-        connectedAt: new Date(),
-        name,
-        slug,
-        authData: {
-          accessToken: access_token as string,
-          refreshToken: refresh_token as string,
-          expiry: new Date(expires_at as string),
-        },
+    organisationIntegrations.forEach((integration) => {
+      integration.authData = {
+        accessToken: access_token as string,
+        refreshToken: refresh_token as string,
+        expiry: new Date(expires_at as string),
       };
+      integration.connectedAt = new Date();
+
+      savePromises.push(integration.save());
     });
 
-    const organisation = await Organisation.findById(
-      session.user.organisationId,
-    );
-
-    if (!organisation) {
-      throw new Error("Organisation not found");
-    }
-
-    organisation.integrations =
-      organisation.integrations.concat(integrationsToAdd);
-
-    await organisation.save();
+    await Promise.all(savePromises);
 
     const user = await getUserDetails(access_token as string);
 

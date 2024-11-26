@@ -5,7 +5,7 @@ import Evidence from "~/server/models/Evidence";
 import type { OrganisationControl } from "~/lib/types/controls";
 
 export const controlsRouter = createTRPCRouter({
-  getControls: protectedProcedure.query(async ({ ctx }) => {
+  get: protectedProcedure.query(async ({ ctx }) => {
     const {
       session: {
         user: { organisationId },

@@ -6,9 +6,7 @@ export const metadata: Metadata = {
   title: "Frameworks",
 };
 
-export default async function Page() {
-  const frameworksWithCompletion =
-    await api.frameworks.getFrameworksWithCompletion();
-
-  return <FrameworksPage frameworks={frameworksWithCompletion} />;
+export default function Page() {
+  void api.frameworks.getWithCompletion.prefetch();
+  return <FrameworksPage />;
 }

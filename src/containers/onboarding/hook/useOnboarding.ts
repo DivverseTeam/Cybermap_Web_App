@@ -1,10 +1,11 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import {
+  FrameworkName,
   OrganisationIndustry,
   OrganisationKind,
   OrganisationSize,
@@ -20,7 +21,7 @@ const schema = z.object({
     .max(50, { message: "Organisation name cannot exceed 50 characters" }),
   kind: OrganisationKind,
   industry: OrganisationIndustry,
-  frameworks: z.array(z.string()).optional(),
+  frameworks: z.array(FrameworkName).optional(),
   integrations: z.array(z.string()).optional(),
   size: OrganisationSize,
   logoUrl: z.string().optional(),
@@ -30,11 +31,8 @@ type FormData = z.infer<typeof schema>;
 
 export default function useOnboarding() {
   const [step, setStep] = useState(1);
-  const {
-    mutate: onboardingMutate,
-    isPending,
-    error,
-  } = api.user.completeOnboarding.useMutation();
+  const { mutate: onboardingMutate, isPending } =
+    api.user.completeOnboarding.useMutation();
   const { update: updateSession } = useSession();
 
   const router = useRouter();
@@ -52,16 +50,15 @@ export default function useOnboarding() {
   });
 
   const onSubmit = (data: FormData) => {
-    const { name, kind, frameworks, size, industry, integrations } = data;
+    const { name, kind, frameworks, size, industry } = data;
     console.log("Form submitted successfully:", data, step);
     onboardingMutate(
       {
         name,
         kind,
         size,
-        frameworkIds: frameworks,
         industry,
-        integrations,
+        frameworks,
       },
       {
         onSuccess: (data) => {

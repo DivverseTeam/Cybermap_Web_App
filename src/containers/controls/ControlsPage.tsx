@@ -26,13 +26,12 @@ import { columns } from "./components/control-table-columns";
 import { NewControlSheet } from "./components/new-control-sheet";
 import type { Framework } from "~/lib/types/frameworks";
 import type { OrganisationControl } from "~/lib/types/controls";
+import { api } from "~/trpc/react";
 
-type Props = {
-  controls: Array<OrganisationControl>;
-  frameworks: Array<Framework>;
-};
+export default function ControlsPage() {
+  const [frameworks] = api.frameworks.get.useSuspenseQuery();
+  const [controls] = api.controls.get.useSuspenseQuery();
 
-export default function ControlsPage({ controls, frameworks }: Props) {
   const [isVisible, setIsVisible] = useState(false);
   const [tableData, setTableData] = useState<Array<OrganisationControl>>([]);
   const [statusFilter, setStatusFilter] = useState<string>("");

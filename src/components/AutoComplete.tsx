@@ -53,7 +53,7 @@ export const AutoCompleteComp = ({
                       <ActionListItem
                         key={subItem + String(subIndex)}
                         title={subItem}
-                        value={subItem.toLowerCase()}
+                        value={subItem}
                       />
                     ))}
                   </ActionListSection>

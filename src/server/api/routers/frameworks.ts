@@ -11,7 +11,7 @@ const feedbackWeights: Record<string, number> = {
 };
 
 export const frameworksRouter = createTRPCRouter({
-  getFrameworks: protectedProcedure.query(
+  get: protectedProcedure.query(
     async ({
       ctx: {
         session: {
@@ -34,7 +34,7 @@ export const frameworksRouter = createTRPCRouter({
     },
   ),
 
-  getFrameworksWithCompletion: protectedProcedure.query(
+  getWithCompletion: protectedProcedure.query(
     async ({
       ctx: {
         session: {

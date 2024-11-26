@@ -24,6 +24,7 @@ import {
   UserNotFoundException,
 } from "@aws-sdk/client-cognito-identity-provider";
 import { Resource } from "sst";
+import { FrameworkName } from "~/lib/types";
 
 // Initialize the Cognito client
 const cognitoClient = new CognitoIdentityProviderClient();
@@ -63,8 +64,7 @@ export const userRouter = createTRPCRouter({
         size: OrganisationSize,
         kind: OrganisationKind,
         industry: OrganisationIndustry,
-        frameworkIds: z.array(z.string()).optional(),
-        integrations: z.array(z.any()).optional(),
+        frameworks: z.array(FrameworkName).optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {

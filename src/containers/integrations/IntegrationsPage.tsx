@@ -2,25 +2,20 @@
 
 import React, { useState } from "react";
 import PageTitle from "~/components/PageTitle";
-import AvailableIntegrationsContainer from "./components/available-integrations-container";
-import ConnectedIntegrationsContainer from "./components/connected-integrations-container";
 import { IntegrationTabs } from "./components/integration-tabs";
 import type {
   Integration,
   IntegrationCategory,
 } from "~/lib/types/integrations";
+import IntegrationsContainer from "./components/integrations-container";
+import { api } from "~/trpc/react";
 // import IntegrationList from "./components/available-integrations-list";
 
-type Props = {
-  integrations: {
-    all: Array<Integration>;
-    connected: Array<Integration>;
-  };
-};
+type Props = {};
 
-export default function IntegrationsPage({
-  integrations: { all, connected },
-}: Props) {
+export default function IntegrationsPage({}: Props) {
+  const [{ connected, all }] = api.integrations.get.useSuspenseQuery();
+
   const [activeList, setActiveList] = useState<string>("connected");
   const [activeCategory, setActiveCategory] = useState<
     IntegrationCategory | string
@@ -48,10 +43,16 @@ export default function IntegrationsPage({
           connected={connected}
         />
         {activeList === "available" ? (
-          <AvailableIntegrationsContainer integrations={filteredAll} />
+          <IntegrationsContainer
+            integrations={filteredAll}
+            isConnected={false}
+          />
         ) : (
           activeList === "connected" && (
-            <ConnectedIntegrationsContainer integrations={filteredConnected} />
+            <IntegrationsContainer
+              integrations={filteredConnected}
+              isConnected={true}
+            />
           )
         )}
       </div>
