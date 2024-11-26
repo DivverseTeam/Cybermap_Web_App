@@ -53,14 +53,9 @@ export async function GET(req: NextRequest) {
         oauthProvider: parsedProvider,
       })) || [];
 
-    const { oauthProvider, projectId, tenantId, workspaceId } =
-      organisationIntegrations[0] || {};
-
     const oauth2Props = IntegrationOauth2Props.parse({
-      provider: oauthProvider,
-      projectId,
-      tenantId,
-      workspaceId,
+      ...organisationIntegrations[0]?.toObject(),
+      provider: parsedProvider,
     });
 
     const client = new AuthorizationCode(getOauth2Config(oauth2Props));
