@@ -1,12 +1,14 @@
 import { Search01Icon } from "hugeicons-react";
 import React, { useState } from "react";
 import { Input } from "~/app/_components/ui/input";
-import { IntegrationCard } from "./integration-card";
+import { IntegrationCard, IntegrationCardSkeleton } from "./integration-card";
 import type { Integration } from "~/lib/types/integrations";
 import IntegrationConnectionModal from "./integration-connection-modal";
-import { z } from "zod";
 import { useConnectIntegration } from "~/hooks/use-connect-integration";
 import { useDisconnectIntegration } from "~/hooks/use-disconnect-integration";
+import { useIsFetching } from "@tanstack/react-query";
+import { getQueryKey } from "@trpc/react-query";
+import { api } from "~/trpc/react";
 
 type Props = {
   integrations: Array<Integration & { isConnected?: boolean }>;
@@ -39,6 +41,16 @@ export default function IntegrationsContainer({
     }
   };
 
+  const utils = api.useUtils();
+
+  const isFetching = useIsFetching({
+    queryKey: getQueryKey(api.integrations.get),
+  });
+
+  const isMutating = utils.general.oauth2.authorization.isMutating();
+
+  const isLoading = isFetching || isMutating;
+
   return (
     <div className="flex grow flex-col">
       <div className="mx-auto flex w-full justify-between rounded-2xl rounded-b-none border bg-muted p-2 2xl:p-5 [@media(min-width:1400px)]:p-4">
@@ -64,19 +76,23 @@ export default function IntegrationsContainer({
           </p>
         </div>
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3 xl:gap-8">
-          {integrations.map((integration, index: number) => (
-            <IntegrationCard
-              key={index}
-              integration={{
-                ...integration,
-                isConnected: integration.isConnected || isConnected,
-              }}
-              onClickAction={onIntegrationCardActionClick}
-              isPending={
-                selectedIntegration?.id === integration.id && isPending
-              }
-            />
-          ))}
+          {isLoading
+            ? Array.from({ length: 3 }).map((_, index) => (
+                <IntegrationCardSkeleton key={index} />
+              ))
+            : integrations.map((integration, index: number) => (
+                <IntegrationCard
+                  key={index}
+                  integration={{
+                    ...integration,
+                    isConnected: integration.isConnected || isConnected,
+                  }}
+                  onClickAction={onIntegrationCardActionClick}
+                  isPending={
+                    selectedIntegration?.id === integration.id && isPending
+                  }
+                />
+              ))}
         </div>
       </div>
       {selectedIntegration && (
