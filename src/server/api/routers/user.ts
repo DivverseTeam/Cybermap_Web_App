@@ -28,7 +28,6 @@ import { FrameworkName } from "~/lib/types";
 import { controls } from "~/lib/constants/controls";
 import Control from "~/server/models/Control";
 
-// Initialize the Cognito client
 const cognitoClient = new CognitoIdentityProviderClient();
 
 export const SignInProps = z.object({

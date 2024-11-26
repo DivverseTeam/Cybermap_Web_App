@@ -3,7 +3,9 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
+import { FormError } from "~/app/_components/form-error";
 import { Button } from "~/app/_components/ui/button";
 import {
   Form,
@@ -15,7 +17,6 @@ import {
 } from "~/app/_components/ui/form";
 import { Input } from "~/app/_components/ui/input";
 import { PasswordInput } from "~/app/_components/ui/password-input";
-import { cn } from "~/lib/utils";
 import { AppRoutes } from "~/routes";
 import { api } from "~/trpc/react";
 
@@ -23,8 +24,7 @@ const ResetPassword = () => {
   const {
     mutate: resetPassword,
     isPending,
-    isError,
-    isSuccess,
+
     error,
   } = api.user.resetPassword.useMutation();
 
@@ -64,6 +64,7 @@ const ResetPassword = () => {
       { email, verificationCode, newPassword },
       {
         onSuccess: () => {
+          toast.success("Password reset successful");
           setTimeout(() => {
             router.push(AppRoutes.AUTH.LOGIN);
           }, 500);
@@ -71,7 +72,7 @@ const ResetPassword = () => {
         onError: (error) => {
           console.error("Error:", error);
         },
-      }
+      },
     );
   };
 
@@ -81,61 +82,65 @@ const ResetPassword = () => {
         Reset Your Password
       </h1>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="select-none">Email</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Enter your email"
-                    type="email"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="flex flex-col gap-4"
+        >
+          <div className="flex flex-col gap-2">
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="select-none">Email</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Enter your email"
+                      type="email"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <FormField
-            control={form.control}
-            name="verificationCode"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="select-none">
-                  Enter verification code
-                </FormLabel>
-                <FormControl>
-                  <PasswordInput {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+            <FormField
+              control={form.control}
+              name="verificationCode"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="select-none">
+                    Enter verification code
+                  </FormLabel>
+                  <FormControl>
+                    <PasswordInput {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <FormField
-            control={form.control}
-            name="newPassword"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="select-none">
-                  Enter new Password
-                </FormLabel>
-                <FormControl>
-                  <PasswordInput {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <Button
-            type="submit"
-            loading={isPending}
-            className="w-full rounded-md bg-primary px-4 py-2 text-white hover:bg-blue-500"
-          >
+            <FormField
+              control={form.control}
+              name="newPassword"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="select-none">
+                    Enter new Password
+                  </FormLabel>
+                  <FormControl>
+                    <PasswordInput {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormError message={error?.message} />
+          </div>
+
+          <Button type="submit" loading={isPending} className="w-ful" size="lg">
             Reset Password
           </Button>
         </form>
@@ -146,15 +151,6 @@ const ResetPassword = () => {
         onClick={() => router.push(AppRoutes.AUTH.FORGOT_PASSWORD)}
       >
         Didn’t receive a verification code?
-      </p>
-
-      <p
-        className={cn({
-          "text-green-500": isSuccess,
-          "text-destructive": isError,
-        })}
-      >
-        {isSuccess ? "Password reset successful" : isError ? error.message : ""}
       </p>
     </div>
   );
