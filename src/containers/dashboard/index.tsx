@@ -189,7 +189,7 @@ export default function DashboardPage() {
 
       <div className="flex flex-col gap-6 py-6">
         {/* General charts */}
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-4">
           <div className="h-[400px] min-w-[378px] flex flex-col gap-3 [@media(min-width:1400px)]:gap-4 rounded-[8px] border border-neutral-2 border-solid bg-white p-4 px-2">
             <div className="flex w-full items-center justify-between px-5">
               <p className="text-base font-semibold text-neutral-normal">

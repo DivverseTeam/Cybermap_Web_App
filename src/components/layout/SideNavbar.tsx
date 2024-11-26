@@ -89,7 +89,7 @@ export default function SideNavbar({}: Props) {
         //   variant: `${pathname === "/regulations" ? "lightBlue" : "ghost"}`,
         // },
         {
-          title: "Evidence Library",
+          title: "Evidence library",
           icon: LibraryIcon,
           href: "/evidence-library",
           variant: `${
@@ -156,7 +156,7 @@ export default function SideNavbar({}: Props) {
   ];
 
   return (
-    <aside className="fixed top-0 left-0 z-20 flex min-h-screen w-[250px] flex-grow flex-col justify-start bg-[#192839] text-[14px] leading-4 [@media(min-width:1400px)]:w-[280px] [@media(min-width:1400px)]:min-w-[280px]">
+    <aside className="fixed top-0 left-0 z-20 flex h-screen w-[250px] flex-grow flex-col justify-start overflow-y-auto bg-[#192839] text-[14px] leading-4 [@media(min-width:1400px)]:w-[280px] [@media(min-width:1400px)]:min-w-[280px]">
       <div className="mx-auto flex w-full items-center justify-center px-4 py-3 [@media(min-width:1400px)]:px-6 [@media(min-width:1400px)]:py-6 ">
         <CyberMapBrand />
       </div>
