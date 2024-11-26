@@ -11,6 +11,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
+  FormMessage,
 } from "~/app/_components/ui/form";
 import { Input } from "~/app/_components/ui/input";
 import { PasswordInput } from "~/app/_components/ui/password-input";
@@ -70,7 +71,7 @@ const ResetPassword = () => {
         onError: (error) => {
           console.error("Error:", error);
         },
-      },
+      }
     );
   };
 
@@ -94,6 +95,7 @@ const ResetPassword = () => {
                     {...field}
                   />
                 </FormControl>
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -109,6 +111,7 @@ const ResetPassword = () => {
                 <FormControl>
                   <PasswordInput {...field} />
                 </FormControl>
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -124,6 +127,7 @@ const ResetPassword = () => {
                 <FormControl>
                   <PasswordInput {...field} />
                 </FormControl>
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -141,7 +145,7 @@ const ResetPassword = () => {
         className="mt-4 cursor-pointer text-center text-gray-500 italic hover:text-black hover:underline"
         onClick={() => router.push(AppRoutes.AUTH.FORGOT_PASSWORD)}
       >
-        Didn’t receive a token?
+        Didn’t receive a verification code?
       </p>
 
       <p
