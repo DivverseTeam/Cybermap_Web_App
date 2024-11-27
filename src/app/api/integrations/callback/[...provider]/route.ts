@@ -5,10 +5,10 @@ import { getServerAuthSession } from "~/server/auth";
 import { Client } from "@microsoft/microsoft-graph-client";
 import { Oauth2Provider } from "~/lib/types/integrations";
 import type { Document } from "mongoose";
-import { env } from "~/env";
 import { getOauth2Config } from "~/server/constants/integrations";
 import { IntegrationOauth2Props } from "~/server/api/routers/general";
 import Integration from "~/server/models/Integration";
+import { Resource } from "sst";
 
 async function getUserDetails(accessToken: string) {
   const client = Client.init({
@@ -44,7 +44,7 @@ export async function GET(req: NextRequest) {
 
     const options = {
       code,
-      redirect_uri: `${env.BASE_URL || "http://localhost:3000"}/api/integrations/callback/${provider}`,
+      redirect_uri: `${Resource.cybermap.url || "http://localhost:3000"}/api/integrations/callback/${provider}`,
     };
 
     const organisationIntegrations =

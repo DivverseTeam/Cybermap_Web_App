@@ -27,6 +27,10 @@ export default async function RootLayout({
     redirect(AppRoutes.AUTH.LOGIN);
   }
 
+  if (!session.user.organisationId) {
+    redirect(AppRoutes.AUTH.ONBOARDING);
+  }
+
   return (
     <HydrateClient>
       <div className="flex">
