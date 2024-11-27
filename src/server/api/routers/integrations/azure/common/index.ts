@@ -1,5 +1,9 @@
-import type { Group, User, AppRoleAssignment } from "@microsoft/microsoft-graph-types";
-import { azureClient } from "../init";
+import type {
+  AppRoleAssignment,
+  Group,
+  User,
+} from "@microsoft/microsoft-graph-types";
+import { azureClient, subscriptionClient } from "../init";
 
 const listUsers = async (): Promise<{ value: User[] }> => {
   const response = await azureClient.api("/users").get();
@@ -27,10 +31,21 @@ const listUserGroups = async (userId: string): Promise<{ value: Group[] }> => {
   return userGroups;
 };
 
+async function listSubscriptions() {
+  try {
+    const subscriptions = await subscriptionClient.subscriptions.list();
+    const subscriptionIds = subscriptions.map((sub) => sub.subscriptionId);
+    return subscriptionIds;
+  } catch (error) {
+    console.error("Error retrieving subscriptions:", error);
+  }
+}
+
 export {
   getUserDetails,
+  getUserRoleAssignments,
   listGroups,
+  listSubscriptions,
   listUserGroups,
   listUsers,
-  getUserRoleAssignments,
 };

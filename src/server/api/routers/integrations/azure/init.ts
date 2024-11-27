@@ -1,3 +1,7 @@
+import { SubscriptionClient } from "@azure/arm-subscriptions";
+import { ResourceManagementClient } from "@azure/arm-resources";
+import { PolicyClient } from "@azure/arm-policy";
+import { DefaultAzureCredential } from "@azure/identity";
 import { Client, type Options } from "@microsoft/microsoft-graph-client";
 
 const accessToken =
@@ -11,4 +15,17 @@ const options: Options = {
 
 const azureClient = Client.init(options);
 
-export { azureClient };
+const credential = new DefaultAzureCredential();
+const subscriptionId = "461a0c54-75c6-4586-8b57-ff6275f47644";
+
+const subscriptionClient = new SubscriptionClient(credential);
+const policyClient = new PolicyClient(credential);
+const resourceClient = new ResourceManagementClient(credential, subscriptionId);
+
+export {
+  azureClient,
+  subscriptionClient,
+  policyClient,
+  credential,
+  resourceClient,
+};
