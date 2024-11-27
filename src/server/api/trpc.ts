@@ -9,8 +9,10 @@
 
 import { TRPCError, initTRPC } from "@trpc/server";
 import type { Session } from "next-auth";
+import { redirect } from "next/navigation";
 import superjson from "superjson";
 import { ZodError } from "zod";
+import { AppRoutes } from "~/routes";
 
 import { getServerAuthSession } from "~/server/auth";
 import { mongoosePromise } from "~/server/db";
@@ -135,7 +137,8 @@ export const protectedProcedure = t.procedure
   .use(timingMiddleware)
   .use(({ ctx, next }) => {
     if (!ctx.session || !ctx.session.user) {
-      throw new TRPCError({ code: "UNAUTHORIZED" });
+      redirect(AppRoutes.AUTH.LOGIN);
+      // throw new TRPCError({ code: "UNAUTHORIZED" });
     }
     return next({
       ctx: {

@@ -1,9 +1,12 @@
-import { FRAMEWORKS_ENUM } from "~/lib/constants/frameworks";
+import type { FrameworkName } from "~/lib/types";
 
-export const FRAMEWORKS_ONBOARDING = [
+export const FRAMEWORKS_ONBOARDING: Array<{
+  title: string;
+  list: Array<FrameworkName>;
+}> = [
   {
     title: "Industry recommendation",
-    list: [FRAMEWORKS_ENUM.SOC2, FRAMEWORKS_ENUM.ISO27001],
+    list: ["ISO27001"],
   },
   // {
   //   title: "More frameworks",

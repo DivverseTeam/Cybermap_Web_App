@@ -1,42 +1,45 @@
-import {
-  createTRPCRouter,
-  protectedProcedure,
-  publicProcedure,
-} from "~/server/api/trpc";
-import Organisation from "~/server/models/Organisation";
-import {
-  integrations,
-  Oauth2ProviderIntegrationIdsMap,
-} from "~/lib/constants/integrations";
+import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import { integrations } from "~/lib/constants/integrations";
 import { z } from "zod";
-import { Oauth2Provider } from "~/lib/types/integrations";
+import { type Integration, Oauth2Provider } from "~/lib/types/integrations";
+import OrganisationIntegration from "~/server/models/Integration";
 
 export const integrationsRouter = createTRPCRouter({
-  getAllIntegrations: publicProcedure.query(({ ctx: _ }) => {
-    return integrations;
-  }),
-
-  getConnectedIntegrations: protectedProcedure.query(async ({ ctx }) => {
+  get: protectedProcedure.query(async ({ ctx }) => {
     const {
       session: {
         user: { organisationId },
       },
     } = ctx;
 
-    const organisation = await Organisation.findById(organisationId);
-
-    const organisationIntegrations = organisation?.integrations || [];
+    const organisationIntegrations =
+      (await OrganisationIntegration.find({ organisationId })) || [];
 
     const connectedIntegrationIds = new Set(
-      organisationIntegrations.map((integration) => integration.id),
+      organisationIntegrations
+        .filter((integration) => integration?.connectedAt)
+        .map((integration) => integration.integrationId),
     );
 
-    return integrations.filter((integration) =>
-      connectedIntegrationIds.has(integration.id),
-    );
+    const allIntegrations: Array<Integration & { isConnected: boolean }> = [];
+    const connected: Array<Integration & { isConnected: boolean }> = [];
+
+    for (const integration of integrations) {
+      if (connectedIntegrationIds.has(integration.id)) {
+        allIntegrations.push({ ...integration, isConnected: true });
+        connected.push({ ...integration, isConnected: true });
+      } else {
+        allIntegrations.push({ ...integration, isConnected: false });
+      }
+    }
+
+    return {
+      connected,
+      all: allIntegrations,
+    };
   }),
 
-  disconnectIntegration: protectedProcedure
+  disconnect: protectedProcedure
     .input(
       z.union([
         z.object({
@@ -56,25 +59,19 @@ export const integrationsRouter = createTRPCRouter({
         },
       } = ctx;
 
-      let integrationIds = [];
+      let integrationIds: Array<string> = [];
 
       if (provider) {
-        integrationIds = Oauth2ProviderIntegrationIdsMap[provider];
+        integrationIds = integrations
+          .filter((integration) => integration?.oauthProvider === provider)
+          .map((integration) => integration.id);
       } else {
         integrationIds = [integrationId];
       }
 
-      const organisation = await Organisation.findById(organisationId);
-
-      if (!organisation) {
-        throw new Error("Organisation not found");
-      }
-
-      // Remove integrations matching any ID in the `integrationIds` array
-      organisation.integrations = organisation.integrations.filter(
-        (integration) => !integrationIds.includes(integration.id),
-      );
-
-      await organisation.save();
+      await OrganisationIntegration.deleteMany({
+        organisationId,
+        integrationId: { $in: integrationIds },
+      });
     }),
 });

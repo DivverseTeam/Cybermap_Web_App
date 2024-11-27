@@ -1,6 +1,8 @@
 import { userRouter } from "~/server/api/routers/user";
 import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
 import { generalRouter } from "~/server/api/routers/general";
+import { controlsRouter } from "~/server/api/routers/controls";
+import { frameworksRouter } from "~/server/api/routers/frameworks";
 import { integrationsRouter } from "~/server/api/routers/integrations";
 
 /**
@@ -11,6 +13,8 @@ import { integrationsRouter } from "~/server/api/routers/integrations";
 export const appRouter = createTRPCRouter({
   user: userRouter,
   general: generalRouter,
+  controls: controlsRouter,
+  frameworks: frameworksRouter,
   integrations: integrationsRouter,
 });
 

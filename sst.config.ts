@@ -18,9 +18,11 @@ export default $config({
   },
   // biome-ignore lint/suspicious/useAwait: <explanation>
   async run() {
-    const bucket = new sst.aws.Bucket("images", {
+    const imagesBucket = new sst.aws.Bucket("images", {
       access: "public",
     });
+
+    const evidencesBucket = new sst.aws.Bucket("evidences", {});
 
     const userPool = new sst.aws.CognitoUserPool("user", {
       usernames: ["email"],
@@ -35,7 +37,7 @@ export default $config({
     });
 
     new sst.aws.Nextjs("cybermap", {
-      link: [bucket, userPool, userPoolClient],
+      link: [imagesBucket, userPool, userPoolClient, evidencesBucket],
     });
   },
 });

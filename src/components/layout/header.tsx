@@ -11,9 +11,15 @@ import {
 import { Input } from "~/app/_components/ui/input";
 import { Separator } from "~/app/_components/ui/seperator";
 import { CyberMapBrand } from "../svgs/CyberMapBrand";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { api } from "~/trpc/react";
 
 export default function Header() {
   const { data } = useSession();
+
+  const user = data?.user; // Safely extract user object
+
   return (
     <header className="fixed inset-x-0 top-0 z-10 ml-[250px] [@media(min-width:1400px)]:ml-[280px] w-[calc(100vw-250px)] [@media(min-width:1400px)]:w-[calc(100vw-280px)] border-b-2 border-b-[#E8E8EC] bg-white py-2 px-4  [@media(min-width:1400px)]:py-4 [@media(min-width:1400px)]:px-6 ">
       <nav className="flex items-center">
@@ -34,21 +40,21 @@ export default function Header() {
               </span>
               <Separator orientation="vertical" className="mx-1 2xl:mx-2" />
               <Avatar className="h-7 w-7 rounded-xs">
-                <AvatarImage src="" />
+                <AvatarImage src={user?.image || ""} />
                 <AvatarFallback>
-                  {data?.user.name
-                    .split(" ")
-                    .map((word) => word[0])
-                    .join("")}
+                  {user?.name
+                    ? user.name
+                        .split(" ")
+                        .map((word) => word[0])
+                        .join("")
+                    : "?"}
                 </AvatarFallback>
               </Avatar>
               <span className="flex flex-col">
                 <span className="text-[#80828D] text-sm">
-                  {data?.user.name}
+                  {user?.name || "Guest"}
                 </span>
-                <span className="text-[#B9BBC6] text-xs">
-                  {data?.user?.email}
-                </span>
+                <span className="text-[#B9BBC6] text-xs">{user?.email}</span>
               </span>
             </span>
           </div>

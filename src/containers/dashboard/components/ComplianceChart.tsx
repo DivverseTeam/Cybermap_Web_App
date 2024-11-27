@@ -38,32 +38,32 @@ export default function ComplianceChart() {
             bottom: 0,
           }}
         >
-          {/* <defs>
-            <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#962DFF" stopOpacity={1} />
-              <stop offset="48.25%" stopColor="#F1CAFF" stopOpacity={1} />
-              <stop offset="103.37%" stopColor="#FFFFFF" stopOpacity={1} />
-            </linearGradient>
-
-            <linearGradient id="colorPv" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#962DFF" stopOpacity={1} />
-              <stop offset="48.25%" stopColor="#F1CAFF" stopOpacity={1} />
-              <stop offset="103.37%" stopColor="#FFFFFF" stopOpacity={1} />
-            </linearGradient>
-          </defs> */}
           <defs>
             <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#74E0AD" stopOpacity={1} />
-              <stop offset="48.25%" stopColor="#B6FFD3" stopOpacity={1} />
+              <stop offset="0%" stopColor="#962DFF" stopOpacity={1} />
+              <stop offset="48.25%" stopColor="#F1CAFF" stopOpacity={1} />
               <stop offset="103.37%" stopColor="#FFFFFF" stopOpacity={1} />
             </linearGradient>
 
             <linearGradient id="colorPv" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#74E0AD" stopOpacity={1} />
-              <stop offset="48.25%" stopColor="#B6FFD3" stopOpacity={1} />
+              <stop offset="0%" stopColor="#962DFF" stopOpacity={1} />
+              <stop offset="48.25%" stopColor="#F1CAFF" stopOpacity={1} />
               <stop offset="103.37%" stopColor="#FFFFFF" stopOpacity={1} />
             </linearGradient>
           </defs>
+          {/* <defs>
+            <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#74E0AD" stopOpacity={1} />
+              <stop offset="48.25%" stopColor="#B6FFD3" stopOpacity={1} />
+              <stop offset="103.37%" stopColor="#FFFFFF" stopOpacity={1} />
+            </linearGradient>
+
+            <linearGradient id="colorPv" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#74E0AD" stopOpacity={1} />
+              <stop offset="48.25%" stopColor="#B6FFD3" stopOpacity={1} />
+              <stop offset="103.37%" stopColor="#FFFFFF" stopOpacity={1} />
+            </linearGradient>
+          </defs> */}
           <CartesianGrid vertical={false} />
           <XAxis
             dataKey="month"
@@ -89,7 +89,7 @@ export default function ComplianceChart() {
           <Area
             type="monotone"
             dataKey="compliance"
-            stroke="#09D886"
+            stroke="rgba(150, 45, 255, 1)"
             // width={100}
             fill="url(#colorPv)"
           />

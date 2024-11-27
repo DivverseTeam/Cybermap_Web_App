@@ -59,7 +59,7 @@ export default function SideNavbar({}: Props) {
           variant: `${pathname === "/dashboard" ? "lightBlue" : "ghost"}`,
         },
         {
-          title: "Starter guide",
+          title: "Compliance guide",
           href: "/starter-guide",
 
           icon: CurvyRightDirectionIcon,
@@ -68,7 +68,7 @@ export default function SideNavbar({}: Props) {
       ],
     },
     {
-      groupName: "Compliance",
+      groupName: "Governance",
       items: [
         {
           title: "Frameworks",
@@ -82,14 +82,14 @@ export default function SideNavbar({}: Props) {
           href: "/controls",
           variant: `${pathname === "/controls" ? "lightBlue" : "ghost"}`,
         },
+        // {
+        //   title: "Regulations",
+        //   icon: PolicyIcon,
+        //   href: "/regulations",
+        //   variant: `${pathname === "/regulations" ? "lightBlue" : "ghost"}`,
+        // },
         {
-          title: "Regulations",
-          icon: PolicyIcon,
-          href: "/regulations",
-          variant: `${pathname === "/regulations" ? "lightBlue" : "ghost"}`,
-        },
-        {
-          title: "Evidence Library",
+          title: "Evidence library",
           icon: LibraryIcon,
           href: "/evidence-library",
           variant: `${
@@ -97,7 +97,7 @@ export default function SideNavbar({}: Props) {
           }`,
         },
         {
-          title: "Police templates",
+          title: "Policies",
           icon: PolicyIcon,
           href: "/policies",
           variant: `${pathname === "/policies" ? "lightBlue" : "ghost"}`,
@@ -108,10 +108,10 @@ export default function SideNavbar({}: Props) {
       groupName: "Management",
       items: [
         {
-          title: "Personnel",
+          title: "Employees",
           icon: UserMultipleIcon,
-          href: "/personnel",
-          variant: `${pathname === "/personnel" ? "lightBlue" : "ghost"}`,
+          href: "/employees",
+          variant: `${pathname === "/employees" ? "lightBlue" : "ghost"}`,
         },
         {
           title: "Integrations",
@@ -119,20 +119,20 @@ export default function SideNavbar({}: Props) {
           href: "/integrations",
           variant: `${pathname === "/integrations" ? "lightBlue" : "ghost"}`,
         },
-        {
-          title: "Training modules",
-          icon: OnlineLearning01Icon,
-          href: "/training-modules",
-          variant: `${
-            pathname === "/training-modules" ? "lightBlue" : "ghost"
-          }`,
-        },
-        {
-          title: "Audit center",
-          icon: Audit02Icon,
-          href: "/audit-center",
-          variant: `${pathname === "/audit-center" ? "lightBlue" : "ghost"}`,
-        },
+        // {
+        //   title: "Training modules",
+        //   icon: OnlineLearning01Icon,
+        //   href: "/training-modules",
+        //   variant: `${
+        //     pathname === "/training-modules" ? "lightBlue" : "ghost"
+        //   }`,
+        // },
+        // {
+        //   title: "Audit center",
+        //   icon: Audit02Icon,
+        //   href: "/audit-center",
+        //   variant: `${pathname === "/audit-center" ? "lightBlue" : "ghost"}`,
+        // },
       ],
     },
     {
@@ -150,21 +150,17 @@ export default function SideNavbar({}: Props) {
           icon: Logout02Icon,
           variant: "ghost",
           onClick: handleLogout,
-          href: "/signin",
         },
       ],
     },
   ];
 
   return (
-    <aside
-      className="fixed bg-[#192839] z-20 top-0 left-0 w-[250px] [@media(min-width:1400px)]:w-[280px] [@media(min-width:1400px)]:min-w-[280px] text-[14px] leading-4  
-    flex flex-col justify-start flex-grow min-h-screen"
-    >
-      <div className="w-full flex items-center justify-center mx-auto py-3 px-4  [@media(min-width:1400px)]:py-6 [@media(min-width:1400px)]:px-6 ">
+    <aside className="fixed top-0 left-0 z-20 flex h-screen w-[250px] flex-grow flex-col justify-start overflow-y-auto bg-[#192839] text-[14px] leading-4 [@media(min-width:1400px)]:w-[280px] [@media(min-width:1400px)]:min-w-[280px]">
+      <div className="mx-auto flex w-full items-center justify-center px-4 py-3 [@media(min-width:1400px)]:px-6 [@media(min-width:1400px)]:py-6 ">
         <CyberMapBrand />
       </div>
-      <div className="text-[14px] leading-4  flex flex-col justify-start flex-grow pt-12 [@media(min-width:1400px)]:pt-20 gap-[12px] max-h-[700px] px-4 [@media(min-width:1400px)]:px-6 ">
+      <div className="flex max-h-[700px] flex-grow flex-col justify-start gap-[12px] px-4 pt-12 text-[14px] leading-4 [@media(min-width:1400px)]:px-6 [@media(min-width:1400px)]:pt-20 ">
         {menuList.map((menu) => (
           <Nav
             isCollapsed={false}

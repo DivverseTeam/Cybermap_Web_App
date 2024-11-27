@@ -1,18 +1,14 @@
 import React from "react";
 import IntegrationsPage from "~/containers/integrations/IntegrationsPage";
 import { api } from "~/trpc/server";
+import type { Metadata } from "next";
 
-export default async function page() {
-  const allIntegrations = await api.integrations.getAllIntegrations();
-  const connectedIntegrations =
-    await api.integrations.getConnectedIntegrations();
+export const metadata: Metadata = {
+  title: "Integrations",
+};
 
-  return (
-    <IntegrationsPage
-      integrations={{
-        all: allIntegrations,
-        connected: connectedIntegrations,
-      }}
-    />
-  );
+export default function page() {
+  void api.integrations.get.prefetch();
+
+  return <IntegrationsPage />;
 }

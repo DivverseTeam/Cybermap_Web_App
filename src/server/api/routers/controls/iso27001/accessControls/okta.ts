@@ -1,5 +1,5 @@
-import { getAccessControlEvidence } from "../../../integrations/okta/ISO27001/requirementFive";
+// import { getAccessControlEvidence } from "../../../integrations/okta/ISO27001/requirementFive";
 
-export async function getAccessControls() {
-  await getAccessControlEvidence();
-}
+// export async function getAccessControls() {
+//   await getAccessControlEvidence();
+// }
