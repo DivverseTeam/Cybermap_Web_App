@@ -60,10 +60,12 @@ export default function SideNavbar({}: Props) {
         },
         {
           title: "Compliance guide",
-          href: "/starter-guide",
+          href: "/compliance-guide",
 
           icon: CurvyRightDirectionIcon,
-          variant: `${pathname === "/starter-guide" ? "lightBlue" : "ghost"}`,
+          variant: `${
+            pathname === "/compliance-guide" ? "lightBlue" : "ghost"
+          }`,
         },
       ],
     },

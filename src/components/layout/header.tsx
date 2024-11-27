@@ -1,7 +1,6 @@
 "use client";
 
 import { HelpSquareIcon, Search01Icon } from "hugeicons-react";
-import { SeparatorVerticalIcon } from "lucide-react";
 import { useSession } from "next-auth/react";
 import {
   Avatar,
@@ -10,7 +9,6 @@ import {
 } from "~/app/_components/ui/avatar";
 import { Input } from "~/app/_components/ui/input";
 import { Separator } from "~/app/_components/ui/seperator";
-import { CyberMapBrand } from "../svgs/CyberMapBrand";
 
 export default function Header() {
   const { data } = useSession();
