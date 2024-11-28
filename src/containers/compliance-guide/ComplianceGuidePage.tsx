@@ -34,7 +34,7 @@ export const frameworksWithControls: IFramework[] = [
 ];
 export default function ComplianceGuidePage({}: Props) {
   return (
-    <div>
+    <div className="flex flex-col gap-5">
       <PageTitle
         title="Compliance guide"
         subtitle="Track your progress towards framework compliance"

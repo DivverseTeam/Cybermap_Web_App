@@ -83,7 +83,7 @@ export default function FrameworkCard({ framework }: Props) {
             <div
               key={index}
               className={`h-4 w-4 rounded ${
-                isCompleted ? "bg-green-500" : "bg-gray-200"
+                isCompleted ? "bg-green-600" : "bg-gray-200"
               }`}
             ></div>
           ))}

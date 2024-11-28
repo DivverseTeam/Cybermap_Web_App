@@ -9,12 +9,8 @@ import { PolarAngleAxis, RadialBar, RadialBarChart } from "recharts";
 import { ComplianceTabs } from "./components/compliance-tabs";
 import ComplianceContainer from "./components/compliance-container";
 import ControlsContainer from "./components/controls-container";
-import type { IFramework } from "../types";
 
-type Props = {
-  framework: IFramework;
-  title: string;
-};
+type Props = {};
 
 export default function ViewFrameworkCompliance({}: Props) {
   const params = useParams();
@@ -29,42 +25,46 @@ export default function ViewFrameworkCompliance({}: Props) {
   const radialCircleSize = 20;
 
   const controlRadialBarData = [
-    { name: "score", value: framework.controlsCompletion.completedControls },
+    { name: "score", value: framework?.controlsCompletion.completedControls },
   ];
   const moduleRadialBarData = [
-    { name: "score", value: framework.modulesCompletion.completedModules },
+    { name: "score", value: framework?.modulesCompletion.completedModules },
   ];
 
   // Set colors based on score value
   const controlBarColor =
-    framework.controlsCompletion.completedControls > 75
+    framework?.controlsCompletion.completedControls ?? 0 > 75
       ? "rgba(0, 123, 23)"
-      : framework.controlsCompletion.completedControls > 50 &&
-        framework.controlsCompletion.completedControls <= 75
+      : (framework?.controlsCompletion.completedControls ?? 0) > 50 &&
+        (framework?.controlsCompletion.completedControls ?? 0) <= 75
       ? "rgba(255, 179, 0)"
-      : framework.controlsCompletion.completedControls === 50
+      : (framework?.controlsCompletion.completedControls ?? 0) === 50
       ? "rgba(198, 92, 16)"
       : "rgba(219, 0, 7)";
   // Set colors based on score value
   const moduleBarColor =
-    framework.controlsCompletion.completedControls > 75
+    (framework?.modulesCompletion.completedModules ?? 0) > 75
       ? "rgba(0, 123, 23)"
-      : framework.controlsCompletion.completedControls > 50 &&
-        framework.controlsCompletion.completedControls <= 75
+      : (framework?.modulesCompletion.completedModules ?? 0) > 50 &&
+        (framework?.modulesCompletion.completedModules ?? 0) <= 75
       ? "rgba(255, 179, 0)"
-      : framework.controlsCompletion.completedControls === 50
+      : (framework?.modulesCompletion.completedModules ?? 0) === 50
       ? "rgba(198, 92, 16)"
       : "rgba(219, 0, 7)";
 
   // Create an array with `true` for completed controls and `false` for remaining controls
+  const completedControls =
+    framework?.controlsCompletion.completedControls ?? 0;
   const controlBoxes = Array.from(
-    { length: framework.controlsCompletion.totalControls },
-    (_, i) => i < framework.controlsCompletion.completedControls
+    { length: framework?.controlsCompletion.totalControls ?? 0 },
+    (_, i) => i < completedControls
   );
   // Create an array with `true` for completed modules and `false` for remaining modules
+
+  const completedModules = framework?.modulesCompletion.completedModules ?? 0;
   const moduleBoxes = Array.from(
-    { length: framework.modulesCompletion.totalModules },
-    (_, i) => i < framework.modulesCompletion.completedModules
+    { length: framework?.modulesCompletion.totalModules ?? 0 },
+    (_, i) => i < completedModules
   );
   return (
     <>
@@ -124,7 +124,7 @@ export default function ViewFrameworkCompliance({}: Props) {
                   <div
                     key={index}
                     className={`h-4 w-4 rounded ${
-                      isCompleted ? "bg-green-500" : "bg-gray-200"
+                      isCompleted ? "bg-green-600" : "bg-gray-200"
                     }`}
                   ></div>
                 ))}
@@ -183,7 +183,7 @@ export default function ViewFrameworkCompliance({}: Props) {
                   <div
                     key={index}
                     className={`h-4 w-4 rounded ${
-                      isCompleted ? "bg-green-500" : "bg-gray-200"
+                      isCompleted ? "bg-green-600" : "bg-gray-200"
                     }`}
                   ></div>
                 ))}
