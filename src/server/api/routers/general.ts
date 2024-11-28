@@ -1,27 +1,25 @@
 import { z } from "zod";
 import { PRESIGNED_URL_TYPES } from "~/lib/types";
 
-import mongoose, { Document, Query, UpdateWriteOpResult } from "mongoose";
+import mongoose from "mongoose";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { Resource } from "sst";
 import { AuthorizationCode } from "simple-oauth2";
 
-import { env } from "~/env";
 import {
   getOauth2Config,
   MICROSOFT_OAUTH_SCOPE,
 } from "~/server/constants/integrations";
 import { integrations } from "~/lib/constants/integrations";
-import Integration, {
-  OrganisationIntegration,
-} from "~/server/models/Integration";
+import Integration from "~/server/models/Integration";
 
 export const IntegrationOauth2Props = z.union([
   z.object({
     provider: z.literal("MICROSOFT"),
     tenantId: z.string().uuid(),
+    subscriptionId: z.string().uuid(),
     workspaceId: z.string().optional(),
   }),
   z.object({
@@ -117,7 +115,7 @@ export const generalRouter = createTRPCRouter({
         const client = new AuthorizationCode(getOauth2Config(input));
 
         const authorizationUri = client.authorizeURL({
-          redirect_uri: `${env.BASE_URL || "http://localhost:3000"}/api/integrations/callback/${provider.toLowerCase()}`,
+          redirect_uri: `${Resource.cybermap.url || "http://localhost:3000"}/api/integrations/callback/${provider.toLowerCase()}`,
           scope: MICROSOFT_OAUTH_SCOPE,
         });
 

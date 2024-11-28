@@ -18,7 +18,6 @@ import {
 } from "~/app/_components/ui/form";
 import { Input } from "~/app/_components/ui/input";
 import { PasswordInput } from "~/app/_components/ui/password-input";
-import GoogleSignInButton from "~/components/GoogleSignInButton";
 import { SignInSchema } from "../schemas";
 
 type Props = {
@@ -31,7 +30,6 @@ type Props = {
 export default function SignInForm({
   headerTitle,
   headerSubtitle,
-  callbackUrl,
   error,
 }: Props) {
   const [loading, setLoading] = useState<boolean>(false);
@@ -64,10 +62,6 @@ export default function SignInForm({
 
       <Form {...form}>
         <div className="flex max-h-[679px] w-full flex-col gap-[1rem]">
-          {/* <GoogleSignInButton />
-          <div className=" mx-auto flex w-full items-center justify-evenly text-[#CBD5E2] before:mr-4 before:block before:h-px before:flex-grow before:bg-[#CBD5E2] after:ml-4 after:block after:h-px after:flex-grow after:bg-[#CBD5E2]">
-            OR
-          </div> */}
           <form onSubmit={form.handleSubmit(onSubmit)} className=" w-full">
             <div className="gap-4 space-y-4">
               <FormField
@@ -103,8 +97,9 @@ export default function SignInForm({
                   </FormItem>
                 )}
               />
+
               <p className="ml-auto flex w-fit cursor-pointer select-none justify-between font-semibold text-primary hover:underline">
-                Forgot Password
+                <Link href={"/forgot-password"}>Forgot Password</Link>
               </p>
 
               <FormError

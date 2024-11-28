@@ -38,14 +38,17 @@ const OauthProviderConnectionPropsMap: Record<
       {
         name: "tenantId",
         label: "Tenant ID",
-        placeholder:
-          "The unique identifier of your Azure Active Directory tenant",
+        placeholder: "The unique identifier of your Azure tenant",
+      },
+      {
+        name: "subscriptionId",
+        label: "Subscription ID",
+        placeholder: "The unique identifier of your Azure workspace",
       },
       {
         name: "workspaceId",
         label: "Workspace ID",
-        placeholder:
-          "The unique identifier of your Azure Log Analytics workspace",
+        placeholder: "The unique identifier of your Azure workspace",
       },
     ],
     schema: z.object({
@@ -53,6 +56,7 @@ const OauthProviderConnectionPropsMap: Record<
         .string()
         .uuid({ message: "Please enter a valid tenant id" })
         .trim(),
+      subscriptionId: z.string().uuid().trim(),
       workspaceId: z.string().optional(),
     }),
   },

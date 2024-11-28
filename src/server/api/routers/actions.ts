@@ -9,6 +9,7 @@ import {
   SignUpCommand,
   UsernameExistsException,
   AdminConfirmSignUpCommand,
+  AdminUpdateUserAttributesCommand,
 } from "@aws-sdk/client-cognito-identity-provider";
 import type { SignInProps, SignUpProps } from "./user";
 import { mongoosePromise } from "~/server/db";
@@ -36,12 +37,26 @@ export const signUp = async (props: SignUpProps) => {
       }),
     );
 
-    await cognitoClient.send(
-      new AdminConfirmSignUpCommand({
-        UserPoolId: Resource.user.id,
-        Username: email,
-      }),
-    );
+    await Promise.all([
+      cognitoClient.send(
+        new AdminConfirmSignUpCommand({
+          UserPoolId: Resource.user.id,
+          Username: email,
+        }),
+      ),
+      cognitoClient.send(
+        new AdminUpdateUserAttributesCommand({
+          UserPoolId: Resource.user.id,
+          Username: email,
+          UserAttributes: [
+            {
+              Name: "email_verified",
+              Value: "true",
+            },
+          ],
+        }),
+      ),
+    ]);
 
     let user = await User.create({
       name,
@@ -54,7 +69,6 @@ export const signUp = async (props: SignUpProps) => {
 
     return UserSchema.parse(user);
   } catch (error) {
-    console.log(error);
     if (error instanceof UsernameExistsException) {
       throw new Error("Email already exists");
     } else {
@@ -96,7 +110,6 @@ export const signIn = async (props: SignInProps) => {
 
     return UserSchema.parse(user);
   } catch (error) {
-    console.log(error);
     throw error;
   }
 };

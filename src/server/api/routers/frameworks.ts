@@ -1,8 +1,7 @@
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { frameworks } from "~/lib/constants/frameworks";
 import Organisation from "~/server/models/Organisation";
-import { controls } from "~/lib/constants/controls";
-import Evidence from "~/server/models/Evidence";
+import Control from "~/server/models/Control";
 
 const feedbackWeights: Record<string, number> = {
   FULLY_IMPLEMENTED: 1,
@@ -42,8 +41,10 @@ export const frameworksRouter = createTRPCRouter({
         },
       },
     }) => {
-      const organisation =
-        await Organisation.findById(organisationId).select("frameworks");
+      const [organisation, controls] = await Promise.all([
+        Organisation.findById(organisationId).select("frameworks"),
+        Control.find({ organisationId }),
+      ]);
 
       if (!organisation) {
         throw new Error("Organisation not found");
@@ -61,24 +62,6 @@ export const frameworksRouter = createTRPCRouter({
         ),
       }));
 
-      const controlCodes = controlsByFramework
-        .flatMap((framework) => framework.controls)
-        .map((control) => control.code);
-
-      const evidences = await Evidence.find({
-        codes: { $in: controlCodes },
-        organisationId,
-      }).select("codes status feedback");
-
-      const evidenceMap = new Map<string, (typeof evidences)[0]>();
-      evidences.forEach((evidence) => {
-        evidence.codes.forEach((code) => {
-          if (!evidenceMap.has(code)) {
-            evidenceMap.set(code, evidence);
-          }
-        });
-      });
-
       const frameworksWithComplianceScore = controlsByFramework.map(
         (framework) => {
           const totalControls = framework.controls.length;
@@ -92,8 +75,7 @@ export const frameworksRouter = createTRPCRouter({
 
           const totalCompletionWeight = framework.controls.reduce(
             (acc, control) => {
-              const evidence = evidenceMap.get(control.code);
-              const feedback = evidence?.feedback || "NOT_IMPLEMENTED";
+              const feedback = control.status;
 
               if (feedback === "FULLY_IMPLEMENTED") {
                 complianceScore.passing += 1;
@@ -116,13 +98,7 @@ export const frameworksRouter = createTRPCRouter({
           return {
             name: framework.name,
             logo: framework.logo,
-            controls: framework.controls.map((control) => {
-              const evidence = evidenceMap.get(control.code);
-              return {
-                ...control,
-                status: evidence?.feedback || "NOT_IMPLEMENTED",
-              };
-            }),
+            controls,
             completionLevel,
             complianceScore, // Add compliance score to the result
           };

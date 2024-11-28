@@ -7,12 +7,29 @@ import { cn } from "~/lib/utils";
 import { api } from "~/trpc/react";
 import { useIsFetching } from "@tanstack/react-query";
 import { getQueryKey } from "@trpc/react-query";
+import { Skeleton } from "~/app/_components/ui/skeleton";
 
 type Props = {
   integration: Integration & { isConnected: boolean };
   onClickAction: (integration: Integration & { isConnected: boolean }) => void;
   isPending?: boolean;
 };
+
+export const IntegrationCardSkeleton = () => (
+  <div className="w-full rounded-lg border bg-white p-4 shadow-md">
+    <div className="flex flex-col gap-y-12">
+      <div className="flex items-center justify-between">
+        <Skeleton className="h-16 w-16 rounded-md border-2" />
+        <Skeleton className="h-8 w-24 rounded-md" />
+      </div>
+
+      <div className="flex flex-col gap-y-1">
+        <Skeleton className="h-6 w-3/4 rounded-md" />
+        <Skeleton className="h-4 w-1/2 rounded-md" />
+      </div>
+    </div>
+  </div>
+);
 
 export function IntegrationCard({
   integration,

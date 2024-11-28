@@ -9,6 +9,7 @@ export const OrganisationIntegration = z.object({
   connectedAt: z.coerce.date().optional(),
   tenantId: z.string().optional(),
   workspaceId: z.string().optional(),
+  subscriptionId: z.string().optional(),
   projectId: z.string().optional(),
   oauthProvider: z.string(),
   authData: z.object({
@@ -29,6 +30,7 @@ const IntegrationSchema = new BaseSchema<IntegrationWithDocument>({
   slug: { type: String, required: true },
   tenantId: { type: String, required: false },
   workspaceId: { type: String, required: false },
+  subscriptionId: { type: String, required: false },
   projectId: { type: String, required: false },
   oauthProvider: { type: String, required: true },
   connectedAt: { type: Date, required: false },

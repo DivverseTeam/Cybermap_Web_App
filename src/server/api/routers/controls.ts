@@ -1,8 +1,5 @@
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import Organisation from "~/server/models/Organisation";
-import { controls } from "~/lib/constants/controls";
-import Evidence from "~/server/models/Evidence";
-import type { OrganisationControl } from "~/lib/types/controls";
+import Control, { OrganisationControl } from "~/server/models/Control";
 
 export const controlsRouter = createTRPCRouter({
   get: protectedProcedure.query(async ({ ctx }) => {
@@ -16,45 +13,8 @@ export const controlsRouter = createTRPCRouter({
       throw new Error("Organisation not found");
     }
 
-    const organisation =
-      await Organisation.findById(organisationId).select("frameworks");
+    const controls = await Control.find({ organisationId });
 
-    if (!organisation) {
-      throw new Error("Organisation not found");
-    }
-
-    const frameworks = organisation.frameworks;
-
-    const organisationControls = controls.filter((control) =>
-      control.mapped.some((framework) => frameworks.includes(framework)),
-    );
-
-    const controlCodes = organisationControls.map((control) => control.code);
-
-    const evidences = await Evidence.find({
-      codes: { $in: controlCodes },
-      organisationId,
-    }).select("codes status feedback");
-
-    const evidenceMap = new Map<string, (typeof evidences)[0]>();
-    evidences.forEach((evidence) => {
-      evidence.codes.forEach((code) => {
-        if (!evidenceMap.has(code)) {
-          evidenceMap.set(code, evidence);
-        }
-      });
-    });
-
-    const organisationControlWithFeedback: Array<OrganisationControl> =
-      organisationControls.map((control) => {
-        const evidence = evidenceMap.get(control.code);
-
-        return {
-          ...control,
-          status: evidence?.feedback || "NOT_IMPLEMENTED",
-        };
-      });
-
-    return organisationControlWithFeedback;
+    return OrganisationControl.array().parse(controls);
   }),
 });

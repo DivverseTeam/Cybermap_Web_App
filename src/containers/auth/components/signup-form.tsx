@@ -18,7 +18,6 @@ import {
 } from "~/app/_components/ui/form";
 import { Input } from "~/app/_components/ui/input";
 import { PasswordInput } from "~/app/_components/ui/password-input";
-import GoogleSignInButton from "~/components/GoogleSignInButton";
 import { AppRoutes } from "~/routes";
 import { api } from "~/trpc/react";
 import { SignUpSchema } from "../schemas";
@@ -66,7 +65,7 @@ export default function SignUpForm({ headerTitle, headerSubtitle }: Props) {
         onError: (error) => {
           console.error("Error signing up:", error);
         },
-      }
+      },
     );
   };
 
@@ -79,10 +78,6 @@ export default function SignUpForm({ headerTitle, headerSubtitle }: Props) {
 
       <Form {...form}>
         <div className="flex max-h-[735px] w-full flex-col gap-[1rem]">
-          {/* <GoogleSignInButton />
-          <div className=" mx-auto flex w-full items-center justify-evenly text-[#CBD5E2] before:mr-4 before:block before:h-px before:flex-grow before:bg-[#CBD5E2] after:ml-4 after:block after:h-px after:flex-grow after:bg-[#CBD5E2]">
-            OR
-          </div> */}
           <form onSubmit={form.handleSubmit(onSubmit)} className=" w-full">
             <div className="gap-4 space-y-4">
               {headerTitle === "Sign Up" && (
