@@ -8,7 +8,7 @@ import type { Document } from "mongoose";
 import { getOauth2Config } from "~/server/constants/integrations";
 import { IntegrationOauth2Props } from "~/server/api/routers/general";
 import Integration from "~/server/models/Integration";
-import { Resource } from "sst";
+import { env } from "~/env";
 
 async function getUserDetails(accessToken: string) {
   const client = Client.init({
@@ -44,7 +44,7 @@ export async function GET(req: NextRequest) {
 
     const options = {
       code,
-      redirect_uri: `${Resource.cybermap.url || "http://localhost:3000"}/api/integrations/callback/${provider}`,
+      redirect_uri: `${env.BASE_URL || "http://localhost:3000"}/api/integrations/callback/${provider}`,
     };
 
     const organisationIntegrations =
