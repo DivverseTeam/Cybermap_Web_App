@@ -37,7 +37,7 @@ const BreadCrumbs: FunctionComponent<BreadCrumbsProps> = () => {
                   href={`/${fullPath}`}
                   className={cn(
                     index === pathNames.length - 1
-                      ? "text-black"
+                      ? "text-black uppercase"
                       : "text-muted-foreground"
                   )}
                 >

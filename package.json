@@ -99,6 +99,7 @@
     "jsx-email": "^1.12.1",
     "jwt-decode": "^4.0.0",
     "lucide-react": "^0.441.0",
+    "markdown-to-jsx": "^7.7.0",
     "mongodb": "^6.9.0",
     "mongoose": "^8.6.3",
     "next": "15.0.2",
