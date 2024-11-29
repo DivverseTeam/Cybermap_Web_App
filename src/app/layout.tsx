@@ -6,6 +6,7 @@ import { Inter, Public_Sans } from "next/font/google";
 import { TRPCReactProvider } from "~/trpc/react";
 import { Wrapper } from "./_wrapper";
 import { getServerAuthSession } from "~/server/auth";
+import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
   title: "Create T3 App",
@@ -30,6 +31,7 @@ export default async function RootLayout({
         <TRPCReactProvider>
           <Wrapper session={session}>{children}</Wrapper>
         </TRPCReactProvider>
+        <Toaster />
       </body>
     </html>
   );

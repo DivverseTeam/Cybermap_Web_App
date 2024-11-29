@@ -1,49 +1,47 @@
 "use client";
+
 import React from "react";
 import PageTitle from "~/components/PageTitle";
-import FrameworkCard from "./components/FrameworkCard";
-import type { IFramework } from "./types";
+import dynamic from "next/dynamic";
+import { api } from "~/trpc/react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
-type Props = {};
+const ProgressCard = dynamic(() => import("./components/progress-card"), {
+  ssr: false,
+});
 
-export const frameworksWithControls: IFramework[] = [
-  {
-    name: "ISO 27001",
-    logo: "",
-    controlsCompletion: {
-      completedControls: 65,
-      totalControls: 92,
-    },
-    modulesCompletion: {
-      completedModules: 40,
-      totalModules: 97,
-    },
-  },
-  {
-    name: "SOC 2",
-    logo: "",
-    controlsCompletion: {
-      completedControls: 32,
-      totalControls: 100,
-    },
-    modulesCompletion: {
-      completedModules: 32,
-      totalModules: 100,
-    },
-  },
-];
-export default function ComplianceGuidePage({}: Props) {
+export default function ComplianceGuidePage() {
+  const [frameworks] = api.frameworks.getWithCompletion.useSuspenseQuery();
+  const pathname = usePathname();
+
   return (
     <div className="flex flex-col gap-5">
       <PageTitle
-        title="Compliance guide"
+        title="Compliance Guide"
         subtitle="Track your progress towards framework compliance"
-        // action={<NewControlSheet />}
       />
-      <div className="grid grid-cols-2 2xl:grid-cols-3 gap-6">
-        {frameworksWithControls.map((framework, idx) => (
-          <FrameworkCard key={idx} framework={framework} />
-        ))}
+      <div className="grid grid-cols-2 gap-6 2xl:grid-cols-3">
+        {frameworks.map((framework, idx) => {
+          const {
+            logo,
+            name,
+            slug,
+            complianceScore: { passing, failing, risk },
+          } = framework;
+
+          return (
+            <Link key={idx} href={`${pathname}/${slug}`}>
+              <ProgressCard
+                logo={logo}
+                total={passing + failing + risk}
+                completed={passing}
+                title={name}
+                tag="controls"
+              />
+            </Link>
+          );
+        })}
       </div>
     </div>
   );

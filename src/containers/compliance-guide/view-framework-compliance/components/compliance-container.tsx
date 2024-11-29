@@ -26,11 +26,11 @@ export default function ComplianceContainer({}: Props) {
     <Accordion
       type="single"
       collapsible
-      className="text-secondary py-2 text-xs"
+      className="py-2 text-secondary text-sm"
     >
       {/* GENERAL */}
       <AccordionItem value="item-1">
-        <AccordionTrigger className="bg-gray-100 rounded-sm p-3">
+        <AccordionTrigger className="rounded-sm bg-gray-100 p-3">
           <p>GENERAL</p>
           <div className="flex items-center">
             <p className="flex justify-end">1 module</p>
@@ -38,7 +38,7 @@ export default function ComplianceContainer({}: Props) {
             <ChevronDown className="h-4 w-4 shrink-0 transition-transform duration-200" />
           </div>
         </AccordionTrigger>
-        <AccordionContent className="px-3 flex items-center justify-between py-3 text-black">
+        <AccordionContent className="flex items-center justify-between px-3 py-3 text-black">
           <p>Overview</p>
           <Badge className="w-max font-semibold" variant={"success"}>
             Completed
@@ -48,7 +48,7 @@ export default function ComplianceContainer({}: Props) {
 
       {/* START YOUR PROJECT */}
       <AccordionItem value="item-2">
-        <AccordionTrigger className="bg-gray-100 px-1 rounded-sm p-3 ">
+        <AccordionTrigger className="rounded-sm bg-gray-100 p-3 px-1 ">
           <p>START YOUR PROJECT</p>
           <div className="flex items-center">
             <p className="flex justify-end">4 modules</p>
@@ -56,7 +56,7 @@ export default function ComplianceContainer({}: Props) {
             <ChevronDown className="h-4 w-4 shrink-0 transition-transform duration-200" />
           </div>
         </AccordionTrigger>
-        <AccordionContent className="px-3 flex items-center justify-between py-3 text-black">
+        <AccordionContent className="flex items-center justify-between px-3 py-3 text-black">
           <p>What is an ISMS?</p>
           <Badge className="w-max font-semibold" variant={"success"}>
             Completed
