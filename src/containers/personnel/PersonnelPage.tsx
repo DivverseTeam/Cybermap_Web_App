@@ -20,7 +20,7 @@ const employeesData = employees;
 const allCompliances = new Set();
 
 employeesData.forEach((employee: IEmployee) => {
-  employee.complianceList.forEach((compliance) => {
+  employee.complianceList?.forEach((compliance) => {
     Object.keys(compliance).forEach((key) => allCompliances.add(key));
   });
 });
@@ -86,7 +86,7 @@ export default function PersonnelPage({}: Props) {
         hireDate: new Date(employee.hireDate),
         terminationDate:
           employee.terminationDate && new Date(employee.terminationDate),
-        complianceList: employee.complianceList.map((compliance) => {
+        complianceList: employee.complianceList?.map((compliance) => {
           // Ensure every key has a boolean value (true or false)
           const cleanedCompliance = Object.fromEntries(
             Object.entries(compliance).map(([key, value]) => [
@@ -100,21 +100,21 @@ export default function PersonnelPage({}: Props) {
       const filteredData = employeeData.filter((employee) => {
         // Check if "compliant" is selected in the list
         if (selectedCompliances.includes("Compliant")) {
-          return employee.complianceList.every(
+          return employee.complianceList?.every(
             (compliance) => Object.values(compliance)[0] === true
           );
         }
 
         // Check if "non-compliant" is selected in the list
         if (selectedCompliances.includes("Non-compliant")) {
-          return employee.complianceList.some((compliance) =>
+          return employee.complianceList?.some((compliance) =>
             Object.values(compliance).some((value) => value === false)
           );
         }
 
         // General case for specific compliance selections
         return selectedCompliances.every((compliance) =>
-          employee.complianceList.some(
+          employee.complianceList?.some(
             (complianceObj) => complianceObj[compliance] === true
           )
         );
@@ -202,8 +202,8 @@ export default function PersonnelPage({}: Props) {
       <Button
         variant="outline"
         onClick={scrollToTop}
-        className={`fixed right-4 bottom-4 rounded-full bg-muted p-2 shadow-lg transition hover:bg-gray-200 ${
-          isVisible ? "opacity-100" : "opacity-0"
+        className={`fixed right-4 bottom-4 rounded-full bg-blue-500 p-2 shadow-lg transition hover:bg-gray-200 ${
+          isVisible ? "opacity-80" : "opacity-10"
         }`}
         aria-label="Scroll to top"
       >

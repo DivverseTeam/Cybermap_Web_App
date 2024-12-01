@@ -6,5 +6,5 @@ export interface IEmployee {
   gender: string;
   hireDate: Date | string;
   terminationDate?: Date | string | undefined;
-  complianceList: Array<{ [key: string]: boolean | undefined }>;
+  complianceList?: Array<{ [key: string]: boolean | undefined }>;
 }
