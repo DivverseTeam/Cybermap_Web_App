@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import React, { type FunctionComponent } from "react";
 import { api } from "~/trpc/react";
 import Markdown from "markdown-to-jsx";
@@ -14,6 +14,7 @@ const LessonPage: FunctionComponent<LessonPageProps> = () => {
   const slug = params.slug as string;
   const lessonSlug = params.lessonSlug as string;
   const utils = api.useUtils();
+  const router = useRouter();
 
   const [course] = api.frameworks.compliance.getCourse.useSuspenseQuery({
     slug,
@@ -22,7 +23,9 @@ const LessonPage: FunctionComponent<LessonPageProps> = () => {
     api.frameworks.compliance.markLessonCompleted.useMutation();
 
   const lessons = course.modules.flatMap((module) => module.lessons);
-  const lesson = lessons.find((lesson) => lesson.slug === lessonSlug);
+  const lessonIndex = lessons.findIndex((lesson) => lesson.slug === lessonSlug);
+  const lesson = lessons[lessonIndex];
+  const nextLesson = lessons[lessonIndex + 1];
   // const module = course.modules[Math.floor(lesson!.id) - 1];
 
   const onMarkCompleted = () => {
@@ -35,6 +38,9 @@ const LessonPage: FunctionComponent<LessonPageProps> = () => {
         onSuccess: () => {
           toast.success("Lesson marked as completed");
           utils.frameworks.compliance.getCourse.invalidate({ slug });
+          router.push(`./${nextLesson?.slug}`);
+          // setTimeout(() => {
+          // }, 500);
           // Push to the next lesson
         },
         onError: (error) => {

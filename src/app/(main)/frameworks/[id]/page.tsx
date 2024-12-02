@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 
 import { Button } from "~/app/_components/ui/button";
 import PageTitle from "~/components/PageTitle";
-import ViewFrameworks from "~/containers/frameworks/view-framework/ViewFrameworks";
+// import ViewFrameworks from "~/containers/frameworks/view-framework/ViewFrameworks";
 // import ViewFramework from "~/containers/dashboard/frameworks/view-frameworks/ViewFramework";
 
 export default function page() {
@@ -20,7 +20,7 @@ export default function page() {
       />
 
       {/* Content */}
-      <ViewFrameworks />
+      {/* <ViewFrameworks /> */}
 
       {/* <Link href="/dashboard/frameworks">
 				<p className="text-blue-600 hover:underline">Back to Frameworks</p>

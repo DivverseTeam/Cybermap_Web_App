@@ -1,9 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import dynamic from "next/dynamic";
 import { useParams } from "next/navigation";
-import { frameworksWithControls } from "../ComplianceGuidePage";
 import PageTitle from "~/components/PageTitle";
 import { api } from "~/trpc/react";
 import {
@@ -13,6 +12,7 @@ import {
   TabsTrigger,
 } from "~/app/_components/ui/tabs";
 import ComplianceModules from "./components/compliance-modules";
+import ComplianceControls from "./components/compliance-controls";
 
 const ProgressCard = dynamic(() => import("../components/progress-card"), {
   ssr: false,
@@ -22,21 +22,23 @@ type Props = {};
 
 export default function ViewFrameworkCompliance({}: Props) {
   const params = useParams();
-  const slug = params.slug as string;
+  const slug = (params.slug as string).toLowerCase();
 
   const [course] = api.frameworks.compliance.getCourse.useSuspenseQuery({
     slug,
   });
+  const [frameworks] = api.frameworks.getWithCompletion.useSuspenseQuery();
 
-  const [activeTab, setActiveTab] = useState<"compliance" | "controls">(
-    "compliance",
-  );
+  const framework = frameworks.find((framework) => framework.slug === slug);
+  const {
+    controls = [],
+    complianceScore: { passing = 0, failing = 0, risk = 0 } = {},
+  } = framework || {};
 
   return (
     <div className="flex flex-col gap-4 2xl:gap-6">
       <PageTitle title={""} />
 
-      {/* COMPLIANCE SUMMARY */}
       <div className="grid grid-cols-2 gap-4 2xl:gap-6">
         <ProgressCard
           total={course.readiness.total}
@@ -46,22 +48,27 @@ export default function ViewFrameworkCompliance({}: Props) {
         />
 
         <ProgressCard
-          total={course.readiness.total}
-          completed={course.readiness.completed}
+          total={passing + failing + risk}
+          completed={passing}
           tag="controls"
           title="Audit Preparedness"
         />
       </div>
 
-      <Tabs defaultValue={activeTab}>
+      <Tabs
+        defaultValue="compliance"
+        className="flex flex-col items-start gap-5"
+      >
         <TabsList className="rounded-none bg-inherit">
           <TabsTrigger value="compliance">Compliance Modules</TabsTrigger>
           <TabsTrigger value="controls">Controls</TabsTrigger>
         </TabsList>
-        <TabsContent value="compliance">
+        <TabsContent value="compliance" className="w-full">
           <ComplianceModules course={course.modules} />
         </TabsContent>
-        <TabsContent value="controls">Course</TabsContent>
+        <TabsContent value="controls" className="w-full">
+          <ComplianceControls controls={controls} />
+        </TabsContent>
       </Tabs>
     </div>
   );

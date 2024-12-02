@@ -26,7 +26,7 @@ const ProgressCard: FunctionComponent<ProgressCardProps> = ({
   tag,
 }) => {
   const usePercentage = total < 76 || total > 100;
-  const percentage = Math.round((completed / total) * 100);
+  const percentage = total ? Math.round((completed / total) * 100) : 0;
   const radialCircleSize = 20;
 
   const radialBarData = [{ name: "score", value: percentage }];

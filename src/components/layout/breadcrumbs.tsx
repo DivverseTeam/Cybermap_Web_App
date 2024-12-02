@@ -1,6 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
+import Link from "next/link";
 import type { FunctionComponent } from "react";
 import React from "react";
 import {
@@ -34,14 +35,15 @@ const BreadCrumbs: FunctionComponent<BreadCrumbsProps> = () => {
             <React.Fragment key={index}>
               <BreadcrumbItem>
                 <BreadcrumbLink
+                  asChild={true}
                   href={`/${fullPath}`}
                   className={cn(
                     index === pathNames.length - 1
                       ? "text-black uppercase"
-                      : "text-muted-foreground"
+                      : "text-muted-foreground",
                   )}
                 >
-                  {unslugify(path)}
+                  <Link href={`/${fullPath}`}>{unslugify(path)}</Link>
                 </BreadcrumbLink>
               </BreadcrumbItem>
               {index < pathNames.length - 1 && (

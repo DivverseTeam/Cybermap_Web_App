@@ -5,7 +5,6 @@ import { twMerge } from "tailwind-merge";
 import { z } from "zod";
 import { Button } from "~/app/_components/ui/button";
 import TagsContainer from "~/components/TagContainer";
-import type { IFrameworkData } from "../types";
 
 const FrameworkStatus = z.enum([
   "FULLY_IMPLEMENTED",
@@ -103,7 +102,7 @@ export const frameworkDataColumns: ColumnDef<FrameComplianceType>[] = [
       const cn = (c: string) =>
         twMerge(
           "font-medium text-xs p-2 flex items-center justify-center rounded-[1000px] w-fit h-5",
-          c
+          c,
         );
       if (status === FrameworkStatus.Values.FULLY_IMPLEMENTED) {
         return (
@@ -152,7 +151,7 @@ export const frameworkIcons = {
   gdpr: "/frameworkIcons/gdpr.svg",
 };
 
-export const frameworkList: IFrameworkData[] = [
+export const frameworkList = [
   {
     name: "HIPAA",
     keyVal: "hipaa",

@@ -1,4 +1,4 @@
-import User, { User as UserSchema } from "~/server/models/User";
+import UserModel, { User } from "~/server/models/User";
 import { Resource } from "sst";
 import { jwtDecode } from "jwt-decode";
 
@@ -58,7 +58,7 @@ export const signUp = async (props: SignUpProps) => {
       ),
     ]);
 
-    let user = await User.create({
+    let user = await UserModel.create({
       name,
       email,
       role,
@@ -67,7 +67,7 @@ export const signUp = async (props: SignUpProps) => {
 
     user = user.toJSON();
 
-    return UserSchema.parse(user);
+    return User.parse(user);
   } catch (error) {
     if (error instanceof UsernameExistsException) {
       throw new Error("Email already exists");
@@ -100,7 +100,7 @@ export const signIn = async (props: SignInProps) => {
       initiateAuthOutput?.AuthenticationResult?.IdToken || "",
     );
 
-    let user = await User.findOne({ cognitoId });
+    let user = await UserModel.findOne({ cognitoId });
 
     if (!user) {
       throw new Error("User not found");
@@ -108,7 +108,7 @@ export const signIn = async (props: SignInProps) => {
 
     user = user.toJSON();
 
-    return UserSchema.parse(user);
+    return User.parse(user);
   } catch (error) {
     throw error;
   }

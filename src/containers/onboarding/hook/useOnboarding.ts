@@ -3,6 +3,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
 import {
   FrameworkName,
@@ -68,7 +69,13 @@ export default function useOnboarding() {
             });
           }
 
-          router.push("/policies");
+          toast.success("Onboarding completed successfully", {
+            description: "You can now start using the app",
+          });
+
+          setTimeout(() => {
+            router.push("/dashboard");
+          }, 2000);
         },
         onError: (error: any) => {
           console.error("Error signing up:", error);

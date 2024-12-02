@@ -10,7 +10,7 @@ export default async function Page(props: Props) {
   const params = await props.params;
 
   void api.frameworks.compliance.getCourse.prefetch({
-    slug: params.slug,
+    slug: params.slug.toLowerCase(),
   });
 
   return <ViewFrameworkCompliance />;
