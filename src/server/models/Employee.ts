@@ -3,8 +3,7 @@ import { z } from "zod";
 
 import { BaseSchema } from "./base";
 
-export const Employee = z.object({
-  id: z.string(),
+export const EmployeeType = z.object({
   employeeId: z.string(),
   firstName: z.string(),
   lastName: z.string(),
@@ -13,13 +12,11 @@ export const Employee = z.object({
   hireDate: z.coerce.date(),
   terminationDate: z.coerce.date().optional(),
   organisationId: z.string(),
-  createdAt: z.coerce.date(),
-  errorCode: z.string().optional(),
 });
 
-export type Employee = z.infer<typeof Employee>;
+export type EmployeeType = z.infer<typeof EmployeeType>;
 
-type EmployeeWithDocument = Employee & mongoose.Document;
+type EmployeeWithDocument = EmployeeType & mongoose.Document;
 
 const EmployeeSchema = new BaseSchema<EmployeeWithDocument>({
   employeeId: {

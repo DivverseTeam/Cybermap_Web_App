@@ -1,8 +1,8 @@
 "use client";
 
 import { PlusSignIcon } from "hugeicons-react";
-import { CloudUpload } from "lucide-react";
-import { useState } from "react";
+import { CloudUpload, FileSpreadsheet, X } from "lucide-react";
+import { useRef, useState } from "react";
 
 // import { useMediaQuery } from "~/hooks/use-media-query";
 import { Button } from "~/app/_components/ui/button";
@@ -31,6 +31,9 @@ import { useMediaQuery } from "~/hooks/use-media-query";
 
 import * as XLSX from "xlsx";
 import { toast } from "sonner";
+import { api } from "~/trpc/react";
+import type { EmployeeType } from "~/server/models/Employee";
+import { Progress } from "~/app/_components/ui/progress";
 
 // import { Evidence } from "../_lib/queries";
 
@@ -49,28 +52,39 @@ export function ImportEmployeeDialog({
   onOpenChange,
   ...props
 }: ImportEmployeesDialogProps) {
+  const {
+    mutate: addEmployees,
+    isPending,
+
+    error,
+  } = api.employees.addEmployees.useMutation();
   const isDesktop = useMediaQuery("(min-width: 640px)");
 
-  const [fileData, setFileData] = useState<object[]>([]);
-  const [file, setFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [fileData, setFileData] = useState<EmployeeType[]>([]);
+  const [file, setFile] = useState<File | undefined>();
 
-  const [loading, setLoading] = useState<boolean>(false);
-  const [preview, setPreview] = useState<string>("");
+  const [preview, setPreview] = useState<string | undefined>("");
+
+  const [processingProgress, setProcessingProgress] = useState<number>(0);
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
+    setPreview("");
+    resetFileInput();
+    setFile(undefined);
     const droppedFile = e.dataTransfer.files[0]; // Get the first file
     if (droppedFile) {
-      setFile(droppedFile);
       processFile(droppedFile); // Process the dropped file
+      setFile(droppedFile);
     }
   };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0]; // Get the first file
     if (selectedFile) {
-      setFile(selectedFile);
       processFile(selectedFile); // Process the selected file
+      setFile(selectedFile);
     }
   };
 
@@ -78,22 +92,28 @@ export function ImportEmployeeDialog({
     e.preventDefault();
 
   const processFile = (file: File) => {
+    setProcessingProgress(0); // Reset progress at the start
+
     const reader = new FileReader();
-    if (file.size > 10 * 1024 * 1024) {
-      // 10MB limit
-      alert("File size exceeds 10MB.");
-      return;
-    }
+    // if (file.size > 10 * 1024 * 1024) {
+    //   // 10MB limit
+    //   alert("File size exceeds 10MB.");
+    //   return;
+    // }
     reader.onload = (event) => {
       const binaryData = event.target?.result;
 
       if (binaryData) {
+        setProcessingProgress(30); // File reading complete (30%)
+
         const workbook = XLSX.read(binaryData, { type: "binary" });
         if (workbook.SheetNames.length === 0) {
           console.error("No sheets found in the workbook.");
           alert("The uploaded file does not contain any sheets.");
           return;
         }
+        setProcessingProgress(50); // Workbook parsed (50%)
+
         const sheetName = workbook.SheetNames[0] || "Sheet 1"; // Get the first sheet
         const worksheet = workbook.Sheets[sheetName];
         // Ensure the worksheet is valid
@@ -102,41 +122,49 @@ export function ImportEmployeeDialog({
           alert(`The sheet "${sheetName}" is missing.`);
           return;
         }
-        const jsonData: {}[] = XLSX.utils.sheet_to_json(worksheet); // Convert to JSON
-        setFileData(jsonData); // Save data as an array of objects
+        const jsonData: EmployeeType[] = XLSX.utils.sheet_to_json(worksheet); // Convert to JSON
+        setPreview(JSON.stringify(jsonData[0]));
+        setProcessingProgress(90); // Data conversion complete (90%)
 
-        setPreview(JSON.stringify(fileData[0], null, 2));
+        setFileData(jsonData); // Save data as an array of objects
+        setProcessingProgress(100); // Processing complete (100%)
       }
     };
     reader.readAsBinaryString(file);
   };
   const handleFileUpload = async () => {
-    try {
-      setLoading(true);
-      // const response = await fetch("/api/upload", {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify(fileData), // Convert the data to JSON
-      // });
-      const response = 1 + 1;
+    addEmployees(fileData, {
+      onSuccess: (data) => {
+        toast.success(data?.message);
+        setPreview("");
+        resetFileInput();
+        setFile(undefined);
+      },
+      onError: (err) => {
+        console.error("Error:", err);
+        toast.error(
+          "Failed to upload employees! Please review the csv file and try again"
+        );
+        setPreview(error?.message);
+        resetFileInput();
+        setFile(undefined);
+      },
+    });
+  };
 
-      // if (!response.ok) {
-      //   setLoading(false);
-      //   throw new Error(`Failed to upload data: ${response.statusText}`);
-      // }
+  const formatFileSize = (bytes: number): string => {
+    if (bytes >= 1024 * 1024) {
+      // Convert to MB if size >= 1MB
+      return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+    } else {
+      // Otherwise, show in KB
+      return `${(bytes / 1024).toFixed(0)} KB`;
+    }
+  };
 
-      // const result = await response.json();
-      const result = await response;
-      console.log("Employees Upload successful:", result);
-      setLoading(false);
-      toast("Employees uploaded successfully!");
-      setFile(null);
-    } catch (error) {
-      console.error("Error uploading data:", error);
-      setLoading(false);
-      toast.error("Failed to upload data. Please try again.");
+  const resetFileInput = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ""; // Clear the input value
     }
   };
 
@@ -156,25 +184,24 @@ export function ImportEmployeeDialog({
           </DialogTrigger>
         ) : null}
         <DialogContent>
-          <div className="flex w-full flex-col items-center justify-center gap-4 overflow-y-auto">
+          <div className="flex w-full flex-col justify-center gap-4 overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Admin employee upload</DialogTitle>
               <DialogDescription>
-                Here you can manually import employees from your local file
-                system
+                Upload the appropriate csv or excel sheet
               </DialogDescription>
             </DialogHeader>
             <div
               onDrop={handleDrop}
               onDragOver={handleDragOver}
-              className="flex h-36 w-full cursor-pointer items-center justify-center rounded-lg border-2 border-gray-300 border-dashed bg-gray-50 hover:border-secondary"
+              className="flex mt-2 h-44 w-full cursor-pointer items-center justify-center rounded-sm border border-gray-200 border-dashed bg-gray-50 hover:border-secondary"
             >
               {file ? (
                 <ul>
                   <li className="text-gray-700 text-sm">{file.name}</li>
                 </ul>
               ) : (
-                <div className="flex items-center justify-between gap-10">
+                <div className="flex flex-col items-center justify-between gap-2">
                   <div className="flex items-center justify-between gap-3">
                     <CloudUpload className="h-20 w-20 text-[#E0E1E6]" />
                     <div className="flex flex-col gap-2 text-gray-500 text-xs">
@@ -184,9 +211,9 @@ export function ImportEmployeeDialog({
                   </div>
                   <Label
                     htmlFor="fileUpload"
-                    className="mt-4 cursor-pointer rounded-md border-2 border-secondary bg-gray-50 px-2 py-1 text-secondary text-xs hover:bg-muted"
+                    className=" cursor-pointer rounded-sm font-light border border-secondary bg-gray-50 px-14 py-1.5 text-secondary text-xs hover:bg-gray-200"
                   >
-                    SELECT FILE
+                    Select File
                   </Label>
                 </div>
               )}
@@ -194,15 +221,49 @@ export function ImportEmployeeDialog({
             <input
               type="file"
               id="fileUpload"
+              ref={fileInputRef}
               className="hidden"
-              multiple
+              accept=".xlsx, .xls"
               onChange={handleFileSelect}
             />
+            {file && processingProgress && (
+              <div className="flex flex-col mt-4 rounded-md border bg-gray-100 p-4 gap-2">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex gap-2 items-center">
+                    <FileSpreadsheet className="w-8 h-8" />
+                    <div className="flex-flex-col gap-2">
+                      <p className="font-normal">{file.name}</p>
+                      <span className="text-secondary text-xs">
+                        {formatFileSize(file.size)}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex items-end flex-col gap-2">
+                    <X
+                      className="w-4 h-4 cursor-pointer"
+                      onClick={() => {
+                        setPreview("");
+                        resetFileInput();
+                        setFile(undefined);
+                      }}
+                    />
+
+                    <span className="text-secondary text-xs">
+                      {processingProgress}%
+                    </span>
+                  </div>
+                </div>
+                <Progress value={processingProgress} />
+              </div>
+            )}
             <div className="mt-4">
-              {fileData.length > 0 ? (
-                <pre className="max-h-32 overflow-auto">
+              {fileData ? (
+                <pre
+                  className={`"max-h-32 h-10 overflow-auto w-full pb-5" ${
+                    error && "text-destructive"
+                  }`}
+                >
                   {preview}
-                  {/* Display only the first row */}
                 </pre>
               ) : (
                 <p>No data uploaded yet.</p>
@@ -211,18 +272,25 @@ export function ImportEmployeeDialog({
           </div>
           <DialogFooter className="gap-2 sm:space-x-0">
             <DialogClose asChild>
-              <Button variant="outline" onClick={() => setFile(null)}>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setPreview("");
+                  resetFileInput();
+                  setFile(undefined);
+                }}
+              >
                 Cancel
               </Button>
             </DialogClose>
             <Button
               aria-label="Delete selected rows"
               variant={"default"}
-              loading={loading}
+              loading={isPending}
               type="submit"
               onClick={handleFileUpload}
             >
-              Save
+              Import
             </Button>
           </DialogFooter>
         </DialogContent>
