@@ -26,7 +26,7 @@ export const employeesRouter = createTRPCRouter({
         const newEmployees = employeesWithOrgId.map((employee) => ({
           updateOne: {
             filter: { email: employee.email }, // Match by employeeId
-            update: { $set: employee }, // Update fields
+            update: { $setOnInsert: employee }, // Only insert new employees
             upsert: true, // Insert if not found
           },
         }));
