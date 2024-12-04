@@ -67,9 +67,7 @@ export function ImportEmployeeDialog({
 
   const [preview, setPreview] = useState<string | undefined>("");
 
-  const [processingProgress, setProcessingProgress] = useState<
-    number | undefined
-  >(undefined);
+  const [processingProgress, setProcessingProgress] = useState<number>(0);
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -368,6 +366,7 @@ export function ImportEmployeeDialog({
               type="submit"
               className="px-10"
               onClick={handleFileUpload}
+              disabled={processingProgress < 100}
             >
               Import
             </Button>
