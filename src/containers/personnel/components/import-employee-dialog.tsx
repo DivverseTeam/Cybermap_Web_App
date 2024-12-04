@@ -94,11 +94,17 @@ export function ImportEmployeeDialog({
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) =>
     e.preventDefault();
 
+  type ProcessStep = {
+    delay: number;
+    progress: number;
+  };
+
   const processFile = (file: File) => {
     if (!file) {
       toast.error("Please select a file to upload.");
       return;
     }
+
     setProcessingProgress(0); // Reset progress at the start
 
     const reader = new FileReader();
@@ -110,33 +116,94 @@ export function ImportEmployeeDialog({
     reader.onload = (event) => {
       const binaryData = event.target?.result;
 
-      if (binaryData) {
-        setProcessingProgress(30); // File reading complete (30%)
+      if (!binaryData) {
+        toast.error("Error reading the file. Please try again.");
+        return;
+      }
 
-        const workbook = XLSX.read(binaryData, { type: "binary" });
-        if (workbook.SheetNames.length === 0) {
-          console.error("No sheets found in the workbook.");
-          alert("The uploaded file does not contain any sheets.");
-          return;
-        }
-        setProcessingProgress(50); // Workbook parsed (50%)
+      try {
+        const workbook: XLSX.WorkBook = XLSX.read(binaryData, {
+          type: "binary",
+        });
 
-        const sheetName = workbook.SheetNames[0] || "Sheet 1"; // Get the first sheet
-        const worksheet = workbook.Sheets[sheetName];
-        // Ensure the worksheet is valid
-        if (!worksheet) {
-          console.error(`Sheet "${sheetName}" not found.`);
-          alert(`The sheet "${sheetName}" is missing.`);
-          return;
-        }
-        const jsonData: EmployeeType[] = XLSX.utils.sheet_to_json(worksheet); // Convert to JSON
-        setPreview(JSON.stringify(jsonData[0]));
-        setProcessingProgress(90); // Data conversion complete (90%)
+        const processSteps: ProcessStep[] = [
+          { delay: 500, progress: 30 }, // File reading complete
+          { delay: 1000, progress: 50 }, // Workbook parsed
+          { delay: 1000, progress: 70 }, // Sheet selected and validated
+          { delay: 1000, progress: 90 }, // Data converted to JSON
+          { delay: 500, progress: 100 }, // Processing complete
+        ];
 
-        setFileData(jsonData); // Save data as an array of objects
-        setProcessingProgress(100); // Processing complete (100%)
+        let currentStep = 0;
+
+        const simulateProcessing = (): void => {
+          const step = processSteps[currentStep];
+
+          if (step) {
+            const { delay, progress } = step;
+
+            setTimeout(() => {
+              setProcessingProgress(progress);
+
+              // Perform actions at specific progress stages
+              if (progress === 50) {
+                // Validate workbook
+                if (workbook.SheetNames.length === 0) {
+                  toast.error("The uploaded file does not contain any sheets.");
+                  return;
+                }
+              }
+
+              if (progress === 70) {
+                // Validate and process the first sheet
+                const sheetName: string = workbook.SheetNames[0] || "Sheet1";
+                const worksheet: XLSX.WorkSheet | undefined =
+                  workbook.Sheets[sheetName];
+
+                if (!worksheet) {
+                  toast.error(`The sheet "${sheetName}" is missing.`);
+                  return;
+                }
+              }
+
+              if (progress === 90) {
+                // Convert the sheet to JSON
+                const sheetName: string = workbook.SheetNames[0] || "Sheet1";
+                const worksheet: XLSX.WorkSheet | undefined =
+                  workbook.Sheets[sheetName];
+
+                // Ensure the worksheet is valid
+                if (!worksheet) {
+                  console.error(`Sheet "${sheetName}" not found.`);
+                  alert(`The sheet "${sheetName}" is missing.`);
+                  return;
+                }
+                const jsonData: EmployeeType[] =
+                  XLSX.utils.sheet_to_json(worksheet);
+
+                setPreview(JSON.stringify(jsonData[0])); // Show a preview of the first record
+                setFileData(jsonData); // Save the processed data
+              }
+
+              currentStep++;
+              simulateProcessing(); // Move to the next step
+            }, delay);
+          }
+        };
+
+        simulateProcessing(); // Start the simulation
+      } catch (error) {
+        console.error("Error processing file:", error);
+        toast.error(
+          "An error occurred during file processing. Please try again."
+        );
       }
     };
+
+    reader.onerror = (): void => {
+      toast.error("Failed to read the file. Please try again.");
+    };
+
     reader.readAsBinaryString(file);
   };
   const handleFileUpload = () => {
@@ -237,7 +304,7 @@ export function ImportEmployeeDialog({
               accept=".xlsx, .xls"
               onChange={handleFileSelect}
             />
-            {file && processingProgress && (
+            {file && (
               <div className="flex flex-col mt-4 rounded-md border bg-gray-100 p-4 gap-2">
                 <div className="flex items-center justify-between gap-2">
                   <div className="flex gap-2 items-center">

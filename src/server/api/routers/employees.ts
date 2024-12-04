@@ -60,7 +60,9 @@ export const employeesRouter = createTRPCRouter({
     console.log("organisayion ID:", organisationId);
 
     try {
-      const employees = await Employee.find({ organisationId });
+      const employees = await Employee.find({ organisationId }).sort({
+        firstName: 1,
+      });
 
       // return EmployeeType.array().parse(employees);
       return employees;
