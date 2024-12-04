@@ -15,6 +15,7 @@ export const Organisation = z.object({
   id: z.string(),
   logoUrl: z.string().optional(),
   name: z.string(),
+  azureTenantId: z.string(),
   size: OrganisationSize,
   kind: OrganisationKind,
   industry: OrganisationIndustry,
@@ -28,6 +29,7 @@ type OrganisationWithDocument = Organisation & mongoose.Document;
 const OrganisationSchema = new BaseSchema<OrganisationWithDocument>({
   logoUrl: { type: String, required: false },
   name: { type: String, required: true },
+  azureTenantId: { type: String, required: false },
   size: { type: String, enum: ORGANISATION_SIZES, required: true },
   kind: {
     type: String,

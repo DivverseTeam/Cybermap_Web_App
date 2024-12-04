@@ -2,5 +2,5 @@ import { getAccessControlEvidence } from "../../../integrations/azure/ISO27001/r
 
 export async function getAccessControl() {
   console.log("Getting access controls...");
-  return await getAccessControlEvidence();
+  return getAccessControlEvidence();
 }

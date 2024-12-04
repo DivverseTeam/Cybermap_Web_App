@@ -1,14 +1,14 @@
-import { type NextRequest, NextResponse } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 import { AuthorizationCode } from "simple-oauth2";
 
-import { getServerAuthSession } from "~/server/auth";
 import { Client } from "@microsoft/microsoft-graph-client";
-import { Oauth2Provider } from "~/lib/types/integrations";
-import type { Document } from "mongoose";
-import { getOauth2Config } from "~/server/constants/integrations";
-import { IntegrationOauth2Props } from "~/server/api/routers/general";
-import Integration from "~/server/models/Integration";
 import { Resource } from "sst";
+import { Oauth2Provider } from "~/lib/types/integrations";
+import { runIso27001 } from "~/server/api/routers/controls/iso27001";
+import { IntegrationOauth2Props } from "~/server/api/routers/general";
+import { getServerAuthSession } from "~/server/auth";
+import { getOauth2Config } from "~/server/constants/integrations";
+import Integration from "~/server/models/Integration";
 
 async function getUserDetails(accessToken: string) {
   const client = Client.init({
@@ -20,15 +20,18 @@ async function getUserDetails(accessToken: string) {
   return await client.api("/me").get();
 }
 
-export async function GET(req: NextRequest) {
+export async function GET(req: NextRequest, res: NextResponse) {
   try {
     const searchParams = req.nextUrl.searchParams;
     const { provider } =
-      req.nextUrl.pathname.match(/callback\/(?<provider>\w+)/)?.groups || {};
+      req.nextUrl.pathname.match(/callback\/(?<provider>[\w-]+)/)?.groups || {};
 
-    const parsedProvider = Oauth2Provider.parse(provider?.toUpperCase());
+    const providerName = provider?.split("_")[0];
+    const providerResource = provider?.split("_")[1];
 
-    const session = await getServerAuthSession();
+    const parsedProvider = Oauth2Provider.parse(providerName?.toUpperCase());
+
+    const session: any = await getServerAuthSession();
 
     if (!session || !session?.user?.organisationId) {
       console.error("User session not found or organisation ID missing.");
@@ -44,17 +47,21 @@ export async function GET(req: NextRequest) {
 
     const options = {
       code,
-      redirect_uri: `${Resource.cybermap.url || "http://localhost:3000"}/api/integrations/callback/${provider}`,
+      redirect_uri: `${
+        Resource.cybermap.url || "http://localhost:3000"
+      }/api/integrations/callback/${provider}`,
+      // redirect_uri: `${"http://localhost:3000"}/api/integrations/callback/${provider}`, Abiola
     };
 
-    const organisationIntegrations =
-      (await Integration.find({
-        organisationId: session.user.organisationId,
-        oauthProvider: parsedProvider,
-      })) || [];
+    const organisationIntegration = await Integration.findOne({
+      organisationId: session.user.organisationId,
+      oauthProvider: parsedProvider,
+      slug: providerResource,
+    });
 
+    if (!organisationIntegration) throw new Error("Integation not found");
     const oauth2Props = IntegrationOauth2Props.parse({
-      ...organisationIntegrations[0]?.toObject(),
+      ...organisationIntegration?.toObject(),
       provider: parsedProvider,
     });
 
@@ -68,20 +75,16 @@ export async function GET(req: NextRequest) {
     const { token } = accessToken;
     const { access_token, refresh_token, expires_at } = token;
 
-    const savePromises: Array<Promise<Document<unknown>>> = [];
+    // const savePromises: Array<Promise<Document<unknown>>> = [];
 
-    organisationIntegrations.forEach((integration) => {
-      integration.authData = {
-        accessToken: access_token as string,
-        refreshToken: refresh_token as string,
-        expiry: new Date(expires_at as string),
-      };
-      integration.connectedAt = new Date();
+    organisationIntegration.authData = {
+      accessToken: access_token as string,
+      refreshToken: refresh_token as string,
+      expiry: new Date(expires_at as string),
+    };
+    organisationIntegration.connectedAt = new Date();
 
-      savePromises.push(integration.save());
-    });
-
-    await Promise.all(savePromises);
+    organisationIntegration.save();
 
     const user = await getUserDetails(access_token as string);
 
@@ -105,6 +108,11 @@ export async function GET(req: NextRequest) {
         </body>
       </html>
     `;
+
+    // redirect to this page http://localhost:3000/integrations
+    // return NextResponse.redirect(
+    //   new URL("/integrations", "http://localhost:3000")
+    // );
 
     return new NextResponse(html, {
       headers: { "Content-Type": "text/html" },
@@ -134,5 +142,8 @@ export async function GET(req: NextRequest) {
       headers: { "Content-Type": "text/html" },
       status: 500,
     });
+  } finally {
+    runIso27001();
+    NextResponse.redirect(new URL("/integrations", "http://localhost:3000"));
   }
 }

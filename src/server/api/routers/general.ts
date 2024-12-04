@@ -1,18 +1,18 @@
 import { z } from "zod";
 import { PRESIGNED_URL_TYPES } from "~/lib/types";
 
-import mongoose from "mongoose";
-import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { Resource } from "sst";
+import mongoose from "mongoose";
 import { AuthorizationCode } from "simple-oauth2";
+import { Resource } from "sst";
+import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 
-import {
-  getOauth2Config,
-  MICROSOFT_OAUTH_SCOPE,
-} from "~/server/constants/integrations";
 import { integrations } from "~/lib/constants/integrations";
+import {
+  MICROSOFT_OAUTH_SCOPE,
+  getOauth2Config,
+} from "~/server/constants/integrations";
 import Integration from "~/server/models/Integration";
 
 export const IntegrationOauth2Props = z.union([
@@ -21,10 +21,12 @@ export const IntegrationOauth2Props = z.union([
     tenantId: z.string().uuid(),
     subscriptionId: z.string().uuid(),
     workspaceId: z.string().optional(),
+    slug: z.string().optional(),
   }),
   z.object({
     provider: z.literal("GOOGLE"),
     projectId: z.string(),
+    slug: z.string().optional(),
   }),
 ]);
 
@@ -37,7 +39,7 @@ export const generalRouter = createTRPCRouter({
         type: z.enum([...PRESIGNED_URL_TYPES]),
         fileType: z.string(),
         id: z.string().optional(),
-      }),
+      })
     )
     .mutation(async ({ input }) => {
       const { type, fileType } = input;
@@ -74,8 +76,7 @@ export const generalRouter = createTRPCRouter({
     authorization: protectedProcedure
       .input(IntegrationOauth2Props)
       .mutation(async ({ input, ctx }) => {
-        const { provider, ...restInput } = input;
-
+        const { provider, slug, ...restInput } = input;
         const {
           session: {
             user: { organisationId },
@@ -86,37 +87,40 @@ export const generalRouter = createTRPCRouter({
           throw new Error("No organisation found");
         }
 
-        const upsertPromises: Array<Promise<unknown>> = [];
+        const integration = integrations.find(
+          (integration) => integration?.slug === slug
+        );
 
-        integrations
-          .filter((integration) => integration?.oauthProvider === provider)
-          .forEach((integration) => {
-            upsertPromises.push(
-              Integration.updateOne(
-                { integrationId: integration.id },
-                {
-                  $set: {
-                    integrationId: integration.id,
-                    name: integration.name,
-                    slug: integration.slug,
-                    oauthProvider: provider,
-                    authData: {},
-                    organisationId,
-                    ...restInput,
-                  },
-                },
-                { upsert: true },
-              ),
-            );
-          });
-
-        await Promise.all(upsertPromises);
+        if (!integration) throw new Error("Integration not found");
+        await Integration.updateOne(
+          { integrationId: integration.id },
+          {
+            $set: {
+              integrationId: integration.id,
+              name: integration.name,
+              slug: integration.slug,
+              oauthProvider: provider,
+              authData: {},
+              organisationId,
+              ...restInput,
+            },
+          },
+          { upsert: true }
+        );
 
         const client = new AuthorizationCode(getOauth2Config(input));
 
+        const isAzureAD = slug === "azure-ad";
+        const isAzureCloud = slug === "azure-cloud";
+
         const authorizationUri = client.authorizeURL({
-          redirect_uri: `${Resource.cybermap.url || "http://localhost:3000"}/api/integrations/callback/${provider.toLowerCase()}`,
-          scope: MICROSOFT_OAUTH_SCOPE,
+          // redirect_uri: `${"http://localhost:3000"}/api/integrations/callback/${provider.toLowerCase()}_${slug}`,Abiola
+          redirect_uri: `${
+            Resource.cybermap.url || "http://localhost:3000"
+          }/api/integrations/callback/${provider.toLowerCase()}`,
+          scope: isAzureAD
+            ? MICROSOFT_OAUTH_SCOPE
+            : "https://management.azure.com/.default",
         });
 
         return { url: authorizationUri };

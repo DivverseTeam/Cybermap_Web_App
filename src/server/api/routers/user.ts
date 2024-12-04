@@ -6,15 +6,6 @@ import {
   UserRole,
 } from "~/lib/types";
 
-import mongoose from "mongoose";
-import {
-  createTRPCRouter,
-  protectedProcedure,
-  publicProcedure,
-} from "~/server/api/trpc";
-import Organisation from "~/server/models/Organisation";
-import User from "~/server/models/User";
-import { signIn, signUp } from "./actions";
 import {
   CodeMismatchException,
   CognitoIdentityProviderClient,
@@ -23,11 +14,17 @@ import {
   ForgotPasswordCommand,
   UserNotFoundException,
 } from "@aws-sdk/client-cognito-identity-provider";
+import mongoose from "mongoose";
 import { Resource } from "sst";
 import { FrameworkName } from "~/lib/types";
-import { controls } from "~/lib/constants/controls";
-import Control from "~/server/models/Control";
-import { getInformationSecurityPolicies } from "./controls/iso27001/informationSecurityPolicies/aws";
+import {
+  createTRPCRouter,
+  protectedProcedure,
+  publicProcedure,
+} from "~/server/api/trpc";
+import Organisation from "~/server/models/Organisation";
+import User from "~/server/models/User";
+import { signIn, signUp } from "./actions";
 
 const cognitoClient = new CognitoIdentityProviderClient();
 
@@ -46,11 +43,6 @@ export const SignUpProps = SignInProps.extend({
 export type SignUpProps = z.infer<typeof SignUpProps>;
 
 export const userRouter = createTRPCRouter({
-  test: publicProcedure
-    .query(async ({ ctx: _,}) => {
-      return await getInformationSecurityPolicies();
-    }),
-  
   signUp: publicProcedure
     .input(SignUpProps)
     .mutation(async ({ ctx: _, input }) => {
@@ -72,7 +64,7 @@ export const userRouter = createTRPCRouter({
         kind: OrganisationKind,
         industry: OrganisationIndustry,
         frameworks: z.array(FrameworkName).optional(),
-      }),
+      })
     )
     .mutation(async ({ ctx, input }) => {
       const {
@@ -86,27 +78,27 @@ export const userRouter = createTRPCRouter({
 
       const upsertControlsPromises: Array<Promise<unknown>> = [];
 
-      controls.forEach((control) => {
-        if (
-          control.mapped.some((framework) => frameworks.includes(framework))
-        ) {
-          upsertControlsPromises.push(
-            Control.updateOne(
-              {
-                code: control.code,
-              },
-              {
-                $set: {
-                  ...control,
-                  organisationId,
-                  status: "NOT_IMPLEMENTED",
-                },
-              },
-              { upsert: true },
-            ),
-          );
-        }
-      });
+      // controls.forEach((control) => {
+      //   if (
+      //     control.mapped.some((framework) => frameworks.includes(framework))
+      //   ) {
+      //     upsertControlsPromises.push(
+      //       Control.updateOne(
+      //         {
+      //           code: control.code,
+      //         },
+      //         {
+      //           $set: {
+      //             ...control,
+      //             organisationId,
+      //             status: "NOT_IMPLEMENTED",
+      //           },
+      //         },
+      //         { upsert: true },
+      //       ),
+      //     );
+      //   }
+      // });
 
       const [_, updatedUser] = await Promise.all([
         Organisation.create({
@@ -124,7 +116,7 @@ export const userRouter = createTRPCRouter({
     .input(
       z.object({
         email: z.string().email(),
-      }),
+      })
     )
     .mutation(async ({ input }) => {
       try {
@@ -139,7 +131,7 @@ export const userRouter = createTRPCRouter({
           throw new Error("Email address is not registered");
         } else {
           throw new Error(
-            "Failed to send password reset email. Please try again.",
+            "Failed to send password reset email. Please try again."
           );
         }
       }
@@ -150,7 +142,7 @@ export const userRouter = createTRPCRouter({
         email: z.string().email(),
         verificationCode: z.string(),
         newPassword: z.string(),
-      }),
+      })
     )
     .mutation(async ({ input }) => {
       const { email, verificationCode, newPassword } = input;
@@ -171,7 +163,7 @@ export const userRouter = createTRPCRouter({
           throw new Error("Password reset code expired");
         } else {
           throw new Error(
-            "Failed to send password reset email. Please try again.",
+            "Failed to send password reset email. Please try again."
           );
         }
       }

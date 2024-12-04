@@ -23,14 +23,17 @@ import { Tabs, TabsList, TabsTrigger } from "~/app/_components/ui/tabs";
 import PageTitle from "~/components/PageTitle";
 import { columns } from "./components/control-table-columns";
 
-import { NewControlSheet } from "./components/new-control-sheet";
-import type { Framework } from "~/lib/types/frameworks";
 import type { OrganisationControl } from "~/lib/types/controls";
+import type { Framework } from "~/lib/types/frameworks";
 import { api } from "~/trpc/react";
+import { NewControlSheet } from "./components/new-control-sheet";
 
 export default function ControlsPage() {
   const [frameworks] = api.frameworks.get.useSuspenseQuery();
-  const [controls] = api.controls.get.useSuspenseQuery();
+  // const [controls] = api.controls.get.useSuspenseQuery();
+  const [userControls] = api.controls.getUserControls.useSuspenseQuery();
+
+  // const { data: userControlMappingData } = api.user.test.useQuery();
 
   const [isVisible, setIsVisible] = useState(false);
   const [tableData, setTableData] = useState<Array<OrganisationControl>>([]);
@@ -71,15 +74,15 @@ export default function ControlsPage() {
       setSelectedFrameworks((prev) =>
         checked
           ? [...prev, value]
-          : prev.filter((framework) => framework !== value),
+          : prev.filter((framework) => framework !== value)
       );
     }
   };
 
   const handleFilterUserControlMapping = async () => {
     const filteredData = statusFilter
-      ? controls.filter((control) => control.status === statusFilter)
-      : controls;
+      ? userControls.filter((control) => control.status === statusFilter)
+      : userControls;
 
     // Filter controls based on selected frameworks
     const filteredControlsData = filteredData.filter((control) => {
@@ -93,7 +96,7 @@ export default function ControlsPage() {
         return true; // Show all controls if no specific filter is applied
       }
       return selectedFrameworks.some((framework) =>
-        control.mapped.includes(framework),
+        control.mapped.includes(framework)
       );
     });
     setTableData(filteredControlsData);
@@ -130,7 +133,7 @@ export default function ControlsPage() {
 
   useEffect(() => {
     handleFilterUserControlMapping();
-  }, [statusFilter, selectedFrameworks, controls]);
+  }, [statusFilter, selectedFrameworks, userControls]);
 
   // Show button when page is scrolled down
   useEffect(() => {
@@ -145,6 +148,10 @@ export default function ControlsPage() {
     window.addEventListener("scroll", toggleVisibility);
     return () => window.removeEventListener("scroll", toggleVisibility);
   }, []);
+
+  useEffect(() => {
+    console.log("userControlMappingData", userControls);
+  }, [userControls]);
 
   return (
     <div className="flex flex-col gap-6">
@@ -251,10 +258,8 @@ export default function ControlsPage() {
                         {header.isPlaceholder
                           ? null
                           : typeof header.column.columnDef.header === "function"
-                            ? header.column.columnDef.header(
-                                header.getContext(),
-                              ) // Call the function to get the rendered header
-                            : header.column.columnDef.header}
+                          ? header.column.columnDef.header(header.getContext()) // Call the function to get the rendered header
+                          : header.column.columnDef.header}
                       </button>
                     </TableHead>
                   ))}
@@ -280,7 +285,7 @@ export default function ControlsPage() {
                     <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext(),
+                        cell.getContext()
                       )}
                     </TableCell>
                   ))}

@@ -1,10 +1,12 @@
+import { Client } from "@microsoft/microsoft-graph-client";
 import type {
   AppRoleAssignment,
   RoleAssignment,
   ServicePrincipal,
 } from "@microsoft/microsoft-graph-types";
-import { CONTROL_STATUS_ENUM } from "~/lib/constants/controls";
-import { azureClient } from "../init";
+import { ControlStatus } from "~/lib/types/controls";
+import { AzureAUth, evaluate } from "../../common";
+import { initializeAzureClient } from "../init";
 
 const SECURITY_ROLES = [
   "Security Reader",
@@ -12,23 +14,26 @@ const SECURITY_ROLES = [
   "Global Administrator",
 ];
 
-async function getRoleAssignmentLogs(): Promise<{ value: RoleAssignment[] }> {
+async function getRoleAssignmentLogs(
+  azureClient: Client
+): Promise<{ value: RoleAssignment[] }> {
   const roleAssignments = await azureClient
     .api("/roleManagement/directory/roleAssignments")
     .get();
   return roleAssignments;
 }
 
-async function evaluateRoleAssignmentLogs() {
+async function evaluateRoleAssignmentLogs(azureClient: Client) {
   try {
     // Fetch role assignments from Graph API
-    const roleAssignments = await getRoleAssignmentLogs();
+    const roleAssignments = await getRoleAssignmentLogs(azureClient);
+    console.log("roleAssignments", roleAssignments);
 
     // Extract role assignment information
     const roles = roleAssignments?.value || [];
 
     if (roles.length === 0) {
-      return CONTROL_STATUS_ENUM.NOT_IMPLEMENTED;
+      return ControlStatus.Enum.NOT_IMPLEMENTED;
     }
 
     // Check if security-related roles exist
@@ -40,27 +45,28 @@ async function evaluateRoleAssignmentLogs() {
 
     if (hasSecurityRoles) {
       return roles.length > 3
-        ? CONTROL_STATUS_ENUM.FULLY_IMPLEMENTED
-        : CONTROL_STATUS_ENUM.PARTIALLY_IMPLEMENTED;
+        ? ControlStatus.Enum.FULLY_IMPLEMENTED
+        : ControlStatus.Enum.PARTIALLY_IMPLEMENTED;
     } else {
-      return CONTROL_STATUS_ENUM.NOT_IMPLEMENTED;
+      return ControlStatus.Enum.NOT_IMPLEMENTED;
     }
   } catch (error) {
     console.error("Error fetching role assignments:", error);
-    throw new Error("Failed to evaluate access control status");
+    return null;
+    // throw new Error("Failed to evaluate access control status");
   }
 }
 
-async function getAllServicePrincipals(): Promise<{
+async function getAllServicePrincipals(azureClient: Client): Promise<{
   value: ServicePrincipal[];
 }> {
   const servicePrincipals = await azureClient.api("/servicePrincipals").get();
   return servicePrincipals;
 }
 
-async function evaluateThirdPartySecurityDocumentation() {
+async function evaluateThirdPartySecurityDocumentation(azureClient: Client) {
   try {
-    const servicePrincipals = await getAllServicePrincipals();
+    const servicePrincipals = await getAllServicePrincipals(azureClient);
 
     let documentedCount = 0;
     let undocumentedCount = 0;
@@ -85,48 +91,33 @@ async function evaluateThirdPartySecurityDocumentation() {
     // Return overall documentation status
     const total = servicePrincipals.value.length;
     if (documentedCount === total) {
-      return CONTROL_STATUS_ENUM.FULLY_IMPLEMENTED;
+      return ControlStatus.Enum.FULLY_IMPLEMENTED;
     } else if (undocumentedCount === total) {
-      return CONTROL_STATUS_ENUM.NOT_IMPLEMENTED;
+      return ControlStatus.Enum.NOT_IMPLEMENTED;
     } else {
-      return CONTROL_STATUS_ENUM.PARTIALLY_IMPLEMENTED;
+      return ControlStatus.Enum.PARTIALLY_IMPLEMENTED;
     }
   } catch (error) {
     console.error(
       "Error evaluating third-party security documentation:",
       error
     );
-    throw new Error("Failed to evaluate third-party security documentation.");
+    // throw new Error("Failed to evaluate third-party security documentation.");
+    return null;
   }
 }
 
-async function evaluate() {
-  try {
-    const roleAssignmentStatus = await evaluateRoleAssignmentLogs();
-    const thirdPartyDocumentationStatus =
-      await evaluateThirdPartySecurityDocumentation();
-
-    if (
-      roleAssignmentStatus === CONTROL_STATUS_ENUM.FULLY_IMPLEMENTED &&
-      thirdPartyDocumentationStatus === CONTROL_STATUS_ENUM.FULLY_IMPLEMENTED
-    ) {
-      return CONTROL_STATUS_ENUM.FULLY_IMPLEMENTED;
-    } else if (
-      roleAssignmentStatus === CONTROL_STATUS_ENUM.NOT_IMPLEMENTED ||
-      thirdPartyDocumentationStatus === CONTROL_STATUS_ENUM.NOT_IMPLEMENTED
-    ) {
-      return CONTROL_STATUS_ENUM.NOT_IMPLEMENTED;
-    } else {
-      return CONTROL_STATUS_ENUM.PARTIALLY_IMPLEMENTED;
-    }
-  } catch (error) {
-    console.error("Error evaluating access control status:", error);
-    throw error;
-  }
-}
-
-async function getOrganizationInformationSecurityEvidence() {
-  return evaluate();
+async function getOrganizationInformationSecurityEvidence({
+  azureAd,
+}: AzureAUth) {
+  console.log("getOrganizationInformationSecurityEvidence...");
+  if (!azureAd) throw new Error("Azure AD token is required");
+  const azureClient = await initializeAzureClient(azureAd.token);
+  const status = await evaluate([
+    () => evaluateRoleAssignmentLogs(azureClient),
+    () => evaluateThirdPartySecurityDocumentation(azureClient),
+  ]);
+  return status;
 }
 
 export { getOrganizationInformationSecurityEvidence };

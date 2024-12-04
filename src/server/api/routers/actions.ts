@@ -1,20 +1,21 @@
-import User, { User as UserSchema } from "~/server/models/User";
-import { Resource } from "sst";
 import { jwtDecode } from "jwt-decode";
+import { Resource } from "sst";
+import User, { User as UserSchema } from "~/server/models/User";
 
 import {
-  CognitoIdentityProviderClient,
-  InitiateAuthCommand,
-  type AttributeType,
-  SignUpCommand,
-  UsernameExistsException,
   AdminConfirmSignUpCommand,
   AdminUpdateUserAttributesCommand,
+  CognitoIdentityProviderClient,
+  InitiateAuthCommand,
+  SignUpCommand,
+  UsernameExistsException,
+  type AttributeType,
 } from "@aws-sdk/client-cognito-identity-provider";
-import type { SignInProps, SignUpProps } from "./user";
 import { mongoosePromise } from "~/server/db";
+import { globalConfig } from "./integrations/aws/init";
+import type { SignInProps, SignUpProps } from "./user";
 
-const cognitoClient = new CognitoIdentityProviderClient();
+const cognitoClient = new CognitoIdentityProviderClient(globalConfig);
 await mongoosePromise;
 
 export const signUp = async (props: SignUpProps) => {
@@ -34,7 +35,7 @@ export const signUp = async (props: SignUpProps) => {
         Username: email,
         Password: password,
         UserAttributes: attributes,
-      }),
+      })
     );
 
     await Promise.all([
@@ -42,7 +43,7 @@ export const signUp = async (props: SignUpProps) => {
         new AdminConfirmSignUpCommand({
           UserPoolId: Resource.user.id,
           Username: email,
-        }),
+        })
       ),
       cognitoClient.send(
         new AdminUpdateUserAttributesCommand({
@@ -54,7 +55,7 @@ export const signUp = async (props: SignUpProps) => {
               Value: "true",
             },
           ],
-        }),
+        })
       ),
     ]);
 
@@ -81,23 +82,26 @@ export const signIn = async (props: SignInProps) => {
   try {
     const { email, password } = props;
 
+    console.log("initiateAuthOutput 1");
     const initiateAuthOutput = await cognitoClient.send(
       new InitiateAuthCommand({
         AuthFlow: "USER_PASSWORD_AUTH",
+        // ClientId: "5935eo5ka6uqrnk46cq092htth", Abiola
         ClientId: Resource["user-client"].id,
         AuthParameters: {
           USERNAME: email,
           PASSWORD: password,
         },
-      }),
+      })
     );
 
+    // console.log("initiateAuthOutput 2", initiateAuthOutput);
     if (!initiateAuthOutput || !initiateAuthOutput.AuthenticationResult) {
       throw new Error("Invalid email or password");
     }
 
     const { sub: cognitoId }: { sub: string } = jwtDecode(
-      initiateAuthOutput?.AuthenticationResult?.IdToken || "",
+      initiateAuthOutput?.AuthenticationResult?.IdToken || ""
     );
 
     let user = await User.findOne({ cognitoId });
