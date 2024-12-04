@@ -37,7 +37,7 @@ export const employeesRouter = createTRPCRouter({
         return {
           message: `${
             result.upsertedCount < 1
-              ? "All provided employees already exist."
+              ? "All provided employees already exist on Cybermap"
               : result.upsertedCount === 1
               ? "1 new employee added successfully!"
               : `${result.upsertedCount} new employees added successfully!`
