@@ -26,7 +26,7 @@ export const employeesRouter = createTRPCRouter({
         const newEmployees = employeesWithOrgId.map((employee) => ({
           updateOne: {
             filter: { email: employee.email }, // Match by employeeId
-            update: { $set: employee }, // Update fields
+            update: { $setOnInsert: employee }, // Only insert new employees
             upsert: true, // Insert if not found
           },
         }));
@@ -37,7 +37,7 @@ export const employeesRouter = createTRPCRouter({
         return {
           message: `${
             result.upsertedCount < 1
-              ? "All provided employees already exist."
+              ? "All provided employees already exist on Cybermap"
               : result.upsertedCount === 1
               ? "1 new employee added successfully!"
               : `${result.upsertedCount} new employees added successfully!`
