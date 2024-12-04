@@ -263,6 +263,9 @@ importers:
       lucide-react:
         specifier: ^0.441.0
         version: 0.441.0(react@19.0.0-rc-02c0e824-20241028)
+      markdown-to-jsx:
+        specifier: ^7.7.0
+        version: 7.7.0(react@19.0.0-rc-02c0e824-20241028)
       mongodb:
         specifier: ^6.9.0
         version: 6.9.0(@aws-sdk/credential-providers@3.696.0(@aws-sdk/client-sso-oidc@3.667.0(@aws-sdk/client-sts@3.696.0)))
@@ -308,9 +311,6 @@ importers:
       sonner:
         specifier: ^1.5.0
         version: 1.5.0(react-dom@19.0.0-rc-02c0e824-20241028(react@19.0.0-rc-02c0e824-20241028))(react@19.0.0-rc-02c0e824-20241028)
-      sst:
-        specifier: 3.2.73
-        version: 3.2.73
       styled-components:
         specifier: 5.3.11
         version: 5.3.11(@babel/core@7.25.7)(react-dom@19.0.0-rc-02c0e824-20241028(react@19.0.0-rc-02c0e824-20241028))(react-is@18.3.1)(react@19.0.0-rc-02c0e824-20241028)
@@ -366,6 +366,9 @@ importers:
       postcss:
         specifier: ^8.4.39
         version: 8.4.47
+      sst:
+        specifier: 3.3.41
+        version: 3.3.41
       tailwindcss:
         specifier: ^3.4.3
         version: 3.4.13
@@ -6181,6 +6184,12 @@ packages:
     resolution: {integrity: sha512-bJzx6nMoP6PDLPBFmg7+xRKeFZvFboMrGlxmNj9ClvX53KrmvM5bXFXEWjbz4cz1AFn+jWJ9z/DJSz7hrs0w3w==}
     engines: {node: '>=6'}
 
+  markdown-to-jsx@7.7.0:
+    resolution: {integrity: sha512-130nIMbJY+woOQJ11xTqEtYko60t6EpNkZuqjKMferL3udtob3nRfzXOdsiA26NPemiR7w/hR8M3/B9yiYPGZg==}
+    engines: {node: '>= 10'}
+    peerDependencies:
+      react: '>= 0.14.0'
+
   marked@7.0.4:
     resolution: {integrity: sha512-t8eP0dXRJMtMvBojtkcsA7n48BkauktUKzfkPSCq85ZMTJ0v76Rke4DYz01omYpPTUh4p/f7HePgRo3ebG8+QQ==}
     engines: {node: '>= 16'}
@@ -7493,33 +7502,33 @@ packages:
   sprintf-js@1.0.3:
     resolution: {integrity: sha512-D9cPgkvLlV3t3IzL0D0YLvGA9Ahk4PcvVwUbN0dSGr1aP0Nrt4AEnTUbuGvquEC0mA64Gqt1fzirlRs5ibXx8g==}
 
-  sst-darwin-arm64@3.2.73:
-    resolution: {integrity: sha512-UKGIjQH/RDHzhnTfqTOfTQgJ+fkw4e4ZhOMkGeZjkYrSj6H//rDcEgS0KCqT/Da+A9WGQ5783PlPq5x6dcsjiQ==}
+  sst-darwin-arm64@3.3.41:
+    resolution: {integrity: sha512-tR1Na95x1VHY8n9LbRzH+MLDcLCBfesGtA5lg+TXNbr2yllP0VkdhdeEnEfK9nFBhig7B4+fPRUxVVdDOPLcoQ==}
     cpu: [arm64]
     os: [darwin]
 
-  sst-darwin-x64@3.2.73:
-    resolution: {integrity: sha512-9KHuOGY5QsG+ZR4vcp1on/E6pHbZhUtu0HCgswMOv3MqUflJCtUQzD6/MVAPj8WKjVrrpeDsuxF7IX6UE65/Vw==}
+  sst-darwin-x64@3.3.41:
+    resolution: {integrity: sha512-gdg0wzbhG3s3e+JRrIEi1YPgATSHnt56+tsBnT32TaMJt3q1ijw8+i0068oKEh3wvCBIIfsvMf18VkGi3XKe9g==}
     cpu: [x64]
     os: [darwin]
 
-  sst-linux-arm64@3.2.73:
-    resolution: {integrity: sha512-xDTnk2KqZnnLxrz+DEIjJhx0V/Sru3H6WToe+hVynWM8v9ni3zHWbHef+IqXa7/Woc9QAqgGEiccl92HuDxC7Q==}
+  sst-linux-arm64@3.3.41:
+    resolution: {integrity: sha512-cFcjiX7bbD3WdIvgdfiYeZCee3nSXcCXc+HT37jvKHwhtNVJRBZaF8XdK9MkzOOmaie7zEiQKjZqVO3VN6EAHQ==}
     cpu: [arm64]
     os: [linux]
 
-  sst-linux-x64@3.2.73:
-    resolution: {integrity: sha512-h9lUS4UpJAfnR/+NkLOgfoHnvqYUR3/keitR0tiJITskjT9J6fTdqzYE9hdZVSUZj6S9zj9Zd3JnKYXOR579qQ==}
+  sst-linux-x64@3.3.41:
+    resolution: {integrity: sha512-RPiqmdkpZ3L9P+coqtfFchMx3DcYDJEZ/XnMSOq9QFIPq+5DYlzD9XRNTmeribQKtMvvnHn/x27BH4r0WU4Rbw==}
     cpu: [x64]
     os: [linux]
 
-  sst-linux-x86@3.2.73:
-    resolution: {integrity: sha512-wloNzmSHZiiWIhowKFqtzv41Gk6LtvCtWxhl+hl8D1pT3+wTRp9FqD/zkPGDlw5gYUgajowhrRAYnqXoM3JzNA==}
+  sst-linux-x86@3.3.41:
+    resolution: {integrity: sha512-FygjCCUsCk0K9biXN1TUEEfdtCmFeWuWud3dmaVU7DBAS+2KLkaGQxtYz0UFPbGQDDZcJPrla3CtcrWRnsYhVQ==}
     cpu: [x86]
     os: [linux]
 
-  sst@3.2.73:
-    resolution: {integrity: sha512-PfC1kxCeLujG4iPRtzmbD+b5qkgZ34KQkbIzp/91jzx7YHH4Tmp0HEw2b6XmINb0VhaN1oxjOa0fSX+XMv5KYA==}
+  sst@3.3.41:
+    resolution: {integrity: sha512-SWz6sBnqlNzRSJgE6CBHJkvb2DCw8DYny6MEjvKRI0Wf8sHm9l+ZQ4R/ShsF5p1oE1g2PWTnIZLIHO7rGX7SvQ==}
     hasBin: true
     peerDependencies:
       hono: 4.x
@@ -17273,6 +17282,10 @@ snapshots:
     dependencies:
       p-defer: 1.0.0
 
+  markdown-to-jsx@7.7.0(react@19.0.0-rc-02c0e824-20241028):
+    dependencies:
+      react: 19.0.0-rc-02c0e824-20241028
+
   marked@7.0.4: {}
 
   marky@1.2.5: {}
@@ -18885,32 +18898,32 @@ snapshots:
 
   sprintf-js@1.0.3: {}
 
-  sst-darwin-arm64@3.2.73:
+  sst-darwin-arm64@3.3.41:
     optional: true
 
-  sst-darwin-x64@3.2.73:
+  sst-darwin-x64@3.3.41:
     optional: true
 
-  sst-linux-arm64@3.2.73:
+  sst-linux-arm64@3.3.41:
     optional: true
 
-  sst-linux-x64@3.2.73:
+  sst-linux-x64@3.3.41:
     optional: true
 
-  sst-linux-x86@3.2.73:
+  sst-linux-x86@3.3.41:
     optional: true
 
-  sst@3.2.73:
+  sst@3.3.41:
     dependencies:
       aws4fetch: 1.0.20
       jose: 5.2.3
       openid-client: 5.6.4
     optionalDependencies:
-      sst-darwin-arm64: 3.2.73
-      sst-darwin-x64: 3.2.73
-      sst-linux-arm64: 3.2.73
-      sst-linux-x64: 3.2.73
-      sst-linux-x86: 3.2.73
+      sst-darwin-arm64: 3.3.41
+      sst-darwin-x64: 3.3.41
+      sst-linux-arm64: 3.3.41
+      sst-linux-x64: 3.3.41
+      sst-linux-x86: 3.3.41
 
   stack-utils@2.0.6:
     dependencies:

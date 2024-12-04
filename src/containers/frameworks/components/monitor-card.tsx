@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "~/app/_components/ui/button";
-import FrameworkComplianceProgress from "./FrameworkComplianceProgress";
+import FrameworkComplianceProgress from "./compliance-progress";
 import type { OrganisationFramework } from "~/lib/types/frameworks";
 
 type FrameworkMonitorCardProps = {

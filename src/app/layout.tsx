@@ -32,6 +32,7 @@ export default async function RootLayout({
           <Wrapper session={session}>{children}</Wrapper>
           <Toaster />
         </TRPCReactProvider>
+        <Toaster />
       </body>
     </html>
   );

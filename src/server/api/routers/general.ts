@@ -14,6 +14,7 @@ import {
 } from "~/server/constants/integrations";
 import { integrations } from "~/lib/constants/integrations";
 import Integration from "~/server/models/Integration";
+import { env } from "~/env";
 
 export const IntegrationOauth2Props = z.union([
   z.object({
@@ -115,7 +116,7 @@ export const generalRouter = createTRPCRouter({
         const client = new AuthorizationCode(getOauth2Config(input));
 
         const authorizationUri = client.authorizeURL({
-          redirect_uri: `${Resource.cybermap.url || "http://localhost:3000"}/api/integrations/callback/${provider.toLowerCase()}`,
+          redirect_uri: `${env.BASE_URL || "http://localhost:3000"}/api/integrations/callback/${provider.toLowerCase()}`,
           scope: MICROSOFT_OAUTH_SCOPE,
         });
 

@@ -1,7 +1,6 @@
 "use client";
 
 import { HelpSquareIcon, Search01Icon } from "hugeicons-react";
-import { SeparatorVerticalIcon } from "lucide-react";
 import { useSession } from "next-auth/react";
 import {
   Avatar,
@@ -10,10 +9,6 @@ import {
 } from "~/app/_components/ui/avatar";
 import { Input } from "~/app/_components/ui/input";
 import { Separator } from "~/app/_components/ui/seperator";
-import { CyberMapBrand } from "../svgs/CyberMapBrand";
-import Link from "next/link";
-import { useEffect, useState } from "react";
-import { api } from "~/trpc/react";
 
 export default function Header() {
   const { data } = useSession();
@@ -21,7 +16,7 @@ export default function Header() {
   const user = data?.user; // Safely extract user object
 
   return (
-    <header className="fixed inset-x-0 top-0 z-10 ml-[250px] [@media(min-width:1400px)]:ml-[280px] w-[calc(100vw-250px)] [@media(min-width:1400px)]:w-[calc(100vw-280px)] border-b-2 border-b-[#E8E8EC] bg-white py-2 px-4  [@media(min-width:1400px)]:py-4 [@media(min-width:1400px)]:px-6 ">
+    <header className="fixed inset-x-0 top-0 z-10 ml-[250px] w-[calc(100vw-250px)] border-b-2 border-b-[#E8E8EC] bg-white px-4 py-2 [@media(min-width:1400px)]:ml-[280px] [@media(min-width:1400px)]:w-[calc(100vw-280px)] [@media(min-width:1400px)]:px-6 [@media(min-width:1400px)]:py-4 ">
       <nav className="flex items-center">
         <div className="flex-grow">
           <div className="flex justify-between">

@@ -8,6 +8,7 @@ export default $config({
       home: "aws",
       providers: {
         aws: {
+          version: "6.61.0",
           profile: "Shegezzy",
           // input?.stage === "production"
           // 	? "cybermap-production"
@@ -16,6 +17,7 @@ export default $config({
       },
     };
   },
+
   // biome-ignore lint/suspicious/useAwait: <explanation>
   async run() {
     const imagesBucket = new sst.aws.Bucket("images", {
@@ -23,6 +25,10 @@ export default $config({
     });
 
     const evidencesBucket = new sst.aws.Bucket("evidences", {});
+
+    const policyTemplatesBucket = new sst.aws.Bucket("policy-templates", {
+      access: "public",
+    });
 
     const userPool = new sst.aws.CognitoUserPool("user", {
       usernames: ["email"],
@@ -37,7 +43,13 @@ export default $config({
     });
 
     new sst.aws.Nextjs("cybermap", {
-      link: [imagesBucket, userPool, userPoolClient, evidencesBucket],
+      link: [
+        imagesBucket,
+        userPool,
+        userPoolClient,
+        evidencesBucket,
+        policyTemplatesBucket,
+      ],
     });
   },
 });

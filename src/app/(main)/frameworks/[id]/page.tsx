@@ -6,37 +6,11 @@ import { useEffect, useState } from "react";
 
 import { Button } from "~/app/_components/ui/button";
 import PageTitle from "~/components/PageTitle";
-import ViewFrameworks from "~/containers/frameworks/view-framework/ViewFrameworks";
+// import ViewFrameworks from "~/containers/frameworks/view-framework/ViewFrameworks";
 // import ViewFramework from "~/containers/dashboard/frameworks/view-frameworks/ViewFramework";
-
-const _frameworkData = {
-  1: {
-    name: "React",
-    description: "A JavaScript library for building user interfaces.",
-  },
-  2: {
-    name: "Vue",
-    description: "A progressive framework for building user interfaces.",
-  },
-  3: {
-    name: "Angular",
-    description: "A platform for building mobile and desktop web applications.",
-  },
-};
 
 export default function page() {
   // const { id } = useParams(); // Get the dynamic route parameter
-  const [_framework, _setFramework] = useState(null);
-
-  // useEffect(() => {
-  // 	// Simulate fetching data from an API or database
-  // 	if (id) {
-  // 		const frameworkDetails = frameworkData[id];
-  // 		setFramework(frameworkDetails);
-  // 	}
-  // }, [id]);
-
-  // if (!framework) return <div>Loading...</div>;
 
   return (
     <div>
@@ -46,7 +20,7 @@ export default function page() {
       />
 
       {/* Content */}
-      <ViewFrameworks />
+      {/* <ViewFrameworks /> */}
 
       {/* <Link href="/dashboard/frameworks">
 				<p className="text-blue-600 hover:underline">Back to Frameworks</p>

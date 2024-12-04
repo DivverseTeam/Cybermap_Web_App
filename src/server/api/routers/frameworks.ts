@@ -1,12 +1,19 @@
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { frameworks } from "~/lib/constants/frameworks";
-import Organisation from "~/server/models/Organisation";
-import Control from "~/server/models/Control";
+import OrganisationModel from "~/server/models/Organisation";
+import ControlModel, { OrganisationControl } from "~/server/models/Control";
+import { z } from "zod";
+import ISO27001 from "~/lib/constants/frameworks/iso27001";
+import type { Course } from "~/lib/types/course";
 
 const feedbackWeights: Record<string, number> = {
   FULLY_IMPLEMENTED: 1,
   PARTIALLY_IMPLEMENTED: 0.5,
   NOT_IMPLEMENTED: 0,
+};
+
+const SLUG_FRAMEWORK_CONTENT_MAP = {
+  iso27001: ISO27001,
 };
 
 export const frameworksRouter = createTRPCRouter({
@@ -19,7 +26,7 @@ export const frameworksRouter = createTRPCRouter({
       },
     }) => {
       const organisation =
-        await Organisation.findById(organisationId).select("frameworks");
+        await OrganisationModel.findById(organisationId).select("frameworks");
 
       if (!organisation) {
         throw new Error("Organisation not found");
@@ -42,8 +49,8 @@ export const frameworksRouter = createTRPCRouter({
       },
     }) => {
       const [organisation, controls] = await Promise.all([
-        Organisation.findById(organisationId).select("frameworks"),
-        Control.find({ organisationId }),
+        OrganisationModel.findById(organisationId).select("frameworks"),
+        ControlModel.find({ organisationId }),
       ]);
 
       if (!organisation) {
@@ -55,11 +62,10 @@ export const frameworksRouter = createTRPCRouter({
       );
 
       const controlsByFramework = organisationFrameworks.map((framework) => ({
-        name: framework.name,
-        logo: framework.logo,
-        controls: controls.filter((control) =>
-          control.mapped.includes(framework.name),
-        ),
+        ...framework,
+        controls: OrganisationControl.array()
+          .parse(controls)
+          .filter((control) => control.mapped.includes(framework.name)),
       }));
 
       const frameworksWithComplianceScore = controlsByFramework.map(
@@ -96,11 +102,10 @@ export const frameworksRouter = createTRPCRouter({
               : 0;
 
           return {
-            name: framework.name,
-            logo: framework.logo,
-            controls,
+            ...framework,
+            controls: OrganisationControl.array().parse(controls),
             completionLevel,
-            complianceScore, // Add compliance score to the result
+            complianceScore,
           };
         },
       );
@@ -108,4 +113,114 @@ export const frameworksRouter = createTRPCRouter({
       return frameworksWithComplianceScore;
     },
   ),
+
+  compliance: createTRPCRouter({
+    getCourse: protectedProcedure
+      .input(
+        z.object({
+          slug: z.string(),
+        }),
+      )
+      .query(
+        async ({
+          ctx: {
+            session: {
+              user: { organisationId },
+            },
+          },
+          input: { slug },
+        }) => {
+          const courseContent =
+            SLUG_FRAMEWORK_CONTENT_MAP[
+              slug as keyof typeof SLUG_FRAMEWORK_CONTENT_MAP
+            ];
+
+          const organisation =
+            await OrganisationModel.findById(organisationId).select(
+              "completedLessons",
+            );
+
+          if (!organisation) {
+            throw new Error("Organisation not found");
+          }
+
+          const completedLessons =
+            organisation.completedLessons.get(slug) || [];
+
+          const { courseModulesWithCompletion, totalLessons } =
+            courseContent.reduce(
+              (acc, section) => {
+                const updatedLessons = section.lessons.map((lesson) => ({
+                  ...lesson,
+                  isCompleted: completedLessons.includes(lesson.id),
+                }));
+
+                acc.courseModulesWithCompletion.push({
+                  ...section,
+                  lessons: updatedLessons,
+                });
+
+                acc.totalLessons += updatedLessons.length;
+
+                return acc;
+              },
+              { courseModulesWithCompletion: [] as Course, totalLessons: 0 }, // Initial accumulator
+            );
+
+          return {
+            modules: courseModulesWithCompletion,
+            readiness: {
+              total: totalLessons,
+              completed: completedLessons.length,
+            },
+            preparedness: {
+              total: totalLessons,
+              completed: completedLessons.length,
+            },
+            total: totalLessons,
+            completed: completedLessons.length,
+          };
+        },
+      ),
+
+    markLessonCompleted: protectedProcedure
+      .input(
+        z.object({
+          slug: z.string(),
+          lessonId: z.number(),
+        }),
+      )
+      .mutation(
+        async ({
+          ctx: {
+            session: {
+              user: { organisationId },
+            },
+          },
+          input: { slug, lessonId },
+        }) => {
+          const organisation =
+            await OrganisationModel.findById(organisationId).select(
+              "completedLessons",
+            );
+
+          if (!organisation) {
+            throw new Error("Organisation not found");
+          }
+
+          const completedLessons =
+            organisation.completedLessons.get(slug) || [];
+
+          if (!completedLessons.includes(lessonId)) {
+            completedLessons.push(lessonId);
+
+            organisation.completedLessons.set(slug, completedLessons);
+
+            await organisation.save();
+          }
+
+          return true;
+        },
+      ),
+  }),
 });

@@ -12,8 +12,8 @@ import {
   protectedProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
-import Organisation from "~/server/models/Organisation";
-import User from "~/server/models/User";
+import OrganisationModel from "~/server/models/Organisation";
+import UserModel from "~/server/models/User";
 import { signIn, signUp } from "./actions";
 import {
   CodeMismatchException,
@@ -26,7 +26,7 @@ import {
 import { Resource } from "sst";
 import { FrameworkName } from "~/lib/types";
 import { controls } from "~/lib/constants/controls";
-import Control from "~/server/models/Control";
+import ControlModel from "~/server/models/Control";
 
 const cognitoClient = new CognitoIdentityProviderClient();
 
@@ -85,9 +85,10 @@ export const userRouter = createTRPCRouter({
           control.mapped.some((framework) => frameworks.includes(framework))
         ) {
           upsertControlsPromises.push(
-            Control.updateOne(
+            ControlModel.updateOne(
               {
                 code: control.code,
+                organisationId,
               },
               {
                 $set: {
@@ -103,11 +104,11 @@ export const userRouter = createTRPCRouter({
       });
 
       const [_, updatedUser] = await Promise.all([
-        Organisation.create({
+        OrganisationModel.create({
           _id: organisationId,
           ...input,
         }),
-        User.findByIdAndUpdate(userId, { organisationId }, { new: true }),
+        UserModel.findByIdAndUpdate(userId, { organisationId }, { new: true }),
         ...upsertControlsPromises,
       ]);
 

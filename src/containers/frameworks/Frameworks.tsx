@@ -3,11 +3,10 @@
 import dynamic from "next/dynamic";
 import { Button } from "~/app/_components/ui/button";
 import PageTitle from "~/components/PageTitle";
-import type { OrganisationFramework } from "~/lib/types/frameworks";
 import { api } from "~/trpc/react";
 
 const FrameworkMonitorCard = dynamic(
-  () => import("./components/FrameworkMonitorCard"),
+  () => import("./components/monitor-card"),
   { ssr: false },
 );
 
