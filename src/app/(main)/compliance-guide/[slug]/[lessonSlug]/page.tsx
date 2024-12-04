@@ -2,18 +2,14 @@ import type { Metadata } from "next/types";
 import React from "react";
 import LessonPage from "~/containers/compliance-guide/lesson";
 import { api } from "~/trpc/server";
+// TODO: Update to use the "use cache" directive
+import { unstable_cache } from "next/cache";
 
 type Props = {
   params: Promise<{ slug: string; lessonSlug: string }>;
 };
 
-export default async function Page(props: Props) {
-  const params = await props.params;
-
-  void api.frameworks.compliance.getCourse.prefetch({
-    slug: params.slug,
-  });
-
+export default function Page(_props: Props) {
   return <LessonPage />;
 }
 

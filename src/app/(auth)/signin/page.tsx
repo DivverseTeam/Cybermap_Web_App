@@ -10,12 +10,6 @@ export const metadata: Metadata = {
   title: "Sign In",
 };
 
-export default async function page(props: Props) {
-  const searchParams = await props.searchParams;
-  return (
-    <SignInPage
-      error={searchParams?.error}
-      callbackUrl={searchParams?.callbackUrl}
-    />
-  );
+export default function page(props: Props) {
+  return <SignInPage searchParams={props.searchParams} />;
 }
