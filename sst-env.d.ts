@@ -18,6 +18,10 @@ declare module "sst" {
       "name": string
       "type": "sst.aws.Bucket"
     }
+    "policy-templates": {
+      "name": string
+      "type": "sst.aws.Bucket"
+    }
     "user": {
       "id": string
       "type": "sst.aws.CognitoUserPool"

@@ -72,7 +72,7 @@ const ResetPassword = () => {
         onError: (error) => {
           console.error("Error:", error);
         },
-      },
+      }
     );
   };
 

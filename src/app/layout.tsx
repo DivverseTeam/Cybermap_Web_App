@@ -6,7 +6,7 @@ import { Inter, Public_Sans } from "next/font/google";
 import { TRPCReactProvider } from "~/trpc/react";
 import { Wrapper } from "./_wrapper";
 import { getServerAuthSession } from "~/server/auth";
-import { Toaster } from "sonner";
+import { Toaster } from "./_components/ui/toaster";
 
 export const metadata: Metadata = {
   title: "Create T3 App",
@@ -30,6 +30,7 @@ export default async function RootLayout({
       <body className={`${inter.variable}${publicSans.variable} font-sans`}>
         <TRPCReactProvider>
           <Wrapper session={session}>{children}</Wrapper>
+          <Toaster />
         </TRPCReactProvider>
         <Toaster />
       </body>
