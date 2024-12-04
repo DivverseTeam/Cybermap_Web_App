@@ -11,7 +11,8 @@ export const EmployeeType = z.object({
   gender: z.string(),
   hireDate: z.coerce.date(),
   terminationDate: z.coerce.date().optional(),
-  organisationId: z.string(),
+  organisationId: z.string().optional(),
+  complianceList: z.array(z.record(z.boolean().optional())).optional(), // Using z.record for the complianceList
 });
 
 export type EmployeeType = z.infer<typeof EmployeeType>;
@@ -48,6 +49,10 @@ const EmployeeSchema = new BaseSchema<EmployeeWithDocument>({
     required: false,
   },
   organisationId: { type: String, required: true },
+  complianceList: {
+    type: [Object],
+    required: false,
+  },
 });
 
 export default (mongoose.models

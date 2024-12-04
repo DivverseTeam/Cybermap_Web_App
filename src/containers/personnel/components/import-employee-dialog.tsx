@@ -61,12 +61,15 @@ export function ImportEmployeeDialog({
   const isDesktop = useMediaQuery("(min-width: 640px)");
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+
   const [fileData, setFileData] = useState<EmployeeType[]>([]);
   const [file, setFile] = useState<File | undefined>();
 
   const [preview, setPreview] = useState<string | undefined>("");
 
-  const [processingProgress, setProcessingProgress] = useState<number>(0);
+  const [processingProgress, setProcessingProgress] = useState<
+    number | undefined
+  >(undefined);
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -92,6 +95,10 @@ export function ImportEmployeeDialog({
     e.preventDefault();
 
   const processFile = (file: File) => {
+    if (!file) {
+      toast.error("Please select a file to upload.");
+      return;
+    }
     setProcessingProgress(0); // Reset progress at the start
 
     const reader = new FileReader();
@@ -132,13 +139,15 @@ export function ImportEmployeeDialog({
     };
     reader.readAsBinaryString(file);
   };
-  const handleFileUpload = async () => {
+  const handleFileUpload = () => {
     addEmployees(fileData, {
       onSuccess: (data) => {
         toast.success(data?.message);
         setPreview("");
         resetFileInput();
         setFile(undefined);
+        onOpenChange?.(false);
+        window.location.reload();
       },
       onError: (err) => {
         console.error("Error:", err);
@@ -183,6 +192,7 @@ export function ImportEmployeeDialog({
             </Button>
           </DialogTrigger>
         ) : null}
+
         <DialogContent>
           <div className="flex w-full flex-col justify-center gap-4 overflow-y-auto">
             <DialogHeader>
@@ -191,6 +201,7 @@ export function ImportEmployeeDialog({
                 Upload the appropriate csv or excel sheet
               </DialogDescription>
             </DialogHeader>
+
             <div
               onDrop={handleDrop}
               onDragOver={handleDragOver}
@@ -288,6 +299,7 @@ export function ImportEmployeeDialog({
               variant={"default"}
               loading={isPending}
               type="submit"
+              className="px-10"
               onClick={handleFileUpload}
             >
               Import

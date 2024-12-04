@@ -4,20 +4,14 @@ import { useEffect, useState, useTransition } from "react";
 import { CircleCheck, TriangleAlert } from "lucide-react";
 import { PolarAngleAxis, RadialBar, RadialBarChart } from "recharts";
 import { Button } from "~/app/_components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuTrigger,
-} from "~/app/_components/ui/dropdown-menu";
+
 import { formatDate } from "~/lib/utils";
-import type { IEmployee } from "../types";
+// import type { IEmployee } from "../types";
+import type { EmployeeType } from "~/server/models/Employee";
 
 // const columnHelper = createColumnHelper();
 
-export const columns: ColumnDef<IEmployee>[] = [
+export const columns: ColumnDef<EmployeeType>[] = [
   {
     accessorFn: (row) => ({
       firstName: row.firstName,
@@ -92,49 +86,55 @@ export const columns: ColumnDef<IEmployee>[] = [
           : "rgba(219, 0, 7, 0.2)";
 
       return (
-        <RadialBarChart
-          width={circleSize}
-          height={circleSize}
-          cx={circleSize / 2}
-          cy={circleSize / 2}
-          innerRadius={12}
-          outerRadius={18}
-          barSize={2}
-          data={data}
-          startAngle={90}
-          endAngle={-270}
-          className="mx-auto flex items-center justify-center"
-        >
-          {/* Draw the interior background circle */}
-          <circle
-            cx={circleSize / 2}
-            cy={circleSize / 2}
-            r={12} // Match the innerRadius
-            fill={interiorBackgroundColor} // Interior background color
-          />
-          <PolarAngleAxis
-            type="number"
-            domain={[0, 100]}
-            angleAxisId={0}
-            tick={false}
-          />
-          <RadialBar
-            background
-            dataKey="value"
-            cornerRadius={circleSize / 2}
-            fill={barColor}
-          />
-          <text
-            x={circleSize / 2}
-            y={circleSize / 2}
-            textAnchor="middle"
-            dominantBaseline="middle"
-            style={{ fill: textColor, fontWeight: "medium" }}
-            className="progress-label" // Apply dynamic text color here
-          >
-            {score}
-          </text>
-        </RadialBarChart>
+        <>
+          {score ? (
+            <RadialBarChart
+              width={circleSize}
+              height={circleSize}
+              cx={circleSize / 2}
+              cy={circleSize / 2}
+              innerRadius={12}
+              outerRadius={18}
+              barSize={2}
+              data={data}
+              startAngle={90}
+              endAngle={-270}
+              className="mx-auto flex items-center justify-center"
+            >
+              {/* Draw the interior background circle */}
+              <circle
+                cx={circleSize / 2}
+                cy={circleSize / 2}
+                r={12} // Match the innerRadius
+                fill={interiorBackgroundColor} // Interior background color
+              />
+              <PolarAngleAxis
+                type="number"
+                domain={[0, 100]}
+                angleAxisId={0}
+                tick={false}
+              />
+              <RadialBar
+                background
+                dataKey="value"
+                cornerRadius={circleSize / 2}
+                fill={barColor}
+              />
+              <text
+                x={circleSize / 2}
+                y={circleSize / 2}
+                textAnchor="middle"
+                dominantBaseline="middle"
+                style={{ fill: textColor, fontWeight: "medium" }}
+                className="progress-label" // Apply dynamic text color here
+              >
+                {score}
+              </text>
+            </RadialBarChart>
+          ) : (
+            <div className="h-[2px] w-4 bg-secondary"></div>
+          )}
+        </>
       );
     },
   },

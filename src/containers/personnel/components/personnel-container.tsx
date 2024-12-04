@@ -28,15 +28,18 @@ import {
 import type { IEmployee } from "../types";
 import { columns } from "./personnel-table-columns";
 import { ImportEmployeeDialog } from "./import-employee-dialog";
+import type { EmployeeType } from "~/server/models/Employee";
 
 type Props = {
-  data: IEmployee[];
+  // data: IEmployee[];
+  employees: EmployeeType[] | undefined;
 };
 
-export default function PersonnelContainer({ data }: Props) {
+export default function PersonnelContainer({ employees }: Props) {
   // Employee tanstack table is created here
-  const table = useReactTable({
-    data,
+
+  const table = useReactTable<EmployeeType>({
+    data: employees ?? [],
     columns: columns,
     manualPagination: true,
     manualSorting: true,
@@ -114,7 +117,7 @@ export default function PersonnelContainer({ data }: Props) {
             ))}
           </TableBody>
         </Table>
-        {data.length === 0 && (
+        {!employees && (
           <span className="mt-20 flex h-[400px] justify-center font-semibold text-2xl text-secondary 2xl:mt-30">
             No employee matches your filter query
           </span>

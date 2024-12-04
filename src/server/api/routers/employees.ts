@@ -35,12 +35,37 @@ export const employeesRouter = createTRPCRouter({
         // Insert employees into the database
         const result = await Employee.bulkWrite(newEmployees);
         return {
-          message: `${result.upsertedCount} new ${
-            result.upsertedCount > 1 ? "employees" : "employee"
-          } added successfully.`,
+          message: `${
+            result.upsertedCount < 1
+              ? "All provided employees already exist."
+              : result.upsertedCount === 1
+              ? "1 new employee added successfully!"
+              : `${result.upsertedCount} new employees added successfully!`
+          }`,
         };
       } catch (error) {
         console.log(error);
       }
     }),
+  getEmployees: protectedProcedure.query(async ({ ctx }) => {
+    const {
+      session: {
+        user: { organisationId },
+      },
+    } = ctx;
+
+    if (!organisationId) {
+      throw new Error("Organisation not found");
+    }
+    console.log("organisayion ID:", organisationId);
+
+    try {
+      const employees = await Employee.find({ organisationId });
+
+      // return EmployeeType.array().parse(employees);
+      return employees;
+    } catch (error) {
+      console.log(error);
+    }
+  }),
 });
