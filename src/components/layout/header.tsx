@@ -9,6 +9,7 @@ import {
 } from "~/app/_components/ui/avatar";
 import { Input } from "~/app/_components/ui/input";
 import { Separator } from "~/app/_components/ui/seperator";
+import BreadCrumbs from "./breadcrumbs";
 
 export default function Header() {
   const { data } = useSession();
@@ -16,11 +17,11 @@ export default function Header() {
   const user = data?.user; // Safely extract user object
 
   return (
-    <header className="fixed inset-x-0 top-0 z-10 ml-[250px] w-[calc(100vw-250px)] border-b-2 border-b-[#E8E8EC] bg-white px-4 py-2 [@media(min-width:1400px)]:ml-[280px] [@media(min-width:1400px)]:w-[calc(100vw-280px)] [@media(min-width:1400px)]:px-6 [@media(min-width:1400px)]:py-4 ">
+    <header className="w-[calc(100vw-250px)] border-b-2 px-4 py-2 [@media(min-width:1400px)]:w-[calc(100vw-280px)] [@media(min-width:1400px)]:px-6 [@media(min-width:1400px)]:py-4 ">
       <nav className="flex items-center">
         <div className="flex-grow">
-          <div className="flex justify-between">
-            <Input
+          <div className="flex justify-between items-center">
+            {/* <Input
               placeholder="Search for anything..."
               className="w-72 bg-[#F9F9FB]"
               suffix={
@@ -28,7 +29,9 @@ export default function Header() {
                   <Search01Icon size="12" />
                 </span>
               }
-            />
+            /> */}
+            <BreadCrumbs />
+
             <span className="flex items-center gap-2">
               <span className="mr-0 text-gray-500">
                 <HelpSquareIcon />

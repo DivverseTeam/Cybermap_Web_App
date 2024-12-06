@@ -188,91 +188,9 @@ export default function DashboardPage() {
       {/* py-6 */}
 
       <div className="flex flex-col gap-6 py-6">
-        {/* General charts */}
-        <div className="flex items-center gap-4">
-          <div className="h-[400px] min-w-[378px] flex flex-col gap-3 [@media(min-width:1400px)]:gap-4 rounded-[8px] border border-neutral-2 border-solid bg-white p-4 px-2">
-            <div className="flex w-full items-center justify-between px-5">
-              <p className="text-base font-semibold text-neutral-normal">
-                Realtime monitoring
-              </p>
-              <span className="text-xs text-secondary">
-                Last update 2mins ago
-              </span>
-            </div>
-            <div className="flex flex-col gap-1 w-full mx-auto justify-center items-center">
-              {/* <ProgressChart /> */}
-              <PieChart width={200} height={200}>
-                <Pie
-                  data={realtimeMonitoringData}
-                  dataKey="value"
-                  nameKey="name"
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={80}
-                  outerRadius={100}
-                  startAngle={240}
-                  endAngle={-60} // 80% of a full circle (approximate)
-                  cornerRadius={12} // Rounded edges for each segment
-                  paddingAngle={-12} // Creates slight overlap by negative padding
-                >
-                  {realtimeMonitoringData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                  {/* First text with larger font size and bold style */}
-                  <Label
-                    value={`${Math.ceil(
-                      (+(
-                        realtimeMonitoringData.find(
-                          (item) => item.name.toLowerCase() === "passing"
-                        )?.value ?? 0
-                      ) /
-                        +realtimeMonitoringData.reduce(
-                          (acc, item) => acc + item.value,
-                          0
-                        )) *
-                        100
-                    )}%`}
-                    position="center"
-                    fontSize={20}
-                    fontWeight="bold"
-                    fill="#333"
-                  />
-
-                  {/* Second text with smaller font size and different color */}
-                  <Label
-                    value="Passing"
-                    position="center"
-                    fontSize={13}
-                    fill="#8B8D98" // Different color for the second text
-                    dy={20} // Position the second text slightly below the first one
-                  />
-                </Pie>
-
-                <Tooltip />
-              </PieChart>
-
-              <CustomPiechartLegend payload={realtimeMonitoringData} />
-            </div>
-            <Button variant="outline" className="w-60 mx-auto">
-              Download report
-            </Button>
-          </div>
-          <div className="h-[400px] w-full flex flex-col gap-3 [@media(min-width:1400px)]:gap-4 rounded-[8px] border border-neutral-2 border-solid bg-white p-4 px-2">
-            <div className="flex w-full items-center justify-between px-5">
-              <p className="text-base font-semibold text-neutral-normal">
-                ISO 27001 Compliance trend
-              </p>
-              <div className="flex h-8 w-[106px] items-center justify-center gap-2 rounded-sm border border-neutral-5 border-solid bg-white font-medium text-neutral-11 text-sm">
-                <span>Annually</span>
-                <DownArrow />
-              </div>
-            </div>
-            <ComplianceChart />
-          </div>
-        </div>
-
         {/* Preparedness and Readiness */}
         <div className="flex gap-4 w-full justify-between">
+          {/* Readiness score */}
           <div className="w-full rounded-[8px] gap-4 p-6 flex flex-col justify-start items-center border border-neutral-2 border-solid bg-white">
             <div className="flex w-full items-start text-base font-semibold text-neutral-normal">
               ISO 27001 Preparedness
@@ -359,6 +277,7 @@ export default function DashboardPage() {
               </div>
             </div>
           </div>
+          {/* Framework status */}
           <div className="w-full rounded-[8px] gap-4 p-6 flex flex-col justify-start items-center border border-neutral-2 border-solid bg-white">
             <div className="flex w-full items-start text-base font-semibold text-neutral-normal">
               ISO 27001 Audit Readiness
@@ -444,6 +363,89 @@ export default function DashboardPage() {
                 </div> */}
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* General charts */}
+        <div className="flex items-center gap-4">
+          <div className="h-[400px] min-w-[378px] flex flex-col gap-3 [@media(min-width:1400px)]:gap-4 rounded-[8px] border border-neutral-2 border-solid bg-white p-4 px-2">
+            <div className="flex w-full items-center justify-between px-5">
+              <p className="text-base font-semibold text-neutral-normal">
+                Realtime monitoring
+              </p>
+              <span className="text-xs text-secondary">
+                Last update 2mins ago
+              </span>
+            </div>
+            <div className="flex flex-col gap-1 w-full mx-auto justify-center items-center">
+              {/* <ProgressChart /> */}
+              <PieChart width={200} height={200}>
+                <Pie
+                  data={realtimeMonitoringData}
+                  dataKey="value"
+                  nameKey="name"
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={80}
+                  outerRadius={100}
+                  startAngle={240}
+                  endAngle={-60} // 80% of a full circle (approximate)
+                  cornerRadius={12} // Rounded edges for each segment
+                  paddingAngle={-12} // Creates slight overlap by negative padding
+                >
+                  {realtimeMonitoringData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                  {/* First text with larger font size and bold style */}
+                  <Label
+                    value={`${Math.ceil(
+                      (+(
+                        realtimeMonitoringData.find(
+                          (item) => item.name.toLowerCase() === "passing"
+                        )?.value ?? 0
+                      ) /
+                        +realtimeMonitoringData.reduce(
+                          (acc, item) => acc + item.value,
+                          0
+                        )) *
+                        100
+                    )}%`}
+                    position="center"
+                    fontSize={20}
+                    fontWeight="bold"
+                    fill="#333"
+                  />
+
+                  {/* Second text with smaller font size and different color */}
+                  <Label
+                    value="Passing"
+                    position="center"
+                    fontSize={13}
+                    fill="#8B8D98" // Different color for the second text
+                    dy={20} // Position the second text slightly below the first one
+                  />
+                </Pie>
+
+                <Tooltip />
+              </PieChart>
+
+              <CustomPiechartLegend payload={realtimeMonitoringData} />
+            </div>
+            <Button variant="outline" className="w-60 mx-auto">
+              Download report
+            </Button>
+          </div>
+          <div className="h-[400px] w-full flex flex-col gap-3 [@media(min-width:1400px)]:gap-4 rounded-[8px] border border-neutral-2 border-solid bg-white p-4 px-2">
+            <div className="flex w-full items-center justify-between px-5">
+              <p className="text-base font-semibold text-neutral-normal">
+                ISO 27001 Compliance trend
+              </p>
+              <div className="flex h-8 w-[106px] items-center justify-center gap-2 rounded-sm border border-neutral-5 border-solid bg-white font-medium text-neutral-11 text-sm">
+                <span>Annually</span>
+                <DownArrow />
+              </div>
+            </div>
+            <ComplianceChart />
           </div>
         </div>
 
