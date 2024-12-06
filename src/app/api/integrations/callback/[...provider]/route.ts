@@ -45,10 +45,10 @@ export async function GET(req: NextRequest, res: NextResponse) {
       throw new Error("Authorization code is missing in the callback URL.");
     }
 
+    // Abiola
+    // redirect_uri: `${"http://localhost:3000"}/api/integrations/callback/${provider}`,
     const options = {
       code,
-      // Abiola
-      // redirect_uri: `${"http://localhost:3000"}/api/integrations/callback/${provider}`,
       redirect_uri: `${env.BASE_URL || "http://localhost:3000"}/api/integrations/callback/${provider}`,
     };
 

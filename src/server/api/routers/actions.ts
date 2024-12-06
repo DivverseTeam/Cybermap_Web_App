@@ -1,6 +1,6 @@
-import UserModel, { User } from "~/server/models/User";
 import { jwtDecode } from "jwt-decode";
 import { Resource } from "sst";
+import UserModel, { User } from "~/server/models/User";
 // import User, { User as UserSchema } from "~/server/models/User";
 
 import {
@@ -84,11 +84,11 @@ export const signIn = async (props: SignInProps) => {
     const { email, password } = props;
 
     console.log("initiateAuthOutput 1");
+    // Abiola
+    // ClientId: "5935eo5ka6uqrnk46cq092htth",
     const initiateAuthOutput = await cognitoClient.send(
       new InitiateAuthCommand({
         AuthFlow: "USER_PASSWORD_AUTH",
-        // Abiola
-        // ClientId: "5935eo5ka6uqrnk46cq092htth",
         ClientId: Resource["user-client"].id,
         AuthParameters: {
           USERNAME: email,

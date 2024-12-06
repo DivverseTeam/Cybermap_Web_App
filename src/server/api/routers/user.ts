@@ -6,8 +6,6 @@ import {
   UserRole,
 } from "~/lib/types";
 
-<<<<<<< HEAD
-=======
 import mongoose from "mongoose";
 import {
   createTRPCRouter,
@@ -17,7 +15,6 @@ import {
 import OrganisationModel from "~/server/models/Organisation";
 import UserModel from "~/server/models/User";
 import { signIn, signUp } from "./actions";
->>>>>>> b85d7ec0f6237ea90e6f84ac5859dc5ab21df155
 import {
   CodeMismatchException,
   CognitoIdentityProviderClient,
@@ -26,22 +23,8 @@ import {
   ForgotPasswordCommand,
   UserNotFoundException,
 } from "@aws-sdk/client-cognito-identity-provider";
-import mongoose from "mongoose";
 import { Resource } from "sst";
 import { FrameworkName } from "~/lib/types";
-<<<<<<< HEAD
-import {
-  createTRPCRouter,
-  protectedProcedure,
-  publicProcedure,
-} from "~/server/api/trpc";
-import Organisation from "~/server/models/Organisation";
-import User from "~/server/models/User";
-import { signIn, signUp } from "./actions";
-=======
-import { controls } from "~/lib/constants/controls";
-import ControlModel from "~/server/models/Control";
->>>>>>> b85d7ec0f6237ea90e6f84ac5859dc5ab21df155
 
 const cognitoClient = new CognitoIdentityProviderClient();
 
@@ -95,7 +78,6 @@ export const userRouter = createTRPCRouter({
 
       const upsertControlsPromises: Array<Promise<unknown>> = [];
 
-<<<<<<< HEAD
       // controls.forEach((control) => {
       //   if (
       //     control.mapped.some((framework) => frameworks.includes(framework))
@@ -117,30 +99,6 @@ export const userRouter = createTRPCRouter({
       //     );
       //   }
       // });
-=======
-      controls.forEach((control) => {
-        if (
-          control.mapped.some((framework) => frameworks.includes(framework))
-        ) {
-          upsertControlsPromises.push(
-            ControlModel.updateOne(
-              {
-                code: control.code,
-                organisationId,
-              },
-              {
-                $set: {
-                  ...control,
-                  organisationId,
-                  status: "NOT_IMPLEMENTED",
-                },
-              },
-              { upsert: true },
-            ),
-          );
-        }
-      });
->>>>>>> b85d7ec0f6237ea90e6f84ac5859dc5ab21df155
 
       const [_, updatedUser] = await Promise.all([
         OrganisationModel.create({
