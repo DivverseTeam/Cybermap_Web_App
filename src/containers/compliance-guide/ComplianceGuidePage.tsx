@@ -2,14 +2,10 @@
 
 import React from "react";
 import PageTitle from "~/components/PageTitle";
-import dynamic from "next/dynamic";
 import { api } from "~/trpc/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-
-const ProgressCard = dynamic(() => import("./components/progress-card"), {
-  ssr: false,
-});
+import FrameworkComplianceCard from "./components/framework-compliance-card";
 
 export default function ComplianceGuidePage() {
   const [frameworks] = api.frameworks.getWithCompletion.useSuspenseQuery();
@@ -28,16 +24,19 @@ export default function ComplianceGuidePage() {
             name,
             slug,
             complianceScore: { passing, failing, risk },
+            readiness,
           } = framework;
 
           return (
             <Link key={idx} href={`${pathname}/${slug}`}>
-              <ProgressCard
+              <FrameworkComplianceCard
+                name={name}
                 logo={logo}
-                total={passing + failing + risk}
-                completed={passing}
-                title={name}
-                tag="controls"
+                preparedness={{
+                  completed: passing,
+                  total: passing + failing + risk,
+                }}
+                readiness={readiness}
               />
             </Link>
           );

@@ -22,14 +22,16 @@ type Props = {};
 
 export default function ViewFrameworkCompliance({}: Props) {
   const params = useParams();
-  const slug = (params.slug as string).toLowerCase();
+  const frameworkSlug = params["framework-slug"] as string;
 
   const [course] = api.frameworks.compliance.getCourse.useSuspenseQuery({
-    slug,
+    slug: frameworkSlug,
   });
   const [frameworks] = api.frameworks.getWithCompletion.useSuspenseQuery();
 
-  const framework = frameworks.find((framework) => framework.slug === slug);
+  const framework = frameworks.find(
+    (framework) => framework.slug === frameworkSlug,
+  );
   const {
     controls = [],
     complianceScore: { passing = 0, failing = 0, risk = 0 } = {},

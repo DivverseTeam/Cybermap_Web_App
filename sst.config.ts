@@ -26,7 +26,7 @@ export default $config({
 
     const evidencesBucket = new sst.aws.Bucket("evidences", {});
 
-    const policyTemplatesBucket = new sst.aws.Bucket("policy-templates", {
+    const policyTemplatesBucket = new sst.aws.Bucket("policy-documents", {
       access: "public",
     });
 

@@ -3,17 +3,19 @@
 import { useParams } from "next/navigation";
 import React, { type FunctionComponent } from "react";
 import { api } from "~/trpc/react";
-import Markdown from "markdown-to-jsx";
+import Markdown, { RuleType } from "markdown-to-jsx";
+import PolicyTemplate from "./policy-template";
+import Link from "next/link";
 
 interface LessonPageProps {}
 
 const LessonPage: FunctionComponent<LessonPageProps> = () => {
   const params = useParams();
-  const slug = params.slug as string;
-  const lessonSlug = params.lessonSlug as string;
+  const frameworkSlug = params["framework-slug"] as string;
+  const lessonSlug = params["lesson-slug"] as string;
 
   const [course] = api.frameworks.compliance.getCourse.useSuspenseQuery({
-    slug,
+    slug: frameworkSlug,
   });
 
   const lessons = course.modules.flatMap((module) => module.lessons);
@@ -114,10 +116,39 @@ const LessonPage: FunctionComponent<LessonPageProps> = () => {
               },
             },
           },
+          renderRule(next, node, _renderChildren, _state) {
+            if (node.type === RuleType.link) {
+              if (
+                node.target.startsWith(
+                  "https://cybermap.circle.so/c/all-documents/",
+                ) &&
+                //@ts-ignore
+                "text" in node.children[0]
+              ) {
+                const documentSlug = node.target.split("/").pop();
+                return (
+                  <Link
+                    href={{
+                      query: {
+                        title: node.children[0].text,
+                        slug: documentSlug,
+                      },
+                    }}
+                    scroll={false}
+                    className="font-semibold text-blue-500 text-lg leading-10"
+                  >
+                    {node.children[0].text || ""}
+                  </Link>
+                );
+              }
+            }
+            return next();
+          },
         }}
       >
         {lesson!.content}
       </Markdown>
+      <PolicyTemplate />
     </div>
   );
 };

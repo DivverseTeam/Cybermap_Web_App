@@ -4,20 +4,19 @@ import Header from "../components/Header";
 import SignInForm from "../components/signin-form";
 
 type Props = {
-  searchParams?: Promise<Record<"callbackUrl" | "error", string>>;
+  callbackUrl?: string;
+  error?: string;
 };
 
-export default async function SignInPage({ searchParams }: Props) {
-  const search = await searchParams;
-
+export default function SignInPage({ callbackUrl, error }: Props) {
   return (
     <div className="flex w-full flex-col">
       <Header />
       <SignInForm
         headerTitle="Sign In"
         headerSubtitle="Welcome back! Sign in to jump right back in"
-        callbackUrl={search?.callbackUrl}
-        error={search?.error}
+        callbackUrl={callbackUrl}
+        error={error}
       />
     </div>
   );

@@ -49,7 +49,9 @@ export const frameworksRouter = createTRPCRouter({
       },
     }) => {
       const [organisation, controls] = await Promise.all([
-        OrganisationModel.findById(organisationId).select("frameworks"),
+        OrganisationModel.findById(organisationId).select(
+          "frameworks completedLessons",
+        ),
         ControlModel.find({ organisationId }),
       ]);
 
@@ -61,12 +63,27 @@ export const frameworksRouter = createTRPCRouter({
         organisation.frameworks.includes(framework.name),
       );
 
-      const controlsByFramework = organisationFrameworks.map((framework) => ({
-        ...framework,
-        controls: OrganisationControl.array()
-          .parse(controls)
-          .filter((control) => control.mapped.includes(framework.name)),
-      }));
+      const controlsByFramework = organisationFrameworks.map((framework) => {
+        const courseContent =
+          SLUG_FRAMEWORK_CONTENT_MAP[
+            framework.slug as keyof typeof SLUG_FRAMEWORK_CONTENT_MAP
+          ] || [];
+        const totalModules = courseContent.flatMap(
+          (course) => course.lessons,
+        ).length;
+
+        return {
+          ...framework,
+          controls: OrganisationControl.array()
+            .parse(controls)
+            .filter((control) => control.mapped.includes(framework.name)),
+          readiness: {
+            completed:
+              organisation.completedLessons.get(framework.slug)?.length || 0,
+            total: totalModules,
+          },
+        };
+      });
 
       const frameworksWithComplianceScore = controlsByFramework.map(
         (framework) => {
@@ -133,7 +150,7 @@ export const frameworksRouter = createTRPCRouter({
           const courseContent =
             SLUG_FRAMEWORK_CONTENT_MAP[
               slug as keyof typeof SLUG_FRAMEWORK_CONTENT_MAP
-            ];
+            ] || [];
 
           const organisation =
             await OrganisationModel.findById(organisationId).select(

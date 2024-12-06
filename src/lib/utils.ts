@@ -80,3 +80,33 @@ export const getProviderByIntegrationId = (
     integrations.find((i) => i.id === integrationId)?.oauthProvider ?? null
   );
 };
+
+// export const humanFileSize = (bytes, si=false, dp=1) => {
+//   const thresh = si ? 1000 : 1024;
+
+//   if (Math.abs(bytes) < thresh) {
+//     return bytes + ' B';
+//   }
+
+//   const units = si
+//     ? ['kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
+//     : ['KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'];
+//   let u = -1;
+//   const r = 10**dp;
+
+//   do {
+//     bytes /= thresh;
+//     ++u;
+//   } while (Math.round(Math.abs(bytes) * r) / r >= thresh && u < units.length - 1);
+
+//   return bytes.toFixed(dp) + ' ' + units[u];
+// }
+
+export const humanFileSize = (size: number) => {
+  const i = size == 0 ? 0 : Math.floor(Math.log(size) / Math.log(1024));
+  return (
+    +(size / Math.pow(1024, i)).toFixed(2) * 1 +
+    " " +
+    ["B", "kB", "MB", "GB", "TB"][i]
+  );
+};

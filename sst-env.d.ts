@@ -18,7 +18,7 @@ declare module "sst" {
       "name": string
       "type": "sst.aws.Bucket"
     }
-    "policy-templates": {
+    "policy-documents": {
       "name": string
       "type": "sst.aws.Bucket"
     }

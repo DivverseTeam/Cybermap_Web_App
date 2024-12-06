@@ -6,7 +6,7 @@ import { api } from "~/trpc/server";
 import { unstable_cache } from "next/cache";
 
 type Props = {
-  params: Promise<{ slug: string; lessonSlug: string }>;
+  params: Promise<{ "framework-slug": string; "lesson-slug": string }>;
 };
 
 export default function Page(_props: Props) {
@@ -14,11 +14,15 @@ export default function Page(_props: Props) {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug = "", lessonSlug = "" } = await params;
+  const awaitedParams = await params;
 
-  const course = await api.frameworks.compliance.getCourse({ slug });
+  const course = await api.frameworks.compliance.getCourse({
+    slug: awaitedParams["framework-slug"],
+  });
   const lessons = course.modules.flatMap((module) => module.lessons);
-  const lessonIndex = lessons.findIndex((lesson) => lesson.slug === lessonSlug);
+  const lessonIndex = lessons.findIndex(
+    (lesson) => lesson.slug === awaitedParams["lesson-slug"],
+  );
   const lesson = lessons[lessonIndex];
 
   const title = `${lesson?.title || ""}`;

@@ -14,14 +14,14 @@ const LessonLayout: FunctionComponent<
   LessonLayoutProps & { children: ReactNode }
 > = ({ children }) => {
   const params = useParams();
-  const slug = params.slug as string;
-  const lessonSlug = params.lessonSlug as string;
+  const frameworkSlug = params["framework-slug"] as string;
+  const lessonSlug = params["lesson-slug"] as string;
   const utils = api.useUtils();
   const router = useRouter();
   const _pathname = usePathname();
 
   const [course] = api.frameworks.compliance.getCourse.useSuspenseQuery({
-    slug,
+    slug: frameworkSlug,
   });
   const { mutate: markCompletedMutation, isPending } =
     api.frameworks.compliance.markLessonCompleted.useMutation();
@@ -36,13 +36,16 @@ const LessonLayout: FunctionComponent<
   const onMarkCompleted = () => {
     markCompletedMutation(
       {
-        slug,
+        slug: frameworkSlug,
         lessonId: lesson!.id,
       },
       {
         onSuccess: () => {
           toast.success("Lesson marked as completed");
-          utils.frameworks.compliance.getCourse.invalidate({ slug });
+          utils.frameworks.compliance.getCourse.invalidate({
+            slug: frameworkSlug,
+          });
+          utils.frameworks.getWithCompletion.invalidate();
           router.push(`./${nextLesson?.slug}`);
         },
         onError: (error) => {

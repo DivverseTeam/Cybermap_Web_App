@@ -27,7 +27,7 @@ const ProgressCard: FunctionComponent<ProgressCardProps> = ({
 }) => {
   const usePercentage = total < 76 || total > 100;
   const percentage = total ? Math.round((completed / total) * 100) : 0;
-  const radialCircleSize = 20;
+  const radialCircleSize = 40;
 
   const radialBarData = [{ name: "score", value: percentage }];
 
@@ -35,7 +35,7 @@ const ProgressCard: FunctionComponent<ProgressCardProps> = ({
   const boxesCompleted = usePercentage ? percentage : completed;
 
   return (
-    <div className="flex flex-col gap-3 rounded-[8px] border border-neutral-2 border-solid bg-white p-4 text-xs">
+    <div className="flex min-w-[600px] flex-col gap-4 rounded-[8px] border border-neutral-2 border-solid bg-white p-4">
       <div className="mb-2 flex items-center justify-between">
         {logo ? (
           <div className="flex items-center gap-2">
@@ -53,21 +53,21 @@ const ProgressCard: FunctionComponent<ProgressCardProps> = ({
                 }}
               />
             </div>
-            <p className="text-sm">{title}</p>
+            <p className="text-lg">{title}</p>
           </div>
         ) : (
-          <h3 className="font-medium text-base">{title}</h3>
+          <h3 className="font-medium text-lg">{title}</h3>
         )}
 
         <div className="flex items-center gap-1">
-          <p>{percentage}%</p>
+          <p className="text-base">{percentage}%</p>
           <RadialBarChart
             width={radialCircleSize}
             height={radialCircleSize}
             cx={radialCircleSize / 2}
             cy={radialCircleSize / 2}
-            innerRadius={8}
-            outerRadius={14}
+            innerRadius={12}
+            outerRadius={28}
             barSize={2}
             data={radialBarData}
             startAngle={90}
@@ -89,18 +89,18 @@ const ProgressCard: FunctionComponent<ProgressCardProps> = ({
           </RadialBarChart>
         </div>
       </div>
-      <div className="grid grid-cols-25 gap-1">
+      <div className="grid grid-cols-20 gap-2">
         {Array.from({ length: boxesTotal }).map((_, index) => (
           <div
             key={index}
-            className={`h-4 w-4 rounded ${
+            className={`h-6 w-6 rounded ${
               index < boxesCompleted ? "bg-green-600" : "bg-gray-200"
             }`}
           />
         ))}
       </div>
       <div className="flex justify-end">
-        <p className="text-secondary">
+        <p className="text-secondary text-sm">
           {completed}/{total} {toTitleCase(tag)} completed
         </p>
       </div>
