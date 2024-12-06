@@ -9,13 +9,13 @@ async function getPolicyStatusForSubscription(
   resourceClient: ResourceManagementClient,
   policyInsightsClient: PolicyInsightsClient
 ) {
-  console.log("getPolicyStatusForSubscription...");
   let status: ControlStatus = ControlStatus.Enum.FULLY_IMPLEMENTED;
   const resources = [];
   for await (const resource of resourceClient.resources.list()) {
     console.log("Resource:", resource);
     resources.push(resource);
   }
+
   const totalResources = resources.length;
 
   if (totalResources === 0) {
@@ -59,6 +59,7 @@ async function getChangeLogStatus(
         },
       }
     );
+  console.log("getChangeLogStatus...", policyEventsIterator);
   let totalLogs = 0;
   let compliantLogs = 0;
   let nonCompliantLogs = 0;

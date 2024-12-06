@@ -2,69 +2,68 @@ import { Client } from "@microsoft/microsoft-graph-client";
 import { ControlStatus } from "~/lib/types/controls";
 import { AzureAUth, evaluate } from "../../common";
 import { getUserDetails, listUsers } from "../common";
-import { initializeAzureClient, logsQueryClient } from "../init";
+import { initializeAzureClient } from "../init";
 
-async function getTerminationLogs(workspaceId: string) {
-  const query = `
-    let userAccessLogs = AuditLogs
-    | where TimeGenerated > ago(90d)
-    | where ActivityDisplayName == "Add user" or ActivityDisplayName == "Remove user";
+// async function getTerminationLogs(workspaceId: string) {
+//   const query = `
+//     let userAccessLogs = AuditLogs
+//     | where TimeGenerated > ago(90d)
+//     | where ActivityDisplayName == "Add user" or ActivityDisplayName == "Remove user";
 
-    let deactivationLogs = SignInLogs
-    | where ResultType == "0"  // Successful sign-ins
-    | summarize LastSignIn=max(TimeGenerated) by UserPrincipalName;
+//     let deactivationLogs = SignInLogs
+//     | where ResultType == "0"  // Successful sign-ins
+//     | summarize LastSignIn=max(TimeGenerated) by UserPrincipalName;
 
-    let terminatedUsers = IdentityInfo
-    | where IsTerminated == true;  // Replace with your actual termination field
+//     let terminatedUsers = IdentityInfo
+//     | where IsTerminated == true;  // Replace with your actual termination field
 
-    userAccessLogs
-    | join kind=leftouter (terminatedUsers) on $left.UserPrincipalName == $right.UserPrincipalName
-    | join kind=leftouter (deactivationLogs) on $left.UserPrincipalName == $right.UserPrincipalName
-    | project UserPrincipalName, LastSignIn, IsTerminated
-    | extend Status = iff(isnull(LastSignIn) and IsTerminated, "Not implemented", 
-                          iff(LastSignIn < EndDate and IsTerminated, "Partially implemented", "Fully implemented"))
-    | summarize StatusCount=count() by Status;
-  `;
+//     userAccessLogs
+//     | join kind=leftouter (terminatedUsers) on $left.UserPrincipalName == $right.UserPrincipalName
+//     | join kind=leftouter (deactivationLogs) on $left.UserPrincipalName == $right.UserPrincipalName
+//     | project UserPrincipalName, LastSignIn, IsTerminated
+//     | extend Status = iff(isnull(LastSignIn) and IsTerminated, "Not implemented", 
+//                           iff(LastSignIn < EndDate and IsTerminated, "Partially implemented", "Fully implemented"))
+//     | summarize StatusCount=count() by Status;
+//   `;
 
-  try {
-    const result: any = await logsQueryClient.queryWorkspace(
-      workspaceId,
-      query,
-      {
-        duration: "P7D",
-      }
-    );
+//   try {
+//     const result: any = await logsQueryClient.queryWorkspace(
+//       workspaceId,
+//       query,
+//       {
+//         duration: "P7D",
+//       }
+//     );
 
-    if (
-      result.tables &&
-      result.status === "Success" &&
-      result.tables.length > 0
-    ) {
-      const statusResults = result.tables[0].rows;
-      let finalStatus: ControlStatus = ControlStatus.Enum.NOT_IMPLEMENTED;
+//     if (
+//       result.tables &&
+//       result.status === "Success" &&
+//       result.tables.length > 0
+//     ) {
+//       const statusResults = result.tables[0].rows;
+//       let finalStatus: ControlStatus = ControlStatus.Enum.NOT_IMPLEMENTED;
 
-      // Analyzing overall data for conclusion
-      for (const [status, count] of statusResults) {
-        if (status === ControlStatus.Enum.FULLY_IMPLEMENTED) {
-          finalStatus = ControlStatus.Enum.FULLY_IMPLEMENTED;
-          break;
-        } else if (status === ControlStatus.Enum.PARTIALLY_IMPLEMENTED) {
-          finalStatus = ControlStatus.Enum.PARTIALLY_IMPLEMENTED;
-        }
-      }
+//       // Analyzing overall data for conclusion
+//       for (const [status, count] of statusResults) {
+//         if (status === ControlStatus.Enum.FULLY_IMPLEMENTED) {
+//           finalStatus = ControlStatus.Enum.FULLY_IMPLEMENTED;
+//           break;
+//         } else if (status === ControlStatus.Enum.PARTIALLY_IMPLEMENTED) {
+//           finalStatus = ControlStatus.Enum.PARTIALLY_IMPLEMENTED;
+//         }
+//       }
 
-      return finalStatus;
-    } else {
-      return "No data found";
-    }
-  } catch (error) {
-    console.error("Error executing the query:", error);
-    throw error;
-  }
-}
+//       return finalStatus;
+//     } else {
+//       return "No data found";
+//     }
+//   } catch (error) {
+//     console.error("Error executing the query:", error);
+//     throw error;
+//   }
+// }
 
 async function getAccessManagementLogs(azureClient: Client) {
-  try {
     // Fetch all users
     const users = await listUsers(azureClient);
     console.log("Users:", users);
@@ -101,10 +100,6 @@ async function getAccessManagementLogs(azureClient: Client) {
     } else {
       return ControlStatus.Enum.NOT_IMPLEMENTED;
     }
-  } catch (error) {
-    console.error("Error while fetching user data:", error);
-    return null;
-  }
 }
 
 async function getHumanResourceSecurityEvidence({ azureAd }: AzureAUth) {

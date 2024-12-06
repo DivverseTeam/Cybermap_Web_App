@@ -87,8 +87,8 @@ export const signIn = async (props: SignInProps) => {
       new InitiateAuthCommand({
         AuthFlow: "USER_PASSWORD_AUTH",
         // Abiola
-        ClientId: "5935eo5ka6uqrnk46cq092htth",
-        // ClientId: Resource["user-client"].id,
+        // ClientId: "5935eo5ka6uqrnk46cq092htth",
+        ClientId: Resource["user-client"].id,
         AuthParameters: {
           USERNAME: email,
           PASSWORD: password,

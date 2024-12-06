@@ -5,7 +5,6 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "~/app/_components/ui/button";
 import {
-  Form,
   FormControl,
   FormField,
   FormItem,
@@ -15,7 +14,7 @@ import { Input } from "~/app/_components/ui/input";
 import { Label } from "~/app/_components/ui/label";
 import {
   Sheet,
-  SheetClose,
+  // SheetClose,
   SheetContent,
   SheetFooter,
   SheetHeader,
@@ -68,6 +67,7 @@ const controlDetailsData = [
 ];
 
 export function NewControlSheet() {
+  const [open, setOpen] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
 
   const formSchema = z.object({
@@ -104,112 +104,110 @@ export function NewControlSheet() {
     e.preventDefault();
 
   return (
-    <Sheet>
+    <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
         <Button>Create new control</Button>
       </SheetTrigger>
-      <Form {...form}>
+      {/* <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="flex flex-col gap-4"
-        >
-          <SheetContent className="flex h-full flex-col gap-6 overflow-y-auto">
-            <SheetHeader>
-              <SheetTitle>Create control</SheetTitle>
-              {/* <SheetDescription>
+          className="bg-black"
+        > */}
+      <SheetContent className="flex h-full flex-col gap-6 overflow-y-auto">
+        <SheetHeader>
+          <SheetTitle>Create control</SheetTitle>
+          {/* <SheetDescription>
             Make changes to your profile here. Click save when you're done.
           </SheetDescription> */}
-            </SheetHeader>
-            <div className="flex flex-col gap-3">
-              {/* Control details */}
-              {/* <div className="flex justify-start  gap-7">
+        </SheetHeader>
+        <div className="flex flex-col gap-3">
+          {/* Control details */}
+          {/* <div className="flex justify-start  gap-7">
                 <span className="text-secondary">Name</span>
                 <span className="text-secondary-foreground">Control name</span>
               </div> */}
 
-              <div className="text-xs">
-                <table className=" w-full">
-                  <tbody>
-                    {controlDetailsData.map((row, index) => (
-                      <tr key={index} className="flex gap-3 text-left">
-                        <td className="flex p-2 px-0 text-left">
-                          {row.label()}
-                        </td>
-                        {row.name === "button" ? (
-                          <td className="flex p-2 px-0 text-left">
-                            {row.input(null)}
-                          </td>
-                        ) : (
-                          <FormField
-                            control={form.control}
-                            name={row["name"] as any}
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormControl>
-                                  <td className="flex p-2 px-0 text-left">
-                                    {row.input(field)}
-                                  </td>
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
+          <div className="text-xs">
+            <table className=" w-full">
+              <tbody>
+                {controlDetailsData.map((row, index) => (
+                  <tr key={index} className="flex gap-3 text-left">
+                    <td className="flex p-2 px-0 text-left">{row.label()}</td>
+                    {row.name === "button" ? (
+                      <td className="flex p-2 px-0 text-left">
+                        {row.input(null)}
+                      </td>
+                    ) : (
+                      <FormField
+                        control={form.control}
+                        name={row["name"] as any}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <td className="flex p-2 px-0 text-left">
+                                {row.input(field)}
+                              </td>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
                         )}
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-            <div className="flex w-full flex-col items-center justify-center">
-              <div
-                onDrop={handleDrop}
-                onDragOver={handleDragOver}
-                className="flex h-36 w-full cursor-pointer items-center justify-center rounded-lg border-2 border-gray-300 border-dashed bg-gray-50 hover:border-secondary"
-              >
-                {files.length ? (
-                  <ul>
-                    {files.map((file: File, index: number) => (
-                      <li key={index} className="text-gray-700 text-sm">
-                        {file.name}
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <div className="flex items-center justify-between gap-20">
-                    <div className="flex items-center justify-between gap-3">
-                      <CloudUpload className="h-20 w-20 text-[#E0E1E6]" />
-                      <div className="flex flex-col gap-2 text-gray-500 text-xs">
-                        <span>Select a file or drag and drop here</span>
-                        <span>CSV o XLSX file no more than 10mb</span>
-                      </div>
-                    </div>
-                    <Label
-                      htmlFor="fileUpload"
-                      className="mt-4 cursor-pointer rounded-md border-2 border-secondary bg-gray-50 px-4 py-2 text-secondary text-xs hover:bg-muted"
-                    >
-                      SELECT FILE
-                    </Label>
+                      />
+                    )}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div className="flex w-full flex-col items-center justify-center">
+          <div
+            onDrop={handleDrop}
+            onDragOver={handleDragOver}
+            className="flex h-36 w-full cursor-pointer items-center justify-center rounded-lg border-2 border-gray-300 border-dashed bg-gray-50 hover:border-secondary"
+          >
+            {files.length ? (
+              <ul>
+                {files.map((file: File, index: number) => (
+                  <li key={index} className="text-gray-700 text-sm">
+                    {file.name}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <div className="flex items-center justify-between gap-20">
+                <div className="flex items-center justify-between gap-3">
+                  <CloudUpload className="h-20 w-20 text-[#E0E1E6]" />
+                  <div className="flex flex-col gap-2 text-gray-500 text-xs">
+                    <span>Select a file or drag and drop here</span>
+                    <span>CSV o XLSX file no more than 10mb</span>
                   </div>
-                )}
+                </div>
+                <Label
+                  htmlFor="fileUpload"
+                  className="mt-4 cursor-pointer rounded-md border-2 border-secondary bg-gray-50 px-4 py-2 text-secondary text-xs hover:bg-muted"
+                >
+                  SELECT FILE
+                </Label>
               </div>
-              <input
-                type="file"
-                id="fileUpload"
-                className="hidden"
-                multiple
-                onChange={handleFileSelect}
-              />
-            </div>
+            )}
+          </div>
+          <input
+            type="file"
+            id="fileUpload"
+            className="hidden"
+            multiple
+            onChange={handleFileSelect}
+          />
+        </div>
 
-            <SheetFooter>
-              <SheetClose asChild>
-                <Button type="submit">Save changes</Button>
-              </SheetClose>
-            </SheetFooter>
-          </SheetContent>
-        </form>
-      </Form>
+        <SheetFooter>
+          {/* <SheetClose asChild>
+              </SheetClose> */}
+          <Button type="submit">Save changes</Button>
+        </SheetFooter>
+      </SheetContent>
+      {/* </form>
+      </Form> */}
     </Sheet>
   );
 }

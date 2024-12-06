@@ -5,14 +5,16 @@ import Organisation from "~/server/models/Organisation";
 import UserControlMapping from "~/server/models/UserControlMapping";
 import { getAzureRefreshToken } from "../../integrations/azure/init";
 import { AzureAUth } from "../../integrations/common";
+import { getAccessControl } from "./accessControls";
+import { getHumanResourceSecurity } from "./humanResourceSecurity";
 import { getInformationSecurityPolicies } from "./informationSecurityPolicies";
 import { getOrganizationOfInformationSecurity } from "./organizationofInformationSecurity";
 
 const ISO27001_FUNCTIONS: any = {
   ISP: (auth: AzureAUth) => getInformationSecurityPolicies(auth),
   OIS: (auth: AzureAUth) => getOrganizationOfInformationSecurity(auth),
-  // HRS: (auth: AzureAUth) => getHumanResourceSecurity(auth),
-  // ACC: (auth: AzureAUth) =>  getAccessControl(auth),
+  HRS: (auth: AzureAUth) => getHumanResourceSecurity(auth),
+  ACC: (auth: AzureAUth) => getAccessControl(auth),
 };
 
 export async function runIso27001() {
@@ -93,22 +95,45 @@ export async function runIso27001() {
     }
   } catch (error: any) {
     console.error("Error during ISO27001 audit:", error);
-    if (error.code === "ExpiredAuthenticationToken") {
-      console.error("Token expired. Please re-authenticate.");
-      const integrations = await Promise.all(
+    if (
+      error.code === "ExpiredAuthenticationToken" ||
+      error.code === "InvalidAuthenticationToken" ||
+      error.code === "AuthorizationFailed"
+    ) {
+      console.error("Token expired. Please re-authenticate.......");
+      const integrations: any[] = await Promise.all(
         AZURE_CLOUD_SLUG.map(async (slug) => {
           return await Integration.findOne(
             {
               organisationId: currentOrganisationId,
               slug,
             },
-            "authData subscriptionId"
+            "authData subscriptionId slug tenantId"
           ).lean();
         })
       );
-      if (!integrations.length) {
-        const token = await getAzureRefreshToken(integrations);
-        console.log("Refreshed token", token);
+      if (integrations.length) {
+        const tokens = await getAzureRefreshToken(integrations);
+        console.log("Refreshed.....", tokens);
+        if (tokens && tokens.length) {
+          for (const token of tokens) {
+            if (token?.token) {
+              await Integration.findOneAndUpdate(
+                {
+                  organisationId: currentOrganisationId,
+                  slug: token.slug,
+                },
+                {
+                  $set: {
+                    "authData.accessToken": token.token.accessToken,
+                    "authData.expiry": token.token.expiry,
+                    "authData.refreshToken": token.token.refreshToken,
+                  },
+                }
+              );
+            }
+          }
+        }
       }
     }
   }

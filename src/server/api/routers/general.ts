@@ -116,10 +116,10 @@ export const generalRouter = createTRPCRouter({
 
         const authorizationUri = client.authorizeURL({
           // Abiola
-          redirect_uri: `${"http://localhost:3000"}/api/integrations/callback/${provider.toLowerCase()}_${slug}`,
-          // redirect_uri: `${
-          //   Resource.cybermap.url || "http://localhost:3000"
-          // }/api/integrations/callback/${provider.toLowerCase()}`,
+          // redirect_uri: `${"http://localhost:3000"}/api/integrations/callback/${provider.toLowerCase()}_${slug}`,
+          redirect_uri: `${
+            Resource.cybermap.url || "http://localhost:3000"
+          }/api/integrations/callback/${provider.toLowerCase()}`,
           scope: isAzureAD ? MICROSOFT_OAUTH_SCOPE : MICROSOFT_OAUTH_ARM_SCOPE,
         });
 

@@ -29,7 +29,12 @@ async function evaluate(functions: (() => Promise<ControlStatus | null>)[]) {
       return ControlStatus.Enum.PARTIALLY_IMPLEMENTED;
     }
   } catch (error: any) {
-    if (error.code === "ExpiredAuthenticationToken") {
+    console.log("Error in evaluate", error.code);
+    if (
+      error.code === "ExpiredAuthenticationToken" ||
+      error.code === "InvalidAuthenticationToken" ||
+      error.code === "AuthorizationFailed"
+    ) {
       throw error;
     }
   }

@@ -55,46 +55,116 @@ async function getAzureRefreshToken(integrations: OrganisationIntegration[]) {
     if (!integrations.length) {
       throw new Error("No Azure integrations found.");
     }
-    for (const integration of integrations) {
-      const authData = integration?.authData;
-      const slug = integration.slug;
-      if (slug === "azure-cloud" && authData) {
-        const { accessToken, expiry } = authData;
-        const client = new AuthorizationCode(
-          getOauth2Config({
-            ...integration,
-            provider: "MICROSOFT",
-          } as any)
-        );
-        const token = client.createToken({
-          access_token: accessToken,
-          // refresh_token: refreshToken,
-          expires_in: new Date(expiry.getTime()).toISOString(),
-        });
-        if (!token.expired()) return;
-        const refreshedToken = await fetchAccessToken(
-          integration.tenantId as string
-        );
-        return refreshedToken;
-      }
-      if (slug === "azure-ad" && authData) {
-        const { accessToken, refreshToken, expiry } = authData;
-        const client = new AuthorizationCode(
-          getOauth2Config({
-            ...integration,
-            provider: "MICROSOFT",
-          } as any)
-        );
-        const token = client.createToken({
-          access_token: accessToken,
-          refresh_token: refreshToken,
-          expires_in: new Date(expiry.getTime()).toISOString(),
-        });
-        if (!token.expired()) return;
-        const refreshedToken = await token.refresh();
-        return refreshedToken.token;
-      }
-    }
+
+    const tokens = await Promise.all(
+      integrations.map(async (integration) => {
+        const authData = integration.authData;
+        const slug = integration.slug;
+        if (slug === "azure-cloud" && authData) {
+          const { accessToken, expiry } = authData;
+          const client = new AuthorizationCode(
+            getOauth2Config({
+              ...integration,
+              provider: "MICROSOFT",
+            } as any)
+          );
+          const token = client.createToken({
+            access_token: accessToken,
+            // refresh_token: refreshToken,
+            expires_in: new Date(expiry.getTime()).toISOString(),
+          });
+          console.log("Azure Cloud==", token.expired());
+          // if (!token.expired()) {
+          //   return {
+          //     slug,
+          //     token: null,
+          //   };
+          // }
+          // console.log("integration", integration);
+          const refreshedToken = await fetchAccessToken(
+            integration.tenantId as string
+          );
+          return {
+            slug,
+            token: refreshedToken,
+          };
+        }
+        if (slug === "azure-ad" && authData) {
+          const { accessToken, refreshToken, expiry } = authData;
+          const client = new AuthorizationCode(
+            getOauth2Config({
+              ...integration,
+              provider: "MICROSOFT",
+            } as any)
+          );
+          const token = client.createToken({
+            access_token: accessToken,
+            refresh_token: refreshToken,
+            expires_in: new Date(expiry.getTime()).toISOString(),
+          });
+          console.log("Azure AD==", token.expired());
+          // if (!token.expired()) {
+          //   return {
+          //     slug,
+          //     token: null,
+          //   };
+          // }
+          const refreshedToken = await token.refresh();
+          const expiresIn = refreshedToken.token.expires_in as number;
+          return {
+            slug,
+            token: {
+              accessToken: refreshedToken.token.access_token,
+              refreshToken: refreshedToken.token.refresh_token,
+              expiry: new Date(Date.now() + expiresIn * 1000),
+            },
+          };
+        }
+      })
+    );
+    // for (const integration of integrations) {
+    //   console.log("Integration 222:", integration);
+    //   const authData = integration?.authData;
+    //   const slug = integration.slug;
+    //   if (slug === "azure-cloud" && authData) {
+    //     const { accessToken, expiry } = authData;
+    //     const client = new AuthorizationCode(
+    //       getOauth2Config({
+    //         ...integration,
+    //         provider: "MICROSOFT",
+    //       } as any)
+    //     );
+    //     const token = client.createToken({
+    //       access_token: accessToken,
+    //       // refresh_token: refreshToken,
+    //       expires_in: new Date(expiry.getTime()).toISOString(),
+    //     });
+    //     if (!token.expired()) return;
+    //     const refreshedToken = await fetchAccessToken(
+    //       integration.tenantId as string
+    //     );
+    //     return refreshedToken;
+    //   }
+    //   if (slug === "azure-ad" && authData) {
+    //     const { accessToken, refreshToken, expiry } = authData;
+    //     const client = new AuthorizationCode(
+    //       getOauth2Config({
+    //         ...integration,
+    //         provider: "MICROSOFT",
+    //       } as any)
+    //     );
+    //     const token = client.createToken({
+    //       access_token: accessToken,
+    //       refresh_token: refreshToken,
+    //       expires_in: new Date(expiry.getTime()).toISOString(),
+    //     });
+    //     console.log("Azure AD==", token.expired());
+    //     if (!token.expired()) return;
+    //     const refreshedToken = await token.refresh();
+    //     return refreshedToken.token;
+    //   }
+    // }
+    return tokens;
   } catch (error: any) {
     console.error("Error refreshing access token:", {
       message: error.message,
@@ -117,7 +187,12 @@ async function fetchAccessToken(tenantId: string) {
 
   try {
     const response = await axios.post(tokenUrl, params);
-    return response.data.access_token;
+    // console.log("Access token response:", response.data);
+    return {
+      accessToken: response.data.access_token,
+      refreshToken: "",
+      expiry: new Date(Date.now() + response.data.expires_in * 1000),
+    };
   } catch (error: any) {
     console.error(
       "Error fetching access token:",
