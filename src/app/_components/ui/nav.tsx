@@ -21,7 +21,7 @@ interface LinkProp {
   label?: string;
   href?: string;
   icon?: ElementType;
-  variant: "lightBlue" | "ghost" | "default"; // Adjust to the allowed values
+  variant: "white" | "ghost" | "default"; // Adjust to the allowed values
   onClick?: () => void;
 }
 interface NavProps {
@@ -65,22 +65,20 @@ export function Nav({ links, groupName, isCollapsed }: NavProps) {
               onClick={link.onClick}
               className={cn(
                 "w-[200px] cursor-pointer [@media(min-width:1400px)]:w-[220px]",
-                isActive && "text-white",
+                isActive && "text-black",
                 buttonVariants({
-                  variant: isActive ? "lightBlue" : "linkGhost",
+                  variant: isActive ? "white" : "linkGhost",
                   size: "linkSm",
                 }),
                 link.variant === "default" &&
                   "dark:bg-muted dark:text-white dark:hover:bg-muted-foreground dark:hover:text-white",
-                link.variant === "lightBlue" && "text-white",
-                "justify-start",
+                link.variant === "white" && "text-black",
+                "justify-start"
               )}
             >
               {link.icon && (
                 <link.icon
-                  className={`${
-                    isActive && "text-primary"
-                  } "mr-2 h-4 w-4" pr-2`}
+                  className={`${isActive && "text-black"} "mr-2 h-4 w-4" pr-2`}
                 />
               )}
               {link.title}
@@ -89,7 +87,7 @@ export function Nav({ links, groupName, isCollapsed }: NavProps) {
                   className={cn(
                     "ml-auto",
                     link.variant === "default" &&
-                      "text-background dark:text-white",
+                      "text-background dark:text-white"
                   )}
                 >
                   {link.label}

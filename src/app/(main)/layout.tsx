@@ -33,10 +33,10 @@ export default async function RootLayout({
   return (
     <div className="flex">
       <SideNavbar />
-      <div className="ml-[250px] h-full w-full [@media(min-width:1400px)]:ml-[280px] ">
+      <div className="flex flex-col gap-6 my-4 bg-white border rounded-3xl ml-[254px] h-full min-h-screen w-full [@media(min-width:1400px)]:ml-[280px] ">
         <Header />
-        <div className="container mx-auto mt-16 flex flex-col gap-6 px-4 py-5 2xl:px-8 2xl:py-16 [@media(min-width:1300px)]:mt-[72px] [@media(min-width:1400px)]:px-6 [@media(min-width:1400px)]:py-10">
-          <BreadCrumbs />
+        <div className="container h-full w-full mx-auto  px-4 py-1 2xl:px-8 2xl:py-16 [@media(min-width:1400px)]:px-6 [@media(min-width:1400px)]:py-2">
+          {/* <BreadCrumbs /> */}
           {children}
         </div>
       </div>

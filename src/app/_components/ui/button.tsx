@@ -12,7 +12,7 @@ const buttonVariants = cva(
       variant: {
         default:
           "bg-primary text-primary-foreground hover:bg-primary/90 font-semibold",
-        lightBlue: "bg-primary/20 ",
+        white: "bg-white text-black border",
         destructive:
           "bg-destructive text-destructive-foreground hover:bg-destructive/90",
         outline:
@@ -20,13 +20,13 @@ const buttonVariants = cva(
         secondary:
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
-        linkGhost: "hover:bg-primary/5 ",
+        linkGhost: "hover:text-black ",
         link: "text-primary underline-offset-4 hover:underline",
       },
       size: {
         default: "h-10 px-4 py-2",
         sm: "h-7 [@media(min-width:1400px)]:h-8 2xl:h-9 rounded-md px-3",
-        linkSm: "h-7 [@media(min-width:1400px)]:h-8 2xl:h-9 rounded-md px-3",
+        linkSm: "h-8 [@media(min-width:1400px)]:h-9 2xl:h-10 rounded-lg px-3",
         lg: "h-11 rounded-md px-8",
         icon: "h-10 w-10",
         xs: "h-7 rounded-md px-3",
@@ -36,7 +36,7 @@ const buttonVariants = cva(
       variant: "default",
       size: "default",
     },
-  },
+  }
 );
 
 export interface ButtonProps
@@ -58,7 +58,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       disabled,
       ...props
     },
-    ref,
+    ref
   ) => {
     const Comp = asChild ? Slot : "button";
     return (
@@ -72,7 +72,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         <Slottable>{children}</Slottable>
       </Comp>
     );
-  },
+  }
 );
 Button.displayName = "Button";
 
