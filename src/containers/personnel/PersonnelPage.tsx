@@ -6,29 +6,30 @@ import {
   SortByDown01Icon,
   UserMultipleIcon,
 } from "hugeicons-react";
-import { ArrowUpToLine, ChevronRight, ListFilter, Star, X } from "lucide-react";
+import {
+  ArrowUpToLine,
+  ChevronRight,
+  ListFilter,
+  Star,
+  TriangleAlert,
+  X,
+} from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { Button } from "~/app/_components/ui/button";
 import PageTitle from "~/components/PageTitle";
-import { employees } from "./_lib/constants";
+// import { employees } from "./_lib/constants";
 import PersonnelContainer from "./components/personnel-container";
 import type { IEmployee } from "./types";
+import { api } from "~/trpc/react";
+import { ImportEmployeeDialog } from "./components/import-employee-dialog";
+import type { EmployeeType } from "~/server/models/Employee";
+import SpinnerModal from "./components/spinner-modal";
 
 type Props = {};
-const employeesData = employees;
-
-const allCompliances = new Set();
-
-employeesData.forEach((employee: IEmployee) => {
-  employee.complianceList.forEach((compliance) => {
-    Object.keys(compliance).forEach((key) => allCompliances.add(key));
-  });
-});
-
-const complianceList = Array.from(allCompliances);
+// const employeesData = employees;
 
 export default function PersonnelPage({}: Props) {
-  const [data, setData] = useState<IEmployee[]>([]);
+  const [data, setData] = useState<EmployeeType[] | undefined>([]);
 
   // Scroll to top button logic
   const [isVisible, setIsVisible] = useState(false);
@@ -54,6 +55,25 @@ export default function PersonnelPage({}: Props) {
       behavior: "smooth",
     });
   };
+
+  const {
+    data: employees,
+    isLoading,
+    isError,
+  } = api.employees.getEmployees.useQuery();
+  console.log(employees);
+
+  // const employeesData = employees;
+
+  const allCompliances = new Set();
+
+  employees?.forEach((employee: EmployeeType) => {
+    employee.complianceList?.forEach((compliance) => {
+      Object.keys(compliance).forEach((key) => allCompliances.add(key));
+    });
+  });
+
+  const complianceList = Array.from(allCompliances);
 
   // FILTER LOGIC
   const [selectedCompliances, setSelectedCompliances] = useState<string[]>([]);
@@ -81,12 +101,12 @@ export default function PersonnelPage({}: Props) {
       //   { cache: "no-store" }
       // );
       // const { evidences, total } = await res.json();
-      const employeeData = employees.map((employee: IEmployee) => ({
+      const employeeData = employees?.map((employee: EmployeeType) => ({
         ...employee,
         hireDate: new Date(employee.hireDate),
         terminationDate:
           employee.terminationDate && new Date(employee.terminationDate),
-        complianceList: employee.complianceList.map((compliance) => {
+        complianceList: employee.complianceList?.map((compliance) => {
           // Ensure every key has a boolean value (true or false)
           const cleanedCompliance = Object.fromEntries(
             Object.entries(compliance).map(([key, value]) => [
@@ -97,24 +117,24 @@ export default function PersonnelPage({}: Props) {
           return cleanedCompliance;
         }),
       }));
-      const filteredData = employeeData.filter((employee) => {
+      const filteredData = employeeData?.filter((employee) => {
         // Check if "compliant" is selected in the list
         if (selectedCompliances.includes("Compliant")) {
-          return employee.complianceList.every(
+          return employee.complianceList?.every(
             (compliance) => Object.values(compliance)[0] === true
           );
         }
 
         // Check if "non-compliant" is selected in the list
         if (selectedCompliances.includes("Non-compliant")) {
-          return employee.complianceList.some((compliance) =>
+          return employee.complianceList?.some((compliance) =>
             Object.values(compliance).some((value) => value === false)
           );
         }
 
         // General case for specific compliance selections
         return selectedCompliances.every((compliance) =>
-          employee.complianceList.some(
+          employee.complianceList?.some(
             (complianceObj) => complianceObj[compliance] === true
           )
         );
@@ -125,6 +145,10 @@ export default function PersonnelPage({}: Props) {
     console.log(selectedCompliances);
   }, [selectedCompliances]);
 
+  // Dialog for employee upload
+  const [showImportEmployeesDialog, setShowImportEmployeesDialog] =
+    useState(false);
+
   return (
     <div className="flex flex-col gap-6">
       <PageTitle
@@ -132,7 +156,7 @@ export default function PersonnelPage({}: Props) {
         subtitle="Assign roles, track responsibilities, and keep your team audit-ready with real-time monitoring, collaborative tools, and automated reminders."
         // action={<NewControlSheet />}
       />
-      {data ? (
+      {(employees ?? []).length > 0 ? (
         <div className="flex gap-5 [@media(min-width:1400px)]:gap-6">
           {/* FILTERS */}
           <div className="flex min-w-[200px] [@media(min-width:1400px)]:min-w-[260px] flex-col rounded-lg">
@@ -183,32 +207,42 @@ export default function PersonnelPage({}: Props) {
           </div>
 
           {/* EMPLOYEE TABLE */}
-          <PersonnelContainer data={data} />
+          <PersonnelContainer employees={employees} />
         </div>
       ) : (
         <div className="mx-auto mt-5 flex w-[827px] flex-col items-center ">
           <UserMultipleIcon className="h-[224px] w-[224px] text-[#E0E1E6]" />
           <div className="flex w-[412px] justify-center gap-4">
-            <Button variant="outline" className="rounded-md text-secondary">
-              <PlusSignIcon className="mr-2" />
-              Import Employee
-            </Button>
+            <ImportEmployeeDialog
+              open={showImportEmployeesDialog}
+              onOpenChange={setShowImportEmployeesDialog}
+              showTrigger={true}
+            />
             <Button variant="outline" className="rounded-md text-secondary">
               <CurvyRightDirectionIcon className="mr-2" /> Integrations
             </Button>
           </div>
+          {isError && (
+            <div className="flex items-center gap-1">
+              <TriangleAlert className="text-[#C65C10]" />
+              <span className="text-[#C65C10]">
+                Error fetching employees. Please try again later
+              </span>
+            </div>
+          )}
         </div>
       )}
       <Button
         variant="outline"
         onClick={scrollToTop}
-        className={`fixed right-4 bottom-4 rounded-full bg-muted p-2 shadow-lg transition hover:bg-gray-200 ${
-          isVisible ? "opacity-100" : "opacity-0"
+        className={`fixed right-4 bottom-4 rounded-full bg-gray-300 p-2 shadow-lg transition hover:bg-gray-400 ${
+          isVisible ? "opacity-80" : "opacity-10"
         }`}
         aria-label="Scroll to top"
       >
         <ArrowUpToLine />
       </Button>
+      <SpinnerModal show={isLoading} />
     </div>
   );
 }

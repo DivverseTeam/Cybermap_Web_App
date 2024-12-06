@@ -8,7 +8,7 @@ import { IntegrationOauth2Props } from "~/server/api/routers/general";
 import { getServerAuthSession } from "~/server/auth";
 import { getOauth2Config } from "~/server/constants/integrations";
 import Integration from "~/server/models/Integration";
-import { Resource } from "sst";
+import { env } from "~/env";
 
 async function getUserDetails(accessToken: string) {
   const client = Client.init({
@@ -48,10 +48,8 @@ export async function GET(req: NextRequest, res: NextResponse) {
     const options = {
       code,
       // Abiola
-      redirect_uri: `${
-        Resource.cybermap.url || "http://localhost:3000"
-      }/api/integrations/callback/${provider}`,
       // redirect_uri: `${"http://localhost:3000"}/api/integrations/callback/${provider}`,
+      redirect_uri: `${env.BASE_URL || "http://localhost:3000"}/api/integrations/callback/${provider}`,
     };
 
     const organisationIntegration = await Integration.findOne({

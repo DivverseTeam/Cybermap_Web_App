@@ -7,6 +7,7 @@ export const Framework = z.object({
   name: FrameworkName,
   code: z.string(),
   logo: z.string().optional(),
+  slug: z.string(),
 });
 
 export type Framework = z.infer<typeof Framework>;

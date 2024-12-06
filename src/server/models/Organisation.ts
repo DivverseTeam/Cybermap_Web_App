@@ -20,6 +20,7 @@ export const Organisation = z.object({
   kind: OrganisationKind,
   industry: OrganisationIndustry,
   frameworks: z.array(FrameworkName).optional().default([]),
+  completedLessons: z.map(z.string(), z.number().array()),
 });
 
 export type Organisation = z.infer<typeof Organisation>;
@@ -45,6 +46,12 @@ const OrganisationSchema = new BaseSchema<OrganisationWithDocument>({
     type: [{ type: String }],
     required: false,
     default: [],
+  },
+  completedLessons: {
+    type: Map,
+    of: [{ type: Number }],
+    required: false,
+    default: new Map<string, Array<number>>(),
   },
 });
 

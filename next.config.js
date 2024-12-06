@@ -8,6 +8,9 @@ await import("./src/env.js");
 const config = {
   reactStrictMode: true,
   output: "standalone",
+  // experimental: {
+  //   dynamicIO: true
+  // }
 };
 
 export default config;

@@ -20,7 +20,8 @@ import {
 import { signOut } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import { Nav } from "~/app/_components/ui/nav";
-import { CyberMapBrand } from "~/components/svgs/CyberMapBrand";
+import { VerakosBrand } from "../svgs/VerakosBrand";
+import { SearchCenter } from "./search-center";
 
 type Props = {};
 
@@ -29,7 +30,7 @@ type MenuItem = {
   label?: string;
   href?: string;
   icon?: ElementType;
-  variant: "lightBlue" | "ghost" | "default"; // Adjust to the allowed values
+  variant: "white" | "ghost" | "default"; // Adjust to the allowed values
   onClick?: () => void;
 };
 
@@ -56,51 +57,49 @@ export default function SideNavbar({}: Props) {
           href: "/dashboard",
 
           icon: Analytics01Icon,
-          variant: `${pathname === "/dashboard" ? "lightBlue" : "ghost"}`,
+          variant: `${pathname === "/dashboard" ? "white" : "ghost"}`,
         },
         {
           title: "Compliance guide",
-          href: "/starter-guide",
+          href: "/compliance-guide",
 
           icon: CurvyRightDirectionIcon,
-          variant: `${pathname === "/starter-guide" ? "lightBlue" : "ghost"}`,
+          variant: `${pathname === "/compliance-guide" ? "white" : "ghost"}`,
         },
       ],
     },
     {
       groupName: "Governance",
       items: [
-        {
-          title: "Frameworks",
-          icon: FrameworksIcon,
-          href: "/frameworks",
-          variant: `${pathname === "/frameworks" ? "lightBlue" : "ghost"}`,
-        },
+        // {
+        //   title: "Frameworks",
+        //   icon: FrameworksIcon,
+        //   href: "/frameworks",
+        //   variant: `${pathname === "/frameworks" ? "white" : "ghost"}`,
+        // },
         {
           title: "Controls",
           icon: FileValidationIcon,
           href: "/controls",
-          variant: `${pathname === "/controls" ? "lightBlue" : "ghost"}`,
+          variant: `${pathname === "/controls" ? "white" : "ghost"}`,
         },
         // {
         //   title: "Regulations",
         //   icon: PolicyIcon,
         //   href: "/regulations",
-        //   variant: `${pathname === "/regulations" ? "lightBlue" : "ghost"}`,
+        //   variant: `${pathname === "/regulations" ? "white" : "ghost"}`,
         // },
         {
           title: "Evidence library",
           icon: LibraryIcon,
           href: "/evidence-library",
-          variant: `${
-            pathname === "/evidence-library" ? "lightBlue" : "ghost"
-          }`,
+          variant: `${pathname === "/evidence-library" ? "white" : "ghost"}`,
         },
         {
           title: "Policies",
           icon: PolicyIcon,
           href: "/policies",
-          variant: `${pathname === "/policies" ? "lightBlue" : "ghost"}`,
+          variant: `${pathname === "/policies" ? "white" : "ghost"}`,
         },
       ],
     },
@@ -111,27 +110,27 @@ export default function SideNavbar({}: Props) {
           title: "Employees",
           icon: UserMultipleIcon,
           href: "/employees",
-          variant: `${pathname === "/employees" ? "lightBlue" : "ghost"}`,
+          variant: `${pathname === "/employees" ? "white" : "ghost"}`,
         },
         {
           title: "Integrations",
           icon: CurvyRightDirectionIcon,
           href: "/integrations",
-          variant: `${pathname === "/integrations" ? "lightBlue" : "ghost"}`,
+          variant: `${pathname === "/integrations" ? "white" : "ghost"}`,
         },
         // {
         //   title: "Training modules",
         //   icon: OnlineLearning01Icon,
         //   href: "/training-modules",
         //   variant: `${
-        //     pathname === "/training-modules" ? "lightBlue" : "ghost"
+        //     pathname === "/training-modules" ? "white" : "ghost"
         //   }`,
         // },
         // {
         //   title: "Audit center",
         //   icon: Audit02Icon,
         //   href: "/audit-center",
-        //   variant: `${pathname === "/audit-center" ? "lightBlue" : "ghost"}`,
+        //   variant: `${pathname === "/audit-center" ? "white" : "ghost"}`,
         // },
       ],
     },
@@ -143,7 +142,7 @@ export default function SideNavbar({}: Props) {
           icon: AccountSetting02Icon,
           href: "/settings",
 
-          variant: `${pathname === "/settings" ? "lightBlue" : "ghost"}`,
+          variant: `${pathname === "/settings" ? "white" : "ghost"}`,
         },
         {
           title: "Logout",
@@ -156,11 +155,12 @@ export default function SideNavbar({}: Props) {
   ];
 
   return (
-    <aside className="fixed top-0 left-0 z-20 flex h-screen w-[250px] flex-grow flex-col justify-start overflow-y-auto bg-[#192839] text-[14px] leading-4 [@media(min-width:1400px)]:w-[280px] [@media(min-width:1400px)]:min-w-[280px]">
-      <div className="mx-auto flex w-full items-center justify-center px-4 py-3 [@media(min-width:1400px)]:px-6 [@media(min-width:1400px)]:py-6 ">
-        <CyberMapBrand />
+    <aside className="fixed top-0 left-0 z-20 flex h-screen w-[246px] flex-grow flex-col justify-start overflow-y-auto bg-gray-50 text-[14px] leading-4 [@media(min-width:1400px)]:w-[280px] [@media(min-width:1400px)]:min-w-[280px]">
+      <div className="mx-auto flex w-full items-center px-2 py-2 [@media(min-width:1400px)]:px-4 [@media(min-width:1400px)]:py-6 ">
+        <VerakosBrand />
       </div>
-      <div className="flex max-h-[700px] flex-grow flex-col justify-start gap-[12px] px-4 pt-12 text-[14px] leading-4 [@media(min-width:1400px)]:px-6 [@media(min-width:1400px)]:pt-20 ">
+      <SearchCenter />
+      <div className="flex max-h-[700px] mt-2 [@media(min-width:1400px)]:mt-4 flex-grow flex-col justify-start gap-[12px] px-4  text-[14px] leading-4 [@media(min-width:1400px)]:px-6 ">
         {menuList.map((menu) => (
           <Nav
             isCollapsed={false}

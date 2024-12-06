@@ -6,6 +6,10 @@ export default {
   content: ["./src/**/*.tsx"],
   theme: {
     extend: {
+      gridTemplateColumns: {
+        25: "repeat(25, minmax(0, 1fr))",
+        20: "repeat(20, minmax(0, 1fr))",
+      },
       boxShadow: {
         all: "0 2px 8px 8px rgba(0, 0, 0, 0.05)",
       },

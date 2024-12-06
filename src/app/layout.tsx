@@ -6,6 +6,8 @@ import { Inter, Public_Sans } from "next/font/google";
 import { TRPCReactProvider } from "~/trpc/react";
 import { Wrapper } from "./_wrapper";
 import { getServerAuthSession } from "~/server/auth";
+import { Toaster } from "./_components/ui/toaster";
+import { HydrateClient } from "~/trpc/server";
 
 export const metadata: Metadata = {
   title: "Create T3 App",
@@ -25,12 +27,15 @@ export default async function RootLayout({
   const session = await getServerAuthSession();
 
   return (
-    <html lang="en" className={`${GeistSans.variable}`}>
-      <body className={`${inter.variable}${publicSans.variable} font-sans`}>
-        <TRPCReactProvider>
-          <Wrapper session={session}>{children}</Wrapper>
-        </TRPCReactProvider>
-      </body>
-    </html>
+    <TRPCReactProvider>
+      <HydrateClient>
+        <html lang="en" className={`${GeistSans.variable}`}>
+          <body className={`${inter.variable}${publicSans.variable} font-sans`}>
+            <Wrapper session={session}>{children}</Wrapper>
+            <Toaster />
+          </body>
+        </html>
+      </HydrateClient>
+    </TRPCReactProvider>
   );
 }

@@ -1,9 +1,16 @@
 import { z } from "zod";
 import { PRESIGNED_URL_TYPES } from "~/lib/types";
 
-import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import mongoose from "mongoose";
+import {
+  DeleteObjectCommand,
+  GetObjectAttributesCommand,
+  GetObjectCommand,
+  NoSuchKey,
+  PutObjectCommand,
+  S3Client,
+} from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { AuthorizationCode } from "simple-oauth2";
 import { Resource } from "sst";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
@@ -15,6 +22,7 @@ import {
   getOauth2Config,
 } from "~/server/constants/integrations";
 import Integration from "~/server/models/Integration";
+import { env } from "~/env";
 
 export const IntegrationOauth2Props = z.union([
   z.object({
@@ -38,9 +46,10 @@ export const generalRouter = createTRPCRouter({
     .input(
       z.object({
         type: z.enum([...PRESIGNED_URL_TYPES]),
-        fileType: z.string(),
+        fileType: z.string().optional(),
         id: z.string().optional(),
-      })
+        objectKey: z.string().optional(),
+      }),
     )
     .mutation(async ({ input }) => {
       const { type, fileType } = input;
@@ -49,14 +58,21 @@ export const generalRouter = createTRPCRouter({
 
       const client = new S3Client({});
 
+      let bucket: string = Resource.images.name;
+
       let key: string = id;
 
       if (type === "ORGANISATION_LOGO") {
         key = `media/organisation_logos/${id}`;
       }
 
+      if (type === "POLICY_DOCUMENT") {
+        bucket = Resource["policy-documents"].name;
+        key = input?.objectKey || "";
+      }
+
       const command = new PutObjectCommand({
-        Bucket: Resource.images.name,
+        Bucket: bucket,
         Key: key,
         ...(fileType && {
           Metadata: {
@@ -71,6 +87,63 @@ export const generalRouter = createTRPCRouter({
         url,
         id,
       };
+    }),
+
+  getPolicyDocument: protectedProcedure
+    .input(
+      z.object({
+        framework: z.string(),
+        slug: z.string(),
+      }),
+    )
+    .query(async ({ input, ctx }) => {
+      const { framework, slug } = input;
+      const { organisationId = "" } = ctx.session.user;
+
+      const client = new S3Client({});
+
+      let documentSize = 0;
+      let hasDocument = false;
+
+      try {
+        const objectResponse = await client.send(
+          new GetObjectAttributesCommand({
+            Bucket: Resource["policy-documents"].name,
+            Key: `${organisationId}/${framework}/${slug}`,
+            ObjectAttributes: ["ObjectSize"],
+          }),
+        );
+        hasDocument = true;
+        documentSize = objectResponse.ObjectSize || 0;
+      } catch (error) {
+        console.log(error);
+      }
+
+      return {
+        hasDocument,
+        documentSize,
+      };
+    }),
+
+  deletePolicyDocument: protectedProcedure
+    .input(
+      z.object({
+        framework: z.string(),
+        slug: z.string(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      const { slug, framework } = input;
+      const { organisationId = "" } = ctx.session.user;
+
+      const client = new S3Client({});
+
+      await client.send(
+        new DeleteObjectCommand({
+          Bucket: Resource["policy-documents"].name,
+          Key: `${organisationId}/${framework}/${slug}`,
+        }),
+      );
     }),
 
   oauth2: createTRPCRouter({
@@ -118,7 +191,7 @@ export const generalRouter = createTRPCRouter({
           // Abiola
           // redirect_uri: `${"http://localhost:3000"}/api/integrations/callback/${provider.toLowerCase()}_${slug}`,
           redirect_uri: `${
-            Resource.cybermap.url || "http://localhost:3000"
+            env.BASE_URL || "http://localhost:3000"
           }/api/integrations/callback/${provider.toLowerCase()}`,
           scope: isAzureAD ? MICROSOFT_OAUTH_SCOPE : MICROSOFT_OAUTH_ARM_SCOPE,
         });

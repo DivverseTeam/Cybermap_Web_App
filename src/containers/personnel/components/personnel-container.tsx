@@ -6,7 +6,7 @@ import {
 } from "@tanstack/react-table";
 import { PlusSignIcon, Search01Icon } from "hugeicons-react";
 import Image from "next/image";
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "~/app/_components/ui/button";
 import {
   DropdownMenu,
@@ -27,15 +27,19 @@ import {
 } from "~/app/_components/ui/table";
 import type { IEmployee } from "../types";
 import { columns } from "./personnel-table-columns";
+import { ImportEmployeeDialog } from "./import-employee-dialog";
+import type { EmployeeType } from "~/server/models/Employee";
 
 type Props = {
-  data: IEmployee[];
+  // data: IEmployee[];
+  employees: EmployeeType[] | undefined;
 };
 
-export default function PersonnelContainer({ data }: Props) {
+export default function PersonnelContainer({ employees }: Props) {
   // Employee tanstack table is created here
-  const table = useReactTable({
-    data,
+
+  const table = useReactTable<EmployeeType>({
+    data: employees ?? [],
     columns: columns,
     manualPagination: true,
     manualSorting: true,
@@ -53,6 +57,10 @@ export default function PersonnelContainer({ data }: Props) {
     // },
   });
 
+  // Dialog for employee upload
+  const [showImportEmployeesDialog, setShowImportEmployeesDialog] =
+    useState(false);
+
   return (
     <div className="flex grow flex-col">
       <div className="mx-auto flex w-full gap-3 rounded-2xl rounded-b-none border bg-muted p-3 [@media(min-width:1400px)]:p-4 2xl:p-5">
@@ -68,14 +76,12 @@ export default function PersonnelContainer({ data }: Props) {
             </span>
           }
         />
-        <Button
-          variant="outline"
-          className="h-[36px] [@media(min-width:1400px)]:h-[44px] rounded-md text-secondary"
-          size="sm"
-        >
-          <PlusSignIcon className="mr-2" />
-          Import Employee
-        </Button>
+
+        <ImportEmployeeDialog
+          open={showImportEmployeesDialog}
+          onOpenChange={setShowImportEmployeesDialog}
+          showTrigger={true}
+        />
       </div>
       <div className="border">
         <Table className="rounded-none">
@@ -111,7 +117,7 @@ export default function PersonnelContainer({ data }: Props) {
             ))}
           </TableBody>
         </Table>
-        {data.length === 0 && (
+        {!employees && (
           <span className="mt-20 flex h-[400px] justify-center font-semibold text-2xl text-secondary 2xl:mt-30">
             No employee matches your filter query
           </span>
