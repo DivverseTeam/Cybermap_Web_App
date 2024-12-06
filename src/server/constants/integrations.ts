@@ -24,6 +24,9 @@ export const Oauth2ProviderConfigMap: Record<Oauth2Provider, ModuleOptions> = {
   },
 };
 
+export const MICROSOFT_OAUTH_ARM_SCOPE =
+  "https://management.azure.com/.default";
+
 export const MICROSOFT_OAUTH_SCOPE =
   "offline_access User.Read User.Read.All Directory.Read.All AuditLog.Read.All UserAuthenticationMethod.Read.All Group.Read.All IdentityProvider.Read.All RoleManagement.Read.All RoleManagementAlert.Read.Directory Device.Read.All Policy.Read.All ServicePrincipalEndpoint.Read.All";
 

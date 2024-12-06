@@ -28,9 +28,10 @@ async function evaluate(functions: (() => Promise<ControlStatus | null>)[]) {
     } else {
       return ControlStatus.Enum.PARTIALLY_IMPLEMENTED;
     }
-  } catch (error) {
-    console.error("Error evaluating access control status:", error);
-    throw error;
+  } catch (error: any) {
+    if (error.code === "ExpiredAuthenticationToken") {
+      throw error;
+    }
   }
 }
 

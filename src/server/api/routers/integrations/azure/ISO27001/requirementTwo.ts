@@ -24,36 +24,30 @@ async function getRoleAssignmentLogs(
 }
 
 async function evaluateRoleAssignmentLogs(azureClient: Client) {
-  try {
-    // Fetch role assignments from Graph API
-    const roleAssignments = await getRoleAssignmentLogs(azureClient);
-    console.log("roleAssignments", roleAssignments);
+  // Fetch role assignments from Graph API
+  const roleAssignments = await getRoleAssignmentLogs(azureClient);
+  console.log("roleAssignments", roleAssignments);
 
-    // Extract role assignment information
-    const roles = roleAssignments?.value || [];
+  // Extract role assignment information
+  const roles = roleAssignments?.value || [];
 
-    if (roles.length === 0) {
-      return ControlStatus.Enum.NOT_IMPLEMENTED;
-    }
+  if (roles.length === 0) {
+    return ControlStatus.Enum.NOT_IMPLEMENTED;
+  }
 
-    // Check if security-related roles exist
-    const hasSecurityRoles = roles.some(
-      (role) =>
-        role.roleDefinition?.displayName &&
-        SECURITY_ROLES.includes(role.roleDefinition.displayName)
-    );
+  // Check if security-related roles exist
+  const hasSecurityRoles = roles.some(
+    (role) =>
+      role.roleDefinition?.displayName &&
+      SECURITY_ROLES.includes(role.roleDefinition.displayName)
+  );
 
-    if (hasSecurityRoles) {
-      return roles.length > 3
-        ? ControlStatus.Enum.FULLY_IMPLEMENTED
-        : ControlStatus.Enum.PARTIALLY_IMPLEMENTED;
-    } else {
-      return ControlStatus.Enum.NOT_IMPLEMENTED;
-    }
-  } catch (error) {
-    console.error("Error fetching role assignments:", error);
-    return null;
-    // throw new Error("Failed to evaluate access control status");
+  if (hasSecurityRoles) {
+    return roles.length > 3
+      ? ControlStatus.Enum.FULLY_IMPLEMENTED
+      : ControlStatus.Enum.PARTIALLY_IMPLEMENTED;
+  } else {
+    return ControlStatus.Enum.NOT_IMPLEMENTED;
   }
 }
 
@@ -65,45 +59,36 @@ async function getAllServicePrincipals(azureClient: Client): Promise<{
 }
 
 async function evaluateThirdPartySecurityDocumentation(azureClient: Client) {
-  try {
-    const servicePrincipals = await getAllServicePrincipals(azureClient);
+  const servicePrincipals = await getAllServicePrincipals(azureClient);
 
-    let documentedCount = 0;
-    let undocumentedCount = 0;
+  let documentedCount = 0;
+  let undocumentedCount = 0;
 
-    for (const servicePrincipal of servicePrincipals.value) {
-      const servicePrincipalId = servicePrincipal.id;
+  for (const servicePrincipal of servicePrincipals.value) {
+    const servicePrincipalId = servicePrincipal.id;
 
-      // Fetch app role assignments for the service principal
-      const appRoleAssignments: { value: AppRoleAssignment[] } =
-        await azureClient
-          .api(`/servicePrincipals/${servicePrincipalId}/appRoleAssignments`)
-          .get();
+    // Fetch app role assignments for the service principal
+    const appRoleAssignments: { value: AppRoleAssignment[] } =
+      await azureClient
+        .api(`/servicePrincipals/${servicePrincipalId}/appRoleAssignments`)
+        .get();
 
-      // Determine if roles and responsibilities are documented
-      if (appRoleAssignments.value.length > 0) {
-        documentedCount++;
-      } else {
-        undocumentedCount++;
-      }
-    }
-
-    // Return overall documentation status
-    const total = servicePrincipals.value.length;
-    if (documentedCount === total) {
-      return ControlStatus.Enum.FULLY_IMPLEMENTED;
-    } else if (undocumentedCount === total) {
-      return ControlStatus.Enum.NOT_IMPLEMENTED;
+    // Determine if roles and responsibilities are documented
+    if (appRoleAssignments.value.length > 0) {
+      documentedCount++;
     } else {
-      return ControlStatus.Enum.PARTIALLY_IMPLEMENTED;
+      undocumentedCount++;
     }
-  } catch (error) {
-    console.error(
-      "Error evaluating third-party security documentation:",
-      error
-    );
-    // throw new Error("Failed to evaluate third-party security documentation.");
-    return null;
+  }
+
+  // Return overall documentation status
+  const total = servicePrincipals.value.length;
+  if (documentedCount === total) {
+    return ControlStatus.Enum.FULLY_IMPLEMENTED;
+  } else if (undocumentedCount === total) {
+    return ControlStatus.Enum.NOT_IMPLEMENTED;
+  } else {
+    return ControlStatus.Enum.PARTIALLY_IMPLEMENTED;
   }
 }
 

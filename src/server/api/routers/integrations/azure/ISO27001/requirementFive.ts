@@ -1,12 +1,13 @@
+import { Client } from "@microsoft/microsoft-graph-client";
 import type { ConditionalAccessPolicy } from "@microsoft/microsoft-graph-types";
 import { ControlStatus } from "~/lib/types/controls";
-import { evaluate } from "../../common";
+import { AzureAUth, evaluate } from "../../common";
 import { listUserGroups, listUsers } from "../common";
 import { initializeAzureClient } from "../init";
 
-async function evaluateAccessControlLogs() {
+async function evaluateAccessControlLogs(azureClient: Client) {
   try {
-    const users = await listUsers();
+    const users = await listUsers(azureClient);
     // const groups = await listGroups();
 
     let roleBasedImplemented = false;
@@ -15,7 +16,7 @@ async function evaluateAccessControlLogs() {
     for (const user of users.value) {
       if (!user.id) continue;
       // Get group membership for each user
-      const userGroups = await listUserGroups(user.id);
+      const userGroups = await listUserGroups(user.id, azureClient);
 
       // Check if the user is part of any critical resource group
       const hasCriticalAccess = userGroups.value.some(
@@ -48,10 +49,9 @@ async function evaluateAccessControlLogs() {
   }
 }
 
-async function evaluateMFAStatus() {
+async function evaluateMFAStatus(azureClient: Client) {
   try {
     // Fetch conditional access policies
-    const azureClient = await initializeAzureClient();
     const policies = await azureClient
       .api("/policies/conditionalAccessPolicies")
       .get();
@@ -91,8 +91,13 @@ async function evaluateMFAStatus() {
   }
 }
 
-async function getAccessControlEvidence() {
-  return evaluate([evaluateAccessControlLogs, evaluateMFAStatus]);
+async function getAccessControlEvidence({ azureAd }: AzureAUth) {
+  if (!azureAd) throw new Error("Azure AD token is required");
+  const azureClient = await initializeAzureClient(azureAd.token);
+  return evaluate([
+    () => evaluateAccessControlLogs(azureClient),
+    () => evaluateMFAStatus(azureClient),
+  ]);
 }
 
 export { getAccessControlEvidence };

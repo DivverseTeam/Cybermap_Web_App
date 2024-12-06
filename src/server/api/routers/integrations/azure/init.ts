@@ -3,13 +3,19 @@ import { PolicyInsightsClient } from "@azure/arm-policyinsights";
 import { ResourceManagementClient } from "@azure/arm-resources";
 import { SubscriptionClient } from "@azure/arm-subscriptions";
 import { DefaultAzureCredential } from "@azure/identity";
-import { LogsQueryClient } from "@azure/monitor-query";
 import { Client, Options } from "@microsoft/microsoft-graph-client";
+import axios from "axios";
+import { AuthorizationCode } from "simple-oauth2";
+import {
+  MICROSOFT_OAUTH_ARM_SCOPE,
+  getOauth2Config,
+} from "~/server/constants/integrations";
+import { OrganisationIntegration } from "~/server/models/Integration";
+import { AzureToken } from "../common";
+import { StaticTokenCredential } from "../common/azureTokenCredential";
 
 async function initializeAzureClient(accessToken: string) {
   try {
-    // console.log("initializeAzureClient...", accessToken);
-
     const options: Options = {
       authProvider: (done) => {
         done(null, accessToken);
@@ -35,17 +41,90 @@ async function initializeAzureClient(accessToken: string) {
   }
 }
 
-function getAzureCredentials(token: string) {
-  // console.log("Getting Azure credentials...", accessToken);
-  const credential = {
-    getToken: async () => {
-      return {
-        token,
-        expiresOnTimestamp: Date.now() + 3600 * 1000, // Adjust as per token expiration
-      };
-    },
-  };
-  return credential;
+function getCredentials(azureCloud: AzureToken) {
+  const { token, expiresOnTimestamp, subscriptionId } = azureCloud;
+  const credential = new StaticTokenCredential({
+    token,
+    expiresOnTimestamp,
+  });
+  return { credential, subscriptionId };
+}
+
+async function getAzureRefreshToken(integrations: OrganisationIntegration[]) {
+  try {
+    if (!integrations.length) {
+      throw new Error("No Azure integrations found.");
+    }
+    for (const integration of integrations) {
+      const authData = integration?.authData;
+      const slug = integration.slug;
+      if (slug === "azure-cloud" && authData) {
+        const { accessToken, expiry } = authData;
+        const client = new AuthorizationCode(
+          getOauth2Config({
+            ...integration,
+            provider: "MICROSOFT",
+          } as any)
+        );
+        const token = client.createToken({
+          access_token: accessToken,
+          // refresh_token: refreshToken,
+          expires_in: new Date(expiry.getTime()).toISOString(),
+        });
+        if (!token.expired()) return;
+        const refreshedToken = await fetchAccessToken(
+          integration.tenantId as string
+        );
+        return refreshedToken;
+      }
+      if (slug === "azure-ad" && authData) {
+        const { accessToken, refreshToken, expiry } = authData;
+        const client = new AuthorizationCode(
+          getOauth2Config({
+            ...integration,
+            provider: "MICROSOFT",
+          } as any)
+        );
+        const token = client.createToken({
+          access_token: accessToken,
+          refresh_token: refreshToken,
+          expires_in: new Date(expiry.getTime()).toISOString(),
+        });
+        if (!token.expired()) return;
+        const refreshedToken = await token.refresh();
+        return refreshedToken.token;
+      }
+    }
+  } catch (error: any) {
+    console.error("Error refreshing access token:", {
+      message: error.message,
+      status: error.response?.status,
+      data: error.response?.data, // Log Azure's error response details
+    });
+  }
+}
+
+async function fetchAccessToken(tenantId: string) {
+  const tokenUrl = `https://login.microsoftonline.com/${tenantId}/oauth2/v2.0/token`;
+  const clientId = process.env.AZURE_CLIENT_ID;
+  const clientSecret = process.env.AZURE_CLIENT_SECRET;
+
+  const params = new URLSearchParams();
+  params.append("grant_type", "client_credentials");
+  params.append("client_id", clientId!);
+  params.append("client_secret", clientSecret!);
+  params.append("scope", MICROSOFT_OAUTH_ARM_SCOPE);
+
+  try {
+    const response = await axios.post(tokenUrl, params);
+    return response.data.access_token;
+  } catch (error: any) {
+    console.error(
+      "Error fetching access token:",
+      error.response?.data || error.message
+    );
+    throw error;
+  }
 }
 
 const credential = new DefaultAzureCredential();
@@ -58,13 +137,13 @@ const policyInsightsClient = new PolicyInsightsClient(
   credential,
   subscriptionId
 );
-const logsQueryClient = new LogsQueryClient(credential);
-
 export {
   credential,
-  getAzureCredentials,
+  fetchAccessToken,
+  getAzureRefreshToken,
+  getCredentials,
   initializeAzureClient,
-  logsQueryClient,
+  // logsQueryClient,
   policyClient,
   policyInsightsClient,
   resourceClient,

@@ -10,6 +10,7 @@ import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 
 import { integrations } from "~/lib/constants/integrations";
 import {
+  MICROSOFT_OAUTH_ARM_SCOPE,
   MICROSOFT_OAUTH_SCOPE,
   getOauth2Config,
 } from "~/server/constants/integrations";
@@ -114,13 +115,12 @@ export const generalRouter = createTRPCRouter({
         const isAzureCloud = slug === "azure-cloud";
 
         const authorizationUri = client.authorizeURL({
-          // redirect_uri: `${"http://localhost:3000"}/api/integrations/callback/${provider.toLowerCase()}_${slug}`,Abiola
-          redirect_uri: `${
-            Resource.cybermap.url || "http://localhost:3000"
-          }/api/integrations/callback/${provider.toLowerCase()}`,
-          scope: isAzureAD
-            ? MICROSOFT_OAUTH_SCOPE
-            : "https://management.azure.com/.default",
+          // Abiola
+          redirect_uri: `${"http://localhost:3000"}/api/integrations/callback/${provider.toLowerCase()}_${slug}`,
+          // redirect_uri: `${
+          //   Resource.cybermap.url || "http://localhost:3000"
+          // }/api/integrations/callback/${provider.toLowerCase()}`,
+          scope: isAzureAD ? MICROSOFT_OAUTH_SCOPE : MICROSOFT_OAUTH_ARM_SCOPE,
         });
 
         return { url: authorizationUri };

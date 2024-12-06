@@ -2,7 +2,6 @@ import { NextResponse, type NextRequest } from "next/server";
 import { AuthorizationCode } from "simple-oauth2";
 
 import { Client } from "@microsoft/microsoft-graph-client";
-import { Resource } from "sst";
 import { Oauth2Provider } from "~/lib/types/integrations";
 import { runIso27001 } from "~/server/api/routers/controls/iso27001";
 import { IntegrationOauth2Props } from "~/server/api/routers/general";
@@ -47,10 +46,11 @@ export async function GET(req: NextRequest, res: NextResponse) {
 
     const options = {
       code,
-      redirect_uri: `${
-        Resource.cybermap.url || "http://localhost:3000"
-      }/api/integrations/callback/${provider}`,
-      // redirect_uri: `${"http://localhost:3000"}/api/integrations/callback/${provider}`, Abiola
+      // Abiola
+      // redirect_uri: `${
+      //   Resource.cybermap.url || "http://localhost:3000"
+      // }/api/integrations/callback/${provider}`,
+      redirect_uri: `${"http://localhost:3000"}/api/integrations/callback/${provider}`,
     };
 
     const organisationIntegration = await Integration.findOne({

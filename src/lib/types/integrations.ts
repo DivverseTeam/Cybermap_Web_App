@@ -17,6 +17,10 @@ export const OAUTH2_PROVIDERS = ["GOOGLE", "MICROSOFT"] as const;
 export const Oauth2Provider = z.enum(OAUTH2_PROVIDERS);
 export type Oauth2Provider = z.infer<typeof Oauth2Provider>;
 
+export const AZURE_CLOUD_SLUG = ["azure-ad", "azure-cloud"] as const;
+export const azureCloudSlug = z.enum(AZURE_CLOUD_SLUG);
+export type azureCloudSlug = z.infer<typeof azureCloudSlug>;
+
 export const Integration = z.object({
   id: z.string(),
   image: z.string(),

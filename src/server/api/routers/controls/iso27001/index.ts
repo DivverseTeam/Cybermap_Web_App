@@ -1,20 +1,23 @@
+import { AZURE_CLOUD_SLUG } from "~/lib/types/integrations";
 import Control from "~/server/models/Control";
 import Integration from "~/server/models/Integration";
 import Organisation from "~/server/models/Organisation";
 import UserControlMapping from "~/server/models/UserControlMapping";
+import { getAzureRefreshToken } from "../../integrations/azure/init";
 import { AzureAUth } from "../../integrations/common";
-import { getHumanResourceSecurity } from "./humanResourceSecurity";
 import { getInformationSecurityPolicies } from "./informationSecurityPolicies";
 import { getOrganizationOfInformationSecurity } from "./organizationofInformationSecurity";
 
 const ISO27001_FUNCTIONS: any = {
   ISP: (auth: AzureAUth) => getInformationSecurityPolicies(auth),
   OIS: (auth: AzureAUth) => getOrganizationOfInformationSecurity(auth),
-  HRS: (auth: AzureAUth) => getHumanResourceSecurity(auth),
+  // HRS: (auth: AzureAUth) => getHumanResourceSecurity(auth),
   // ACC: (auth: AzureAUth) =>  getAccessControl(auth),
 };
 
 export async function runIso27001() {
+  let currentOrganisationId = "";
+
   try {
     const allOrganizations: any = await Organisation.find(
       {},
@@ -24,26 +27,26 @@ export async function runIso27001() {
       console.log("No organizations found.");
       return;
     }
-
     console.log("Performing audit for all organizations...");
 
     for (const organization of allOrganizations) {
       console.log(`Performing audit for organization: ${organization.name}`);
-
+      currentOrganisationId = organization._id;
       const integrations = await Promise.all(
-        ["azure-ad", "azure-cloud"].map((slug) =>
-          Integration.findOne(
+        AZURE_CLOUD_SLUG.map(async (slug) => {
+          return await Integration.findOne(
             {
               organisationId: organization._id,
               slug,
             },
             "authData subscriptionId"
-          ).lean()
-        )
+          ).lean();
+        })
       );
+      // console.log("Integrations", integrations);
 
       const [azureADIntegration, azureCloudIntegration] = integrations;
-      console.log("Integrations", azureADIntegration, azureCloudIntegration);
+      // console.log("Integrations", azureADIntegration, azureCloudIntegration);
 
       if (!azureADIntegration && !azureCloudIntegration) continue;
       if (!azureADIntegration?.authData && !azureCloudIntegration?.authData)
@@ -88,7 +91,25 @@ export async function runIso27001() {
         })
       );
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error during ISO27001 audit:", error);
+    if (error.code === "ExpiredAuthenticationToken") {
+      console.error("Token expired. Please re-authenticate.");
+      const integrations = await Promise.all(
+        AZURE_CLOUD_SLUG.map(async (slug) => {
+          return await Integration.findOne(
+            {
+              organisationId: currentOrganisationId,
+              slug,
+            },
+            "authData subscriptionId"
+          ).lean();
+        })
+      );
+      if (!integrations.length) {
+        const token = await getAzureRefreshToken(integrations);
+        console.log("Refreshed token", token);
+      }
+    }
   }
 }
