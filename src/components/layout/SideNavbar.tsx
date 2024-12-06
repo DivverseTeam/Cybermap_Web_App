@@ -160,7 +160,7 @@ export default function SideNavbar({}: Props) {
         <VerakosBrand />
       </div>
       <SearchCenter />
-      <div className="flex max-h-[700px] flex-grow flex-col justify-start gap-[12px] px-4  text-[14px] leading-4 [@media(min-width:1400px)]:px-6 ">
+      <div className="flex max-h-[700px] mt-2 [@media(min-width:1400px)]:mt-4 flex-grow flex-col justify-start gap-[12px] px-4  text-[14px] leading-4 [@media(min-width:1400px)]:px-6 ">
         {menuList.map((menu) => (
           <Nav
             isCollapsed={false}
