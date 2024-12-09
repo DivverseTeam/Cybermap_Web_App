@@ -28,6 +28,8 @@ import {
 
 interface BreadCrumbsProps {}
 
+const frameworkPathnames = ["iso27001"];
+
 const BreadCrumbs: FunctionComponent<BreadCrumbsProps> = () => {
   const paths = usePathname();
   const pathNames = paths
@@ -75,7 +77,7 @@ const BreadCrumbs: FunctionComponent<BreadCrumbsProps> = () => {
   ];
   function getIconForPath(pathName: string | undefined): ElementType | null {
     const heading = pageHeadings.find(
-      (heading) => heading.pathName === pathName
+      (heading) => heading.pathName === pathName,
     );
     return heading?.icon || null; // Return null if no match is found
   }
@@ -84,7 +86,7 @@ const BreadCrumbs: FunctionComponent<BreadCrumbsProps> = () => {
 
   if (pathNames?.length < 2) {
     return (
-      <div className="flex font-semibold text-black items-center">
+      <div className="flex items-center font-semibold text-black">
         {Icon && <Icon className="mr-2" />}
         <p>
           {pathNames?.[0]
@@ -100,6 +102,7 @@ const BreadCrumbs: FunctionComponent<BreadCrumbsProps> = () => {
       <BreadcrumbList>
         {pathNames.map((path, index) => {
           const fullPath = pathNames.slice(0, index + 1).join("/");
+
           return (
             <React.Fragment key={index}>
               <div className="flex items-center">
@@ -108,11 +111,17 @@ const BreadCrumbs: FunctionComponent<BreadCrumbsProps> = () => {
                   <BreadcrumbLink
                     asChild={true}
                     href={`/${fullPath}`}
-                    className={cn(
-                      index === pathNames.length - 1
-                        ? "text-black uppercase"
-                        : "text-muted-foreground"
-                    )}
+                    className={cn({
+                      "text-muted-foreground": index !== pathNames.length - 1,
+                      "font-semibold text-black":
+                        index === pathNames.length - 1,
+                      uppercase:
+                        (index === pathNames.length - 1 &&
+                          !frameworkPathnames.includes(
+                            pathNames[pathNames.length - 2] || "",
+                          )) ||
+                        frameworkPathnames.includes(path),
+                    })}
                   >
                     <Link href={`/${fullPath}`}>{unslugify(path)}</Link>
                   </BreadcrumbLink>
@@ -124,7 +133,6 @@ const BreadCrumbs: FunctionComponent<BreadCrumbsProps> = () => {
                     <BreadcrumbSeparator>/</BreadcrumbSeparator>
                   </div>
                 )}
-                {/* Add separator unless it's the last item */}
               </div>
             </React.Fragment>
           );

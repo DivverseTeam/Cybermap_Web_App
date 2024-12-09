@@ -16,16 +16,22 @@ export default function Page(_props: Props) {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const awaitedParams = await params;
 
-  const course = await api.frameworks.compliance.getCourse({
-    slug: awaitedParams["framework-slug"],
-  });
+  const [course, framework] = await Promise.all([
+    api.frameworks.compliance.getCourse({
+      slug: awaitedParams["framework-slug"],
+    }),
+    api.frameworks.getWithSlug({
+      slug: awaitedParams["framework-slug"],
+    }),
+  ]);
+
   const lessons = course.modules.flatMap((module) => module.lessons);
   const lessonIndex = lessons.findIndex(
     (lesson) => lesson.slug === awaitedParams["lesson-slug"],
   );
   const lesson = lessons[lessonIndex];
 
-  const title = `${lesson?.title || ""}`;
+  const title = `${lesson?.title || ""} - ${framework?.name}`;
 
   return {
     title,

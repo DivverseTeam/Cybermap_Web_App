@@ -89,29 +89,31 @@ export const generalRouter = createTRPCRouter({
   getPolicyDocument: protectedProcedure
     .input(
       z.object({
-        framework: z.string(),
+        frameworkSlug: z.string(),
         slug: z.string(),
       }),
     )
     .query(async ({ input, ctx }) => {
-      const { framework, slug } = input;
+      const { frameworkSlug, slug } = input;
       const { organisationId = "" } = ctx.session.user;
 
       const client = new S3Client({});
 
       let documentSize = 0;
       let hasDocument = false;
+      let mimeType = null;
 
       try {
         const objectResponse = await client.send(
-          new GetObjectAttributesCommand({
+          new GetObjectCommand({
             Bucket: Resource["policy-documents"].name,
-            Key: `${organisationId}/${framework}/${slug}`,
-            ObjectAttributes: ["ObjectSize"],
+            Key: `${organisationId}/${frameworkSlug}/${slug}`,
           }),
         );
+
         hasDocument = true;
-        documentSize = objectResponse.ObjectSize || 0;
+        documentSize = objectResponse.ContentLength || 0;
+        mimeType = objectResponse?.ContentType as string;
       } catch (error) {
         console.log(error);
       }
@@ -119,18 +121,19 @@ export const generalRouter = createTRPCRouter({
       return {
         hasDocument,
         documentSize,
+        mimeType,
       };
     }),
 
   deletePolicyDocument: protectedProcedure
     .input(
       z.object({
-        framework: z.string(),
+        frameworkSlug: z.string(),
         slug: z.string(),
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      const { slug, framework } = input;
+      const { slug, frameworkSlug } = input;
       const { organisationId = "" } = ctx.session.user;
 
       const client = new S3Client({});
@@ -138,7 +141,7 @@ export const generalRouter = createTRPCRouter({
       await client.send(
         new DeleteObjectCommand({
           Bucket: Resource["policy-documents"].name,
-          Key: `${organisationId}/${framework}/${slug}`,
+          Key: `${organisationId}/${frameworkSlug}/${slug}`,
         }),
       );
     }),

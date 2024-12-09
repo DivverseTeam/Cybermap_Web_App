@@ -60,6 +60,20 @@ const FrameworkComplianceCard: FunctionComponent<
         <div className="flex flex-col gap-8">
           <div>
             <div className="mb-2 flex items-center justify-between">
+              <p className="font-medium text-gray-700">Preparedness</p>
+              <p className="font-medium text-gray-700">
+                {preparednessPercentage}%
+              </p>
+            </div>
+            <ProgressBar percentage={preparednessPercentage} />
+            <div className="mt-2 flex justify-between text-gray-500">
+              <span>{preparedness.completed} modules completed</span>
+              <span>{preparedness.total} total</span>
+            </div>
+          </div>
+
+          <div>
+            <div className="mb-2 flex items-center justify-between">
               <p className="font-medium text-gray-700">Audit readiness</p>
               <p className="font-medium text-gray-700">
                 {readinessPercentage}%
@@ -69,20 +83,6 @@ const FrameworkComplianceCard: FunctionComponent<
             <div className="mt-2 flex justify-between text-gray-500">
               <span>{readiness.completed} modules completed</span>
               <span>{readiness.total} total</span>
-            </div>
-          </div>
-
-          <div>
-            <div className="mb-2 flex items-center justify-between">
-              <p className="font-medium text-gray-700">Preparedness</p>
-              <p className="font-medium text-gray-700">
-                {preparednessPercentage}%
-              </p>
-            </div>
-            <ProgressBar percentage={preparednessPercentage} />
-            <div className="mt-2 flex justify-between text-gray-500">
-              <span>{preparedness.completed} controls implemented</span>
-              <span>{preparedness.total} total</span>
             </div>
           </div>
         </div>
