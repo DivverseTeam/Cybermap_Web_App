@@ -30,7 +30,7 @@ export default function ViewFrameworkCompliance({}: Props) {
   const [frameworks] = api.frameworks.getWithCompletion.useSuspenseQuery();
 
   const framework = frameworks.find(
-    (framework) => framework.slug === frameworkSlug,
+    (framework) => framework.slug === frameworkSlug
   );
   const {
     controls = [],
@@ -53,7 +53,7 @@ export default function ViewFrameworkCompliance({}: Props) {
           total={passing + failing + risk}
           completed={passing}
           tag="controls"
-          title="Audit Preparedness"
+          title="Preparedness"
         />
       </div>
 
