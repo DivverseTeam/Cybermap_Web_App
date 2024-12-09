@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import dynamic from "next/dynamic";
 import { useParams } from "next/navigation";
 import PageTitle from "~/components/PageTitle";
 import { api } from "~/trpc/react";
@@ -13,10 +12,7 @@ import {
 } from "~/app/_components/ui/tabs";
 import ComplianceModules from "./components/compliance-modules";
 import ComplianceControls from "./components/compliance-controls";
-
-const ProgressCard = dynamic(() => import("../components/progress-card"), {
-  ssr: false,
-});
+import ProgressCard from "../components/progress-card";
 
 type Props = {};
 
@@ -32,10 +28,7 @@ export default function ViewFrameworkCompliance({}: Props) {
   const framework = frameworks.find(
     (framework) => framework.slug === frameworkSlug
   );
-  const {
-    controls = [],
-    complianceScore: { passing = 0, failing = 0, risk = 0 } = {},
-  } = framework || {};
+  const { controls = [] } = framework || {};
 
   return (
     <div className="flex flex-col gap-4 2xl:gap-6">
@@ -43,9 +36,13 @@ export default function ViewFrameworkCompliance({}: Props) {
 
       <div className="grid grid-cols-2 gap-4 2xl:gap-6">
         <ProgressCard
+          total={course.preparedness.total}
+          completed={course.preparedness.completed}
+          title="Preparedness"
+        />
+        <ProgressCard
           total={course.readiness.total}
           completed={course.readiness.completed}
-          tag="modules"
           title="Audit Readiness"
         />
 

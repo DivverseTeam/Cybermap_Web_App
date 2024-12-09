@@ -59,9 +59,9 @@ export function Nav({ links, groupName, isCollapsed }: NavProps) {
           const WrapperComponent = link.href ? Link : "span";
 
           return (
+            //@ts-ignore
             <WrapperComponent
               key={index}
-              href={link.href || ""}
               onClick={link.onClick}
               className={cn(
                 "w-[200px] cursor-pointer [@media(min-width:1400px)]:w-[220px]",
@@ -73,8 +73,11 @@ export function Nav({ links, groupName, isCollapsed }: NavProps) {
                 link.variant === "default" &&
                   "dark:bg-muted dark:text-white dark:hover:bg-muted-foreground dark:hover:text-white",
                 link.variant === "white" && "text-black",
-                "justify-start"
+                "justify-start",
               )}
+              {...(link.href && WrapperComponent === Link
+                ? { href: link.href }
+                : {})}
             >
               {link.icon && (
                 <link.icon
@@ -87,7 +90,7 @@ export function Nav({ links, groupName, isCollapsed }: NavProps) {
                   className={cn(
                     "ml-auto",
                     link.variant === "default" &&
-                      "text-background dark:text-white"
+                      "text-background dark:text-white",
                   )}
                 >
                   {link.label}

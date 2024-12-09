@@ -40,6 +40,22 @@ export const frameworksRouter = createTRPCRouter({
     },
   ),
 
+  getWithSlug: protectedProcedure
+    .input(
+      z.object({
+        slug: z.string(),
+      }),
+    )
+    .query(async ({ input: { slug } }) => {
+      const framework = frameworks.find((framework) => framework.slug === slug);
+
+      if (!framework) {
+        throw new Error("Framework not found");
+      }
+
+      return framework;
+    }),
+
   getWithCompletion: protectedProcedure.query(
     async ({
       ctx: {
@@ -77,7 +93,7 @@ export const frameworksRouter = createTRPCRouter({
           controls: OrganisationControl.array()
             .parse(controls)
             .filter((control) => control.mapped.includes(framework.name)),
-          readiness: {
+          preparedness: {
             completed:
               organisation.completedLessons.get(framework.slug)?.length || 0,
             total: totalModules,
@@ -186,11 +202,11 @@ export const frameworksRouter = createTRPCRouter({
 
           return {
             modules: courseModulesWithCompletion,
-            readiness: {
+            preparedness: {
               total: totalLessons,
               completed: completedLessons.length,
             },
-            preparedness: {
+            readiness: {
               total: totalLessons,
               completed: completedLessons.length,
             },

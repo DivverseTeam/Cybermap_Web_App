@@ -23,8 +23,8 @@ export default function ComplianceGuidePage() {
             logo,
             name,
             slug,
-            complianceScore: { passing, failing, risk },
-            readiness,
+            // complianceScore: { passing, failing, risk },
+            preparedness,
           } = framework;
 
           return (
@@ -32,11 +32,8 @@ export default function ComplianceGuidePage() {
               <FrameworkComplianceCard
                 name={name}
                 logo={logo}
-                preparedness={{
-                  completed: passing,
-                  total: passing + failing + risk,
-                }}
-                readiness={readiness}
+                preparedness={preparedness}
+                readiness={preparedness}
               />
             </Link>
           );

@@ -8,7 +8,6 @@ interface ProgressCardProps {
   completed: number;
   title: string;
   logo?: string;
-  tag: "controls" | "modules";
 }
 
 const getBarColor = (percentage: number): string => {
@@ -23,7 +22,6 @@ const ProgressCard: FunctionComponent<ProgressCardProps> = ({
   completed,
   title,
   logo,
-  tag,
 }) => {
   const usePercentage = total < 76 || total > 100;
   const percentage = total ? Math.round((completed / total) * 100) : 0;
@@ -35,7 +33,7 @@ const ProgressCard: FunctionComponent<ProgressCardProps> = ({
   const boxesCompleted = usePercentage ? percentage : completed;
 
   return (
-    <div className="flex min-w-[600px] flex-col gap-4 rounded-[8px] border border-neutral-2 border-solid bg-white p-4">
+    <div className="flex flex-col gap-4 rounded-[8px] border border-neutral-2 border-solid bg-white p-4">
       <div className="mb-2 flex items-center justify-between">
         {logo ? (
           <div className="flex items-center gap-2">
@@ -101,7 +99,7 @@ const ProgressCard: FunctionComponent<ProgressCardProps> = ({
       </div>
       <div className="flex justify-end">
         <p className="text-secondary text-sm">
-          {completed}/{total} {toTitleCase(tag)} completed
+          {completed}/{total} modules completed
         </p>
       </div>
     </div>
