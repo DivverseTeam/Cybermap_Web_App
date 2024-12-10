@@ -32,7 +32,7 @@ export default async function RootLayout({
       <HydrateClient>
         <html lang="en" className={`${GeistSans.variable}`}>
           <body className={`${inter.variable}${publicSans.variable} font-sans`}>
-            <NextTopLoader />
+            <NextTopLoader showSpinner={false} />
             <Wrapper session={session}>{children}</Wrapper>
             <Toaster />
           </body>

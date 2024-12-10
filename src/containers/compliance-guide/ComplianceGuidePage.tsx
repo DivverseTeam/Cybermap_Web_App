@@ -19,13 +19,7 @@ export default function ComplianceGuidePage() {
       />
       <div className="grid grid-cols-2 gap-6 2xl:grid-cols-3">
         {frameworks.map((framework, idx) => {
-          const {
-            logo,
-            name,
-            slug,
-            // complianceScore: { passing, failing, risk },
-            preparedness,
-          } = framework;
+          const { logo, name, slug, readiness, preparedness } = framework;
 
           return (
             <Link key={idx} href={`${pathname}/${slug}`}>
@@ -33,7 +27,7 @@ export default function ComplianceGuidePage() {
                 name={name}
                 logo={logo}
                 preparedness={preparedness}
-                readiness={preparedness}
+                readiness={readiness}
               />
             </Link>
           );
