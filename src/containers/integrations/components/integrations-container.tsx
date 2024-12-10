@@ -52,7 +52,7 @@ export default function IntegrationsContainer({
   const isLoading = isFetching || isMutating;
 
   return (
-    <div className="bg-gray-100 p-1 h-full rounded-xl border border-neutral-2 border-solid">
+    <div className="bg-gray-100 p-1 w-full h-full rounded-xl border border-neutral-2 border-solid">
       <div className="flex grow flex-col p-6 rounded-xl bg-white shadow-md justify-between">
         <div className="mb-4 [@media(min-width:1400px)]:mb-6">
           <h2 className=" text-lg [@media(min-width:1400px)]:text-xl">
