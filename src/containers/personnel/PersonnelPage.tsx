@@ -24,12 +24,13 @@ import { api } from "~/trpc/react";
 import { ImportEmployeeDialog } from "./components/import-employee-dialog";
 import type { EmployeeType } from "~/server/models/Employee";
 import SpinnerModal from "./components/spinner-modal";
+import { employees } from "./_lib/constants";
 
 type Props = {};
 // const employeesData = employees;
 
 export default function PersonnelPage({}: Props) {
-  const [data, setData] = useState<EmployeeType[] | undefined>([]);
+  const [data, setData] = useState<IEmployee[]>([]);
 
   // Scroll to top button logic
   const [isVisible, setIsVisible] = useState(false);
@@ -56,18 +57,18 @@ export default function PersonnelPage({}: Props) {
     });
   };
 
-  const {
-    data: employees,
-    isLoading,
-    isError,
-  } = api.employees.getEmployees.useQuery();
+  // const {
+  //   data: employees,
+  //   isLoading,
+  //   isError,
+  // } = api.employees.getEmployees.useQuery();
   console.log(employees);
 
   // const employeesData = employees;
 
   const allCompliances = new Set();
 
-  employees?.forEach((employee: EmployeeType) => {
+  employees?.forEach((employee: IEmployee) => {
     employee.complianceList?.forEach((compliance) => {
       Object.keys(compliance).forEach((key) => allCompliances.add(key));
     });
@@ -101,7 +102,7 @@ export default function PersonnelPage({}: Props) {
       //   { cache: "no-store" }
       // );
       // const { evidences, total } = await res.json();
-      const employeeData = employees?.map((employee: EmployeeType) => ({
+      const employeeData = employees?.map((employee: IEmployee) => ({
         ...employee,
         hireDate: new Date(employee.hireDate),
         terminationDate:
@@ -152,62 +153,66 @@ export default function PersonnelPage({}: Props) {
   return (
     <div className="flex flex-col gap-6">
       <PageTitle
-        title="Personnel"
-        subtitle="Assign roles, track responsibilities, and keep your team audit-ready with real-time monitoring, collaborative tools, and automated reminders."
+        title="Employees"
+        subtitle="View and manage your employees."
         // action={<NewControlSheet />}
       />
       {(employees ?? []).length > 0 ? (
         <div className="flex gap-5 [@media(min-width:1400px)]:gap-6">
           {/* FILTERS */}
-          <div className="flex min-w-[200px] [@media(min-width:1400px)]:min-w-[260px] flex-col rounded-lg">
-            {/* Filter heading */}
-            <div className="flex h-[34px] [@media(min-width:1400px)]:h-[40px] items-center justify-between rounded-2xl rounded-b-none border border-b-0 bg-muted px-3 text-secondary text-sm 2xl:text-md">
-              <div className="flex gap-2 text-secondary">
-                <span className="font-semibold">Filters</span>
-                <ListFilter className="w-5" />
-                {/* <SortByDown01Icon /> */}
-              </div>
-              <ChevronRight className="w-5" />
-            </div>
-            {/* Selected compliances */}
-            <div className="flex flex-wrap items-center border border-t-0 border-b-2 py-2 pl-2 [@media(min-width:1400px)]:pl-3 text-xs 2xl:text-sm">
-              <div className="mb-1 flex h-5 items-center justify-between gap-2 rounded-3xl bg-primary/20 px-2 2xl:h-8">
-                All <Star className="w-4" />
-              </div>
-              {selectedCompliances.map((selectedCompliance: string) => (
-                <div
-                  key={selectedCompliance}
-                  className="mb-1 ml-1 flex h-5 items-center justify-between gap-1 rounded-3xl bg-primary/20 px-2 font-semibold 2xl:h-8"
-                >
-                  {selectedCompliance}
-                  <X
-                    className="w-3 cursor-pointer hover:w-4"
-                    onClick={() => removeSelectedCompliance(selectedCompliance)}
-                    aria-label={`Remove ${selectedCompliance}`}
-                  />
+          <div className="bg-gray-100 p-1 h-full rounded-lg border border-neutral-2 border-solid">
+            <div className="flex min-w-[200px] flex-col rounded-lg [@media(min-width:1400px)]:min-w-[260px] h-max bg-white shadow-md">
+              {/* Filter heading */}
+              <div className="flex h-[34px] [@media(min-width:1400px)]:h-[40px] items-center justify-between rounded-b-none shadow-none bg-gray-100 px-3 text-secondary text-sm 2xl:text-md">
+                <div className="flex gap-2 text-secondary">
+                  <span className="font-semibold">Filters</span>
+                  <ListFilter className="w-5" />
+                  {/* <SortByDown01Icon /> */}
                 </div>
-              ))}
-            </div>
-            {/* List of all compliances */}
-            <div className="flex flex-col rounded-2xl rounded-t-none border border-t-0 text-sm 2xl:text-md">
-              {[
-                "Compliant",
-                "Non-compliant",
-                ...((complianceList as string[]) || []),
-              ].map((compliance) => (
-                <div
-                  key={compliance}
-                  className="cursor-pointer px-1.5 py-1.5 [@media(min-width:1400px)]:px-2.5 [@media(min-width:1400px)]:py-2.5 last:rounded-b-2xl hover:bg-muted"
-                  onClick={() => addSelectedCompliance(compliance)}
-                >
-                  {compliance}
+                <ChevronRight className="w-5" />
+              </div>
+              {/* Selected compliances */}
+              <div className="flex flex-wrap items-center border border-x-0 border-t-0 border-b-2 py-2 pl-2 [@media(min-width:1400px)]:pl-3 text-xs 2xl:text-sm">
+                <div className="mb-1 flex h-5 items-center justify-between gap-2 rounded-3xl bg-primary/20 px-2 2xl:h-8">
+                  All <Star className="w-4" />
                 </div>
-              ))}
+                {selectedCompliances.map((selectedCompliance: string) => (
+                  <div
+                    key={selectedCompliance}
+                    className="mb-1 ml-1 flex h-5 items-center justify-between gap-1 rounded-3xl bg-primary/20 px-2 font-semibold 2xl:h-8"
+                  >
+                    {selectedCompliance}
+                    <X
+                      className="w-3 cursor-pointer hover:w-4"
+                      onClick={() =>
+                        removeSelectedCompliance(selectedCompliance)
+                      }
+                      aria-label={`Remove ${selectedCompliance}`}
+                    />
+                  </div>
+                ))}
+              </div>
+              {/* List of all compliances */}
+              <div className="flex flex-col text-sm 2xl:text-md">
+                {[
+                  "Compliant",
+                  "Non-compliant",
+                  ...((complianceList as string[]) || []),
+                ].map((compliance) => (
+                  <div
+                    key={compliance}
+                    className="cursor-pointer px-1.5 py-1.5 [@media(min-width:1400px)]:px-2.5 [@media(min-width:1400px)]:py-2.5 last:rounded-b-2xl hover:bg-muted"
+                    onClick={() => addSelectedCompliance(compliance)}
+                  >
+                    {compliance}
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
           {/* EMPLOYEE TABLE */}
-          <PersonnelContainer employees={employees} />
+          <PersonnelContainer data={data} />
         </div>
       ) : (
         <div className="mx-auto mt-5 flex w-[827px] flex-col items-center ">
@@ -222,14 +227,14 @@ export default function PersonnelPage({}: Props) {
               <CurvyRightDirectionIcon className="mr-2" /> Integrations
             </Button>
           </div>
-          {isError && (
+          {/* {isError && (
             <div className="flex items-center gap-1">
               <TriangleAlert className="text-[#C65C10]" />
               <span className="text-[#C65C10]">
                 Error fetching employees. Please try again later
               </span>
             </div>
-          )}
+          )} */}
         </div>
       )}
       <Button
@@ -242,7 +247,7 @@ export default function PersonnelPage({}: Props) {
       >
         <ArrowUpToLine />
       </Button>
-      <SpinnerModal show={isLoading} />
+      {/* <SpinnerModal show={isLoading} /> */}
     </div>
   );
 }

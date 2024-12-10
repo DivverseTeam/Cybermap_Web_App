@@ -31,7 +31,7 @@ export default function IntegrationsContainer({
   const isPending = isConnectPending || isDisconnectPending;
 
   const onIntegrationCardActionClick = (
-    integration: Integration & { isConnected: boolean },
+    integration: Integration & { isConnected: boolean }
   ) => {
     if (!integration?.isConnected) {
       setSelectedIntegration(integration);
@@ -52,28 +52,12 @@ export default function IntegrationsContainer({
   const isLoading = isFetching || isMutating;
 
   return (
-    <div className="flex grow flex-col">
-      <div className="mx-auto flex w-full justify-between rounded-2xl rounded-b-none border bg-muted p-2 2xl:p-5 [@media(min-width:1400px)]:p-4">
-        <Input
-          type="text"
-          placeholder="Search for connected integrations"
-          className="w-60 rounded-md bg-[#F9F9FB] [@media(min-width:1400px)]:w-72"
-          suffix={
-            <span className="cursor-pointer">
-              <Search01Icon size="12" />
-            </span>
-          }
-        />
-      </div>
-      <div className="border bg-white p-8">
+    <div className="bg-gray-100 p-1 h-full rounded-xl border border-neutral-2 border-solid">
+      <div className="flex grow flex-col p-6 rounded-xl bg-white shadow-md justify-between">
         <div className="mb-4 [@media(min-width:1400px)]:mb-6">
-          <h2 className="font-semibold text-lg [@media(min-width:1400px)]:text-xl">
+          <h2 className=" text-lg [@media(min-width:1400px)]:text-xl">
             {`${isConnected ? "Connected" : "All"} integrations`}
           </h2>
-          <p className="text-gray-600 text-xs [@media(min-width:1400px)]:text-sm">
-            Go through and access {isConnected ? "connected" : "all"}{" "}
-            integrations in here
-          </p>
         </div>
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3 xl:gap-8">
           {isLoading

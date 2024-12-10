@@ -79,7 +79,7 @@ export default function Policies() {
   ];
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 pb-4">
       <PageTitle
         title="Policies"
         subtitle="View and edit your policies"
@@ -97,7 +97,9 @@ export default function Policies() {
         <div className="fixed inset-0 z-30 bg-black bg-opacity-60"></div>
       ) : null}
 
-      <DataTable columns={columns} data={data} />
+      <div className="bg-gray-100 p-1 h-full rounded-lg border border-neutral-2 border-solid">
+        <DataTable columns={columns} data={data} />
+      </div>
     </div>
   );
 }

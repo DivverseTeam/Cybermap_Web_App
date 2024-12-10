@@ -31,7 +31,7 @@ export function IntegrationTabs({
   connected,
 }: Props) {
   const connectedCategoriesSet = new Set(
-    connected.map((integration) => integration.category),
+    connected.map((integration) => integration.category)
   );
 
   const connectedCategories = [
@@ -45,7 +45,7 @@ export function IntegrationTabs({
   ];
 
   const allCategoriesSet = new Set(
-    all.map((integration) => integration.category),
+    all.map((integration) => integration.category)
   );
 
   const allCategories = [
@@ -59,89 +59,91 @@ export function IntegrationTabs({
   ];
 
   return (
-    <Tabs
-      defaultValue="connected"
-      className="h-[500px] w-[200px] 2xl:w-[22%] [@media(min-width:1400px)]:h-[886px] [@media(min-width:1400px)]:w-[270px]"
-    >
-      <TabsList className="z-10 flex w-full rounded-2xl rounded-b-none border bg-muted">
-        <TabsTrigger
-          value="connected"
-          className="rounded-2xl rounded-b-none rounded-tr-none"
-          onClick={() => setActiveList("connected")}
-        >
-          Connected ({connected.length})
-        </TabsTrigger>
-        <TabsTrigger
-          value="available"
-          className="rounded-2xl rounded-b-none rounded-tl-none"
-          onClick={() => setActiveList("available")}
-        >
-          Available ({all.length})
-        </TabsTrigger>
-      </TabsList>
+    <div className="bg-gray-100 p-1 h-max rounded-xl border border-neutral-2 border-solid">
+      <Tabs
+        defaultValue="connected"
+        className="h-max w-[200px] 2xl:w-[22%] [@media(min-width:1400px)]:w-[270px]"
+      >
+        <TabsList className="z-10 flex w-full rounded-2xl rounded-b-none bg-muted">
+          <TabsTrigger
+            value="connected"
+            className="rounded-2xl rounded-b-none rounded-tr-none"
+            onClick={() => setActiveList("connected")}
+          >
+            Connected ({connected.length})
+          </TabsTrigger>
+          <TabsTrigger
+            value="available"
+            className="rounded-2xl rounded-b-none rounded-tl-none"
+            onClick={() => setActiveList("available")}
+          >
+            Available ({all.length})
+          </TabsTrigger>
+        </TabsList>
 
-      <TabsContent value="connected">
-        <Card className="rounded-t-none">
-          <CardContent className="space-y-1 p-0">
-            {/* Display list of connected integrations */}
-            {connectedCategories.map((category) => (
-              <div key={category.key} className="w-full">
-                <Button
-                  variant="ghost"
-                  size={"lg"}
-                  className={cn(
-                    "w-full justify-start px-2 hover:bg-[#305EFF17]",
-                    {
-                      "!bg-[#305EFF17]":
-                        (activeCategory === "" && category.key === "All") ||
-                        activeCategory === category.key,
-                    },
-                  )}
-                  type="button"
-                  onClick={() =>
-                    setActiveCategory(
-                      category.key === "All" ? "" : category.key,
-                    )
-                  }
-                >
-                  {category.value}
-                </Button>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-      </TabsContent>
+        <TabsContent value="connected">
+          <Card className="rounded-t-none">
+            <CardContent className="space-y-1 p-0">
+              {/* Display list of connected integrations */}
+              {connectedCategories.map((category) => (
+                <div key={category.key} className="w-full">
+                  <Button
+                    variant="ghost"
+                    size={"lg"}
+                    className={cn(
+                      "w-full justify-start px-2 hover:bg-[#305EFF17]",
+                      {
+                        "!bg-[#305EFF17]":
+                          (activeCategory === "" && category.key === "All") ||
+                          activeCategory === category.key,
+                      }
+                    )}
+                    type="button"
+                    onClick={() =>
+                      setActiveCategory(
+                        category.key === "All" ? "" : category.key
+                      )
+                    }
+                  >
+                    {category.value}
+                  </Button>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-      <TabsContent value="available">
-        <Card className="rounded-t-none">
-          <CardContent className="space-y-1 p-0">
-            {allCategories.map((category) => (
-              <div key={category.key} className="w-full">
-                <Button
-                  variant="ghost"
-                  size={"lg"}
-                  className={cn(
-                    "w-full justify-start px-2 hover:bg-[#305EFF17]",
-                    {
-                      "!bg-[#305EFF17]":
-                        (activeCategory === "" && category.key === "All") ||
-                        activeCategory === category.key,
-                    },
-                  )}
-                  type="button"
-                  onClick={() =>
-                    setActiveCategory(
-                      category.key === "All" ? "" : category.key,
-                    )
-                  }
-                >
-                  {category.value}
-                </Button>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-      </TabsContent>
-    </Tabs>
+        <TabsContent value="available">
+          <Card className="rounded-t-none">
+            <CardContent className="space-y-1 p-0">
+              {allCategories.map((category) => (
+                <div key={category.key} className="w-full">
+                  <Button
+                    variant="ghost"
+                    size={"lg"}
+                    className={cn(
+                      "w-full justify-start px-2 hover:bg-[#305EFF17]",
+                      {
+                        "!bg-[#305EFF17]":
+                          (activeCategory === "" && category.key === "All") ||
+                          activeCategory === category.key,
+                      }
+                    )}
+                    type="button"
+                    onClick={() =>
+                      setActiveCategory(
+                        category.key === "All" ? "" : category.key
+                      )
+                    }
+                  >
+                    {category.value}
+                  </Button>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+    </div>
   );
 }

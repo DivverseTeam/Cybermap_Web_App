@@ -100,7 +100,7 @@ export default function ComplianceChart() {
               <Area
                 type="monotone"
                 dataKey="compliance"
-                stroke="#b5803a"
+                stroke="#F26F10"
                 strokeWidth={3}
                 fill="url(#colorPv)"
               />

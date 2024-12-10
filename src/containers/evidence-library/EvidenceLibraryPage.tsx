@@ -130,63 +130,66 @@ export default function EvidenceLibraryPage({
         action={<NewEvidenceSheet />}
       />
 
-      <div className="container flex flex-col gap-6 bg-white p-4 py-6">
-        <div className="flex justify-between">
-          <div>
-            <Tabs
-              defaultValue="All"
-              className="w-[400px]"
-              onValueChange={(value: string | null) =>
-                setStatusFilter(value === "All" ? null : value)
+      <div className="bg-gray-100 p-1 h-full rounded-lg border border-neutral-2 border-solid">
+        <div className="container flex flex-col gap-6 bg-white p-6 rounded-lg h-max shadow-md">
+          <div className="flex justify-between">
+            <div>
+              <Tabs
+                defaultValue="All"
+                className="w-[400px]"
+                onValueChange={(value: string | null) =>
+                  setStatusFilter(value === "All" ? null : value)
+                }
+              >
+                <TabsList>
+                  <TabsTrigger value="All">All</TabsTrigger>
+                  <TabsTrigger value="Needs artifact">
+                    Needs artifact
+                  </TabsTrigger>
+                  <TabsTrigger value="Updated">Updated</TabsTrigger>
+                </TabsList>
+              </Tabs>
+            </div>
+            <Input
+              type="text"
+              placeholder="Search for a file"
+              // onChange={handleSearch}
+              // defaultValue={search}
+              className="w-54 [@media(min-width:1400px)]:w-72 bg-[#F9F9FB]"
+              suffix={
+                <span className="cursor-pointer">
+                  <Search01Icon size="12" />
+                </span>
               }
-            >
-              <TabsList>
-                <TabsTrigger value="All">All</TabsTrigger>
-                <TabsTrigger value="Needs artifact">Needs artifact</TabsTrigger>
-                <TabsTrigger value="Updated">Updated</TabsTrigger>
-              </TabsList>
-            </Tabs>
+            />
           </div>
-          <Input
-            type="text"
-            placeholder="Search for a file"
-            // onChange={handleSearch}
-            // defaultValue={search}
-            className="w-54 [@media(min-width:1400px)]:w-72 bg-[#F9F9FB]"
-            suffix={
-              <span className="cursor-pointer">
-                <Search01Icon size="12" />
-              </span>
-            }
-          />
-        </div>
 
-        <Table className="border ">
-          <TableHeader className="bg-muted border text-[#40566D] text-xs [@media(min-width:1400px)]:text-sm">
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
-                    <button
-                      onClick={() =>
-                        router.push(
-                          `/dashboard/evidences?page=${currentPage}&limit=${itemsPerPage}`
-                        )
-                      }
-                    >
-                      {header.isPlaceholder
-                        ? null
-                        : typeof header.column.columnDef.header === "function"
-                        ? header.column.columnDef.header(header.getContext()) // Call the function to get the rendered header
-                        : header.column.columnDef.header}
-                    </button>
-                  </TableHead>
-                ))}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody className="bg-white">
-            {/* {table.getRowModel().rows.map((row) => (
+          <Table className="border ">
+            <TableHeader className="bg-muted border text-[#40566D] text-xs [@media(min-width:1400px)]:text-sm">
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <TableHead key={header.id}>
+                      <button
+                        onClick={() =>
+                          router.push(
+                            `/dashboard/evidences?page=${currentPage}&limit=${itemsPerPage}`
+                          )
+                        }
+                      >
+                        {header.isPlaceholder
+                          ? null
+                          : typeof header.column.columnDef.header === "function"
+                          ? header.column.columnDef.header(header.getContext()) // Call the function to get the rendered header
+                          : header.column.columnDef.header}
+                      </button>
+                    </TableHead>
+                  ))}
+                </TableRow>
+              ))}
+            </TableHeader>
+            <TableBody className="bg-white">
+              {/* {table.getRowModel().rows.map((row) => (
             <tr key={row.id}>
               {row.getVisibleCells().map((cell) => (
                 <td key={cell.id} className="px-4 py-2">
@@ -195,35 +198,39 @@ export default function EvidenceLibraryPage({
               ))}
             </tr>
           ))} */}
-            {table.getRowModel().rows.map((row) => (
-              <TableRow
-                key={row.id}
-                data-state={row.getIsSelected() && "selected"}
-              >
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+              {table.getRowModel().rows.map((row) => (
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && "selected"}
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
 
-        {/* <PaginationSection
+          {/* <PaginationSection
           currentPage={page}
           onPageChange={(newPage: any) => handlePageChange(newPage)}
           totalItems={total}
           itemsPerPage={limit}
         /> */}
-        <PaginationWithLinks
-          page={currentPage}
-          pageSize={itemsPerPage}
-          totalCount={data.length}
-          pageSizeSelectOptions={{
-            pageSizeOptions: [5, 10, 25, 50],
-          }}
-        />
+          <PaginationWithLinks
+            page={currentPage}
+            pageSize={itemsPerPage}
+            totalCount={data.length}
+            pageSizeSelectOptions={{
+              pageSizeOptions: [5, 10, 25, 50],
+            }}
+          />
+        </div>
       </div>
     </div>
   );

@@ -1,10 +1,12 @@
 import type { ColumnDef } from "@tanstack/react-table";
-import {  useState, } from "react";
+import { useState } from "react";
 
 import type { IntegrationType } from "../types";
 import Image from "next/image";
 import { Badge } from "~/app/_components/ui/badge";
 import { ViewDashboardIntegrationSheet } from "./view-dashboard-integration-sheet";
+import { Button } from "~/app/_components/ui/button";
+import Link from "next/link";
 
 // const columnHelper = createColumnHelper();
 
@@ -56,7 +58,7 @@ export const columns: ColumnDef<IntegrationType>[] = [
       <span className="flex w-[110px] items-center justify-center text-center">
         Status
       </span>
-    ), 
+    ),
     cell: ({ cell }) => {
       const isConnected = cell.getValue() as boolean;
 
@@ -73,18 +75,15 @@ export const columns: ColumnDef<IntegrationType>[] = [
 
   {
     accessorKey: "actions",
-    header: () => <span></span>, 
-    cell: function Cell({ row }) {
-      const [showViewIntegrationSheet, setShowViewIntegrationSheet] =
-        useState(false);
-
+    header: () => <span></span>,
+    cell: () => {
+      // const [showViewIntegrationSheet, setShowViewIntegrationSheet] =
+      //   useState(false);
 
       return (
-        <ViewDashboardIntegrationSheet
-          open={showViewIntegrationSheet}
-          onOpenChange={setShowViewIntegrationSheet}
-          integration={row.original as unknown as IntegrationType}
-        />
+        <Button variant="outline" size="sm">
+          <Link href={"/integrations"}>View</Link>
+        </Button>
       );
     },
   },

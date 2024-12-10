@@ -38,8 +38,8 @@ export default function DashboardPage() {
     const getAverageReadinessScore = (frameworks: FrameworkType[]) => {
       const totals = frameworks.reduce(
         (acc, framework) => {
-          acc.completed += framework.readiness.completed;
-          acc.total += framework.readiness.total;
+          acc.completed += framework.preparedness.completed;
+          acc.total += framework.preparedness.total;
           return acc;
         },
         { completed: 0, total: 0 }
@@ -78,7 +78,7 @@ export default function DashboardPage() {
           <div className="flex flex-col gap-3 [@media(min-width:1400px)]:gap-4 w-[380px] min-h-[220px] max-h-[300px] 2xl:max-h-[350px] rounded-[8px] ">
             <p className="w-full text-nowrap">Audit readiness</p>
             <div className="bg-gray-100 p-3 h-full rounded-xl border border-neutral-2 border-solid">
-              <div className="flex h-full rounded-xl bg-white shadow-md justify-between items-center">
+              <div className="flex h-full rounded-lg bg-white shadow-md justify-between items-center">
                 <ReadinessScoreIndicator score={averageReadinessScore} />
               </div>
             </div>
@@ -97,8 +97,9 @@ export default function DashboardPage() {
                   const {
                     logo,
                     name,
-                    complianceScore: { passing, failing, risk },
-                    readiness,
+                    // complianceScore: { passing, failing, risk },
+                    // readiness,
+                    preparedness,
                   } = framework;
 
                   return (
@@ -106,11 +107,8 @@ export default function DashboardPage() {
                       key={idx}
                       name={name}
                       logo={logo}
-                      preparedness={{
-                        completed: passing,
-                        total: passing + failing + risk,
-                      }}
-                      readiness={readiness}
+                      preparedness={preparedness}
+                      readiness={preparedness}
                     />
                   );
                 })}
