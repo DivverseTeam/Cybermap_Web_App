@@ -13,7 +13,7 @@ export type IntegrationType2 = {
   status: string;
 };
 
-type Readiness = {
+type Preparedness = {
   completed: number;
   total: number;
 };
@@ -21,5 +21,5 @@ type Readiness = {
 export type FrameworkType = {
   id?: string;
   name: string;
-  readiness: Readiness;
+  preparedness: Preparedness;
 };

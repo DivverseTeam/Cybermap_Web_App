@@ -29,13 +29,13 @@ const ProgressBar = ({ percentage }: { percentage: number }) => {
 const FrameworkStatusCard: FunctionComponent<FrameworkStatusCardProps> = ({
   name,
   preparedness,
-  readiness,
+  // readiness,
 }) => {
   const preparednessPercentage = Math.round(
     (preparedness.completed / preparedness.total) * 100
   );
   const readinessPercentage = Math.round(
-    (readiness.completed / readiness.total) * 100
+    (preparedness.completed / preparedness.total) * 100
   );
 
   return (

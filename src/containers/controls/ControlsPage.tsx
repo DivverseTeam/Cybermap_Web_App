@@ -71,7 +71,7 @@ export default function ControlsPage() {
       setSelectedFrameworks((prev) =>
         checked
           ? [...prev, value]
-          : prev.filter((framework) => framework !== value),
+          : prev.filter((framework) => framework !== value)
       );
     }
   };
@@ -93,7 +93,7 @@ export default function ControlsPage() {
         return true; // Show all controls if no specific filter is applied
       }
       return selectedFrameworks.some((framework) =>
-        control.mapped.includes(framework),
+        control.mapped.includes(framework)
       );
     });
     setTableData(filteredControlsData);
@@ -153,116 +153,120 @@ export default function ControlsPage() {
         subtitle="View and manage your controls"
         action={<NewControlSheet />}
       />
-      <div className="flex gap-7 [@media(min-width:1400px)]:gap-10">
-        <div className="flex w-[136px] [@media(min-width:1400px)]:w-[142px] flex-col gap-1 [@media(min-width:1400px)]:gap-2 2xl:w-[200px]">
-          <h5 className="mb-3 font-semibold">Frameworks</h5>
+      <div className="flex gap-4 [@media(min-width:1400px)]:gap-8">
+        <div className="bg-gray-100 p-1 h-full rounded-lg border border-neutral-2 border-solid">
+          <div className="flex w-[150px] [@media(min-width:1400px)]:w-[175px] flex-col gap-1 [@media(min-width:1400px)]:gap-2 2xl:w-[210px] bg-white p-4 rounded-lg h-max shadow-md">
+            <h5 className="mb-3 font-semibold">Frameworks</h5>
 
-          <label className="flex items-center text-xs 2xl:text-sm">
-            <input
-              type="checkbox"
-              value="All frameworks"
-              onChange={handleCheckboxChange}
-              checked={selectedFrameworks.length === frameworks.length}
-              className="mr-[6px] h-4 w-4 cursor-pointer appearance-none rounded-sm border border-primary checked:border-transparent checked:bg-primary focus:outline-none "
-            />
-            {selectedFrameworks.length === frameworks.length && (
-              <Check className="pointer-events-none absolute h-4 w-4 text-white" />
-            )}
-            All frameworks
-          </label>
-          {frameworks.map((framework: Framework) => (
-            <label
-              key={framework.id}
-              className="flex items-center text-xs 2xl:text-sm"
-            >
+            <label className="flex items-center text-xs 2xl:text-sm">
               <input
                 type="checkbox"
-                value={framework.name}
+                value="All frameworks"
                 onChange={handleCheckboxChange}
-                checked={selectedFrameworks.includes(framework.name)}
+                checked={selectedFrameworks.length === frameworks.length}
                 className="mr-[6px] h-4 w-4 cursor-pointer appearance-none rounded-sm border border-primary checked:border-transparent checked:bg-primary focus:outline-none "
               />
-              {selectedFrameworks.includes(framework.name) && (
+              {selectedFrameworks.length === frameworks.length && (
                 <Check className="pointer-events-none absolute h-4 w-4 text-white" />
               )}
-              {framework.name}
+              All frameworks
             </label>
-          ))}
-          <label className="flex items-center text-xs 2xl:text-sm">
-            <input
-              type="checkbox"
-              value="No framework"
-              onChange={handleCheckboxChange}
-              checked={selectedFrameworks.includes("No framework")}
-              className="mr-[6px] h-4 w-4 cursor-pointer appearance-none rounded-sm border border-primary checked:border-transparent checked:bg-primary focus:outline-none "
-            />
-            {selectedFrameworks.includes("No framework") && (
-              <Check className="pointer-events-none absolute h-4 w-4 text-white" />
-            )}
-            No framework
-          </label>
+            {frameworks.map((framework: Framework) => (
+              <label
+                key={framework.id}
+                className="flex items-center text-xs 2xl:text-sm"
+              >
+                <input
+                  type="checkbox"
+                  value={framework.name}
+                  onChange={handleCheckboxChange}
+                  checked={selectedFrameworks.includes(framework.name)}
+                  className="mr-[6px] h-4 w-4 cursor-pointer appearance-none rounded-sm border border-primary checked:border-transparent checked:bg-primary focus:outline-none "
+                />
+                {selectedFrameworks.includes(framework.name) && (
+                  <Check className="pointer-events-none absolute h-4 w-4 text-white" />
+                )}
+                {framework.name}
+              </label>
+            ))}
+            <label className="flex items-center text-xs 2xl:text-sm">
+              <input
+                type="checkbox"
+                value="No framework"
+                onChange={handleCheckboxChange}
+                checked={selectedFrameworks.includes("No framework")}
+                className="mr-[6px] h-4 w-4 cursor-pointer appearance-none rounded-sm border border-primary checked:border-transparent checked:bg-primary focus:outline-none "
+              />
+              {selectedFrameworks.includes("No framework") && (
+                <Check className="pointer-events-none absolute h-4 w-4 text-white" />
+              )}
+              No framework
+            </label>
+          </div>
         </div>
 
-        <div className="container flex flex-col gap-4 bg-white p-3 py-4 [@media(min-width:1400px)]:gap-6 [@media(min-width:1400px)]:p-4 [@media(min-width:1400px)]:py-6">
-          <div className="flex justify-between">
-            <div>
-              <Tabs
-                defaultValue="All"
-                className="w-[100px]"
-                onValueChange={(value) =>
-                  setStatusFilter(value === "All" ? "" : value)
+        <div className="bg-gray-100 p-1 h-full w-full rounded-lg border border-neutral-2 border-solid">
+          <div className="container flex flex-col gap-4 bg-white p-3 py-4 [@media(min-width:1400px)]:gap-6 [@media(min-width:1400px)]:p-4 [@media(min-width:1400px)]:py-6 rounded-lg h-max shadow-md">
+            <div className="flex justify-between">
+              <div>
+                <Tabs
+                  defaultValue="All"
+                  className="w-[100px]"
+                  onValueChange={(value) =>
+                    setStatusFilter(value === "All" ? "" : value)
+                  }
+                >
+                  <TabsList>
+                    <TabsTrigger value="All">All</TabsTrigger>
+                    <TabsTrigger value={"PARTIALLY_IMPLEMENTED"}>
+                      Partially implemented
+                    </TabsTrigger>
+                    <TabsTrigger value={"FULLY_IMPLEMENTED"}>
+                      Fully implemented
+                    </TabsTrigger>
+                    <TabsTrigger value={"NOT_IMPLEMENTED"}>
+                      Not implemented
+                    </TabsTrigger>
+                  </TabsList>
+                </Tabs>
+              </div>
+              <Input
+                type="text"
+                placeholder="Search for a file"
+                // onChange={handleSearch}
+                // defaultValue={search}
+                className="w-54 bg-[#F9F9FB] [@media(min-width:1400px)]:w-72"
+                suffix={
+                  <span className="cursor-pointer">
+                    <Search01Icon size="12" />
+                  </span>
                 }
-              >
-                <TabsList>
-                  <TabsTrigger value="All">All</TabsTrigger>
-                  <TabsTrigger value={"PARTIALLY_IMPLEMENTED"}>
-                    Partially implemented
-                  </TabsTrigger>
-                  <TabsTrigger value={"FULLY_IMPLEMENTED"}>
-                    Fully implemented
-                  </TabsTrigger>
-                  <TabsTrigger value={"NOT_IMPLEMENTED"}>
-                    Not implemented
-                  </TabsTrigger>
-                </TabsList>
-              </Tabs>
+              />
             </div>
-            <Input
-              type="text"
-              placeholder="Search for a file"
-              // onChange={handleSearch}
-              // defaultValue={search}
-              className="w-54 bg-[#F9F9FB] [@media(min-width:1400px)]:w-72"
-              suffix={
-                <span className="cursor-pointer">
-                  <Search01Icon size="12" />
-                </span>
-              }
-            />
-          </div>
 
-          <Table className="border">
-            <TableHeader className="border bg-muted text-[#40566D] text-xs [@media(min-width:1400px)]:text-sm">
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id}>
-                      <button>
-                        {header.isPlaceholder
-                          ? null
-                          : typeof header.column.columnDef.header === "function"
+            <Table className="border">
+              <TableHeader className="border bg-muted text-[#40566D] text-xs [@media(min-width:1400px)]:text-sm">
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <TableRow key={headerGroup.id}>
+                    {headerGroup.headers.map((header) => (
+                      <TableHead key={header.id}>
+                        <button>
+                          {header.isPlaceholder
+                            ? null
+                            : typeof header.column.columnDef.header ===
+                              "function"
                             ? header.column.columnDef.header(
-                                header.getContext(),
+                                header.getContext()
                               ) // Call the function to get the rendered header
                             : header.column.columnDef.header}
-                      </button>
-                    </TableHead>
-                  ))}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody className="bg-white">
-              {/* {table.getRowModel().rows.map((row) => (
+                        </button>
+                      </TableHead>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableHeader>
+              <TableBody className="bg-white">
+                {/* {table.getRowModel().rows.map((row) => (
             <tr key={row.id}>
               {row.getVisibleCells().map((cell) => (
                 <td key={cell.id} className="px-4 py-2">
@@ -271,23 +275,24 @@ export default function ControlsPage() {
               ))}
             </tr>
           ))} */}
-              {table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+                {table.getRowModel().rows.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         </div>
       </div>
       <Button

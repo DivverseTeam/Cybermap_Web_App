@@ -36,7 +36,7 @@ export default function DashboardPage() {
         acc.total += framework.readiness.total;
         return acc;
       },
-      { completed: 0, total: 0 },
+      { completed: 0, total: 0 }
     );
 
     return totals.total > 0 ? (totals.completed / totals.total) * 100 : 0;
@@ -66,8 +66,8 @@ export default function DashboardPage() {
           {/* Readiness score */}
           <div className="flex max-h-[300px] min-h-[220px] w-[380px] flex-col gap-3 rounded-[8px] 2xl:max-h-[350px] [@media(min-width:1400px)]:gap-4 ">
             <p className="w-full text-nowrap">Audit readiness</p>
-            <div className="h-full rounded-xl border border-neutral-2 border-solid bg-gray-100 p-3">
-              <div className="flex h-full items-center justify-between rounded-xl bg-white shadow-md">
+            <div className="bg-gray-100 p-3 h-full rounded-xl border border-neutral-2 border-solid">
+              <div className="flex h-full rounded-lg bg-white shadow-md justify-between items-center">
                 <ReadinessScoreIndicator score={averageReadinessScore} />
               </div>
             </div>
@@ -127,11 +127,11 @@ export default function DashboardPage() {
                             {header.isPlaceholder
                               ? null
                               : typeof header.column.columnDef.header ===
-                                  "function"
-                                ? header.column.columnDef.header(
-                                    header.getContext(),
-                                  ) // Call the function to get the rendered header
-                                : header.column.columnDef.header}
+                                "function"
+                              ? header.column.columnDef.header(
+                                  header.getContext()
+                                ) // Call the function to get the rendered header
+                              : header.column.columnDef.header}
                           </button>
                         </TableHead>
                       ))}
@@ -148,7 +148,7 @@ export default function DashboardPage() {
                         <TableCell key={cell.id}>
                           {flexRender(
                             cell.column.columnDef.cell,
-                            cell.getContext(),
+                            cell.getContext()
                           )}
                         </TableCell>
                       ))}
