@@ -22,35 +22,24 @@ import EvidenceGatheringChart from "./components/evidence-gathering-chart";
 import { api } from "~/trpc/react";
 import FrameworkStatusCard from "./components/framework-status-card";
 import ComplianceChart from "./components/compliance-chart";
-import { useEffect, useState } from "react";
-import type { FrameworkType } from "./types";
+import { useMemo } from "react";
 
 export default function DashboardPage() {
   const [frameworks] = api.frameworks.getWithCompletion.useSuspenseQuery();
 
   const [{ all }] = api.integrations.get.useSuspenseQuery();
 
-  console.log(all);
+  const averageReadinessScore = useMemo(() => {
+    const totals = frameworks.reduce(
+      (acc, framework) => {
+        acc.completed += framework.readiness.completed;
+        acc.total += framework.readiness.total;
+        return acc;
+      },
+      { completed: 0, total: 0 },
+    );
 
-  const [averageReadinessScore, setAverageReadinessScore] = useState<number>(0);
-
-  useEffect(() => {
-    const getAverageReadinessScore = (frameworks: FrameworkType[]) => {
-      const totals = frameworks.reduce(
-        (acc, framework) => {
-          acc.completed += framework.readiness.completed;
-          acc.total += framework.readiness.total;
-          return acc;
-        },
-        { completed: 0, total: 0 }
-      );
-
-      return totals.total > 0 ? (totals.completed / totals.total) * 100 : 0;
-    };
-
-    const averageCompletionRate = getAverageReadinessScore(frameworks);
-
-    setAverageReadinessScore(averageCompletionRate);
+    return totals.total > 0 ? (totals.completed / totals.total) * 100 : 0;
   }, [frameworks]);
 
   const tableData = all || [];
@@ -73,44 +62,36 @@ export default function DashboardPage() {
 
       <div className="flex flex-col gap-10 py-6">
         {/* Preparedness and Readiness */}
-        <div className="flex gap-6 w-full justify-between">
+        <div className="flex w-full justify-between gap-6">
           {/* Readiness score */}
-          <div className="flex flex-col gap-3 [@media(min-width:1400px)]:gap-4 w-[380px] min-h-[220px] max-h-[300px] 2xl:max-h-[350px] rounded-[8px] ">
+          <div className="flex max-h-[300px] min-h-[220px] w-[380px] flex-col gap-3 rounded-[8px] 2xl:max-h-[350px] [@media(min-width:1400px)]:gap-4 ">
             <p className="w-full text-nowrap">Audit readiness</p>
-            <div className="bg-gray-100 p-3 h-full rounded-xl border border-neutral-2 border-solid">
-              <div className="flex h-full rounded-xl bg-white shadow-md justify-between items-center">
+            <div className="h-full rounded-xl border border-neutral-2 border-solid bg-gray-100 p-3">
+              <div className="flex h-full items-center justify-between rounded-xl bg-white shadow-md">
                 <ReadinessScoreIndicator score={averageReadinessScore} />
               </div>
             </div>
           </div>
 
           {/* Framework status */}
-          <div className="flex flex-col gap-3 [@media(min-width:1400px)]:gap-4 w-full min-h-[220px] rounded-[8px] ">
+          <div className="flex min-h-[220px] w-full flex-col gap-3 rounded-[8px] [@media(min-width:1400px)]:gap-4 ">
             <p className="w-full text-nowrap">Framework status</p>
-            <div className="w-full rounded-xl gap-4 p-3  border border-neutral-2 border-solid bg-gray-100">
+            <div className="w-full gap-4 rounded-xl border border-neutral-2 border-solid bg-gray-100 p-3">
               <div
                 className={`grid items-center gap-3 rounded-[8px] ${
                   frameworks?.length === 1 ? "grid-cols-1" : "grid-cols-2"
                 }`}
               >
                 {frameworks?.map((framework, idx) => {
-                  const {
-                    logo,
-                    name,
-                    complianceScore: { passing, failing, risk },
-                    readiness,
-                  } = framework;
+                  const { logo, name, preparedness } = framework;
 
                   return (
                     <FrameworkStatusCard
                       key={idx}
                       name={name}
                       logo={logo}
-                      preparedness={{
-                        completed: passing,
-                        total: passing + failing + risk,
-                      }}
-                      readiness={readiness}
+                      preparedness={preparedness}
+                      readiness={preparedness}
                     />
                   );
                 })}
@@ -146,11 +127,11 @@ export default function DashboardPage() {
                             {header.isPlaceholder
                               ? null
                               : typeof header.column.columnDef.header ===
-                                "function"
-                              ? header.column.columnDef.header(
-                                  header.getContext()
-                                ) // Call the function to get the rendered header
-                              : header.column.columnDef.header}
+                                  "function"
+                                ? header.column.columnDef.header(
+                                    header.getContext(),
+                                  ) // Call the function to get the rendered header
+                                : header.column.columnDef.header}
                           </button>
                         </TableHead>
                       ))}
@@ -167,7 +148,7 @@ export default function DashboardPage() {
                         <TableCell key={cell.id}>
                           {flexRender(
                             cell.column.columnDef.cell,
-                            cell.getContext()
+                            cell.getContext(),
                           )}
                         </TableCell>
                       ))}

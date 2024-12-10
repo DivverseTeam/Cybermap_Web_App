@@ -98,6 +98,11 @@ export const frameworksRouter = createTRPCRouter({
               organisation.completedLessons.get(framework.slug)?.length || 0,
             total: totalModules,
           },
+          readiness: {
+            completed:
+              organisation.completedLessons.get(framework.slug)?.length || 0,
+            total: totalModules,
+          },
         };
       });
 
