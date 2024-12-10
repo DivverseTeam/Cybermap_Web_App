@@ -26,7 +26,7 @@ import {
 import { Resource } from "sst";
 import { FrameworkName } from "~/lib/types";
 import { controls } from "~/lib/constants/controls";
-import Control from "~/server/models/Control";
+import ControlModel from "~/server/models/Control";
 
 const cognitoClient = new CognitoIdentityProviderClient();
 
@@ -66,7 +66,7 @@ export const userRouter = createTRPCRouter({
         kind: OrganisationKind,
         industry: OrganisationIndustry,
         frameworks: z.array(FrameworkName).optional(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const {
@@ -85,9 +85,10 @@ export const userRouter = createTRPCRouter({
           control.mapped.some((framework) => frameworks.includes(framework))
         ) {
           upsertControlsPromises.push(
-            Control.updateOne(
+            ControlModel.updateOne(
               {
                 code: control.code,
+                organisationId,
               },
               {
                 $set: {
@@ -118,7 +119,7 @@ export const userRouter = createTRPCRouter({
     .input(
       z.object({
         email: z.string().email(),
-      })
+      }),
     )
     .mutation(async ({ input }) => {
       try {
@@ -133,7 +134,7 @@ export const userRouter = createTRPCRouter({
           throw new Error("Email address is not registered");
         } else {
           throw new Error(
-            "Failed to send password reset email. Please try again."
+            "Failed to send password reset email. Please try again.",
           );
         }
       }
@@ -144,7 +145,7 @@ export const userRouter = createTRPCRouter({
         email: z.string().email(),
         verificationCode: z.string(),
         newPassword: z.string(),
-      })
+      }),
     )
     .mutation(async ({ input }) => {
       const { email, verificationCode, newPassword } = input;
@@ -165,7 +166,7 @@ export const userRouter = createTRPCRouter({
           throw new Error("Password reset code expired");
         } else {
           throw new Error(
-            "Failed to send password reset email. Please try again."
+            "Failed to send password reset email. Please try again.",
           );
         }
       }

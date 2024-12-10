@@ -20,7 +20,7 @@ async function getUserDetails(accessToken: string) {
   return await client.api("/me").get();
 }
 
-export async function GET(req: NextRequest, res: NextResponse) {
+export async function GET(req: NextRequest) {
   try {
     const searchParams = req.nextUrl.searchParams;
     const { provider } =
@@ -31,7 +31,7 @@ export async function GET(req: NextRequest, res: NextResponse) {
 
     const parsedProvider = Oauth2Provider.parse(providerName?.toUpperCase());
 
-    const session: any = await getServerAuthSession();
+    const session = await getServerAuthSession();
 
     if (!session || !session?.user?.organisationId) {
       console.error("User session not found or organisation ID missing.");
