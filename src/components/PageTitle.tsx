@@ -18,7 +18,9 @@ const PageTitle: React.FunctionComponent<PageTitleProps> = ({
     <div className={cn("flex items-center justify-between", className)}>
       <div>
         <h1 className="font-semibold text-xl">{title}</h1>
-        {subtitle ? <p className="text-base">{subtitle}</p> : null}
+        {subtitle ? (
+          <p className="text-base text-secondary">{subtitle}</p>
+        ) : null}
       </div>
       {action ? action : null}
     </div>

@@ -19,23 +19,14 @@ export default function ComplianceGuidePage() {
       />
       <div className="grid grid-cols-2 gap-6 2xl:grid-cols-3">
         {frameworks.map((framework, idx) => {
-          const {
-            logo,
-            name,
-            slug,
-            complianceScore: { passing, failing, risk },
-            readiness,
-          } = framework;
+          const { logo, name, slug, readiness, preparedness } = framework;
 
           return (
             <Link key={idx} href={`${pathname}/${slug}`}>
               <FrameworkComplianceCard
                 name={name}
                 logo={logo}
-                preparedness={{
-                  completed: passing,
-                  total: passing + failing + risk,
-                }}
+                preparedness={preparedness}
                 readiness={readiness}
               />
             </Link>

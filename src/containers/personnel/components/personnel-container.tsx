@@ -5,17 +5,8 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { PlusSignIcon, Search01Icon } from "hugeicons-react";
-import Image from "next/image";
 import React, { useState } from "react";
-import { Button } from "~/app/_components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuTrigger,
-} from "~/app/_components/ui/dropdown-menu";
+
 import { Input } from "~/app/_components/ui/input";
 import {
   Table,
@@ -31,15 +22,15 @@ import { ImportEmployeeDialog } from "./import-employee-dialog";
 import type { EmployeeType } from "~/server/models/Employee";
 
 type Props = {
-  // data: IEmployee[];
-  employees: EmployeeType[] | undefined;
+  data: IEmployee[];
+  // employees: EmployeeType[] | undefined;
 };
 
-export default function PersonnelContainer({ employees }: Props) {
+export default function PersonnelContainer({ data }: Props) {
   // Employee tanstack table is created here
 
-  const table = useReactTable<EmployeeType>({
-    data: employees ?? [],
+  const table = useReactTable<IEmployee>({
+    data,
     columns: columns,
     manualPagination: true,
     manualSorting: true,
@@ -62,66 +53,71 @@ export default function PersonnelContainer({ employees }: Props) {
     useState(false);
 
   return (
-    <div className="flex grow flex-col">
-      <div className="mx-auto flex w-full gap-3 rounded-2xl rounded-b-none border bg-muted p-3 [@media(min-width:1400px)]:p-4 2xl:p-5">
-        <Input
-          type="text"
-          placeholder="Search for available integrations"
-          // onChange={handleSearch}
-          // defaultValue={search}
-          className="min-w-[260px] h-[36px] [@media(min-width:1400px)]:h-[44px] rounded-md bg-[#F9F9FB]"
-          suffix={
-            <span className="cursor-pointer">
-              <Search01Icon size="12" />
-            </span>
-          }
-        />
+    <div className="bg-gray-100 p-1 h-full rounded-lg border border-neutral-2 border-solid">
+      <div className="flex grow flex-col rounded-lg h-max bg-white shadow-md">
+        <div className="mx-auto flex w-full gap-3 bg-gray-100 p-3 [@media(min-width:1400px)]:p-4 2xl:p-5">
+          <Input
+            type="text"
+            placeholder="Search for employees"
+            // onChange={handleSearch}
+            // defaultValue={search}
+            className="min-w-[260px] h-[36px] [@media(min-width:1400px)]:h-[44px] rounded-md bg-[#F9F9FB]"
+            suffix={
+              <span className="cursor-pointer">
+                <Search01Icon size="12" />
+              </span>
+            }
+          />
 
-        <ImportEmployeeDialog
-          open={showImportEmployeesDialog}
-          onOpenChange={setShowImportEmployeesDialog}
-          showTrigger={true}
-        />
-      </div>
-      <div className="border">
-        <Table className="rounded-none">
-          <TableHeader className="bg-muted text-[#40566D] ">
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
-                    <button className="rounded-none">
-                      {header.isPlaceholder
-                        ? null
-                        : typeof header.column.columnDef.header === "function"
-                        ? header.column.columnDef.header(header.getContext()) // Call the function to get the rendered header
-                        : header.column.columnDef.header}
-                    </button>
-                  </TableHead>
-                ))}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody className="bg-white">
-            {table.getRowModel().rows.map((row) => (
-              <TableRow
-                key={row.id}
-                data-state={row.getIsSelected() && "selected"}
-              >
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-        {!employees && (
-          <span className="mt-20 flex h-[400px] justify-center font-semibold text-2xl text-secondary 2xl:mt-30">
-            No employee matches your filter query
-          </span>
-        )}
+          <ImportEmployeeDialog
+            open={showImportEmployeesDialog}
+            onOpenChange={setShowImportEmployeesDialog}
+            showTrigger={true}
+          />
+        </div>
+        <div className="border">
+          <Table className="rounded-none">
+            <TableHeader className="bg-muted text-[#40566D] ">
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <TableHead key={header.id}>
+                      <button className="rounded-none">
+                        {header.isPlaceholder
+                          ? null
+                          : typeof header.column.columnDef.header === "function"
+                          ? header.column.columnDef.header(header.getContext()) // Call the function to get the rendered header
+                          : header.column.columnDef.header}
+                      </button>
+                    </TableHead>
+                  ))}
+                </TableRow>
+              ))}
+            </TableHeader>
+            <TableBody className="bg-white">
+              {table.getRowModel().rows.map((row) => (
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && "selected"}
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+          {!data && (
+            <span className="mt-20 flex h-[400px] justify-center font-semibold text-2xl text-secondary 2xl:mt-30">
+              No employee matches your filter query
+            </span>
+          )}
+        </div>
       </div>
     </div>
   );

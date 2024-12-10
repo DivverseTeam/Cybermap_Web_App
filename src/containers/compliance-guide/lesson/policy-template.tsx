@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Doc02Icon,
   Xls02Icon,
@@ -10,8 +12,8 @@ import axios, { AxiosError } from "axios";
 import {
   useParams,
   usePathname,
-  useRouter,
   useSearchParams,
+  useRouter,
 } from "next/navigation";
 import { useEffect, useState, type FunctionComponent } from "react";
 import { useDropzone } from "react-dropzone";
@@ -26,7 +28,6 @@ import {
 } from "~/app/_components/ui/sheet";
 import { cn, humanFileSize } from "~/lib/utils";
 import { api } from "~/trpc/react";
-import { useQuery } from "@tanstack/react-query";
 
 interface PolicyTemplateProps {}
 
@@ -201,20 +202,82 @@ const MimeTypeIconMap = {
   ),
 };
 
+interface DocumentCardProps {
+  mimeType: string;
+  name: string;
+  size: number;
+  progress?: number;
+  error?: string | null;
+}
+
+const DocumentCard: FunctionComponent<DocumentCardProps> = ({
+  progress,
+  error,
+  mimeType,
+  size,
+  name,
+}) => {
+  return (
+    <div
+      className={cn("relative border border-[#CDCED7] bg-[#FCFCFD] text-sm", {
+        "bg-red-500": error,
+      })}
+    >
+      <div className="flex justify-between p-4">
+        <div className="flex items-center gap-2">
+          {MimeTypeIconMap[mimeType as keyof typeof MimeTypeIconMap]}
+          <span>
+            <span className="inline-flex items-center gap-2">
+              <span className="truncate">
+                {name.length > 35 ? name.substring(0, 32) + "..." : name}
+              </span>
+              {progress === 100 ? (
+                <CheckmarkCircle04Icon className="text-green-600" size={20} />
+              ) : (
+                ""
+              )}{" "}
+            </span>
+            <span className="block text-gray-400 text-xs">
+              {humanFileSize(size)}
+            </span>
+          </span>
+        </div>
+        {progress === 100 ? "" : <Delete02Icon />}
+      </div>
+
+      {Number(progress) < 100 ? (
+        <div className="absolute bottom-0 w-full rounded-full bg-gray-200 dark:bg-gray-700">
+          <div
+            className="h-1 rounded-full bg-blue-600"
+            style={{ width: `${progress}%` }}
+          ></div>
+        </div>
+      ) : (
+        ""
+      )}
+    </div>
+  );
+};
+
 const PolicyTemplate: FunctionComponent<PolicyTemplateProps> = ({}) => {
   const { data: session } = useSession();
   const [uploadUrl, setUploadUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
+
   const pathname = usePathname();
   const params = useParams();
   const searchParams = useSearchParams();
   const frameworkSlug = params["framework-slug"] as string;
   const title = searchParams.get("title") as string;
-  const templateSlug = searchParams.get("slug") as string;
+  const templateSlug = searchParams.get("template") as string;
   const [progress, setProgress] = useState<number>(0);
   const { mutate: presignedUrlMutation } =
     api.general.getS3PresignedUrl.useMutation();
+
+  const { data: policyDocument } = api.general.getPolicyDocument.useQuery({
+    frameworkSlug,
+    slug: templateSlug,
+  });
 
   const { getRootProps, getInputProps, open, acceptedFiles } = useDropzone({
     noClick: true,
@@ -275,9 +338,7 @@ const PolicyTemplate: FunctionComponent<PolicyTemplateProps> = ({}) => {
 
   const onOpenChange = () => {
     if (Boolean(title && templateSlug)) {
-      router.replace(pathname, {
-        scroll: false,
-      });
+      window.history.replaceState(null, "", pathname);
     }
   };
 
@@ -290,7 +351,7 @@ const PolicyTemplate: FunctionComponent<PolicyTemplateProps> = ({}) => {
             <SheetDescription>
               Download this{" "}
               <Link
-                href={`https://cybermap-dev-server-policytemplates-frzaumot.s3.us-east-1.amazonaws.com/${frameworkSlug}/${templateSlug}`}
+                href={`https://cybermap-dev-policydocuments-nvcetuav.s3.us-east-1.amazonaws.com/${frameworkSlug}/${templateSlug}`}
                 className="text-blue-500"
                 target="_blank"
               >
@@ -364,55 +425,29 @@ const PolicyTemplate: FunctionComponent<PolicyTemplateProps> = ({}) => {
 
           {acceptedFiles.map((file, idx) => {
             return (
-              <div
+              <DocumentCard
                 key={idx}
-                className={cn(
-                  "relative border border-[#CDCED7] bg-[#FCFCFD] text-sm",
-                  {
-                    "bg-red-500": error,
-                  },
-                )}
-              >
-                <div className="flex justify-between p-4">
-                  <div className="flex items-center gap-2">
-                    {MimeTypeIconMap[file.type as keyof typeof MimeTypeIconMap]}
-                    <span>
-                      <span className="inline-flex items-center gap-2">
-                        <span className="truncate">
-                          {file.name.length > 35
-                            ? file.name.substring(0, 32) + "..."
-                            : file.name}
-                        </span>
-                        {progress === 100 ? (
-                          <CheckmarkCircle04Icon
-                            className="text-green-600"
-                            size={20}
-                          />
-                        ) : (
-                          ""
-                        )}{" "}
-                      </span>
-                      <span className="block text-gray-400 text-xs">
-                        {humanFileSize(file.size)}
-                      </span>
-                    </span>
-                  </div>
-                  {progress === 100 ? <Delete02Icon /> : ""}
-                </div>
-
-                {progress !== 100 ? (
-                  <div className="absolute bottom-0 w-full rounded-full bg-gray-200 dark:bg-gray-700">
-                    <div
-                      className="h-1 rounded-full bg-blue-600"
-                      style={{ width: `${progress}%` }}
-                    ></div>
-                  </div>
-                ) : (
-                  ""
-                )}
-              </div>
+                mimeType={file.type}
+                name={file.name}
+                size={file.size}
+                progress={progress}
+                error={error}
+              />
             );
           })}
+
+          {policyDocument?.hasDocument ? (
+            <div className="flex flex-col gap-2">
+              <span>Uploaded Document</span>
+              <DocumentCard
+                mimeType={policyDocument.mimeType as string}
+                name={templateSlug}
+                size={policyDocument.documentSize}
+              />
+            </div>
+          ) : (
+            ""
+          )}
         </div>
 
         <SheetFooter className="absolute right-6 bottom-12">

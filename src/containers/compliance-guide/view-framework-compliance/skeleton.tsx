@@ -14,8 +14,6 @@ const FrameworkComplianceGuideSkeleton: FunctionComponent<
 > = () => {
   return (
     <div className="flex flex-col gap-4 2xl:gap-6">
-      <Skeleton className="h-8 w-1/3" />
-
       <div className="grid grid-cols-2 gap-4 2xl:gap-6">
         <Skeleton className="h-64 w-full rounded-lg border" />
         <Skeleton className="h-64 w-full rounded-lg border" />

@@ -8,6 +8,7 @@ import { Wrapper } from "./_wrapper";
 import { getServerAuthSession } from "~/server/auth";
 import { Toaster } from "./_components/ui/toaster";
 import { HydrateClient } from "~/trpc/server";
+import NextTopLoader from "nextjs-toploader";
 
 export const metadata: Metadata = {
   title: "Create T3 App",
@@ -31,6 +32,7 @@ export default async function RootLayout({
       <HydrateClient>
         <html lang="en" className={`${GeistSans.variable}`}>
           <body className={`${inter.variable}${publicSans.variable} font-sans`}>
+            <NextTopLoader showSpinner={false} />
             <Wrapper session={session}>{children}</Wrapper>
             <Toaster />
           </body>

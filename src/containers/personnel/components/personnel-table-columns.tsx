@@ -8,10 +8,11 @@ import { Button } from "~/app/_components/ui/button";
 import { formatDate } from "~/lib/utils";
 // import type { IEmployee } from "../types";
 import type { EmployeeType } from "~/server/models/Employee";
+import type { IEmployee } from "../types";
 
 // const columnHelper = createColumnHelper();
 
-export const columns: ColumnDef<EmployeeType>[] = [
+export const columns: ColumnDef<IEmployee>[] = [
   {
     accessorFn: (row) => ({
       firstName: row.firstName,

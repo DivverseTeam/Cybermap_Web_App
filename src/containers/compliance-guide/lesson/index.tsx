@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import React, { type FunctionComponent } from "react";
 import { api } from "~/trpc/react";
 import Markdown, { RuleType } from "markdown-to-jsx";
@@ -17,6 +17,10 @@ const LessonPage: FunctionComponent<LessonPageProps> = () => {
   const [course] = api.frameworks.compliance.getCourse.useSuspenseQuery({
     slug: frameworkSlug,
   });
+  const searchParams = useSearchParams();
+
+  const title = searchParams.get("title") as string;
+  const templateSlug = searchParams.get("template") as string;
 
   const lessons = course.modules.flatMap((module) => module.lessons);
   const lessonIndex = lessons.findIndex((lesson) => lesson.slug === lessonSlug);
@@ -125,19 +129,22 @@ const LessonPage: FunctionComponent<LessonPageProps> = () => {
                 //@ts-ignore
                 "text" in node.children[0]
               ) {
-                const documentSlug = node.target.split("/").pop();
+                const title = node.children[0].text;
+                const templateSlug = node.target.split("/").pop();
+
                 return (
                   <Link
                     href={{
                       query: {
-                        title: node.children[0].text,
-                        slug: documentSlug,
+                        title,
+                        template: templateSlug,
                       },
                     }}
+                    shallow={true}
                     scroll={false}
                     className="font-semibold text-blue-500 text-lg leading-10"
                   >
-                    {node.children[0].text || ""}
+                    {title || ""}
                   </Link>
                 );
               }
@@ -148,7 +155,8 @@ const LessonPage: FunctionComponent<LessonPageProps> = () => {
       >
         {lesson!.content}
       </Markdown>
-      <PolicyTemplate />
+
+      {Boolean(title && templateSlug) ? <PolicyTemplate /> : ""}
     </div>
   );
 };
