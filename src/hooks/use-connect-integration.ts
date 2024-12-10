@@ -6,7 +6,7 @@ const openAuthPopup = (
   url: string,
   windowName?: string,
   width = 600,
-  height = 700,
+  height = 700
 ): Window | null => {
   const left = window.screenX + (window.outerWidth - width) / 2;
   const top = window.screenY + (window.outerHeight - height) / 2;
@@ -14,7 +14,7 @@ const openAuthPopup = (
   const popup = window.open(
     url,
     windowName,
-    `width=${width},height=${height},top=${top},left=${left},resizable,scrollbars,status`,
+    `width=${width},height=${height},top=${top},left=${left},resizable,scrollbars,status`
   );
 
   return popup;
@@ -22,7 +22,7 @@ const openAuthPopup = (
 
 export const useConnectIntegration = () => {
   const [authStatus, setAuthStatus] = useState<"idle" | "success" | "error">(
-    "idle",
+    "idle"
   );
   const [authError, setAuthError] = useState<string | null>(null);
   const utils = api.useUtils();
@@ -82,17 +82,21 @@ export const useConnectIntegration = () => {
       oauth2AuthorizationMutation(
         {
           provider: oauthProvider,
+          slug: integration.slug,
           ...data,
         },
         {
           onSuccess: (data) => {
-            handleConnection(data.url);
+            console.log(data);
+            // handleConnection(data.url);
+            // open the url in anew tab
+            window.open(data.url, "_blank");
           },
           onError: (error) => {
             setAuthStatus("error");
             setAuthError(error.message || "An unknown error occurred");
           },
-        },
+        }
       );
     }
   };

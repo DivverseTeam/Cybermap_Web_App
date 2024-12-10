@@ -1,7 +1,7 @@
-import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { integrations } from "~/lib/constants/integrations";
 import { z } from "zod";
-import { type Integration, Oauth2Provider } from "~/lib/types/integrations";
+import { integrations } from "~/lib/constants/integrations";
+import { Oauth2Provider, type Integration } from "~/lib/types/integrations";
+import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import OrganisationIntegration from "~/server/models/Integration";
 
 export const integrationsRouter = createTRPCRouter({
@@ -18,7 +18,7 @@ export const integrationsRouter = createTRPCRouter({
     const connectedIntegrationIds = new Set(
       organisationIntegrations
         .filter((integration) => integration?.connectedAt)
-        .map((integration) => integration.integrationId),
+        .map((integration) => integration.integrationId)
     );
 
     const allIntegrations: Array<Integration & { isConnected: boolean }> = [];
@@ -50,7 +50,7 @@ export const integrationsRouter = createTRPCRouter({
           provider: Oauth2Provider,
           integrationId: z.string().nullish(),
         }),
-      ]),
+      ])
     )
     .mutation(async ({ ctx, input: { provider, integrationId } }) => {
       const {
@@ -59,19 +59,19 @@ export const integrationsRouter = createTRPCRouter({
         },
       } = ctx;
 
-      let integrationIds: Array<string> = [];
+      // let integrationIds: Array<string> = [];
 
-      if (provider) {
-        integrationIds = integrations
-          .filter((integration) => integration?.oauthProvider === provider)
-          .map((integration) => integration.id);
-      } else {
-        integrationIds = [integrationId];
-      }
+      // if (provider) {
+      //   integrationIds = integrations
+      //     .filter((integration) => integration?.oauthProvider === provider)
+      //     .map((integration) => integration.id);
+      // } else {
+      //   integrationIds = [integrationId];
+      // }
 
       await OrganisationIntegration.deleteMany({
         organisationId,
-        integrationId: { $in: integrationIds },
+        integrationId,
       });
     }),
 });

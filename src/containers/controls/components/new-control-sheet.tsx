@@ -1,14 +1,21 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import { CloudUpload, User } from "lucide-react";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 import { Button } from "~/app/_components/ui/button";
-import { FormLabel } from "~/app/_components/ui/form";
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "~/app/_components/ui/form";
 import { Input } from "~/app/_components/ui/input";
 import { Label } from "~/app/_components/ui/label";
 import {
   Sheet,
-  SheetClose,
+  // SheetClose,
   SheetContent,
-  SheetDescription,
   SheetFooter,
   SheetHeader,
   SheetTitle,
@@ -16,36 +23,71 @@ import {
 } from "~/app/_components/ui/sheet";
 
 const controlDetailsData = [
-  [
-    <span className="w-24 text-secondary ">Name</span>,
+  {
+    name: "name",
+    label: () => <span className="w-24 text-secondary ">Name</span>,
+    input: (field: any) => (
+      <Input placeholder="Enter a name..." className="border-none" {...field} />
+    ),
+  },
+  {
+    name: "description",
+    label: () => <span className="w-24 text-secondary ">Description</span>,
+    input: (field: any) => (
+      <Input
+        placeholder="Add description..."
+        className="border-none"
+        {...field}
+      />
+    ),
+  },
+  {
+    name: "button",
+    label: () => <span className="w-24 text-secondary">Owner</span>,
+    input: () => (
+      <Button
+        variant="outline"
+        className="flex h-6 items-center justify-between gap-2 font-semibold text-secondary text-xs"
+      >
+        <User size={14} />
+        Amanda owner
+      </Button>
+    ),
+  },
 
-    <Input placeholder="Enter a name..." className="border-none" />,
-  ],
-  [
-    <span className="w-24 text-secondary">Description</span>,
-
-    <Input placeholder="Add description..." className="border-none" />,
-  ],
-
-  [
-    <span className="w-24 text-secondary">Owner</span>,
-    <Button
-      variant="outline"
-      className="flex h-6 items-center justify-between gap-2 font-semibold text-secondary text-xs"
-    >
-      <User size={14} />
-      Amanda owner
-    </Button>,
-  ],
-
-  [
-    <span className="w-24 text-secondary">Implementation Guidance</span>,
-    <Input className="border-none" placeholder="Add a note..." />,
-  ],
+  {
+    name: "implementationGuidance",
+    label: () => (
+      <span className="w-24 text-secondary">Implementation Guidance</span>
+    ),
+    input: (field: any) => (
+      <Input className="border-none" placeholder="Add a note..." {...field} />
+    ),
+  },
 ];
 
 export function NewControlSheet() {
+  const [open, setOpen] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
+
+  const formSchema = z.object({
+    name: z.string().email(),
+    description: z.string(),
+    implementationGuidance: z.string(),
+  });
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: "",
+      description: "",
+      implementationGuidance: "",
+    },
+  });
+
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    console.log(values);
+  };
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -62,10 +104,15 @@ export function NewControlSheet() {
     e.preventDefault();
 
   return (
-    <Sheet>
+    <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
         <Button>Create new control</Button>
       </SheetTrigger>
+      {/* <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="bg-black"
+        > */}
       <SheetContent className="flex h-full flex-col gap-6 overflow-y-auto">
         <SheetHeader>
           <SheetTitle>Create control</SheetTitle>
@@ -79,16 +126,33 @@ export function NewControlSheet() {
                 <span className="text-secondary">Name</span>
                 <span className="text-secondary-foreground">Control name</span>
               </div> */}
+
           <div className="text-xs">
             <table className=" w-full">
               <tbody>
                 {controlDetailsData.map((row, index) => (
                   <tr key={index} className="flex gap-3 text-left">
-                    {row.map((cell, cellIndex) => (
-                      <td key={cellIndex} className="flex p-2 px-0 text-left">
-                        {cell}
+                    <td className="flex p-2 px-0 text-left">{row.label()}</td>
+                    {row.name === "button" ? (
+                      <td className="flex p-2 px-0 text-left">
+                        {row.input(null)}
                       </td>
-                    ))}
+                    ) : (
+                      <FormField
+                        control={form.control}
+                        name={row["name"] as any}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <td className="flex p-2 px-0 text-left">
+                                {row.input(field)}
+                              </td>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    )}
                   </tr>
                 ))}
               </tbody>
@@ -137,11 +201,13 @@ export function NewControlSheet() {
         </div>
 
         <SheetFooter>
-          <SheetClose asChild>
-            <Button type="submit">Save changes</Button>
-          </SheetClose>
+          {/* <SheetClose asChild>
+              </SheetClose> */}
+          <Button type="submit">Save changes</Button>
         </SheetFooter>
       </SheetContent>
+      {/* </form>
+      </Form> */}
     </Sheet>
   );
 }
