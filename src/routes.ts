@@ -1,4 +1,3 @@
-import { runIso27001 } from "./server/api/routers/controls/iso27001";
 
 export const AppRoutes = {
   AUTH: {
@@ -9,5 +8,3 @@ export const AppRoutes = {
     FORGOT_PASSWORD: "/forgot-password",
   },
 };
-
-runIso27001();

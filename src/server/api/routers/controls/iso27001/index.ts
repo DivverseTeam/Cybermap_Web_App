@@ -2,7 +2,6 @@ import { AZURE_CLOUD_SLUG } from "~/lib/types/integrations";
 import Control from "~/server/models/Control";
 import Integration from "~/server/models/Integration";
 import Organisation from "~/server/models/Organisation";
-import UserControlMapping from "~/server/models/UserControlMapping";
 import { getAzureRefreshToken } from "../../integrations/azure/init";
 import { AzureAUth } from "../../integrations/common";
 import { getAccessControl } from "./accessControls";
@@ -54,12 +53,15 @@ export async function runIso27001() {
       if (!azureADIntegration?.authData && !azureCloudIntegration?.authData)
         continue;
 
-      const controls = await Control.find({}, "_id code").lean();
+      const controls = await Control.find(
+        { organisationId: organization._id },
+        "_id code"
+      ).lean();
 
       await Promise.all(
-        controls.slice(0, 13).map(async (control) => {
+        controls.map(async (control) => {
           if (
-            organization.name === "Veyron World" &&
+            // organization.name === "Veyron World" &&
             ISO27001_FUNCTIONS[control.code]
           ) {
             const status = await ISO27001_FUNCTIONS[control.code]({
@@ -81,14 +83,12 @@ export async function runIso27001() {
                 : null,
             });
 
-            await UserControlMapping.findOneAndUpdate(
-              {
-                controlId: control._id,
-                organisationId: organization._id,
-              },
+            await Control.findByIdAndUpdate(
+              control._id,
               { status },
               { upsert: true }
             );
+            console.log(`${organization.name} - ${control.name} - ${status}`);
           }
         })
       );
@@ -97,8 +97,7 @@ export async function runIso27001() {
     console.error("Error during ISO27001 audit:", error);
     if (
       error.code === "ExpiredAuthenticationToken" ||
-      error.code === "InvalidAuthenticationToken" ||
-      error.code === "AuthorizationFailed"
+      error.code === "InvalidAuthenticationToken"
     ) {
       console.error("Token expired. Please re-authenticate.......");
       const integrations: any[] = await Promise.all(

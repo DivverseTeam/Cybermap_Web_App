@@ -13,10 +13,12 @@ import {
   type AttributeType,
 } from "@aws-sdk/client-cognito-identity-provider";
 import { mongoosePromise } from "~/server/db";
-import { globalConfig } from "./integrations/aws/init";
+// import { globalConfig } from "./integrations/aws/init";
 import type { SignInProps, SignUpProps } from "./user";
 
-const cognitoClient = new CognitoIdentityProviderClient(globalConfig);
+// Abiola
+// const cognitoClient = new CognitoIdentityProviderClient(globalConfig);
+const cognitoClient = new CognitoIdentityProviderClient();
 await mongoosePromise;
 
 export const signUp = async (props: SignUpProps) => {
@@ -85,10 +87,10 @@ export const signIn = async (props: SignInProps) => {
 
     console.log("initiateAuthOutput 1");
     // Abiola
-    // ClientId: "5935eo5ka6uqrnk46cq092htth",
     const initiateAuthOutput = await cognitoClient.send(
       new InitiateAuthCommand({
         AuthFlow: "USER_PASSWORD_AUTH",
+        // ClientId: "5935eo5ka6uqrnk46cq092htth",
         ClientId: Resource["user-client"].id,
         AuthParameters: {
           USERNAME: email,

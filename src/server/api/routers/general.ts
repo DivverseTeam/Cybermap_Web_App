@@ -188,8 +188,8 @@ export const generalRouter = createTRPCRouter({
         const isAzureCloud = slug === "azure-cloud";
 
         // Abiola
-        // redirect_uri: `${"http://localhost:3000"}/api/integrations/callback/${provider.toLowerCase()}_${slug}`,
         const authorizationUri = client.authorizeURL({
+          // redirect_uri: `${"http://localhost:3000"}/api/integrations/callback/${provider.toLowerCase()}_${slug}`,
           redirect_uri: `${
             env.BASE_URL || "http://localhost:3000"
           }/api/integrations/callback/${provider.toLowerCase()}`,
