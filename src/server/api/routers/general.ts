@@ -165,7 +165,7 @@ export const generalRouter = createTRPCRouter({
         }
 
         const integration = integrations.find(
-          (integration) => integration?.slug === slug
+          (integration) => integration?.slug === slug,
         );
 
         if (!integration) throw new Error("Integration not found");
@@ -182,20 +182,20 @@ export const generalRouter = createTRPCRouter({
               ...restInput,
             },
           },
-          { upsert: true }
+          { upsert: true },
         );
 
         const client = new AuthorizationCode(getOauth2Config(input));
 
         const isAzureAD = slug === "azure-ad";
-        const isAzureCloud = slug === "azure-cloud";
+        // const isAzureCloud = slug === "azure-cloud";
 
         // Abiola
         const authorizationUri = client.authorizeURL({
           // redirect_uri: `${"http://localhost:3000"}/api/integrations/callback/${provider.toLowerCase()}_${slug}`,
           redirect_uri: `${
             env.BASE_URL || "http://localhost:3000"
-          }/api/integrations/callback/${provider.toLowerCase()}`,
+          }/api/integrations/callback/${provider.toLowerCase()}_${slug}` as string,
           scope: isAzureAD ? MICROSOFT_OAUTH_SCOPE : MICROSOFT_OAUTH_ARM_SCOPE,
         });
 
