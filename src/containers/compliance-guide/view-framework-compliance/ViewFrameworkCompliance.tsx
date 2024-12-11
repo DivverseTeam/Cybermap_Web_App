@@ -26,7 +26,7 @@ export default function ViewFrameworkCompliance({}: Props) {
   const [frameworks] = api.frameworks.getWithCompletion.useSuspenseQuery();
 
   const framework = frameworks.find(
-    (framework) => framework.slug === frameworkSlug,
+    (framework) => framework.slug === frameworkSlug
   );
   const { controls = [] } = framework || {};
 
@@ -51,7 +51,7 @@ export default function ViewFrameworkCompliance({}: Props) {
         defaultValue="compliance"
         className="flex flex-col items-start gap-5"
       >
-        <TabsList className="rounded-none bg-inherit">
+        <TabsList className="rounded-none bg-inherit border-b-2 w-full flex justify-start">
           <TabsTrigger value="compliance">Compliance Modules</TabsTrigger>
           <TabsTrigger value="controls">Controls</TabsTrigger>
         </TabsList>
