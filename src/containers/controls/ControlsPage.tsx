@@ -23,7 +23,6 @@ import { Tabs, TabsList, TabsTrigger } from "~/app/_components/ui/tabs";
 import PageTitle from "~/components/PageTitle";
 import { columns } from "./components/control-table-columns";
 
-import { NewControlSheet } from "./components/new-control-sheet";
 import type { Framework } from "~/lib/types/frameworks";
 import type { OrganisationControl } from "~/lib/types/controls";
 import { api } from "~/trpc/react";
@@ -151,7 +150,7 @@ export default function ControlsPage() {
       <PageTitle
         title="Controls"
         subtitle="View and manage your controls"
-        action={<NewControlSheet />}
+        // action={<NewControlSheet />}
       />
       <div className="flex gap-4 [@media(min-width:1400px)]:gap-8">
         <div className="bg-gray-100 p-1 h-full rounded-lg border border-neutral-2 border-solid">
