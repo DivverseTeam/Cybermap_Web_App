@@ -20,24 +20,29 @@ export type UserControlMapping = z.infer<typeof UserControlMapping>;
 
 type UserControlMappingWithDocument = UserControlMapping & mongoose.Document;
 
-const UserControlMappingSchema = new BaseSchema<UserControlMappingWithDocument>({
-  controlId: {
-    type: Schema.Types.ObjectId,
-    ref: "Control",
-    required: true,
+const UserControlMappingSchema = new BaseSchema<UserControlMappingWithDocument>(
+  {
+    //TODO: Fix this types
+    //@ts-ignore
+    controlId: {
+      type: Schema.Types.ObjectId,
+      ref: "Control",
+      required: true,
+    },
+    //@ts-ignore
+    organisationId: {
+      type: Schema.Types.ObjectId,
+      ref: "Organisation",
+      required: true,
+    },
+    status: {
+      type: String,
+      enum: CONTROL_STATUSES,
+      required: false,
+      default: "NOT_IMPLEMENTED",
+    },
   },
-  organisationId: {
-    type: Schema.Types.ObjectId,
-    ref: "Organisation",
-    required: true,
-  },
-  status: {
-    type: String,
-    enum: CONTROL_STATUSES,
-    required: false,
-    default: "NOT_IMPLEMENTED",
-  },
-});
+);
 
 export default (mongoose.models
   .UserControlMapping as mongoose.Model<UserControlMappingWithDocument>) ||
