@@ -58,14 +58,12 @@ export const signUp = async (props: SignUpProps) => {
       ),
     ]);
 
-    let user = await UserModel.create({
+    const user = await UserModel.create({
       name,
       email,
       role,
       cognitoId: signupOutput.UserSub,
     });
-
-    user = user.toJSON();
 
     return User.parse(user);
   } catch (error) {
@@ -100,13 +98,11 @@ export const signIn = async (props: SignInProps) => {
       initiateAuthOutput?.AuthenticationResult?.IdToken || "",
     );
 
-    let user = await UserModel.findOne({ cognitoId });
+    const user = await UserModel.findOne({ cognitoId });
 
     if (!user) {
       throw new Error("User not found");
     }
-
-    user = user.toJSON();
 
     return User.parse(user);
   } catch (error) {

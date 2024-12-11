@@ -88,4 +88,5 @@ export {
   securityHubClient,
   ssmClient,
   taggingClient,
+  globalConfig,
 };

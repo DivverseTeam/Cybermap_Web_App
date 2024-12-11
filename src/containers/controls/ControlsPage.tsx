@@ -23,14 +23,17 @@ import { Tabs, TabsList, TabsTrigger } from "~/app/_components/ui/tabs";
 import PageTitle from "~/components/PageTitle";
 import { columns } from "./components/control-table-columns";
 
-import { NewControlSheet } from "./components/new-control-sheet";
-import type { Framework } from "~/lib/types/frameworks";
 import type { OrganisationControl } from "~/lib/types/controls";
+import type { Framework } from "~/lib/types/frameworks";
 import { api } from "~/trpc/react";
+import { NewControlSheet } from "./components/new-control-sheet";
 
 export default function ControlsPage() {
   const [frameworks] = api.frameworks.get.useSuspenseQuery();
   const [controls] = api.controls.get.useSuspenseQuery();
+  // const [userControls] = api.controls.getUserControls.useSuspenseQuery();
+
+  // const { data: userControlMappingData } = api.user.test.useQuery();
 
   const [isVisible, setIsVisible] = useState(false);
   const [tableData, setTableData] = useState<Array<OrganisationControl>>([]);
@@ -145,6 +148,10 @@ export default function ControlsPage() {
     window.addEventListener("scroll", toggleVisibility);
     return () => window.removeEventListener("scroll", toggleVisibility);
   }, []);
+
+  useEffect(() => {
+    console.log("userControlMappingData", controls);
+  }, [controls]);
 
   return (
     <div className="flex flex-col gap-6">
