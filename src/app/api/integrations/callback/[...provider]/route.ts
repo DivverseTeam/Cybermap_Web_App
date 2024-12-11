@@ -20,7 +20,7 @@ async function getUserDetails(accessToken: string) {
   return await client.api("/me").get();
 }
 
-export async function GET(req: NextRequest, res: NextResponse) {
+export async function GET(req: NextRequest) {
   try {
     const searchParams = req.nextUrl.searchParams;
     const { provider } =
