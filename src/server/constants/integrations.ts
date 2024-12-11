@@ -1,5 +1,5 @@
-import { env } from "~/env";
 import type { ModuleOptions } from "simple-oauth2";
+import { env } from "~/env";
 import type { Oauth2Provider } from "~/lib/types/integrations";
 import type { IntegrationOauth2Props } from "../api/routers/general";
 
@@ -24,8 +24,11 @@ export const Oauth2ProviderConfigMap: Record<Oauth2Provider, ModuleOptions> = {
   },
 };
 
+export const MICROSOFT_OAUTH_ARM_SCOPE =
+  "https://management.azure.com/.default";
+
 export const MICROSOFT_OAUTH_SCOPE =
-  "offline_access User.Read User.Read.All Directory.Read.All AuditLog.Read.All UserAuthenticationMethod.Read.All Group.Read.All IdentityProvider.Read.All RoleManagement.Read.All RoleManagementAlert.Read.Directory Device.Read.All";
+  "offline_access User.Read User.Read.All Directory.Read.All AuditLog.Read.All UserAuthenticationMethod.Read.All Group.Read.All IdentityProvider.Read.All RoleManagement.Read.All RoleManagementAlert.Read.Directory Device.Read.All Policy.Read.All ServicePrincipalEndpoint.Read.All Subscription.Read.All";
 
 export const getOauth2Config = (props: IntegrationOauth2Props) => {
   const { provider } = props;

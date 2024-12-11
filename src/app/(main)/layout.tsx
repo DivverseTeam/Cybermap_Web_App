@@ -10,10 +10,10 @@ import { AppRoutes } from "~/routes";
 
 export const metadata: Metadata = {
   title: {
-    template: "%s | CYBERMAP",
-    default: "CYBERMAP",
+    template: "%s | Verakos",
+    default: "Verakos",
   },
-  description: "Cybermap",
+  description: "Verakos",
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
