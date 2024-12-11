@@ -36,14 +36,14 @@ export default function ViewFrameworkCompliance({}: Props) {
 
       <div className="grid grid-cols-2 gap-4 2xl:gap-6">
         <ProgressCard
-          total={course.readiness.total}
-          completed={course.readiness.completed}
-          title="Audit Readiness"
-        />
-        <ProgressCard
           total={course.preparedness.total}
           completed={course.preparedness.completed}
           title="Preparedness"
+        />
+        <ProgressCard
+          total={course.readiness.total}
+          completed={course.readiness.completed}
+          title="Audit Readiness"
         />
       </div>
 
