@@ -1,48 +1,11 @@
 //@ts-nocheck
-import { KeyClient, KeyProperties } from "@azure/keyvault-keys";
 import { KeyVaultManagementClient } from "@azure/arm-keyvault";
-import { ResourceGraphClient } from "@azure/arm-resourcegraph";
-// import { Client } from "@microsoft/microsoft-graph-client";
+// import { StorageManagementClient } from "@azure/arm-storage";
+import { KeyClient, KeyProperties } from "@azure/keyvault-keys";
 import { ControlStatus } from "~/lib/types/controls";
 import { AzureAUth, evaluate } from "../../common";
-import { getCredentials } from "../init";
-import { Resource } from "@azure/arm-resources";
 import { StaticTokenCredential } from "../../common/azureTokenCredential";
-
-async function getAssetInventoryLogs(
-  subscriptionId: string,
-  resourceGraphClient: ResourceGraphClient
-) {
-  try {
-    // Sample query to list all resources with tags
-    const queryOptions = {
-      subscriptions: [subscriptionId], // Replace with your Azure subscription ID(s)
-      query: "Resources | where isnotempty(tags) | project name, type, tags",
-    };
-
-    // Execute the query
-    const response = await resourceGraphClient.resources(queryOptions);
-
-    // Check if resources with tags are retrieved
-    if (response.totalRecords > 0) {
-      // Validate if Azure functionality fully matches AWS's GetResources behavior
-      const allResourcesTagged = response.data.every(
-        (resource: Resource) =>
-          resource.tags && Object.keys(resource.tags).length > 0
-      );
-
-      if (allResourcesTagged) {
-        return ControlStatus.Enum.FULLY_IMPLEMENTED;
-      } else {
-        return ControlStatus.Enum.PARTIALLY_IMPLEMENTED; // Some resources are tagged, but not all
-      }
-    } else {
-      return ControlStatus.Enum.NOT_IMPLEMENTED;
-    }
-  } catch (error) {
-    return null;
-  }
-}
+import { getCredentials } from "../init";
 
 async function getEncryptionLogs(
   credential: StaticTokenCredential,
@@ -108,6 +71,72 @@ async function getEncryptionLogs(
   }
 }
 
+// async function getKeyManagementLogs(
+//   storageManagementClient: StorageManagementClient
+// ) {
+//   try {
+//     // List all storage accounts in the subscription
+//     const storageAccounts =
+//       await storageManagementClient.storageAccounts.list();
+//     let hasNotImplemented = false;
+//     let hasPartiallyImplemented = false;
+//     let hasFullyImplemented = false;
+
+//     for (const account of storageAccounts) {
+//       const resourceGroupName = account.id.split("/")[4];
+//       const accountName = account.name;
+
+//       try {
+//         // Get the properties of the Blob service
+//         const blobServiceProperties =
+//           await storageManagementClient.blobServices.getServiceProperties(
+//             resourceGroupName,
+//             accountName,
+//             "default"
+//           );
+
+//         // Check encryption settings
+//         const encryption = blobServiceProperties.encryption;
+
+//         if (
+//           !encryption ||
+//           !encryption.services ||
+//           !encryption.services.blob ||
+//           !encryption.services.blob.enabled
+//         ) {
+//           hasNotImplemented = true;
+//           continue;
+//         }
+
+//         if (
+//           encryption.services.blob.enabled &&
+//           encryption.keySource === "Microsoft.Storage"
+//         ) {
+//           hasFullyImplemented = true;
+//         } else {
+//           hasPartiallyImplemented = true;
+//         }
+//       } catch (error: any) {
+//         console.error(
+//           `Error retrieving encryption status for ${accountName}:`,
+//           error.message
+//         );
+//         hasNotImplemented = true; // Treat errors as "Not Implemented"
+//       }
+//     }
+
+//     if (hasNotImplemented) {
+//       return "Not Implemented";
+//     } else if (hasPartiallyImplemented) {
+//       return "Partially Implemented";
+//     } else if (hasFullyImplemented) {
+//       return "Fully Implemented";
+//     }
+//   } catch (error) {
+//     return null;
+//   }
+// }
+
 async function getRequirementFourStatus({ azureCloud }: AzureAUth) {
   if (!azureCloud) throw new Error("Azure cloud is required");
   const { credential, subscriptionId } = getCredentials(azureCloud);
@@ -115,11 +144,15 @@ async function getRequirementFourStatus({ azureCloud }: AzureAUth) {
     credential,
     subscriptionId
   );
-  const resourceGraphClient = new ResourceGraphClient(credential);
-  // PENDING - Asset inventory logs
+  //   const storageManagementClient = new StorageManagementClient(
+  //     credential,
+  //     subscriptionId
+  //   );
+
+  // PENDING - AKey management logs
   return evaluate([
     () => getEncryptionLogs(credential, keyVaultManagementClient),
-    () => getAssetInventoryLogs(subscriptionId, resourceGraphClient),
+    // () => getKeyManagementLogs(storageManagementClient),
   ]);
 }
 

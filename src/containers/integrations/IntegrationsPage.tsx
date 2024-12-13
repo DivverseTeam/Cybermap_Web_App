@@ -29,7 +29,7 @@ export default function IntegrationsPage({}: Props) {
     : connected;
 
   return (
-    <div className="flex flex-col gap-4 [@media(min-width:1400px)]:gap-6">
+    <div className="flex flex-col gap-4 [@media(min-width:1400px)]:gap-6 px-4 [@media(min-width:1400px)]:px-6">
       <PageTitle
         title="Integrations"
         subtitle="Connect your tools to enable real-time threat detection and automated responses"

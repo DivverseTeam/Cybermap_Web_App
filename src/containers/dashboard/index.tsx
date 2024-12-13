@@ -52,7 +52,7 @@ export default function DashboardPage() {
   });
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-5 px-4 [@media(min-width:1400px)]:px-6">
       {/* px-6 */}
       <PageTitle
         title="Dashboard"
@@ -83,7 +83,7 @@ export default function DashboardPage() {
                 }`}
               >
                 {frameworks?.map((framework, idx) => {
-                  const { logo, name, preparedness,readiness } = framework;
+                  const { logo, name, preparedness, readiness } = framework;
 
                   return (
                     <FrameworkStatusCard

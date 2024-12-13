@@ -43,7 +43,7 @@ async function listSubscriptions() {
   try {
     // const subscriptions = await subscriptionClient.subscriptions.list();
     // const subscriptionIds = subscriptions.map((sub) => sub.subscriptionId);
-    return [];
+    return await [];
   } catch (error) {
     console.error("Error retrieving subscriptions:", error);
   }

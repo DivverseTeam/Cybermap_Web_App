@@ -1,3 +1,6 @@
+import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import mongoose from "mongoose";
 import { ControlStatus } from "~/lib/types/controls";
 
 export interface AzureToken {
@@ -39,4 +42,21 @@ async function evaluate(functions: (() => Promise<ControlStatus | null>)[]) {
   }
 }
 
-export { evaluate };
+async function saveEvidence(data: any) {
+  const id = new mongoose.Types.ObjectId().toString();
+
+  const client = new S3Client({});
+
+  let bucket: string = "evidence-library";
+
+  let key: string = id;
+
+  const command = new PutObjectCommand({
+    Bucket: bucket,
+    Key: key,
+  });
+
+  const url = await getSignedUrl(client, command, { expiresIn: 60 * 60 });
+}
+
+export { evaluate, saveEvidence };

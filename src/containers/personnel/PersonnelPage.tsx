@@ -151,7 +151,7 @@ export default function PersonnelPage({}: Props) {
     useState(false);
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 w-[calc(100vw-250px)] [@media(min-width:1400px)]:w-[calc(100vw-280px)] px-4 [@media(min-width:1400px)]:px-6 overflow-auto">
       <PageTitle
         title="Employees"
         subtitle="View and manage your employees."

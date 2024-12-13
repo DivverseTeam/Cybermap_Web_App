@@ -79,7 +79,7 @@ export default function Policies() {
   ];
 
   return (
-    <div className="flex flex-col gap-6 pb-4">
+    <div className="flex flex-col gap-6 pb-4 px-4 [@media(min-width:1400px)]:px-6">
       <PageTitle
         title="Policies"
         subtitle="View and edit your policies"

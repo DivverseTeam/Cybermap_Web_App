@@ -154,7 +154,7 @@ export default function ControlsPage() {
   }, [controls]);
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 px-4 [@media(min-width:1400px)]:px-6">
       <PageTitle
         title="Controls"
         subtitle="View and manage your controls"
