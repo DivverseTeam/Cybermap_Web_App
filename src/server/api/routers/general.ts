@@ -22,7 +22,7 @@ import {
   getOauth2Config,
 } from "~/server/constants/integrations";
 import Integration from "~/server/models/Integration";
-import { env } from "~/env";
+// import { env } from "~/env";
 
 export const IntegrationOauth2Props = z.union([
   z.object({
@@ -49,7 +49,7 @@ export const generalRouter = createTRPCRouter({
         fileType: z.string().optional(),
         id: z.string().optional(),
         objectKey: z.string().optional(),
-      }),
+      })
     )
     .mutation(async ({ input }) => {
       const { type, fileType } = input;
@@ -94,7 +94,7 @@ export const generalRouter = createTRPCRouter({
       z.object({
         frameworkSlug: z.string(),
         slug: z.string(),
-      }),
+      })
     )
     .query(async ({ input, ctx }) => {
       const { frameworkSlug, slug } = input;
@@ -111,7 +111,7 @@ export const generalRouter = createTRPCRouter({
           new GetObjectCommand({
             Bucket: Resource["policy-documents"].name,
             Key: `${organisationId}/${frameworkSlug}/${slug}`,
-          }),
+          })
         );
 
         hasDocument = true;
@@ -133,7 +133,7 @@ export const generalRouter = createTRPCRouter({
       z.object({
         frameworkSlug: z.string(),
         slug: z.string(),
-      }),
+      })
     )
     .mutation(async ({ input, ctx }) => {
       const { slug, frameworkSlug } = input;
@@ -145,7 +145,7 @@ export const generalRouter = createTRPCRouter({
         new DeleteObjectCommand({
           Bucket: Resource["policy-documents"].name,
           Key: `${organisationId}/${frameworkSlug}/${slug}`,
-        }),
+        })
       );
     }),
 
@@ -165,7 +165,7 @@ export const generalRouter = createTRPCRouter({
         }
 
         const integration = integrations.find(
-          (integration) => integration?.slug === slug,
+          (integration) => integration?.slug === slug
         );
 
         if (!integration) throw new Error("Integration not found");
@@ -182,7 +182,7 @@ export const generalRouter = createTRPCRouter({
               ...restInput,
             },
           },
-          { upsert: true },
+          { upsert: true }
         );
 
         const client = new AuthorizationCode(getOauth2Config(input));
@@ -192,10 +192,10 @@ export const generalRouter = createTRPCRouter({
 
         // Abiola
         const authorizationUri = client.authorizeURL({
-          // redirect_uri: `${"http://localhost:3000"}/api/integrations/callback/${provider.toLowerCase()}_${slug}`,
-          redirect_uri: `${
-            env.BASE_URL || "http://localhost:3000"
-          }/api/integrations/callback/${provider.toLowerCase()}_${slug}` as string,
+          redirect_uri: `${"http://localhost:3000"}/api/integrations/callback/${provider.toLowerCase()}_${slug}`,
+          // redirect_uri: `${
+          //   env.BASE_URL || "http://localhost:3000"
+          // }/api/integrations/callback/${provider.toLowerCase()}_${slug}` as string,
           scope: isAzureAD ? MICROSOFT_OAUTH_SCOPE : MICROSOFT_OAUTH_ARM_SCOPE,
         });
 

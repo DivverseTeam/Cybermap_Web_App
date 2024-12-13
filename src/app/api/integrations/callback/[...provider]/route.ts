@@ -31,7 +31,7 @@ export async function GET(req: NextRequest) {
 
     const parsedProvider = Oauth2Provider.parse(providerName?.toUpperCase());
 
-    const session = await getServerAuthSession();
+    const session: any = await getServerAuthSession();
 
     if (!session || !session?.user?.organisationId) {
       console.error("User session not found or organisation ID missing.");
@@ -48,10 +48,10 @@ export async function GET(req: NextRequest) {
     // Abiola
     const options = {
       code,
-      // redirect_uri: `${"http://localhost:3000"}/api/integrations/callback/${provider}`,
-      redirect_uri: `${
-        env.BASE_URL || "http://localhost:3000"
-      }/api/integrations/callback/${provider}`,
+      redirect_uri: `${"http://localhost:3000"}/api/integrations/callback/${provider}`,
+      // redirect_uri: `${
+      //   env.BASE_URL || "http://localhost:3000"
+      // }/api/integrations/callback/${provider}`,
     };
 
     const organisationIntegration = await Integration.findOne({
