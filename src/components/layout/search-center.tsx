@@ -160,8 +160,9 @@ export function SearchCenter() {
                       href={`/${item.pathName}`}
                       className="cursor-pointer"
                       onClick={handleClose}
+                      key={idx}
                     >
-                      <CommandItem key={idx} className="px-4">
+                      <CommandItem className="px-4">
                         <Icon className="mr-2" />
                         <span>{item.title}</span>
                       </CommandItem>
