@@ -83,7 +83,7 @@ export default function DashboardPage() {
                 }`}
               >
                 {frameworks?.map((framework, idx) => {
-                  const { logo, name, preparedness } = framework;
+                  const { logo, name, preparedness,readiness } = framework;
 
                   return (
                     <FrameworkStatusCard
@@ -91,7 +91,7 @@ export default function DashboardPage() {
                       name={name}
                       logo={logo}
                       preparedness={preparedness}
-                      readiness={preparedness}
+                      readiness={readiness}
                     />
                   );
                 })}

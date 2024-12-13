@@ -83,3 +83,10 @@ button {
 body {
   background-color: #f9f9fb;
 }
+
+.overlay-clear {
+  background: none !important;
+  opacity: 1 !important;
+  backdrop-filter: none !important;
+  box-shadow: none !important;
+}

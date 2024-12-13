@@ -2,7 +2,7 @@
 
 import type { DialogProps } from "@radix-ui/react-dialog";
 import { Command as CommandPrimitive } from "cmdk";
-import { Search } from "lucide-react";
+import { ArrowUpRight, Search } from "lucide-react";
 import * as React from "react";
 
 import { Dialog, DialogContent } from "~/app/_components/ui/dialog";
@@ -41,8 +41,10 @@ const CommandInput = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive.Input>,
   React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input>
 >(({ className, ...props }, ref) => (
-  <div className="flex items-center border-b px-3" cmdk-input-wrapper="">
-    <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
+  <div
+    className="flex items-center border rounded-lg px-3 mx-4 my-3"
+    cmdk-input-wrapper=""
+  >
     <CommandPrimitive.Input
       ref={ref}
       className={cn(
@@ -51,6 +53,7 @@ const CommandInput = React.forwardRef<
       )}
       {...props}
     />
+    <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
   </div>
 ));
 
@@ -104,7 +107,7 @@ const CommandSeparator = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <CommandPrimitive.Separator
     ref={ref}
-    className={cn("-mx-1 h-px bg-border", className)}
+    className={cn("-mx-1 h-px mt-2 bg-border", className)}
     {...props}
   />
 ));
@@ -114,14 +117,17 @@ const CommandItem = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive.Item>,
   React.ComponentPropsWithoutRef<typeof CommandPrimitive.Item>
 >(({ className, ...props }, ref) => (
-  <CommandPrimitive.Item
-    ref={ref}
-    className={cn(
-      "relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none data-[disabled=true]:pointer-events-none data-[selected='true']:bg-accent data-[selected=true]:text-accent-foreground data-[disabled=true]:opacity-50",
-      className
-    )}
-    {...props}
-  />
+  <div className="flex items-center px-2 relative">
+    <CommandPrimitive.Item
+      ref={ref}
+      className={cn(
+        "relative w-full flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none data-[disabled=true]:pointer-events-none data-[selected='true']:bg-accent data-[selected=true]:text-accent-foreground data-[disabled=true]:opacity-50",
+        className
+      )}
+      {...props}
+    />
+    <ArrowUpRight className="text-secondary w-5 absolute right-[20px]" />
+  </div>
 ));
 
 CommandItem.displayName = CommandPrimitive.Item.displayName;
