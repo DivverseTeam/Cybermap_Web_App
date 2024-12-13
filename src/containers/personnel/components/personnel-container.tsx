@@ -5,7 +5,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { PlusSignIcon, Search01Icon } from "hugeicons-react";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 
 import { Input } from "~/app/_components/ui/input";
 import {
@@ -20,32 +20,44 @@ import type { IEmployee } from "../types";
 import { columns } from "./personnel-table-columns";
 import { ImportEmployeeDialog } from "./import-employee-dialog";
 import type { EmployeeType } from "~/server/models/Employee";
+import { useDebounce } from "~/hooks/use-debounce";
 
 type Props = {
   data: IEmployee[];
   // employees: EmployeeType[] | undefined;
 };
 
-export default function PersonnelContainer({ data }: Props) {
-  // Employee tanstack table is created here
+const preprocessData = (data: IEmployee[]) =>
+  data.map((row) => ({
+    ...row,
+    firstNameLower: row.firstName.toLowerCase(),
+    lastNameLower: row.lastName.toLowerCase(),
+  }));
 
+export default function PersonnelContainer({ data }: Props) {
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [debouncedSearchQuery] = useDebounce(searchQuery, 300);
+
+  // Preprocess data to include lowercase fields for faster comparisons
+  const normalizedData = useMemo(() => preprocessData(data), [data]);
+
+  // Filter data outside of the table setup
+  const filteredData = useMemo(() => {
+    const query = (debouncedSearchQuery ?? "").toLowerCase();
+    if (!query) return normalizedData;
+    return normalizedData.filter(
+      (row) =>
+        row.firstNameLower.includes(query) || row.lastNameLower.includes(query)
+    );
+  }, [debouncedSearchQuery, normalizedData]);
+
+  // Employee tanstack table is created here
   const table = useReactTable<IEmployee>({
-    data,
+    data: filteredData,
     columns: columns,
     manualPagination: true,
     manualSorting: true,
     getCoreRowModel: getCoreRowModel(),
-    // onSortingChange: (updater) => {
-    //   const newSortingState =
-    //     typeof updater === "function" ? updater([]) : updater;
-
-    //   const sortBy = newSortingState[0];
-    //   router.push(
-    //     `/dashboard/evidences?page=1&limit=${itemsPerPage}&search=${search}&sortColumn=${
-    //       sortBy?.id
-    //     }&sortOrder=${sortBy?.desc ? "desc" : "asc"}`
-    //   );
-    // },
   });
 
   // Dialog for employee upload
@@ -59,8 +71,8 @@ export default function PersonnelContainer({ data }: Props) {
           <Input
             type="text"
             placeholder="Search for employees"
-            // onChange={handleSearch}
-            // defaultValue={search}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
             className="min-w-[260px] h-[36px] [@media(min-width:1400px)]:h-[44px] rounded-md bg-[#F9F9FB]"
             suffix={
               <span className="cursor-pointer">

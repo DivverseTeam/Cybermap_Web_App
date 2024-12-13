@@ -123,7 +123,7 @@ export default function EvidenceLibraryPage({
   // };
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 px-4 [@media(min-width:1400px)]:px-6">
       <PageTitle
         title="Evidence Library"
         subtitle="View and manage your evidences and files"

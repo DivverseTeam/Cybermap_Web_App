@@ -278,7 +278,7 @@ export function ImportEmployeeDialog({
                 </ul>
               ) : (
                 <div className="flex flex-col items-center justify-between gap-2">
-                  <div className="flex items-center justify-between gap-3">
+                  <div className="flex flex-col items-center justify-between gap-3">
                     <CloudUpload className="h-20 w-20 text-[#E0E1E6]" />
                     <div className="flex flex-col gap-2 text-gray-500 text-xs">
                       <span>Select a file or drag and drop here</span>

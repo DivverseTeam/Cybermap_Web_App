@@ -48,6 +48,11 @@ interface SearchCenterItem {
 export function SearchCenter() {
   const [controls] = api.controls.get.useSuspenseQuery();
 
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+
+  // const handleOpen = () => setIsOpen(true);
+  const handleClose = () => setIsOpen(false);
+
   const [groupFilter, setGroupFilter] = useState<string>("");
 
   const [searchData, setSearchData] = useState<Array<SearchCenterItem>>([]);
@@ -103,7 +108,7 @@ export function SearchCenter() {
   }, [groupFilter]);
 
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button
           variant="ghost"
@@ -151,7 +156,11 @@ export function SearchCenter() {
                 {menu.items.map((item, idx) => {
                   const Icon: ElementType = item.icon;
                   return (
-                    <Link href={`/${item.pathName}`} className="cursor-pointer">
+                    <Link
+                      href={`/${item.pathName}`}
+                      className="cursor-pointer"
+                      onClick={handleClose}
+                    >
                       <CommandItem key={idx} className="px-4">
                         <Icon className="mr-2" />
                         <span>{item.title}</span>

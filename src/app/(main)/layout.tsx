@@ -33,9 +33,9 @@ export default async function RootLayout({
   return (
     <div className="flex">
       <SideNavbar />
-      <div className="flex flex-col gap-6 my-4 bg-white border rounded-3xl ml-[254px] h-full min-h-screen w-full [@media(min-width:1400px)]:ml-[280px] ">
+      <div className="my-4 ml-[254px] flex h-full min-h-screen w-[calc(100vw-250px)] [@media(min-width:1400px)]:w-[calc(100vw-280px)]  flex-col gap-6 rounded-3xl border bg-white [@media(min-width:1400px)]:ml-[280px] ">
         <Header />
-        <div className="container h-full w-full mx-auto  px-4 py-1 2xl:px-8 2xl:py-16 [@media(min-width:1400px)]:px-6 [@media(min-width:1400px)]:py-2">
+        <div className="container h-full w-full mx-auto   py-1 2xl:px-8 2xl:py-16  [@media(min-width:1400px)]:py-2">
           {/* <BreadCrumbs /> */}
           {children}
         </div>

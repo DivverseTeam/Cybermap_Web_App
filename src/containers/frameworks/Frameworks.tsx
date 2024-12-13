@@ -7,14 +7,14 @@ import { api } from "~/trpc/react";
 
 const FrameworkMonitorCard = dynamic(
   () => import("./components/monitor-card"),
-  { ssr: false },
+  { ssr: false }
 );
 
 export default function FrameworksPage() {
   const [frameworks] = api.frameworks.getWithCompletion.useSuspenseQuery();
 
   return (
-    <div className="flex flex-col gap-4 [@media(min-width:1400px)]:gap-6">
+    <div className="flex flex-col gap-4 [@media(min-width:1400px)]:gap-6 px-4 [@media(min-width:1400px)]:px-6">
       <PageTitle
         title="Frameworks"
         subtitle="Monitor and manage all your frameworks"
