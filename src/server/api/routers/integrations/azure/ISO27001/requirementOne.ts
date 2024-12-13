@@ -93,7 +93,7 @@ async function getRequirementOneStatus({ azureCloud }: AzureAUth) {
     credential,
     subscriptionId
   );
-  await evaluate([
+  return evaluate([
     () =>
       getPolicyStatusForSubscription(
         subscriptionId,

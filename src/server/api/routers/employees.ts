@@ -1,6 +1,10 @@
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import Employee, { EmployeeType } from "~/server/models/Employee";
 import { z } from "zod";
+import Integration from "~/server/models/Integration";
+import { azureCloudSlug } from "~/lib/types/integrations";
+import { initializeAzureClient } from "./integrations/azure/init";
+import { listUsers } from "./integrations/azure/common";
 
 export const employeesRouter = createTRPCRouter({
   addEmployees: protectedProcedure
@@ -66,6 +70,37 @@ export const employeesRouter = createTRPCRouter({
 
       // return EmployeeType.array().parse(employees);
       return employees;
+    } catch (error) {
+      console.log(error);
+    }
+  }),
+  getAzureUsers: protectedProcedure.query(async ({ ctx }) => {
+    const {
+      session: {
+        user: { organisationId },
+      },
+    } = ctx;
+
+    if (!organisationId) {
+      throw new Error("Organisation not found");
+    }
+    console.log("organisayion ID:", organisationId);
+
+    try {
+      const orgIntegration = await Integration.findOne(
+        {
+          organisationId: organisationId,
+          slug: azureCloudSlug.Enum["azure-ad"],
+        },
+        "authData subscriptionId"
+      ).lean();
+      if (!orgIntegration?.authData)
+        throw new Error(`Integration to Azure not found`);
+      const azureClient = await initializeAzureClient(
+        orgIntegration.authData.accessToken
+      );
+      const users = await listUsers(azureClient);
+      return users.value;
     } catch (error) {
       console.log(error);
     }

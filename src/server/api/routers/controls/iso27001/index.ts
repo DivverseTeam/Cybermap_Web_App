@@ -1,3 +1,5 @@
+//@ts-nocheck
+import { ControlStatus } from "~/lib/types/controls";
 import { AZURE_CLOUD_SLUG } from "~/lib/types/integrations";
 import Control from "~/server/models/Control";
 import Integration from "~/server/models/Integration";
@@ -5,15 +7,19 @@ import Organisation from "~/server/models/Organisation";
 import { getAzureRefreshToken } from "../../integrations/azure/init";
 import { AzureAUth } from "../../integrations/common";
 import { getAccessControl } from "./accessControls";
+import { getAssetManagement } from "./assetManagement";
 import { getHumanResourceSecurity } from "./humanResourceSecurity";
 import { getInformationSecurityPolicies } from "./informationSecurityPolicies";
 import { getOrganizationOfInformationSecurity } from "./organizationofInformationSecurity";
 
-const ISO27001_FUNCTIONS: any = {
+const ISO27001_FUNCTIONS: {
+  [key: string]: (auth: AzureAUth) => Promise<ControlStatus | undefined>;
+} = {
   ISP: (auth: AzureAUth) => getInformationSecurityPolicies(auth),
   OIS: (auth: AzureAUth) => getOrganizationOfInformationSecurity(auth),
   HRS: (auth: AzureAUth) => getHumanResourceSecurity(auth),
   ACC: (auth: AzureAUth) => getAccessControl(auth),
+  ASM: (auth: AzureAUth) => getAssetManagement(auth),
 };
 
 export async function runIso27001() {
@@ -60,10 +66,7 @@ export async function runIso27001() {
 
       await Promise.all(
         controls.map(async (control) => {
-          if (
-            // organization.name === "Veyron World" &&
-            ISO27001_FUNCTIONS[control.code]
-          ) {
+          if (ISO27001_FUNCTIONS[control.code]) {
             const status = await ISO27001_FUNCTIONS[control.code]({
               azureCloud: azureCloudIntegration
                 ? {
