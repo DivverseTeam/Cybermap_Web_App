@@ -21,6 +21,7 @@ import { columns } from "./personnel-table-columns";
 import { ImportEmployeeDialog } from "./import-employee-dialog";
 import type { EmployeeType } from "~/server/models/Employee";
 import { useDebounce } from "~/hooks/use-debounce";
+import EmployeeProfileSheet from "./employee-profile-sheet";
 
 type Props = {
   data: IEmployee[];
@@ -37,6 +38,12 @@ const preprocessData = (data: IEmployee[]) =>
 export default function PersonnelContainer({ data }: Props) {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [debouncedSearchQuery] = useDebounce(searchQuery, 300);
+
+  // State for selected employee and sheet visibility
+  const [selectedEmployee, setSelectedEmployee] = useState<IEmployee | null>(
+    null
+  );
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
 
   // Preprocess data to include lowercase fields for faster comparisons
   const normalizedData = useMemo(() => preprocessData(data), [data]);
@@ -63,6 +70,11 @@ export default function PersonnelContainer({ data }: Props) {
   // Dialog for employee upload
   const [showImportEmployeesDialog, setShowImportEmployeesDialog] =
     useState(false);
+
+  const handleRowClick = (employee: IEmployee) => {
+    setSelectedEmployee(employee);
+    setIsSheetOpen(true);
+  };
 
   return (
     <div className="bg-gray-100 p-1 h-full rounded-lg border border-neutral-2 border-solid">
@@ -111,6 +123,8 @@ export default function PersonnelContainer({ data }: Props) {
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
+                  onClick={() => handleRowClick(row.original)}
+                  className="cursor-pointer"
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
@@ -131,6 +145,13 @@ export default function PersonnelContainer({ data }: Props) {
           )}
         </div>
       </div>
+
+      {/* Sheet for Employee Profile */}
+      <EmployeeProfileSheet
+        open={isSheetOpen}
+        onOpenChange={setIsSheetOpen}
+        employee={selectedEmployee as unknown as IEmployee}
+      />
     </div>
   );
 }

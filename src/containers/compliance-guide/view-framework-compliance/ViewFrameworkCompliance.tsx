@@ -31,7 +31,7 @@ export default function ViewFrameworkCompliance({}: Props) {
   const { controls = [] } = framework || {};
 
   return (
-    <div className="flex flex-col gap-4 2xl:gap-6">
+    <div className="flex flex-col gap-4 2xl:gap-6 px-4 [@media(min-width:1400px)]:px-6">
       <PageTitle title={""} />
 
       <div className="grid grid-cols-2 gap-4 2xl:gap-6">
