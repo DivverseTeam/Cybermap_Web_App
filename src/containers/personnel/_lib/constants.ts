@@ -1,6 +1,6 @@
 import type { IEmployee } from "../types";
 
-export const employees: IEmployee[] = [
+export const employees = [
   {
     id: "6761ffc5fc13ae246fe1c6e8",
     firstName: "Sibyl",
