@@ -1,5 +1,9 @@
 import { RecoveryServicesClient, Vault } from "@azure/arm-recoveryservices";
 import {
+  Job,
+  SiteRecoveryManagementClient,
+} from "@azure/arm-recoveryservices-siterecovery";
+import {
   JobResource,
   ProtectedItemResource,
   RecoveryPointResource,
@@ -154,6 +158,88 @@ async function getBackupLogs({
   }
 }
 
+async function getDisasterRecoveryTestResults({
+  controlName,
+  controlId,
+  organisationId,
+  subscriptionId,
+  siteRecoveryClient,
+  recoveryServicesClient,
+}: {
+  controlName: string;
+  controlId: string;
+  organisationId: string;
+  subscriptionId: string;
+  siteRecoveryClient: SiteRecoveryManagementClient;
+  recoveryServicesClient: RecoveryServicesClient;
+}) {
+  try {
+    const evd_name = `Disaster recovery test results`;
+
+    // List all vaults in the subscription
+    const evidence = [];
+    const vaultsIterator =
+      await recoveryServicesClient.vaults.listBySubscriptionId();
+    const vaults: Vault[] = await asyncIteratorToArray(vaultsIterator);
+
+    let totalTestRuns = 0;
+    let totalSuccessfulTests = 0;
+    let totalVaults = 0;
+
+    for (const vault of vaults) {
+      if (!vault.id) continue;
+      const resourceGroupName = vault.id.split("/")[4];
+      const vaultName = vault.name;
+      totalVaults++;
+
+      if (!vaultName) continue;
+      if (!resourceGroupName) continue;
+      // Fetch replication jobs for each vault
+      const jobsIterator = await siteRecoveryClient.replicationJobs.list(
+        vaultName,
+        resourceGroupName
+      );
+      const jobs: Job[] = await asyncIteratorToArray(jobsIterator);
+      evidence.push({
+        vaultName,
+        jobs,
+      });
+
+      for (const job of jobs) {
+        if (!job.properties) continue;
+        const jobProperties = job.properties;
+        if (jobProperties.scenarioName === "TestFailover") {
+          totalTestRuns++;
+          if (jobProperties.state === "Succeeded") {
+            totalSuccessfulTests++;
+          }
+        }
+      }
+    }
+
+    await saveEvidence({
+      fileName: `Azure-${controlName}-${evd_name}`,
+      body: {
+        evidence,
+      },
+      controls: ["ISO27001-1"],
+      controlId,
+      organisationId,
+    });
+
+    if (totalTestRuns === 0) {
+      return ControlStatus.Enum.NOT_IMPLEMENTED;
+    } else if (totalTestRuns === totalSuccessfulTests && totalVaults > 0) {
+      return ControlStatus.Enum.FULLY_IMPLEMENTED;
+    } else {
+      return ControlStatus.Enum.PARTIALLY_IMPLEMENTED;
+    }
+  } catch (error) {
+    console.error("Error checking disaster recovery status:", error);
+    throw error;
+  }
+}
+
 async function getRequirementTwelveStatus({
   azureCloud,
   controlName,
@@ -170,6 +256,11 @@ async function getRequirementTwelveStatus({
     credential,
     subscriptionId
   );
+  const siteRecoveryClient = new SiteRecoveryManagementClient(
+    credential,
+    subscriptionId
+  );
+
   return evaluate([
     () =>
       getBackupLogs({
@@ -179,6 +270,15 @@ async function getRequirementTwelveStatus({
         subscriptionId,
         recoveryServicesClient,
         backupClient,
+      }),
+    () =>
+      getDisasterRecoveryTestResults({
+        controlName,
+        controlId,
+        organisationId,
+        subscriptionId,
+        siteRecoveryClient,
+        recoveryServicesClient,
       }),
   ]);
 }
