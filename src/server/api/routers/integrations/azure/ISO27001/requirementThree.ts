@@ -1,7 +1,7 @@
 // import { MonitorClient } from "@azure/arm-monitor";
 import { Client } from "@microsoft/microsoft-graph-client";
 import { ControlStatus } from "~/lib/types/controls";
-import { AzureAUth, evaluate } from "../../common";
+import { AzureAUth, evaluate, saveEvidence } from "../../common";
 import { getUserDetails, listUsers } from "../common";
 import { initializeAzureClient } from "../init";
 
@@ -55,8 +55,19 @@ import { initializeAzureClient } from "../init";
 //   }
 // }
 
-async function getAccessManagementLogs(azureClient: Client) {
+async function getAccessManagementLogs({
+  controlName,
+  controlId,
+  organisationId,
+  azureClient,
+}: {
+  azureClient: Client;
+  controlName: string;
+  controlId: string;
+  organisationId: string;
+}) {
   // Fetch all users
+  const evd_name = `Access management logs`;
   const users = await listUsers(azureClient);
   console.log("Users:", users);
 
@@ -66,12 +77,14 @@ async function getAccessManagementLogs(azureClient: Client) {
 
   // Check for users who should be deactivated
   const inactiveUsers = [];
+  const userDetailsArr = [];
 
   for (const user of users.value) {
     if (!user.id) continue;
     // Get the user details
     const userDetails = await getUserDetails(user.id, azureClient);
     console.log("User details:", userDetails);
+    userDetailsArr.push(userDetails);
 
     // console.log("User details:", userDetails);
 
@@ -82,6 +95,14 @@ async function getAccessManagementLogs(azureClient: Client) {
       inactiveUsers.push(user);
     }
   }
+
+  await saveEvidence({
+    fileName: `Azure-${controlName}-${evd_name}`,
+    body: { evidence: userDetailsArr },
+    controls: ["ISO27001-1"],
+    controlId,
+    organisationId,
+  });
 
   // Determine the status based on the findings
   if (inactiveUsers.length === 0) {
@@ -96,6 +117,9 @@ async function getAccessManagementLogs(azureClient: Client) {
 async function getHumanResourceSecurityEvidence({
   azureAd,
   azureCloud,
+  controlId,
+  organisationId,
+  controlName,
 }: AzureAUth) {
   console.log("getOrganizationInformationSecurityEvidence...");
   if (!azureAd) throw new Error("Azure AD token is required");
@@ -103,10 +127,16 @@ async function getHumanResourceSecurityEvidence({
   // if (!azureCloud) throw new Error("Azure cloud is required");
   // const { credential, subscriptionId } = getCredentials(azureCloud);
   // const monitorClient = new MonitorClient(credential, subscriptionId);
-  
+
   // PENDING - Termination logs
   return evaluate([
-    () => getAccessManagementLogs(azureClient),
+    () =>
+      getAccessManagementLogs({
+        azureClient,
+        controlId,
+        controlName,
+        organisationId,
+      }),
     // () => getTerminationLogs(monitorClient),
   ]);
 }

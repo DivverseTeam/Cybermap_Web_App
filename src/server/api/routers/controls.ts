@@ -6,6 +6,7 @@ import {
 import mongoose from "mongoose";
 import Control, { OrganisationControl } from "~/server/models/Control";
 import UserControlMapping from "~/server/models/UserControlMapping";
+import { getEvidencesForOrganization } from "./integrations/common";
 
 export const controlsRouter = createTRPCRouter({
   get: protectedProcedure.query(async ({ ctx }) => {
@@ -59,6 +60,19 @@ export const controlsRouter = createTRPCRouter({
       },
     ]);
     // console.log("controls", controls);
-    return controls; 
+    return controls;
+  }),
+  getEvidences: protectedProcedure.query(async ({ ctx }) => {
+    const {
+      session: {
+        user: { organisationId },
+      },
+    } = ctx;
+
+    if (!organisationId) {
+      throw new Error("Organisation not found");
+    }
+
+    return getEvidencesForOrganization(organisationId);
   }),
 });

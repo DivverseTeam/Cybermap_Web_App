@@ -5,7 +5,7 @@ import type {
   ServicePrincipal,
 } from "@microsoft/microsoft-graph-types";
 import { ControlStatus } from "~/lib/types/controls";
-import { AzureAUth, evaluate } from "../../common";
+import { AzureAUth, evaluate, saveEvidence } from "../../common";
 import { initializeAzureClient } from "../init";
 
 const SECURITY_ROLES = [
@@ -23,10 +23,28 @@ async function getRoleAssignmentLogs(
   return roleAssignments;
 }
 
-async function evaluateRoleAssignmentLogs(azureClient: Client) {
+async function evaluateRoleAssignmentLogs({
+  controlName,
+  controlId,
+  organisationId,
+  azureClient,
+}: {
+  azureClient: Client;
+  controlName: string;
+  controlId: string;
+   organisationId: string;
+}) {
   // Fetch role assignments from Graph API
+  const evd_name = `Role assignment logs`;
   const roleAssignments = await getRoleAssignmentLogs(azureClient);
   console.log("roleAssignments", roleAssignments);
+  await saveEvidence({
+    fileName: `Azure-${controlName}-${evd_name}`,
+    body: { evidence: roleAssignments },
+    controls: ["ISO27001-1"],
+    controlId,
+    organisationId,
+  });
 
   // Extract role assignment information
   const roles = roleAssignments?.value || [];
@@ -58,20 +76,35 @@ async function getAllServicePrincipals(azureClient: Client): Promise<{
   return servicePrincipals;
 }
 
-async function evaluateThirdPartySecurityDocumentation(azureClient: Client) {
+async function evaluateThirdPartySecurityDocumentation({
+  controlName,
+  controlId,
+  organisationId,
+  azureClient,
+}: {
+  controlName: string;
+  controlId: string;
+  organisationId: string;
+  azureClient: Client;
+}) {
+  const evd_name = `Third-party security agreements`;
   const servicePrincipals = await getAllServicePrincipals(azureClient);
 
   let documentedCount = 0;
   let undocumentedCount = 0;
+  const servicePrincipalsRoleAssignments = [];
 
   for (const servicePrincipal of servicePrincipals.value) {
     const servicePrincipalId = servicePrincipal.id;
 
     // Fetch app role assignments for the service principal
-    const appRoleAssignments: { value: AppRoleAssignment[] } =
-      await azureClient
-        .api(`/servicePrincipals/${servicePrincipalId}/appRoleAssignments`)
-        .get();
+    const appRoleAssignments: { value: AppRoleAssignment[] } = await azureClient
+      .api(`/servicePrincipals/${servicePrincipalId}/appRoleAssignments`)
+      .get();
+    servicePrincipalsRoleAssignments.push({
+      appRoleAssignments,
+      servicePrincipalId,
+    });
 
     // Determine if roles and responsibilities are documented
     if (appRoleAssignments.value.length > 0) {
@@ -80,6 +113,14 @@ async function evaluateThirdPartySecurityDocumentation(azureClient: Client) {
       undocumentedCount++;
     }
   }
+
+  await saveEvidence({
+    fileName: `Azure-${controlName}-${evd_name}`,
+    body: { evidence: servicePrincipalsRoleAssignments },
+    controls: ["ISO27001-1"],
+    controlId,
+    organisationId,
+  });
 
   // Return overall documentation status
   const total = servicePrincipals.value.length;
@@ -94,13 +135,28 @@ async function evaluateThirdPartySecurityDocumentation(azureClient: Client) {
 
 async function getOrganizationInformationSecurityEvidence({
   azureAd,
+  controlId,
+  controlName,
+  organisationId,
 }: AzureAUth) {
   console.log("getOrganizationInformationSecurityEvidence...");
   if (!azureAd) throw new Error("Azure AD token is required");
   const azureClient = await initializeAzureClient(azureAd.token);
   const status = await evaluate([
-    () => evaluateRoleAssignmentLogs(azureClient),
-    () => evaluateThirdPartySecurityDocumentation(azureClient),
+    () =>
+      evaluateRoleAssignmentLogs({
+        azureClient,
+        controlId,
+        controlName,
+        organisationId,
+      }),
+    () =>
+      evaluateThirdPartySecurityDocumentation({
+        azureClient,
+        controlId,
+        controlName,
+        organisationId,
+      }),
   ]);
   return status;
 }

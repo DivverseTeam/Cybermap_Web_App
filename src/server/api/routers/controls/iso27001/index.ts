@@ -8,9 +8,15 @@ import { getAzureRefreshToken } from "../../integrations/azure/init";
 import { AzureAUth } from "../../integrations/common";
 import { getAccessControl } from "./accessControls";
 import { getAssetManagement } from "./assetManagement";
+// import { getCryptography } from "./cryptography";
+import { getInformationSecurityIncidentManagement } from "./ISM";
 import { getHumanResourceSecurity } from "./humanResourceSecurity";
 import { getInformationSecurityPolicies } from "./informationSecurityPolicies";
+import { getOperationsSecurity } from "./operationsSecurity";
 import { getOrganizationOfInformationSecurity } from "./organizationofInformationSecurity";
+import { getPhysicalEnvironmentalSecurity } from "./physicalEnvironmentalSecurity";
+import { getSystemAcquisitionDevelopmentMaintenance } from "./systemAcquisitionDevelopmentMaintenance";
+import { getBCM } from "./BCM";
 
 const ISO27001_FUNCTIONS: {
   [key: string]: (auth: AzureAUth) => Promise<ControlStatus | undefined>;
@@ -20,6 +26,12 @@ const ISO27001_FUNCTIONS: {
   HRS: (auth: AzureAUth) => getHumanResourceSecurity(auth),
   ACC: (auth: AzureAUth) => getAccessControl(auth),
   ASM: (auth: AzureAUth) => getAssetManagement(auth),
+  // CRY: (auth: AzureAUth) => getCryptography(auth),
+  PES: (auth: AzureAUth) => getPhysicalEnvironmentalSecurity(auth),
+  OPS: (auth: AzureAUth) => getOperationsSecurity(auth),
+  ADM: (auth: AzureAUth) => getSystemAcquisitionDevelopmentMaintenance(auth),
+  ISM: (auth: AzureAUth) => getInformationSecurityIncidentManagement(auth),
+  BCM: (auth: AzureAUth) => getBCM(auth),
 };
 
 export async function runIso27001() {
@@ -34,10 +46,8 @@ export async function runIso27001() {
       console.log("No organizations found.");
       return;
     }
-    console.log("Performing audit for all organizations...");
 
     for (const organization of allOrganizations) {
-      console.log(`Performing audit for organization: ${organization.name}`);
       currentOrganisationId = organization._id;
       const integrations = await Promise.all(
         AZURE_CLOUD_SLUG.map(async (slug) => {
@@ -61,7 +71,7 @@ export async function runIso27001() {
 
       const controls = await Control.find(
         { organisationId: organization._id },
-        "_id code"
+        "_id code name"
       ).lean();
 
       await Promise.all(
@@ -84,6 +94,9 @@ export async function runIso27001() {
                     subscriptionId: azureADIntegration.subscriptionId,
                   }
                 : null,
+              controlId: control._id,
+              controlName: control.name,
+              organisationId: organization._id,
             });
 
             await Control.findByIdAndUpdate(
@@ -97,12 +110,11 @@ export async function runIso27001() {
       );
     }
   } catch (error: any) {
-    console.error("Error during ISO27001 audit:", error);
+    // console.error("Error during ISO27001 audit:", error);
     if (
       error.code === "ExpiredAuthenticationToken" ||
       error.code === "InvalidAuthenticationToken"
     ) {
-      console.error("Token expired. Please re-authenticate.......");
       const integrations: any[] = await Promise.all(
         AZURE_CLOUD_SLUG.map(async (slug) => {
           return await Integration.findOne(
@@ -116,7 +128,6 @@ export async function runIso27001() {
       );
       if (integrations.length) {
         const tokens = await getAzureRefreshToken(integrations);
-        console.log("Refreshed.....", tokens);
         if (tokens && tokens.length) {
           for (const token of tokens) {
             if (token?.token) {

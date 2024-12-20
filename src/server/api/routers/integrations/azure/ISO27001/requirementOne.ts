@@ -1,22 +1,39 @@
 import { PolicyInsightsClient } from "@azure/arm-policyinsights";
 import { ResourceManagementClient } from "@azure/arm-resources";
 import { ControlStatus } from "~/lib/types/controls";
-import { AzureAUth, evaluate } from "../../common";
+import { AzureAUth, evaluate, saveEvidence } from "../../common";
+import { asyncIteratorToArray } from "../common";
 import { getCredentials } from "../init";
 
-async function getPolicyStatusForSubscription(
-  subscriptionId: string,
-  resourceClient: ResourceManagementClient,
-  policyInsightsClient: PolicyInsightsClient
-) {
+async function getPolicyStatusForSubscription({
+  organisationId,
+  controlId,
+  controlName,
+  subscriptionId,
+  resourceClient,
+  policyInsightsClient,
+}: {
+  subscriptionId: string;
+  resourceClient: ResourceManagementClient;
+  policyInsightsClient: PolicyInsightsClient;
+  controlId: string;
+  organisationId: string;
+  controlName: string;
+}) {
+  const evd_name = `Security policy documentation`;
   let status: ControlStatus = ControlStatus.Enum.FULLY_IMPLEMENTED;
-  const resources = [];
-  for await (const resource of resourceClient.resources.list()) {
-    console.log("Resource:", resource);
-    resources.push(resource);
-  }
+
+  const resourcesIterator = await resourceClient.resources.list();
+  const resources = await asyncIteratorToArray(resourcesIterator);
 
   const totalResources = resources.length;
+  await saveEvidence({
+    fileName: `Azure-${controlName}-${evd_name}`,
+    body: { evidence: resources },
+    controls: ["ISO27001-1"],
+    controlId,
+    organisationId,
+  });
 
   if (totalResources === 0) {
     status = ControlStatus.Enum.NOT_IMPLEMENTED;
@@ -28,6 +45,13 @@ async function getPolicyStatusForSubscription(
     await policyInsightsClient.policyStates.summarizeForSubscription(
       subscriptionId
     );
+  await saveEvidence({
+    fileName: `Azure-${controlName}-${evd_name}`,
+    body: { evidence: complianceResults },
+    controls: ["ISO27001-1"],
+    controlId,
+    organisationId,
+  });
 
   const summary = complianceResults.value?.[0]?.results || {};
   const nonCompliantResources = summary.nonCompliantResources || 0;
@@ -46,10 +70,20 @@ async function getPolicyStatusForSubscription(
   return status;
 }
 
-async function getChangeLogStatus(
-  subscriptionId: string,
-  policyInsightsClient: PolicyInsightsClient
-) {
+async function getChangeLogStatus({
+  organisationId,
+  controlId,
+  controlName,
+  subscriptionId,
+  policyInsightsClient,
+}: {
+  organisationId: string;
+  controlId: string;
+  controlName: string;
+  subscriptionId: string;
+  policyInsightsClient: PolicyInsightsClient;
+}) {
+  const evd_name = `Change logs`;
   const policyEventsIterator =
     await policyInsightsClient.policyEvents.listQueryResultsForSubscription(
       subscriptionId,
@@ -60,6 +94,14 @@ async function getChangeLogStatus(
       }
     );
   console.log("getChangeLogStatus...", policyEventsIterator);
+  await saveEvidence({
+    fileName: `Azure-${controlName}-${evd_name}`,
+    body: { evidence: policyEventsIterator },
+    controls: ["ISO27001-1"],
+    controlId,
+    organisationId,
+  });
+
   let totalLogs = 0;
   let compliantLogs = 0;
   let nonCompliantLogs = 0;
@@ -82,7 +124,12 @@ async function getChangeLogStatus(
   }
 }
 
-async function getRequirementOneStatus({ azureCloud }: AzureAUth) {
+async function getRequirementOneStatus({
+  azureCloud,
+  controlId,
+  controlName,
+  organisationId,
+}: AzureAUth) {
   if (!azureCloud) throw new Error("Azure cloud is required");
   const { credential, subscriptionId } = getCredentials(azureCloud);
   const resourceClient = new ResourceManagementClient(
@@ -95,12 +142,22 @@ async function getRequirementOneStatus({ azureCloud }: AzureAUth) {
   );
   return evaluate([
     () =>
-      getPolicyStatusForSubscription(
+      getPolicyStatusForSubscription({
         subscriptionId,
         resourceClient,
-        policyInsightsClient
-      ),
-    () => getChangeLogStatus(subscriptionId, policyInsightsClient),
+        policyInsightsClient,
+        controlId,
+        controlName,
+        organisationId,
+      }),
+    () =>
+      getChangeLogStatus({
+        subscriptionId,
+        policyInsightsClient,
+        controlId,
+        controlName,
+        organisationId,
+      }),
   ]);
 }
 

@@ -1,6 +1,8 @@
-import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import mongoose from "mongoose";
+import {
+  PutObjectCommand,
+  S3Client,
+  ListObjectsV2Command,
+} from "@aws-sdk/client-s3";
 import { ControlStatus } from "~/lib/types/controls";
 
 export interface AzureToken {
@@ -9,10 +11,19 @@ export interface AzureToken {
   subscriptionId: string;
 }
 
-export interface AzureAUth {
+export interface AzureAUth extends EvidenceMetaData {
   azureCloud: AzureToken | null;
   azureAd: AzureToken | null;
 }
+
+export interface EvidenceMetaData {
+  controlId: string;
+  controlName: string;
+  organisationId: string;
+  controls?: string[];
+}
+
+const bucket: string = "cybermap-dev-evidences-bbsvusex";
 
 async function evaluate(functions: (() => Promise<ControlStatus | null>)[]) {
   try {
@@ -32,7 +43,7 @@ async function evaluate(functions: (() => Promise<ControlStatus | null>)[]) {
       return ControlStatus.Enum.PARTIALLY_IMPLEMENTED;
     }
   } catch (error: any) {
-    console.log("Error in evaluate", error);
+    console.log("Error in evaluate...", error);
     if (
       error.code === "ExpiredAuthenticationToken" ||
       error.code === "InvalidAuthenticationToken"
@@ -42,21 +53,93 @@ async function evaluate(functions: (() => Promise<ControlStatus | null>)[]) {
   }
 }
 
-async function saveEvidence(data: any) {
-  const id = new mongoose.Types.ObjectId().toString();
-
+async function saveEvidence(input: {
+  fileName: string;
+  controlId: string;
+  organisationId: string;
+  body: Object;
+  controls: string[];
+}) {
   const client = new S3Client({});
 
-  let bucket: string = "evidence-library";
-
-  let key: string = id;
+  const key: string = `evidence/${input.organisationId}/${input.fileName}`;
 
   const command = new PutObjectCommand({
     Bucket: bucket,
     Key: key,
+    Body: JSON.stringify({
+      ...input,
+      fileName: `${input.fileName}-${new Date().toISOString()}`,
+    }),
+    ContentType: "application/json",
   });
 
-  const url = await getSignedUrl(client, command, { expiresIn: 60 * 60 });
+  try {
+    const response = await client.send(command);
+    // console.log("Upload successful:", response);
+    return { key, response };
+  } catch (error) {
+    console.error("Error uploading to S3:", error);
+  }
 }
 
-export { evaluate, saveEvidence };
+async function getEvidencesForOrganization(organisationId: string) {
+  const client = new S3Client({});
+  const prefix: string = `evidence/${organisationId}/`;
+
+  const command = new ListObjectsV2Command({
+    Bucket: bucket,
+    Prefix: prefix,
+  });
+
+  try {
+    const response = await client.send(command);
+
+    if (response.Contents) {
+      const evidences = response.Contents.map((item) => ({
+        key: item.Key,
+        lastModified: item.LastModified,
+        size: item.Size,
+      }));
+      return response.Contents;
+    } else {
+      return [];
+    }
+  } catch (error) {
+    console.error("Error listing evidences from S3:", error);
+    throw error;
+  }
+}
+
+function getStatusByCount({
+  fullyImplemented,
+  notImplemented,
+  partiallyImplemented,
+}: {
+  fullyImplemented: number;
+  notImplemented: number;
+  partiallyImplemented: number;
+}) {
+  if (
+    fullyImplemented > 0 &&
+    notImplemented === 0 &&
+    partiallyImplemented === 0
+  ) {
+    return ControlStatus.Enum.FULLY_IMPLEMENTED;
+  } else if (
+    notImplemented > 0 &&
+    fullyImplemented === 0 &&
+    partiallyImplemented === 0
+  ) {
+    return ControlStatus.Enum.NOT_IMPLEMENTED;
+  } else {
+    return ControlStatus.Enum.PARTIALLY_IMPLEMENTED;
+  }
+}
+
+export {
+  evaluate,
+  getStatusByCount,
+  saveEvidence,
+  getEvidencesForOrganization,
+};

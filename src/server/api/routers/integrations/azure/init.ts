@@ -26,18 +26,7 @@ async function initializeAzureClient(accessToken: string) {
 
     return azureClient;
   } catch (error: any) {
-    if (error.response) {
-      // Response received but with an error status code
-      console.error("Error status:", error.response.status);
-      console.error("Error data:", error.response.data);
-    } else if (error.request) {
-      // Request was made but no response received
-      console.error("No response received:", error.request);
-    } else {
-      // Error setting up the request
-      console.error("Request error:", error.message);
-    }
-    throw error; // Re-throw error after logging
+    throw error;
   }
 }
 

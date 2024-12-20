@@ -2,43 +2,53 @@
 import { KeyVaultManagementClient } from "@azure/arm-keyvault";
 // import { StorageManagementClient } from "@azure/arm-storage";
 import { KeyClient, KeyProperties } from "@azure/keyvault-keys";
-import { ControlStatus } from "~/lib/types/controls";
-import { AzureAUth, evaluate } from "../../common";
+import { AzureAUth, evaluate, getStatusByCount } from "../../common";
 import { StaticTokenCredential } from "../../common/azureTokenCredential";
 import { getCredentials } from "../init";
 
-async function getEncryptionLogs(
-  credential: StaticTokenCredential,
-  keyVaultManagementClient: KeyVaultManagementClient
-) {
+async function getEncryptionLogs({
+  controlName,
+  controlId,
+  organisationId,
+  credential,
+  keyVaultManagementClient,
+}: {
+  controlName: string;
+  organisationId: string;
+  controlId: string;
+  credential: StaticTokenCredential;
+  keyVaultManagementClient: KeyVaultManagementClient;
+}) {
   try {
     // List all Key Vaults in the subscription
-    const keyVaults = [];
-    for await (const vault of keyVaultManagementClient.vaults.list()) {
-      keyVaults.push(vault);
-    }
-
+    const evd_name = `Encryption logs`;
+    const evidence = {};
+    const keyVaultsIterator = await keyVaultManagementClient.vaults.list();
+    const keyVaults = await asyncIteratorToArray(keyVaultsIterator);
+    console.log("KeyVaults", keyVaults);
     let fullyImplemented = 0;
     let partiallyImplemented = 0;
     let notImplemented = 0;
 
     for (const vault of keyVaults) {
       const keyVaultUrl = `https://${vault.name}.vault.azure.net`;
+      evidence[vault.name] = {};
       const keyClient = new KeyClient(keyVaultUrl, credential);
 
       let listKeysImplemented = false;
       let describeKeyImplemented = false;
 
-      const valutKeys: KeyProperties[] = [];
+      const valutKeysIterator = await keyClient.listPropertiesOfKeys();
+      const valutKeys: KeyProperties[] = await asyncIteratorToArray(
+        valutKeysIterator
+      );
 
-      for await (const key of keyClient.listPropertiesOfKeys()) {
-        valutKeys.push(key);
-      }
       listKeysImplemented = valutKeys.length > 0;
 
       // Check for describe key functionality (equivalent to AWS KMS DescribeKey)
       if (listKeysImplemented && valutKeys && valutKeys.length) {
         const testKey = await keyClient.getKey(valutKeys[0].name);
+        evidence[vault.name][valutKeys[0].name] = testKey;
         describeKeyImplemented = !!testKey;
       }
 
@@ -51,21 +61,18 @@ async function getEncryptionLogs(
         notImplemented++;
       }
     }
-    if (
-      fullyImplemented > 0 &&
-      notImplemented === 0 &&
-      partiallyImplemented === 0
-    ) {
-      return ControlStatus.Enum.FULLY_IMPLEMENTED;
-    } else if (
-      notImplemented > 0 &&
-      fullyImplemented === 0 &&
-      partiallyImplemented === 0
-    ) {
-      return ControlStatus.Enum.NOT_IMPLEMENTED;
-    } else {
-      return ControlStatus.Enum.PARTIALLY_IMPLEMENTED;
-    }
+    await saveEvidence({
+      fileName: `Azure-${controlName}-${evd_name}`,
+      body: { evidence },
+      controls: ["ISO27001-1"],
+      controlId,
+      organisationId,
+    });
+    return getStatusByCount({
+      fullyImplemented,
+      notImplemented,
+      partiallyImplemented,
+    });
   } catch (error) {
     return null;
   }
@@ -137,7 +144,10 @@ async function getEncryptionLogs(
 //   }
 // }
 
-async function getRequirementFourStatus({ azureCloud }: AzureAUth) {
+async function getRequirementSixStatus({
+  azureCloud,
+  organisationId,
+}: AzureAUth) {
   if (!azureCloud) throw new Error("Azure cloud is required");
   const { credential, subscriptionId } = getCredentials(azureCloud);
   const keyVaultManagementClient = new KeyVaultManagementClient(
@@ -151,9 +161,14 @@ async function getRequirementFourStatus({ azureCloud }: AzureAUth) {
 
   // PENDING - AKey management logs
   return evaluate([
-    () => getEncryptionLogs(credential, keyVaultManagementClient),
+    () =>
+      getEncryptionLogs({
+        credential,
+        organisationId,
+        keyVaultManagementClient,
+      }),
     // () => getKeyManagementLogs(storageManagementClient),
   ]);
 }
 
-export { getRequirementFourStatus };
+export { getRequirementSixStatus };

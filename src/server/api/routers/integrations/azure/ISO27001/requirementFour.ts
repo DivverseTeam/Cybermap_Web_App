@@ -1,19 +1,29 @@
 //@ts-nocheck
-import { KeyClient, KeyProperties } from "@azure/keyvault-keys";
 import { KeyVaultManagementClient } from "@azure/arm-keyvault";
 import { ResourceGraphClient } from "@azure/arm-resourcegraph";
+import { KeyClient, KeyProperties } from "@azure/keyvault-keys";
 // import { Client } from "@microsoft/microsoft-graph-client";
-import { ControlStatus } from "~/lib/types/controls";
-import { AzureAUth, evaluate } from "../../common";
-import { getCredentials } from "../init";
 import { Resource } from "@azure/arm-resources";
+import { ControlStatus } from "~/lib/types/controls";
+import { AzureAUth, evaluate, saveEvidence } from "../../common";
 import { StaticTokenCredential } from "../../common/azureTokenCredential";
+import { getCredentials } from "../init";
 
-async function getAssetInventoryLogs(
-  subscriptionId: string,
-  resourceGraphClient: ResourceGraphClient
-) {
+async function getAssetInventoryLogs({
+  subscriptionId,
+  resourceGraphClient,
+  controlId,
+  controlName,
+  organisationId,
+}: {
+  organisationId: string;
+  controlId: string;
+  controlName: string;
+  subscriptionId: string;
+  resourceGraphClient: ResourceGraphClient;
+}) {
   try {
+    const evd_name = `Asset inventory logs`;
     // Sample query to list all resources with tags
     const queryOptions = {
       subscriptions: [subscriptionId], // Replace with your Azure subscription ID(s)
@@ -22,6 +32,13 @@ async function getAssetInventoryLogs(
 
     // Execute the query
     const response = await resourceGraphClient.resources(queryOptions);
+    await saveEvidence({
+      fileName: `Azure-${controlName}-${evd_name}`,
+      body: { evidence: response },
+      controls: ["ISO27001-1"],
+      controlId,
+      organisationId,
+    });
 
     // Check if resources with tags are retrieved
     if (response.totalRecords > 0) {
@@ -44,16 +61,25 @@ async function getAssetInventoryLogs(
   }
 }
 
-async function getEncryptionLogs(
-  credential: StaticTokenCredential,
-  keyVaultManagementClient: KeyVaultManagementClient
-) {
+async function getEncryptionLogs({
+  controlId,
+  controlName,
+  organisationId,
+  credential,
+  keyVaultManagementClient,
+}: {
+  organisationId: string;
+  controlId: string;
+  controlName: string;
+  credential: StaticTokenCredential;
+  keyVaultManagementClient: KeyVaultManagementClient;
+}) {
   try {
+    const evd_name = `Encryption logs`;
     // List all Key Vaults in the subscription
-    const keyVaults = [];
-    for await (const vault of keyVaultManagementClient.vaults.list()) {
-      keyVaults.push(vault);
-    }
+    const evidence = {};
+    const keyVaultsIterator = await keyVaultManagementClient.vaults.list();
+    const keyVaults = await asyncIteratorToArray(keyVaultsIterator);
 
     let fullyImplemented = 0;
     let partiallyImplemented = 0;
@@ -61,21 +87,22 @@ async function getEncryptionLogs(
 
     for (const vault of keyVaults) {
       const keyVaultUrl = `https://${vault.name}.vault.azure.net`;
+      evidence[vault.name] = {};
       const keyClient = new KeyClient(keyVaultUrl, credential);
 
       let listKeysImplemented = false;
       let describeKeyImplemented = false;
 
-      const valutKeys: KeyProperties[] = [];
-
-      for await (const key of keyClient.listPropertiesOfKeys()) {
-        valutKeys.push(key);
-      }
+      const valutKeysIterator = await keyClient.listPropertiesOfKeys();
+      const valutKeys: KeyProperties[] = await asyncIteratorToArray(
+        valutKeysIterator
+      );
       listKeysImplemented = valutKeys.length > 0;
 
       // Check for describe key functionality (equivalent to AWS KMS DescribeKey)
       if (listKeysImplemented && valutKeys && valutKeys.length) {
         const testKey = await keyClient.getKey(valutKeys[0].name);
+        evidence[vault.name][valutKeys[0].name] = testKey;
         describeKeyImplemented = !!testKey;
       }
 
@@ -88,6 +115,13 @@ async function getEncryptionLogs(
         notImplemented++;
       }
     }
+    await saveEvidence({
+      fileName: `Azure-${controlName}-${evd_name}`,
+      body: { evidence },
+      controls: ["ISO27001-1"],
+      controlId,
+      organisationId,
+    });
     if (
       fullyImplemented > 0 &&
       notImplemented === 0 &&
@@ -108,7 +142,12 @@ async function getEncryptionLogs(
   }
 }
 
-async function getRequirementFourStatus({ azureCloud }: AzureAUth) {
+async function getRequirementFourStatus({
+  azureCloud,
+  controlName,
+  controlId,
+  organisationId,
+}: AzureAUth) {
   if (!azureCloud) throw new Error("Azure cloud is required");
   const { credential, subscriptionId } = getCredentials(azureCloud);
   const keyVaultManagementClient = new KeyVaultManagementClient(
@@ -118,8 +157,22 @@ async function getRequirementFourStatus({ azureCloud }: AzureAUth) {
   const resourceGraphClient = new ResourceGraphClient(credential);
   // PENDING - Asset inventory logs
   return evaluate([
-    () => getEncryptionLogs(credential, keyVaultManagementClient),
-    () => getAssetInventoryLogs(subscriptionId, resourceGraphClient),
+    () =>
+      getEncryptionLogs({
+        credential,
+        controlName,
+        controlId,
+        organisationId,
+        keyVaultManagementClient,
+      }),
+    () =>
+      getAssetInventoryLogs({
+        subscriptionId,
+        controlName,
+        controlId,
+        organisationId,
+        resourceGraphClient,
+      }),
   ]);
 }
 

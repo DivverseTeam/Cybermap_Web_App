@@ -29,6 +29,7 @@ import { Tabs, TabsList, TabsTrigger } from "~/app/_components/ui/tabs";
 import { evidences } from "./_lib/constant";
 import { columns } from "./components/evidence-table-columns";
 import { NewEvidenceSheet } from "./components/new-evidence-sheet";
+import { api } from "~/trpc/react";
 
 interface EvidencesTableProps {
   searchParams: { [key: string]: string | undefined };
@@ -46,6 +47,8 @@ export default function EvidenceLibraryPage({
 
   const router = useRouter();
   const [data, setData] = useState<IEvidence[]>([]);
+    const [orgEvidences] = api.controls.getEvidences.useSuspenseQuery();
+
   // const [total, setTotal] = useState(0);
   // const [currentPage, setCurrentPage] = useState(1);
   // const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -79,6 +82,10 @@ export default function EvidenceLibraryPage({
     };
     fetchData();
   }, [currentPage, itemsPerPage, statusFilter]);
+
+  useEffect(() => { 
+    console.log("orgEvidences", orgEvidences);
+  }, [orgEvidences]);
 
   const lastPostIndex = currentPage * itemsPerPage;
   const firstPostIndex = lastPostIndex - itemsPerPage;

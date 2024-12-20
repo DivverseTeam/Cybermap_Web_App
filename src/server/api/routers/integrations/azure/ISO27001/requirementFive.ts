@@ -1,11 +1,23 @@
 import { Client } from "@microsoft/microsoft-graph-client";
 import type { ConditionalAccessPolicy } from "@microsoft/microsoft-graph-types";
 import { ControlStatus } from "~/lib/types/controls";
-import { AzureAUth, evaluate } from "../../common";
+import { AzureAUth, evaluate, saveEvidence } from "../../common";
 import { listUserGroups, listUsers } from "../common";
 import { initializeAzureClient } from "../init";
 
-async function evaluateAccessControlLogs(azureClient: Client) {
+async function evaluateAccessControlLogs({
+  controlName,
+  controlId,
+  organisationId,
+  azureClient,
+}: {
+  azureClient: Client;
+  controlName: string;
+  controlId: string;
+  organisationId: string;
+}) {
+  const evd_name = `Access control logs`;
+  const evidence: any = {};
   const users = await listUsers(azureClient);
   // const groups = await listGroups();
 
@@ -16,6 +28,7 @@ async function evaluateAccessControlLogs(azureClient: Client) {
     if (!user.id) continue;
     // Get group membership for each user
     const userGroups = await listUserGroups(user.id, azureClient);
+    evidence[user.id] = userGroups.value;
 
     // Check if the user is part of any critical resource group
     const hasCriticalAccess = userGroups.value.some(
@@ -34,6 +47,14 @@ async function evaluateAccessControlLogs(azureClient: Client) {
     }
   }
 
+  await saveEvidence({
+    fileName: `Azure-${controlName}-${evd_name}`,
+    body: { evidence },
+    controls: ["ISO27001-1"],
+    controlId,
+    organisationId,
+  });
+
   // Determine the status based on findings
   if (!roleBasedImplemented) {
     return ControlStatus.Enum.NOT_IMPLEMENTED;
@@ -44,13 +65,31 @@ async function evaluateAccessControlLogs(azureClient: Client) {
   }
 }
 
-async function evaluateMFAStatus(azureClient: Client) {
+async function evaluateMFAStatus({
+  controlName,
+  controlId,
+  organisationId,
+  azureClient,
+}: {
+  azureClient: Client;
+  controlName: string;
+  controlId: string;
+  organisationId: string;
+}) {
   // Fetch conditional access policies
+  const evd_name = `MFA enforcement logs`;
   const policies = await azureClient
     .api("/policies/conditionalAccessPolicies")
     .get();
 
   console.log("policies:", policies);
+  await saveEvidence({
+    fileName: `Azure-${controlName}-${evd_name}`,
+    body: { evidence: policies.value },
+    controls: ["ISO27001-1"],
+    controlId,
+    organisationId,
+  });
 
   // Filter policies related to MFA enforcement
   const mfaPolicies = policies.value.filter(
@@ -81,12 +120,29 @@ async function evaluateMFAStatus(azureClient: Client) {
   return ControlStatus.Enum.FULLY_IMPLEMENTED;
 }
 
-async function getAccessControlEvidence({ azureAd }: AzureAUth) {
+async function getAccessControlEvidence({
+  azureAd,
+  controlName,
+  controlId,
+  organisationId,
+}: AzureAUth) {
   if (!azureAd) throw new Error("Azure AD token is required");
   const azureClient = await initializeAzureClient(azureAd.token);
   return evaluate([
-    () => evaluateAccessControlLogs(azureClient),
-    () => evaluateMFAStatus(azureClient),
+    () =>
+      evaluateAccessControlLogs({
+        azureClient,
+        controlName,
+        controlId,
+        organisationId,
+      }),
+    () =>
+      evaluateMFAStatus({
+        azureClient,
+        controlName,
+        controlId,
+        organisationId,
+      }),
   ]);
 }
 
