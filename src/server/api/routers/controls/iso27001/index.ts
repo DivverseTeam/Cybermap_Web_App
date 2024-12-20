@@ -6,17 +6,19 @@ import Integration from "~/server/models/Integration";
 import Organisation from "~/server/models/Organisation";
 import { getAzureRefreshToken } from "../../integrations/azure/init";
 import { AzureAUth } from "../../integrations/common";
+import { getBCM } from "./BCM";
+import { getInformationSecurityIncidentManagement } from "./ISM";
 import { getAccessControl } from "./accessControls";
 import { getAssetManagement } from "./assetManagement";
-// import { getCryptography } from "./cryptography";
-import { getInformationSecurityIncidentManagement } from "./ISM";
+import { getCommunicationsSecurity } from "./communicationsSecurity";
+import { getCompliance } from "./compliance";
+import { getCryptography } from "./cryptography";
 import { getHumanResourceSecurity } from "./humanResourceSecurity";
 import { getInformationSecurityPolicies } from "./informationSecurityPolicies";
 import { getOperationsSecurity } from "./operationsSecurity";
 import { getOrganizationOfInformationSecurity } from "./organizationofInformationSecurity";
 import { getPhysicalEnvironmentalSecurity } from "./physicalEnvironmentalSecurity";
 import { getSystemAcquisitionDevelopmentMaintenance } from "./systemAcquisitionDevelopmentMaintenance";
-import { getBCM } from "./BCM";
 
 const ISO27001_FUNCTIONS: {
   [key: string]: (auth: AzureAUth) => Promise<ControlStatus | undefined>;
@@ -26,12 +28,14 @@ const ISO27001_FUNCTIONS: {
   HRS: (auth: AzureAUth) => getHumanResourceSecurity(auth),
   ACC: (auth: AzureAUth) => getAccessControl(auth),
   ASM: (auth: AzureAUth) => getAssetManagement(auth),
-  // CRY: (auth: AzureAUth) => getCryptography(auth),
+  CRY: (auth: AzureAUth) => getCryptography(auth),
   PES: (auth: AzureAUth) => getPhysicalEnvironmentalSecurity(auth),
   OPS: (auth: AzureAUth) => getOperationsSecurity(auth),
+  COM: (auth: AzureAUth) => getCommunicationsSecurity(auth),
   ADM: (auth: AzureAUth) => getSystemAcquisitionDevelopmentMaintenance(auth),
   ISM: (auth: AzureAUth) => getInformationSecurityIncidentManagement(auth),
   BCM: (auth: AzureAUth) => getBCM(auth),
+  CMP: (auth: AzureAUth) => getCompliance(auth),
 };
 
 export async function runIso27001() {
@@ -110,11 +114,12 @@ export async function runIso27001() {
       );
     }
   } catch (error: any) {
-    // console.error("Error during ISO27001 audit:", error);
+    console.error("Error during ISO27001 audit:...", error.code);
     if (
       error.code === "ExpiredAuthenticationToken" ||
       error.code === "InvalidAuthenticationToken"
     ) {
+      console.log("Refreshing tokens...");
       const integrations: any[] = await Promise.all(
         AZURE_CLOUD_SLUG.map(async (slug) => {
           return await Integration.findOne(
@@ -128,6 +133,7 @@ export async function runIso27001() {
       );
       if (integrations.length) {
         const tokens = await getAzureRefreshToken(integrations);
+        console.log("fetched Tokens", tokens);
         if (tokens && tokens.length) {
           for (const token of tokens) {
             if (token?.token) {

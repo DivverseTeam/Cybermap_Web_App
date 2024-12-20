@@ -28,6 +28,9 @@ const bucket: string = "cybermap-dev-evidences-bbsvusex";
 async function evaluate(functions: (() => Promise<ControlStatus | null>)[]) {
   try {
     const statuses = await Promise.all(functions.map((fn) => fn()));
+    if (!statuses || statuses.length === 0) {
+      return ControlStatus.Enum.NOT_IMPLEMENTED;
+    }
 
     if (
       statuses.every(
@@ -43,7 +46,7 @@ async function evaluate(functions: (() => Promise<ControlStatus | null>)[]) {
       return ControlStatus.Enum.PARTIALLY_IMPLEMENTED;
     }
   } catch (error: any) {
-    console.log("Error in evaluate...", error);
+    // console.log("Error in evaluate...", error);
     if (
       error.code === "ExpiredAuthenticationToken" ||
       error.code === "InvalidAuthenticationToken"

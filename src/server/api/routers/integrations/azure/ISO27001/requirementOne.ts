@@ -27,15 +27,15 @@ async function getPolicyStatusForSubscription({
   const resources = await asyncIteratorToArray(resourcesIterator);
 
   const totalResources = resources.length;
-  await saveEvidence({
-    fileName: `Azure-${controlName}-${evd_name}`,
-    body: { evidence: resources },
-    controls: ["ISO27001-1"],
-    controlId,
-    organisationId,
-  });
 
   if (totalResources === 0) {
+    await saveEvidence({
+      fileName: `Azure-${controlName}-${evd_name}`,
+      body: { evidence: [] },
+      controls: ["ISO27001-1"],
+      controlId,
+      organisationId,
+    });
     status = ControlStatus.Enum.NOT_IMPLEMENTED;
     return status;
   }
