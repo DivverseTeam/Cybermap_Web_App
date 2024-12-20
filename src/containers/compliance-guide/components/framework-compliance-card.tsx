@@ -7,8 +7,7 @@ import { Button } from "~/app/_components/ui/button";
 interface FrameworkComplianceCardProps {
   logo?: string;
   name: string;
-  pathname: string;
-  slug: string;
+
   readiness: {
     total: number;
     completed: number;
@@ -32,7 +31,7 @@ const ProgressBar = ({ percentage }: { percentage: number }) => {
 
 const FrameworkComplianceCard: FunctionComponent<
   FrameworkComplianceCardProps
-> = ({ name, logo, preparedness, readiness, pathname, slug }) => {
+> = ({ name, logo, preparedness, readiness }) => {
   const preparednessPercentage = Math.round(
     (preparedness.completed / preparedness.total) * 100
   );
@@ -62,9 +61,9 @@ const FrameworkComplianceCard: FunctionComponent<
               </div>
               <p className="text-xl">{name}</p>
             </div>
-            <Link href={`${pathname}/${slug}`}>
-              <Button variant={"outline"}>View Framework</Button>
-            </Link>
+            {/* <Link href={`${pathname}/${slug}`}> */}
+            <Button variant={"outline"}>View Framework</Button>
+            {/* </Link> */}
           </div>
 
           <div className="flex flex-col gap-8">

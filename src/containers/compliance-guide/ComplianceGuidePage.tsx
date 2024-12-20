@@ -28,8 +28,6 @@ export default function ComplianceGuidePage() {
                 logo={logo}
                 preparedness={preparedness}
                 readiness={readiness}
-                pathname={pathname}
-                slug={slug}
               />
             </Link>
           );
