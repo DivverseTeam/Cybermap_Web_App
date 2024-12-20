@@ -270,7 +270,7 @@ export function ImportEmployeeDialog({
             <div
               onDrop={handleDrop}
               onDragOver={handleDragOver}
-              className="flex mt-2 h-44 w-full cursor-pointer items-center justify-center rounded-sm border border-gray-200 border-dashed bg-gray-50 hover:border-secondary"
+              className="flex mt-2 py-4 h-48 w-full cursor-pointer items-center justify-center rounded-sm border border-gray-200 border-dashed bg-gray-50 hover:border-secondary"
             >
               {file ? (
                 <ul>

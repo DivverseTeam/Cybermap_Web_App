@@ -85,7 +85,7 @@ const DocumentationContent = () => (
 
 const SinglePolicy: FunctionComponent<SinglePolicyProps> = () => {
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 px-4 [@media(min-width:1400px)]:px-6">
       <div className="flex items-center justify-between">
         <h1 className="font-semibold text-xl">Incident Response Plan</h1>
         <div className="flex items-center gap-2">

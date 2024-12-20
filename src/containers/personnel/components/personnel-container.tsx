@@ -24,11 +24,11 @@ import { useDebounce } from "~/hooks/use-debounce";
 import EmployeeProfileSheet from "./employee-profile-sheet";
 
 type Props = {
-  data: IEmployee[];
+  data: EmployeeType[];
   // employees: EmployeeType[] | undefined;
 };
 
-const preprocessData = (data: IEmployee[]) =>
+const preprocessData = (data: EmployeeType[]) =>
   data.map((row) => ({
     ...row,
     firstNameLower: row.firstName.toLowerCase(),
@@ -40,8 +40,8 @@ export default function PersonnelContainer({ data }: Props) {
   const [debouncedSearchQuery] = useDebounce(searchQuery, 300);
 
   // State for selected employee and sheet visibility
-  const [selectedEmployee, setSelectedEmployee] = useState<IEmployee | null>(
-    null
+  const [selectedEmployee, setSelectedEmployee] = useState<EmployeeType>(
+    {} as EmployeeType
   );
   const [isSheetOpen, setIsSheetOpen] = useState(false);
 
@@ -59,7 +59,7 @@ export default function PersonnelContainer({ data }: Props) {
   }, [debouncedSearchQuery, normalizedData]);
 
   // Employee tanstack table is created here
-  const table = useReactTable<IEmployee>({
+  const table = useReactTable<EmployeeType>({
     data: filteredData,
     columns: columns,
     manualPagination: true,
@@ -71,7 +71,7 @@ export default function PersonnelContainer({ data }: Props) {
   const [showImportEmployeesDialog, setShowImportEmployeesDialog] =
     useState(false);
 
-  const handleRowClick = (employee: IEmployee) => {
+  const handleRowClick = (employee: EmployeeType) => {
     setSelectedEmployee(employee);
     setIsSheetOpen(true);
   };
@@ -147,11 +147,15 @@ export default function PersonnelContainer({ data }: Props) {
       </div>
 
       {/* Sheet for Employee Profile */}
-      <EmployeeProfileSheet
-        open={isSheetOpen}
-        onOpenChange={setIsSheetOpen}
-        employee={selectedEmployee as unknown as IEmployee}
-      />
+      {selectedEmployee ? (
+        <EmployeeProfileSheet
+          open={isSheetOpen}
+          onOpenChange={setIsSheetOpen}
+          employee={selectedEmployee as unknown as IEmployee}
+        />
+      ) : (
+        ""
+      )}
     </div>
   );
 }

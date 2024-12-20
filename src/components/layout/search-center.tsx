@@ -30,6 +30,7 @@ import {
 import { api } from "~/trpc/react";
 import { Tabs, TabsList, TabsTrigger } from "~/app/_components/ui/tabs";
 import Link from "next/link";
+import { data as policiesList } from "~/containers/policies";
 
 type CommandItem = {
   title: string;
@@ -70,18 +71,11 @@ export function SearchCenter() {
     },
     {
       groupName: "Policies",
-      items: [
-        {
-          title: "Policy",
-          icon: PolicyIcon,
-          pathName: "policies",
-        },
-        {
-          title: "Policy",
-          icon: PolicyIcon,
-          pathName: "policies",
-        },
-      ],
+      items: policiesList.map((policy) => ({
+        title: policy.name,
+        icon: PolicyIcon,
+        pathName: `policies/${policy.name.split(" ").join("-").toLowerCase()}`,
+      })),
     },
     {
       groupName: "Controls",
@@ -100,7 +94,7 @@ export function SearchCenter() {
 
     setSearchData(filteredMenuList);
     // setTotal(total);
-    console.log(groupFilter);
+    // console.log(groupFilter);
   };
 
   useEffect(() => {
