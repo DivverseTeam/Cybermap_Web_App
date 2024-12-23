@@ -96,7 +96,7 @@ export const employeesRouter = createTRPCRouter({
   changeComplianceStatus: protectedProcedure
     .input(
       z.object({
-        _id: z.string(), // The MongoDB ObjectId of the employee
+        _id: z.string().optional(), // The MongoDB ObjectId of the employee
         newComplianceList: z.array(z.record(z.boolean().optional())).optional(),
       })
     )

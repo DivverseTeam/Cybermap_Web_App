@@ -4,7 +4,7 @@ import { z } from "zod";
 import { BaseSchema } from "./base";
 
 export const EmployeeType = z.object({
-  _id: z.string(), // Include _id as a string for the client
+  _id: z.string().optional(), // Include _id as a string for the client
   firstName: z.string(),
   lastName: z.string(),
   employeeId: z.string(),

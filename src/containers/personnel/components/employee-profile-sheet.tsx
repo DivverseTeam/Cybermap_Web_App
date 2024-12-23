@@ -354,7 +354,7 @@ export default function EmployeeProfileSheet({
                   </div>
                 </div>
               ) : (
-                <div className="space-y-5 border h-max rounded-lg p-4 transition-transform duration-300 ease-in-out transform hover:translate-x-1">
+                <div className="space-y-5 border h-max rounded-lg p-4 transition-transform duration-300 ease-in-out transform hover:translate-y-1">
                   <h2 className="font-medium text-lg">
                     Edit compliance status
                   </h2>
