@@ -165,8 +165,8 @@ export default function IntegrationProfile({}: Props) {
               <div className="flex flex-col gap-2">
                 {/* single connection */}
                 <div className="flex items-center justify-between border rounded-2xl p-4">
-                  <div className="flex items-center gap-3">
-                    <p className="text-black text-md">GCS-Secure-Buckets</p>
+                  <div className="flex items-center gap-4">
+                    <p className="text-black text-[16px]">GCS-Secure-Buckets</p>
                     <Badge variant="success">Connected</Badge>
                   </div>
                   <EllipsisVertical />
