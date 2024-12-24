@@ -239,7 +239,7 @@ export default function ControlsPage() {
               </div>
               <Input
                 type="text"
-                placeholder="Search for a file"
+                placeholder="Search for a control"
                 // onChange={handleSearch}
                 // defaultValue={search}
                 className="w-54 bg-[#F9F9FB] [@media(min-width:1400px)]:w-72"

@@ -61,7 +61,7 @@ export default function PersonnelPage({}: Props) {
   const {
     data: employees,
     isLoading,
-    isError,
+    // isError,
   } = api.employees.getEmployees.useQuery();
 
   console.log(employees);

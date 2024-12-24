@@ -8,6 +8,8 @@ import { api } from "~/trpc/react";
 import { useIsFetching } from "@tanstack/react-query";
 import { getQueryKey } from "@trpc/react-query";
 import { Skeleton } from "~/app/_components/ui/skeleton";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 type Props = {
   integration: Integration & { isConnected: boolean };
@@ -39,6 +41,8 @@ export function IntegrationCard({
   const { image, name, category, isConnected } = integration;
   const utils = api.useUtils();
 
+  const pathname = usePathname();
+
   const isFetching = useIsFetching({
     queryKey: getQueryKey(api.integrations.get),
   });
@@ -49,13 +53,15 @@ export function IntegrationCard({
     <div className="w-full rounded-lg border bg-white p-4 shadow-md">
       <div className="flex flex-col gap-y-12">
         <div className="flex items-center justify-between">
-          <Image
-            src={image}
-            alt={`${name} Logo`}
-            width={64}
-            height={64}
-            className="flex h-16 items-center justify-center rounded-md border-2 p-2"
-          />
+          <Link href={`${pathname}/${name.split(" ").join("-")}`}>
+            <Image
+              src={image}
+              alt={`${name} Logo`}
+              width={64}
+              height={64}
+              className="flex h-16 items-center justify-center rounded-md border-2 p-2"
+            />
+          </Link>
           <Button
             size="sm"
             variant="outline"
@@ -72,12 +78,14 @@ export function IntegrationCard({
         </div>
 
         <div className="flex flex-col gap-y-1">
-          <h2 className="inline-flex items-center gap-x-4 font-medium text-gray-900 text-lg">
-            {name}
-            <Badge variant={isConnected ? "success" : "muted"}>
-              {isConnected ? "Connected" : "Inactive"}
-            </Badge>
-          </h2>
+          <Link href={`${pathname}/${name.split(" ").join("-")}`}>
+            <h2 className="inline-flex items-center gap-x-4 font-medium text-gray-900 text-lg">
+              {name}
+              <Badge variant={isConnected ? "success" : "muted"}>
+                {isConnected ? "Connected" : "Inactive"}
+              </Badge>
+            </h2>
+          </Link>
           <p className="text-gray-500 text-sm">
             {IntegrationCategoryValueMap[category]}
           </p>
