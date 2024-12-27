@@ -1,10 +1,12 @@
-import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { frameworks } from "~/lib/constants/frameworks";
-import OrganisationModel from "~/server/models/Organisation";
-import ControlModel, { OrganisationControl } from "~/server/models/Control";
 import { z } from "zod";
+import { frameworks } from "~/lib/constants/frameworks";
 import ISO27001 from "~/lib/constants/frameworks/iso27001";
 import type { Course } from "~/lib/types/course";
+import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import ControlModel, { OrganisationControl } from "~/server/models/Control";
+import OrganisationModel from "~/server/models/Organisation";
+import { OrgControlMapping } from "~/server/models/OrganizationControlMapping";
+import { OrgControlsMappingAggregation } from "./common";
 
 const feedbackWeights: Record<string, number> = {
   FULLY_IMPLEMENTED: 1,
@@ -25,26 +27,27 @@ export const frameworksRouter = createTRPCRouter({
         },
       },
     }) => {
-      const organisation =
-        await OrganisationModel.findById(organisationId).select("frameworks");
+      const organisation = await OrganisationModel.findById(
+        organisationId
+      ).select("frameworks");
 
       if (!organisation) {
         throw new Error("Organisation not found");
       }
 
       const organisationFrameworks = frameworks.filter((framework) =>
-        organisation.frameworks.includes(framework.name),
+        organisation.frameworks.includes(framework.name)
       );
 
       return organisationFrameworks;
-    },
+    }
   ),
 
   getWithSlug: protectedProcedure
     .input(
       z.object({
         slug: z.string(),
-      }),
+      })
     )
     .query(async ({ input: { slug } }) => {
       const framework = frameworks.find((framework) => framework.slug === slug);
@@ -64,11 +67,16 @@ export const frameworksRouter = createTRPCRouter({
         },
       },
     }) => {
+      if (!organisationId) {
+        throw new Error("Organisation not found");
+      }
+      const aggregation = OrgControlsMappingAggregation(organisationId);
+
       const [organisation, controls] = await Promise.all([
         OrganisationModel.findById(organisationId).select(
-          "frameworks completedLessons",
+          "frameworks completedLessons"
         ),
-        ControlModel.find({ organisationId }),
+        ControlModel.aggregate(aggregation),
       ]);
 
       if (!organisation) {
@@ -76,7 +84,7 @@ export const frameworksRouter = createTRPCRouter({
       }
 
       const organisationFrameworks = frameworks.filter((framework) =>
-        organisation.frameworks.includes(framework.name),
+        organisation.frameworks.includes(framework.name)
       );
 
       const controlsByFramework = organisationFrameworks.map((framework) => {
@@ -85,14 +93,17 @@ export const frameworksRouter = createTRPCRouter({
             framework.slug as keyof typeof SLUG_FRAMEWORK_CONTENT_MAP
           ] || [];
         const totalModules = courseContent.flatMap(
-          (course) => course.lessons,
+          (course) => course.lessons
         ).length;
 
         return {
           ...framework,
-          controls: OrganisationControl.array()
+          controls: OrgControlMapping.array()
             .parse(controls)
-            .filter((control) => control.mapped.includes(framework.name)),
+            .filter(
+              (control) =>
+                control?.mapped && control.mapped.includes(framework.name)
+            ),
           preparedness: {
             completed:
               organisation.completedLessons.get(framework.slug)?.length || 0,
@@ -131,7 +142,7 @@ export const frameworksRouter = createTRPCRouter({
 
               return acc + (feedbackWeights[feedback] || 0);
             },
-            0,
+            0
           );
 
           const completionLevel =
@@ -145,11 +156,11 @@ export const frameworksRouter = createTRPCRouter({
             completionLevel,
             complianceScore,
           };
-        },
+        }
       );
 
       return frameworksWithComplianceScore;
-    },
+    }
   ),
 
   compliance: createTRPCRouter({
@@ -157,7 +168,7 @@ export const frameworksRouter = createTRPCRouter({
       .input(
         z.object({
           slug: z.string(),
-        }),
+        })
       )
       .query(
         async ({
@@ -173,10 +184,9 @@ export const frameworksRouter = createTRPCRouter({
               slug as keyof typeof SLUG_FRAMEWORK_CONTENT_MAP
             ] || [];
 
-          const organisation =
-            await OrganisationModel.findById(organisationId).select(
-              "completedLessons",
-            );
+          const organisation = await OrganisationModel.findById(
+            organisationId
+          ).select("completedLessons");
 
           if (!organisation) {
             throw new Error("Organisation not found");
@@ -202,7 +212,7 @@ export const frameworksRouter = createTRPCRouter({
 
                 return acc;
               },
-              { courseModulesWithCompletion: [] as Course, totalLessons: 0 }, // Initial accumulator
+              { courseModulesWithCompletion: [] as Course, totalLessons: 0 } // Initial accumulator
             );
 
           return {
@@ -218,7 +228,7 @@ export const frameworksRouter = createTRPCRouter({
             total: totalLessons,
             completed: completedLessons.length,
           };
-        },
+        }
       ),
 
     markLessonCompleted: protectedProcedure
@@ -226,7 +236,7 @@ export const frameworksRouter = createTRPCRouter({
         z.object({
           slug: z.string(),
           lessonId: z.number(),
-        }),
+        })
       )
       .mutation(
         async ({
@@ -237,10 +247,9 @@ export const frameworksRouter = createTRPCRouter({
           },
           input: { slug, lessonId },
         }) => {
-          const organisation =
-            await OrganisationModel.findById(organisationId).select(
-              "completedLessons",
-            );
+          const organisation = await OrganisationModel.findById(
+            organisationId
+          ).select("completedLessons");
 
           if (!organisation) {
             throw new Error("Organisation not found");
@@ -258,7 +267,7 @@ export const frameworksRouter = createTRPCRouter({
           }
 
           return true;
-        },
+        }
       ),
   }),
 });

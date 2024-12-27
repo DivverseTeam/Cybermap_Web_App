@@ -10,7 +10,6 @@ export const OrganisationControl = z.object({
   name: z.string(),
   code: z.string(),
   mapped: FrameworkName.array(),
-  organisationId: z.string(),
 });
 
 export type OrganisationControl = z.infer<typeof OrganisationControl>;

@@ -1,5 +1,4 @@
 import { jwtDecode } from "jwt-decode";
-import { Resource } from "sst";
 import UserModel, { User } from "~/server/models/User";
 // import User, { User as UserSchema } from "~/server/models/User";
 
@@ -12,13 +11,14 @@ import {
   UsernameExistsException,
   type AttributeType,
 } from "@aws-sdk/client-cognito-identity-provider";
+import { env } from "~/env";
 import { mongoosePromise } from "~/server/db";
-// import { globalConfig } from "./integrations/aws/init";
+import { globalConfig } from "./integrations/aws/init";
 import type { SignInProps, SignUpProps } from "./user";
 
 // Abiola
-// const cognitoClient = new CognitoIdentityProviderClient(globalConfig);
-const cognitoClient = new CognitoIdentityProviderClient();
+const cognitoClient = new CognitoIdentityProviderClient(globalConfig);
+// const cognitoClient = new CognitoIdentityProviderClient();
 await mongoosePromise;
 
 export const signUp = async (props: SignUpProps) => {
@@ -34,7 +34,7 @@ export const signUp = async (props: SignUpProps) => {
 
     const signupOutput = await cognitoClient.send(
       new SignUpCommand({
-        ClientId: Resource["user-client"].id,
+        ClientId: env.APP_CLIENT_ID,
         Username: email,
         Password: password,
         UserAttributes: attributes,
@@ -44,13 +44,13 @@ export const signUp = async (props: SignUpProps) => {
     await Promise.all([
       cognitoClient.send(
         new AdminConfirmSignUpCommand({
-          UserPoolId: Resource.user.id,
+          UserPoolId: env.USER_POOL_ID,
           Username: email,
         })
       ),
       cognitoClient.send(
         new AdminUpdateUserAttributesCommand({
-          UserPoolId: Resource.user.id,
+          UserPoolId: env.USER_POOL_ID,
           Username: email,
           UserAttributes: [
             {
@@ -88,8 +88,7 @@ export const signIn = async (props: SignInProps) => {
     const initiateAuthOutput = await cognitoClient.send(
       new InitiateAuthCommand({
         AuthFlow: "USER_PASSWORD_AUTH",
-        // ClientId: "5935eo5ka6uqrnk46cq092htth",
-        ClientId: Resource["user-client"].id,
+        ClientId: env.APP_CLIENT_ID,
         AuthParameters: {
           USERNAME: email,
           PASSWORD: password,

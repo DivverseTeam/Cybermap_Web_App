@@ -25,11 +25,15 @@ import { S3 } from "@aws-sdk/client-s3";
 import { SecretsManagerClient } from "@aws-sdk/client-secrets-manager";
 import { SecurityHubClient } from "@aws-sdk/client-securityhub";
 import { SSMClient } from "@aws-sdk/client-ssm";
-import { fromEnv } from "@aws-sdk/credential-providers";
+// import { fromEnv } from "@aws-sdk/credential-providers";
+import { env } from "~/env";
 
 const globalConfig = {
-  region: process.env.AWS_REGION ? process.env.AWS_REGION : "eu-east-1",
-  credentials: fromEnv(),
+  region: env.REGION ?? "eu-east-1",
+  credentials: {
+    accessKeyId: env.ACCESS_KEY_ID,
+    secretAccessKey: env.SECRET_ACCESS_KEY,
+  },
 };
 
 const iamClient = new IAMClient(globalConfig);
@@ -74,6 +78,7 @@ export {
   ec2Client,
   elbV2Client,
   glacierClient,
+  globalConfig,
   glueClient,
   guardDutyClient,
   healthClient,
@@ -88,5 +93,4 @@ export {
   securityHubClient,
   ssmClient,
   taggingClient,
-  globalConfig,
 };

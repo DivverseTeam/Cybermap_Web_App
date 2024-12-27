@@ -4,6 +4,7 @@ import { z } from "zod";
 import { CONTROL_STATUSES } from "~/lib/constants/controls";
 import { ControlStatus } from "~/lib/types/controls";
 import { BaseSchema } from "./base";
+import { FrameworkName } from "~/lib/types";
 
 export const OrgControlMapping = z.object({
   id: z.string(),
@@ -15,6 +16,7 @@ export const OrgControlMapping = z.object({
   }),
   integrationIds: z.array(z.string()),
   status: ControlStatus,
+  mapped: FrameworkName.array().optional(),
 });
 
 export type OrgControlMapping = z.infer<typeof OrgControlMapping>;

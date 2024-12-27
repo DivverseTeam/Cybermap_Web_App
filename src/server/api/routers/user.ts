@@ -15,7 +15,6 @@ import {
   UserNotFoundException,
 } from "@aws-sdk/client-cognito-identity-provider";
 import mongoose from "mongoose";
-import { Resource } from "sst";
 import { FrameworkName } from "~/lib/types";
 import {
   createTRPCRouter,
@@ -27,6 +26,7 @@ import UserModel from "~/server/models/User";
 import { signIn, signUp } from "./actions";
 // import { controls } from "~/lib/constants/controls";
 // import Control from "~/server/models/Control";
+import { env } from "~/env";
 
 const cognitoClient = new CognitoIdentityProviderClient();
 
@@ -99,7 +99,7 @@ export const userRouter = createTRPCRouter({
     .mutation(async ({ input }) => {
       try {
         const command = new ForgotPasswordCommand({
-          ClientId: Resource["user-client"].id,
+          ClientId: env.APP_CLIENT_ID,
           Username: input.email,
         });
 
@@ -127,7 +127,7 @@ export const userRouter = createTRPCRouter({
 
       try {
         const command = new ConfirmForgotPasswordCommand({
-          ClientId: Resource["user-client"].id,
+          ClientId: env.APP_CLIENT_ID,
           Username: email,
           ConfirmationCode: verificationCode,
           Password: newPassword,

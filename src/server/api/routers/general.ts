@@ -192,7 +192,6 @@ export const generalRouter = createTRPCRouter({
 
         // Abiola
         const authorizationUri = client.authorizeURL({
-          // redirect_uri: `${"http://localhost:3000"}/api/integrations/callback/${provider.toLowerCase()}_${slug}`,
           redirect_uri: `${
             env.BASE_URL || "http://localhost:3000"
           }/api/integrations/callback/${provider.toLowerCase()}_${slug}` as string,
