@@ -8,7 +8,7 @@ import {
 import { Search01Icon } from "hugeicons-react";
 import { ArrowUpToLine, Check } from "lucide-react";
 import type React from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Button } from "~/app/_components/ui/button";
 import { Input } from "~/app/_components/ui/input";
 import {
@@ -27,6 +27,7 @@ import type { OrganisationControl } from "~/lib/types/controls";
 import type { Framework } from "~/lib/types/frameworks";
 import { api } from "~/trpc/react";
 import { NewControlSheet } from "./components/new-control-sheet";
+import { useDebounce } from "~/hooks/use-debounce";
 
 export default function ControlsPage() {
   const [frameworks] = api.frameworks.get.useSuspenseQuery();
@@ -40,8 +41,17 @@ export default function ControlsPage() {
   const [statusFilter, setStatusFilter] = useState<string>("");
   const [selectedFrameworks, setSelectedFrameworks] = useState<string[]>([]);
 
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [debouncedSearchQuery] = useDebounce(searchQuery, 300);
+
+  const searchTableData = useMemo(() => {
+    const query = (debouncedSearchQuery ?? "").toLowerCase();
+    if (!query) return tableData;
+    return tableData.filter((row) => row.name.includes(query));
+  }, [debouncedSearchQuery, tableData]);
+
   const table = useReactTable({
-    data: tableData,
+    data: searchTableData,
     columns: columns,
     manualPagination: true,
     manualSorting: true,
@@ -103,19 +113,6 @@ export default function ControlsPage() {
     // setTotal(total);
     console.log(statusFilter);
   };
-
-  // const handleSearch = (e: any) => {
-  //   router.push(
-  //     `/dashboard/evidences?page=1&limit=${itemsPerPage}&search=${e.target.value}`
-  //   );
-  // };
-
-  // const handlePageChange = (newPage: any) => {
-  //   setCurrentPage(newPage);
-  //   router.push(
-  //     `/dashboard/evidences?page=${newPage}&limit=${limit}&search=${search}&sortColumn=${sortColumn}&sortOrder=${sortOrder}`
-  //   );
-  // };
 
   // Frameworks checked options
 
@@ -242,6 +239,8 @@ export default function ControlsPage() {
                 placeholder="Search for a control"
                 // onChange={handleSearch}
                 // defaultValue={search}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-54 bg-[#F9F9FB] [@media(min-width:1400px)]:w-72"
                 suffix={
                   <span className="cursor-pointer">

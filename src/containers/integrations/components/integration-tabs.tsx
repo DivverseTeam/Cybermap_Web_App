@@ -58,10 +58,20 @@ export function IntegrationTabs({
       })),
   ];
 
+  const integrationsContent = () => {
+    if (connected.length > 0) {
+      setActiveList("connected");
+      return "connected";
+    } else {
+      setActiveList("available");
+      return "available";
+    }
+  };
+
   return (
     <div className="bg-gray-100 p-1 h-max rounded-xl border border-neutral-2 border-solid">
       <Tabs
-        defaultValue="connected"
+        defaultValue={integrationsContent()}
         className="h-max w-[200px] 2xl:w-[22%] [@media(min-width:1400px)]:w-[270px]"
       >
         <TabsList className="z-10 flex w-full rounded-2xl rounded-b-none bg-muted">
@@ -114,34 +124,36 @@ export function IntegrationTabs({
         </TabsContent>
 
         <TabsContent value="available">
-          <Card className="rounded-t-none">
-            <CardContent className="space-y-1 p-0">
-              {allCategories.map((category) => (
-                <div key={category.key} className="w-full">
-                  <Button
-                    variant="ghost"
-                    size={"lg"}
-                    className={cn(
-                      "w-full justify-start px-2 hover:bg-[#305EFF17]",
-                      {
-                        "!bg-[#305EFF17]":
-                          (activeCategory === "" && category.key === "All") ||
-                          activeCategory === category.key,
+          {allCategories && (
+            <Card className="rounded-t-none">
+              <CardContent className="space-y-1 p-0">
+                {allCategories.map((category) => (
+                  <div key={category.key} className="w-full">
+                    <Button
+                      variant="ghost"
+                      size={"lg"}
+                      className={cn(
+                        "w-full justify-start px-2 hover:bg-[#305EFF17]",
+                        {
+                          "!bg-[#305EFF17]":
+                            (activeCategory === "" && category.key === "All") ||
+                            activeCategory === category.key,
+                        }
+                      )}
+                      type="button"
+                      onClick={() =>
+                        setActiveCategory(
+                          category.key === "All" ? "" : category.key
+                        )
                       }
-                    )}
-                    type="button"
-                    onClick={() =>
-                      setActiveCategory(
-                        category.key === "All" ? "" : category.key
-                      )
-                    }
-                  >
-                    {category.value}
-                  </Button>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
+                    >
+                      {category.value}
+                    </Button>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          )}
         </TabsContent>
       </Tabs>
     </div>
