@@ -4,13 +4,17 @@ import { z } from "zod";
 import { BaseSchema } from "./base";
 
 export const EmployeeType = z.object({
-  employeeId: z.string(),
+  _id: z.string().optional(), // Include _id as a string for the client
   firstName: z.string(),
   lastName: z.string(),
+  employeeId: z.string(),
   email: z.string(),
+  jobTitle: z.string(),
   gender: z.string(),
-  hireDate: z.coerce.date(),
-  terminationDate: z.coerce.date().optional(),
+  hireDate: z.coerce.date().or(z.string()),
+  terminationDate: z.coerce.date().optional().or(z.string()),
+  lastSeen: z.coerce.date().optional(),
+  lastPasswordUpdate: z.coerce.date().optional(),
   organisationId: z.string().optional(),
   complianceList: z.array(z.record(z.boolean().optional())).optional(), // Using z.record for the complianceList
 });
@@ -36,6 +40,10 @@ const EmployeeSchema = new BaseSchema<EmployeeWithDocument>({
     type: String,
     required: true,
   },
+  jobTitle: {
+    type: String,
+    required: true,
+  },
   gender: {
     type: String,
     required: true,
@@ -45,6 +53,14 @@ const EmployeeSchema = new BaseSchema<EmployeeWithDocument>({
     required: true,
   },
   terminationDate: {
+    type: Date,
+    required: false,
+  },
+  lastSeen: {
+    type: Date,
+    required: false,
+  },
+  lastPasswordUpdate: {
     type: Date,
     required: false,
   },

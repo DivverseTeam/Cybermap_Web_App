@@ -20,14 +20,27 @@ export const employeesRouter = createTRPCRouter({
         throw new Error("Organisation not found");
       }
       try {
+        // Define the default compliance list with all compliances set to false
+        const defaultComplianceList = [
+          { "Policy Acknowledgement": false },
+          { "Identity MFA": false },
+          { "Background Check": false },
+          { "Security Training": false },
+          { "Device Compliance": false },
+          { "Password Managers": false },
+          { "Anti-Virus": false },
+          { "Auto-Updates": false },
+        ];
+
         // Add organisationId to each employee
-        const employeesWithOrgId = input.map((employee) => ({
+        const modifiedEmployees = input.map((employee) => ({
           ...employee,
           organisationId, // Add organisationId from context
+          complianceList: defaultComplianceList, // Add the default compliance list
         }));
 
         // Create bulk operations for upsert
-        const newEmployees = employeesWithOrgId.map((employee) => ({
+        const newEmployees = modifiedEmployees.map((employee) => ({
           updateOne: {
             filter: { email: employee.email }, // Match by employeeId
             update: { $setOnInsert: employee }, // Only insert new employees
@@ -61,19 +74,77 @@ export const employeesRouter = createTRPCRouter({
     if (!organisationId) {
       throw new Error("Organisation not found");
     }
-    console.log("organisayion ID:", organisationId);
+    console.log("organisation ID from get employees:", organisationId);
 
     try {
       const employees = await Employee.find({ organisationId }).sort({
         firstName: 1,
       });
 
-      // return EmployeeType.array().parse(employees);
-      return employees;
+      // Convert `_id` to string for each employee
+      const transformedEmployees = employees.map((employee) => ({
+        ...employee.toObject(), // Convert Mongoose document to plain object
+        _id: employee._id.toString(), // Ensure `_id` is a string
+      }));
+
+      return EmployeeType.array().parse(transformedEmployees); // return employees;
     } catch (error) {
       console.log(error);
     }
   }),
+
+  changeComplianceStatus: protectedProcedure
+    .input(
+      z.object({
+        _id: z.string().optional(), // The MongoDB ObjectId of the employee
+        newComplianceList: z.array(z.record(z.boolean().optional())).optional(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const {
+        session: {
+          user: { organisationId },
+        },
+      } = ctx;
+
+      if (!organisationId) {
+        throw new Error("Organisation not found");
+      }
+
+      try {
+        const { _id, newComplianceList } = input;
+
+        // const employeeObjectId = new ObjectId(_id);
+
+        // Transform the newComplianceList into a format MongoDB can use
+        // const formattedComplianceList = newComplianceList.map(
+        //   ({ key, value }) => ({
+        //     [key]: value,
+        //   })
+        // );
+
+        // Update the complianceList of the employee
+        const result = await Employee.updateOne(
+          { _id, organisationId }, // Match employee by ObjectId and organisationId
+          { $set: { complianceList: newComplianceList } } // Replace the complianceList
+        );
+
+        if (result.matchedCount === 0) {
+          throw new Error(
+            "Employee not found or does not belong to this organisation"
+          );
+        }
+
+        return {
+          message: "Compliance list updated successfully",
+          updatedCount: result.modifiedCount,
+        };
+      } catch (error) {
+        console.error("Error updating compliance list:", error);
+        throw new Error("Failed to update compliance list");
+      }
+    }),
+
   getAzureUsers: protectedProcedure.query(async ({ ctx }) => {
     const {
       session: {
@@ -84,7 +155,7 @@ export const employeesRouter = createTRPCRouter({
     if (!organisationId) {
       throw new Error("Organisation not found");
     }
-    console.log("organisayion ID:", organisationId);
+    console.log("organisation ID:", organisationId);
 
     try {
       const orgIntegration = await Integration.findOne(
@@ -100,6 +171,12 @@ export const employeesRouter = createTRPCRouter({
         orgIntegration.authData.accessToken
       );
       const users = await listUsers(azureClient);
+
+      console.log("azure users data: ", users.value);
+
+      // Modify users and add to employees collection in database
+      // ...
+
       return users.value;
     } catch (error) {
       console.log(error);

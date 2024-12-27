@@ -1,10 +1,13 @@
 import type { FunctionComponent } from "react";
 import Image from "next/image";
 import { Card } from "~/app/_components/ui/card";
+import Link from "next/link";
+import { Button } from "~/app/_components/ui/button";
 
 interface FrameworkComplianceCardProps {
   logo?: string;
   name: string;
+
   readiness: {
     total: number;
     completed: number;
@@ -40,22 +43,27 @@ const FrameworkComplianceCard: FunctionComponent<
     <div className="bg-gray-100 p-1 h-full w-full rounded-lg border border-neutral-2 border-solid">
       <Card className="w-full min-w-[500px] rounded-lg border border-gray-200 bg-white p-6 shadow-md">
         <div className="flex flex-col gap-6">
-          <div className="flex items-center gap-4">
-            <div className="relative block h-10 w-10 rounded-[50%]">
-              <Image
-                src={logo || ""}
-                alt="headerImage"
-                fill={true}
-                priority={true}
-                style={{
-                  borderRadius: "50%",
-                  maxWidth: "100%",
-                  objectFit: "cover",
-                  objectPosition: "center",
-                }}
-              />
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="relative block h-10 w-10 rounded-[50%]">
+                <Image
+                  src={logo || ""}
+                  alt="headerImage"
+                  fill={true}
+                  priority={true}
+                  style={{
+                    borderRadius: "50%",
+                    maxWidth: "100%",
+                    objectFit: "cover",
+                    objectPosition: "center",
+                  }}
+                />
+              </div>
+              <p className="text-xl">{name}</p>
             </div>
-            <p className="text-xl">{name}</p>
+            {/* <Link href={`${pathname}/${slug}`}> */}
+            <Button variant={"outline"}>View Framework</Button>
+            {/* </Link> */}
           </div>
 
           <div className="flex flex-col gap-8">

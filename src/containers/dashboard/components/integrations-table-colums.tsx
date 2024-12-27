@@ -76,13 +76,14 @@ export const columns: ColumnDef<IntegrationType>[] = [
   {
     accessorKey: "actions",
     header: () => <span></span>,
-    cell: () => {
-      // const [showViewIntegrationSheet, setShowViewIntegrationSheet] =
-      //   useState(false);
+    cell: ({ row }) => {
+      const { name } = row.getValue("name") as {
+        name: string;
+      };
 
       return (
         <Button variant="outline" size="sm">
-          <Link href={"/integrations"}>View</Link>
+          <Link href={`integrations/${name.split(" ").join("-")}`}>View</Link>
         </Button>
       );
     },

@@ -188,7 +188,7 @@ export const generalRouter = createTRPCRouter({
         const client = new AuthorizationCode(getOauth2Config(input));
 
         const isAzureAD = slug === "azure-ad";
-        const isAzureCloud = slug === "azure-cloud";
+        // const isAzureCloud = slug === "azure-cloud";
 
         // Abiola
         const authorizationUri = client.authorizeURL({

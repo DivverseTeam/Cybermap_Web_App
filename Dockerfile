@@ -1,57 +1,58 @@
 ##### DEPENDENCIES
-
 FROM --platform=linux/amd64 node:22-alpine AS deps
-RUN apk add --no-cache libc6-compat openssl
+
+# Add necessary system packages
+RUN apk add --no-cache libc6-compat openssl bash
+
 WORKDIR /app
 
-# Install dependencies based on the preferred package manager
-COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
+# Copy package.json and lock file
+COPY package.json package-lock.json ./
 
-RUN \
-    if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
-    elif [ -f package-lock.json ]; then npm ci; \
-    elif [ -f pnpm-lock.yaml ]; then yarn global add pnpm && pnpm i; \
-    else echo "Lockfile not found." && exit 1; \
-    fi
+# Clear npm cache and install dependencies with verbose logging
+RUN npm cache clean --force && npm ci --verbose
 
 ##### BUILDER
-
 FROM --platform=linux/amd64 node:22-alpine AS builder
+
+# Pass build-time arguments
 ARG DATABASE_URL
 ARG NEXT_PUBLIC_CLIENTVAR
+
 WORKDIR /app
+
+# Copy installed dependencies from the deps stage
 COPY --from=deps /app/node_modules ./node_modules
+
+# Copy the application source code
 COPY . .
 
-# ENV NEXT_TELEMETRY_DISABLED 1
-
-RUN \
-    if [ -f yarn.lock ]; then yarn build; \
-    elif [ -f package-lock.json ]; then npm run build; \
-    elif [ -f pnpm-lock.yaml ]; then yarn global add pnpm && pnpm run build; \
-    else echo "Lockfile not found." && exit 1; \
-    fi
+# Build the application
+RUN npm run build
 
 ##### RUNNER
-
 FROM --platform=linux/amd64 node:22-alpine AS runner
+
+# Create a non-root user
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 nextjs
+
 WORKDIR /app
 
-ENV NODE_ENV production
-# ENV NEXT_TELEMETRY_DISABLED 1
+# Set environment variables
+ENV NODE_ENV=production
+ENV PORT=3000
 
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
-
-COPY --from=builder /app/next.config.mjs ./
+# Copy necessary files from the builder stage
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/package.json ./package.json
-
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
 USER nextjs
-EXPOSE 3000
-ENV PORT 3000
 
+# Expose the application port
+EXPOSE 3000
+
+# Run the application
 CMD ["node", "server.js"]

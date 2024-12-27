@@ -17,7 +17,7 @@ export default function Header() {
   const user = data?.user; // Safely extract user object
 
   return (
-    <header className="w-[calc(100vw-250px)] border-b-2 px-4 py-2 [@media(min-width:1400px)]:w-[calc(100vw-280px)] [@media(min-width:1400px)]:px-6 [@media(min-width:1400px)]:py-4 ">
+    <header className="w-full border-b-2 px-4 py-2 [@media(min-width:1400px)]:px-6 [@media(min-width:1400px)]:py-4 ">
       <nav className="flex items-center">
         <div className="flex-grow">
           <div className="flex justify-between items-center">

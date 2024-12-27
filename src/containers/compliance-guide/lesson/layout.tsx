@@ -51,12 +51,12 @@ const LessonLayout: FunctionComponent<
         onError: (error) => {
           console.log(error);
         },
-      },
+      }
     );
   };
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-8 px-4 [@media(min-width:1400px)]:px-6">
       <div className="flex justify-between">
         <div className="flex items-center gap-2">
           <Link href="./">

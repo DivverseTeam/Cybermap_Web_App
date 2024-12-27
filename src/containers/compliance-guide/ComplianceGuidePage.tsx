@@ -12,7 +12,7 @@ export default function ComplianceGuidePage() {
   const pathname = usePathname();
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-5 px-4 [@media(min-width:1400px)]:px-6">
       <PageTitle
         title="Compliance Guide"
         subtitle="Track your progress towards framework compliance"

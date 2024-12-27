@@ -116,8 +116,8 @@ const IntegrationConnectionModal: FunctionComponent<
               description
             ) : (
               <>
-                Cybermap uses <span className="text-blue-500">OAuth 2.0</span>{" "}
-                to monitor and manage {name} resources
+                Verakos uses <span className="text-blue-500">OAuth 2.0</span> to
+                monitor and manage {name} resources
               </>
             )}
           </DialogDescription>

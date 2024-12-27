@@ -24,13 +24,14 @@ import { api } from "~/trpc/react";
 import { ImportEmployeeDialog } from "./components/import-employee-dialog";
 import type { EmployeeType } from "~/server/models/Employee";
 import SpinnerModal from "./components/spinner-modal";
-import { employees } from "./_lib/constants";
+// import { employees } from "./_lib/constants";
+// import { employees } from "./_lib/constants";
 
 type Props = {};
 // const employeesData = employees;
 
 export default function PersonnelPage({}: Props) {
-  const [data, setData] = useState<IEmployee[]>([]);
+  const [data, setData] = useState<EmployeeType[]>([]);
 
   // Scroll to top button logic
   const [isVisible, setIsVisible] = useState(false);
@@ -57,18 +58,24 @@ export default function PersonnelPage({}: Props) {
     });
   };
 
+  const {
+    data: employees,
+    isLoading,
+    // isError,
+  } = api.employees.getEmployees.useQuery();
+
+  console.log(employees);
   // const {
-  //   data: employees,
+  //   data: azureUsers,
   //   isLoading,
   //   isError,
-  // } = api.employees.getEmployees.useQuery();
-  console.log(employees);
+  // } = api.employees.getAzureUsers.useQuery();
 
   // const employeesData = employees;
 
   const allCompliances = new Set();
 
-  employees?.forEach((employee: IEmployee) => {
+  employees?.forEach((employee: EmployeeType) => {
     employee.complianceList?.forEach((compliance) => {
       Object.keys(compliance).forEach((key) => allCompliances.add(key));
     });
@@ -96,54 +103,57 @@ export default function PersonnelPage({}: Props) {
   };
 
   useEffect(() => {
-    const fetchData = async () => {
-      // const res = await fetch(
-      //   `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/evidences?page=${page}&limit=${limit}&search=${search}&sortColumn=${sortColumn}&sortOrder=${sortOrder}`,
-      //   { cache: "no-store" }
-      // );
-      // const { evidences, total } = await res.json();
-      const employeeData = employees?.map((employee: IEmployee) => ({
-        ...employee,
-        hireDate: new Date(employee.hireDate),
-        terminationDate:
-          employee.terminationDate && new Date(employee.terminationDate),
-        complianceList: employee.complianceList?.map((compliance) => {
-          // Ensure every key has a boolean value (true or false)
-          const cleanedCompliance = Object.fromEntries(
-            Object.entries(compliance).map(([key, value]) => [
-              key,
-              value ?? false,
-            ]) // Set undefined to false
-          );
-          return cleanedCompliance;
-        }),
-      }));
-      const filteredData = employeeData?.filter((employee) => {
-        // Check if "compliant" is selected in the list
-        if (selectedCompliances.includes("Compliant")) {
-          return employee.complianceList?.every(
-            (compliance) => Object.values(compliance)[0] === true
-          );
-        }
+    // const fetchData = async () => {
+    // const res = await fetch(
+    //   `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/evidences?page=${page}&limit=${limit}&search=${search}&sortColumn=${sortColumn}&sortOrder=${sortOrder}`,
+    //   { cache: "no-store" }
+    // );
+    // const { evidences, total } = await res.json();
+    // console.log(employees);
 
-        // Check if "non-compliant" is selected in the list
-        if (selectedCompliances.includes("Non-compliant")) {
-          return employee.complianceList?.some((compliance) =>
-            Object.values(compliance).some((value) => value === false)
-          );
-        }
+    const employeeData = employees?.map((employee: EmployeeType) => ({
+      ...employee,
 
-        // General case for specific compliance selections
-        return selectedCompliances.every((compliance) =>
-          employee.complianceList?.some(
-            (complianceObj) => complianceObj[compliance] === true
-          )
+      hireDate: new Date(employee.hireDate),
+      terminationDate: employee.terminationDate
+        ? new Date(employee.terminationDate).toISOString()
+        : undefined,
+      complianceList: employee.complianceList?.map((compliance) =>
+        Object.fromEntries(
+          Object.entries(compliance).map(([key, value]) => [
+            key,
+            value ?? false,
+          ])
+        )
+      ),
+    }));
+    const filteredData = employeeData?.filter((employee: EmployeeType) => {
+      // Check if "compliant" is selected in the list
+      if (selectedCompliances.includes("Compliant")) {
+        return employee.complianceList?.every(
+          (compliance) => Object.values(compliance)[0] === true
         );
-      });
-      setData(filteredData);
-    };
-    fetchData();
-    console.log(selectedCompliances);
+      }
+
+      // Check if "non-compliant" is selected in the list
+      if (selectedCompliances.includes("Non-compliant")) {
+        return employee.complianceList?.some((compliance) =>
+          Object.values(compliance).some((value) => value === false)
+        );
+      }
+
+      // General case for specific compliance selections
+      return selectedCompliances.every((compliance) =>
+        employee.complianceList?.some(
+          (complianceObj) => complianceObj[compliance] === true
+        )
+      );
+    });
+
+    filteredData && setData(filteredData);
+    // };
+    // fetchData();
+    console.log("employees data: ", data);
   }, [selectedCompliances]);
 
   // Dialog for employee upload
@@ -151,7 +161,7 @@ export default function PersonnelPage({}: Props) {
     useState(false);
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 w-[calc(100vw-250px)] [@media(min-width:1400px)]:w-[calc(100vw-280px)] px-4 [@media(min-width:1400px)]:px-6 overflow-auto">
       <PageTitle
         title="Employees"
         subtitle="View and manage your employees."
@@ -247,7 +257,7 @@ export default function PersonnelPage({}: Props) {
       >
         <ArrowUpToLine />
       </Button>
-      {/* <SpinnerModal show={isLoading} /> */}
+      <SpinnerModal show={isLoading} />
     </div>
   );
 }

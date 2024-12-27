@@ -12,7 +12,7 @@ import type { IEmployee } from "../types";
 
 // const columnHelper = createColumnHelper();
 
-export const columns: ColumnDef<IEmployee>[] = [
+export const columns: ColumnDef<EmployeeType>[] = [
   {
     accessorFn: (row) => ({
       firstName: row.firstName,
@@ -140,16 +140,83 @@ export const columns: ColumnDef<IEmployee>[] = [
     },
   },
   {
+    accessorKey: "employeeId",
+    header: () => (
+      <span className="whitespace-nowrap text-center">Employee ID</span>
+    ), // Wrap in span
+    cell: ({ cell }) => (
+      <span className="whitespace-nowrap text-center text-sm">
+        {cell.getValue() as string}
+      </span>
+    ),
+  },
+  {
+    accessorKey: "jobTitle",
+    header: () => (
+      <span className="whitespace-nowrap text-center">Job Title</span>
+    ), // Wrap in span
+    cell: ({ cell }) => (
+      <span className="whitespace-nowrap text-center text-sm">
+        {cell.getValue() as string}
+      </span>
+    ),
+  },
+  {
+    accessorKey: "lastSeen",
+    header: () => (
+      <span className="whitespace-nowrap text-center">Last Seen</span>
+    ), // Wrap in span
+    cell: ({ cell }) => {
+      const lastSeen = cell.getValue() as Date | null;
+      return (
+        <span className="whitespace-nowrap text-center text-sm">
+          {lastSeen ? (
+            formatDate(cell.getValue() as Date)
+          ) : (
+            <div className="h-[2px] w-4 bg-secondary"></div>
+          )}
+        </span>
+      );
+    },
+  },
+  {
+    accessorKey: "lastPasswordUpdate",
+    header: () => (
+      <span className="whitespace-nowrap text-center">
+        Last Password Update
+      </span>
+    ), // Wrap in span
+    cell: ({ cell }) => {
+      const lastPasswordUpdate = cell.getValue() as Date | null;
+      return (
+        <span className="whitespace-nowrap text-center text-sm">
+          {lastPasswordUpdate ? (
+            formatDate(lastPasswordUpdate)
+          ) : (
+            <div className="h-[2px] w-4 bg-secondary"></div>
+          )}
+        </span>
+      );
+    },
+  },
+  {
     accessorKey: "hireDate",
     header: () => (
       <span className="whitespace-nowrap text-center">Hire Date</span>
     ), // Wrap in span
-    cell: ({ cell }) => (
-      <span className="whitespace-nowrap text-center text-sm">
-        {" "}
-        {formatDate(cell.getValue() as Date)}
-      </span>
-    ),
+    cell: ({ cell }) => {
+      const hireDate = cell.getValue() as Date | null;
+
+      return (
+        <span className="whitespace-nowrap text-center text-sm">
+          {hireDate ? (
+            formatDate(cell.getValue() as Date)
+          ) : (
+            <div className="h-[2px] w-4 bg-secondary"></div>
+          )}
+        </span>
+      );
+    },
   },
   {
     accessorKey: "terminationDate",

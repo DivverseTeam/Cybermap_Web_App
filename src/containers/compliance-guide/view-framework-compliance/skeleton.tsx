@@ -13,7 +13,7 @@ const FrameworkComplianceGuideSkeleton: FunctionComponent<
   FrameworkComplianceGuideSkeletonProps
 > = () => {
   return (
-    <div className="flex flex-col gap-4 2xl:gap-6">
+    <div className="flex flex-col gap-4 2xl:gap-6 px-4 [@media(min-width:1400px)]:px-6">
       <div className="grid grid-cols-2 gap-4 2xl:gap-6">
         <Skeleton className="h-64 w-full rounded-lg border" />
         <Skeleton className="h-64 w-full rounded-lg border" />

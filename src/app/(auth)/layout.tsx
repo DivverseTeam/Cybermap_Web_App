@@ -16,8 +16,8 @@ const publicSans = Public_Sans({
 
 export const metadata: Metadata = {
   title: {
-    template: "%s | CYBERMAP",
-    default: "CYBERMAP",
+    template: "%s | Verakos",
+    default: "Verakos",
   },
 };
 

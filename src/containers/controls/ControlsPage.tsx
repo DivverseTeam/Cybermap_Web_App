@@ -154,11 +154,11 @@ export default function ControlsPage() {
   }, [userControls]);
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 px-4 [@media(min-width:1400px)]:px-6">
       <PageTitle
         title="Controls"
         subtitle="View and manage your controls"
-        action={<NewControlSheet />}
+        // action={<NewControlSheet />}
       />
       <div className="flex gap-4 [@media(min-width:1400px)]:gap-8">
         <div className="bg-gray-100 p-1 h-full rounded-lg border border-neutral-2 border-solid">
@@ -239,7 +239,7 @@ export default function ControlsPage() {
               </div>
               <Input
                 type="text"
-                placeholder="Search for a file"
+                placeholder="Search for a control"
                 // onChange={handleSearch}
                 // defaultValue={search}
                 className="w-54 bg-[#F9F9FB] [@media(min-width:1400px)]:w-72"

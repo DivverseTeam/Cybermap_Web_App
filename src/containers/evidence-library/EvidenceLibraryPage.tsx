@@ -8,7 +8,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { Search01Icon } from "hugeicons-react";
+import { LibraryIcon, Search01Icon } from "hugeicons-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
 // import { evidences } from "../evidence-libraryOLD/_lib/constant";
@@ -76,7 +76,8 @@ export default function EvidenceLibraryPage({
             )
           : evidences;
 
-      setData(filteredData);
+      // setData(filteredData);
+      setData([]);
       // setTotal(total);
       console.log(statusFilter);
     };
@@ -130,7 +131,7 @@ export default function EvidenceLibraryPage({
   // };
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 px-4 [@media(min-width:1400px)]:px-6">
       <PageTitle
         title="Evidence Library"
         subtitle="View and manage your evidences and files"
@@ -171,32 +172,36 @@ export default function EvidenceLibraryPage({
             />
           </div>
 
-          <Table className="border ">
-            <TableHeader className="bg-muted border text-[#40566D] text-xs [@media(min-width:1400px)]:text-sm">
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id}>
-                      <button
-                        onClick={() =>
-                          router.push(
-                            `/dashboard/evidences?page=${currentPage}&limit=${itemsPerPage}`
-                          )
-                        }
-                      >
-                        {header.isPlaceholder
-                          ? null
-                          : typeof header.column.columnDef.header === "function"
-                          ? header.column.columnDef.header(header.getContext()) // Call the function to get the rendered header
-                          : header.column.columnDef.header}
-                      </button>
-                    </TableHead>
-                  ))}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody className="bg-white">
-              {/* {table.getRowModel().rows.map((row) => (
+          {data.length > 0 ? (
+            <Table className="border ">
+              <TableHeader className="bg-muted border text-[#40566D] text-xs [@media(min-width:1400px)]:text-sm">
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <TableRow key={headerGroup.id}>
+                    {headerGroup.headers.map((header) => (
+                      <TableHead key={header.id}>
+                        <button
+                          onClick={() =>
+                            router.push(
+                              `/dashboard/evidences?page=${currentPage}&limit=${itemsPerPage}`
+                            )
+                          }
+                        >
+                          {header.isPlaceholder
+                            ? null
+                            : typeof header.column.columnDef.header ===
+                              "function"
+                            ? header.column.columnDef.header(
+                                header.getContext()
+                              ) // Call the function to get the rendered header
+                            : header.column.columnDef.header}
+                        </button>
+                      </TableHead>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableHeader>
+              <TableBody className="bg-white">
+                {/* {table.getRowModel().rows.map((row) => (
             <tr key={row.id}>
               {row.getVisibleCells().map((cell) => (
                 <td key={cell.id} className="px-4 py-2">
@@ -205,23 +210,37 @@ export default function EvidenceLibraryPage({
               ))}
             </tr>
           ))} */}
-              {table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+                {table.getRowModel().rows.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          ) : (
+            <div className="flex items-center justify-center m-auto h-[550px] 2xl:h-[835px]">
+              <div className="flex items-center flex-col gap-4">
+                <LibraryIcon className="w-44 h-44 text-gray-200" />
+                <div className="flex flex-col items-center gap-2">
+                  <h2 className="text-xl font-medium">No evidences here yet</h2>
+                  <p className="text-secondary font-normal">
+                    Evidences collected will appear here after they are
+                    collected
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* <PaginationSection
           currentPage={page}
