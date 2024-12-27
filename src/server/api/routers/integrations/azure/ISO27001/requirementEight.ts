@@ -1,49 +1,77 @@
-import { MonitorClient } from "@azure/arm-monitor";
+import { EventData, MonitorClient } from "@azure/arm-monitor";
 import { SecurityCenter } from "@azure/arm-security";
+import { ControlStatus } from "~/lib/types/controls";
 import {
   AzureAUth,
   evaluate,
   getStatusByCount,
   saveEvidence,
 } from "../../common";
-import { getCredentials } from "../init";
 import { asyncIteratorToArray } from "../common";
+import { getCredentials } from "../init";
 
-// async function getOperationAuditLogs(monitorClient: MonitorClient) {
-//   try {
+async function getOperationAuditLogs({
+  controlName,
+  controlId,
+  subscriptionId,
+  organisationId,
+  monitorClient,
+}: {
+  controlName: string;
+  controlId: string;
+  organisationId: string;
+  subscriptionId: string;
+  monitorClient: MonitorClient;
+}) {
+  try {
+    const evd_name = `Operations audit logs`;
+    // Fetch activity logs for the last 7 days
+    const endTime = new Date();
+    const startTime = new Date();
+    startTime.setDate(endTime.getDate() - 7);
 
-//     // Sample KQL query to check log presence
-//     const query = {
-//       query: "Heartbeat | take 1", // Example query: check for any Heartbeat logs
-//     };
+    const filter = `eventTimestamp ge '${startTime.toISOString()}' and eventTimestamp le '${endTime.toISOString()}'`;
 
-//     // Execute the query using Log Analytics
-//     const response = await monitorClient.;
+    // const activityLogs = await monitorClient.activityLogs.list(filter);
 
-//     // Analyze the response
-//     if (response.tables && response.tables.length > 0) {
-//       const rows = response.tables[0].rows;
-//       if (rows.length > 0) {
-//         return "Implemented"; // Logs are present, API is operational
-//       } else {
-//         return "Partially Implemented"; // API is available but no logs detected
-//       }
-//     } else {
-//       return "Not Implemented"; // No data returned, potentially not implemented
-//     }
-//   } catch (error: any) {
-//     console.error("Error while checking Azure Monitor API status:", error);
+    const activityLogsIterator = await monitorClient.activityLogs.list(filter);
+    const activityLogs: EventData[] = await asyncIteratorToArray(
+      activityLogsIterator
+    );
+    await saveEvidence({
+      fileName: `Azure-${controlName}-${evd_name}`,
+      body: {
+        evidence: activityLogs,
+      },
+      controls: ["ISO27001-1"],
+      controlId,
+      organisationId,
+    });
 
-//     // Handle errors to infer status
-//     if (error.code === "ResourceNotFound") {
-//       return ControlStatus.Enum.NOT_IMPLEMENTED; // API feature not found
-//     }
-//     if (error.code === "AuthorizationFailed") {
-//       return ControlStatus.Enum.PARTIALLY_IMPLEMENTED; // API is available but access is restricted
-//     }
-//     throw error; // Rethrow unexpected errors
-//   }
-// }
+    let userActivityCount = 0;
+    let systemChangeCount = 0;
+
+    for (const log of activityLogs) {
+      if (log.operationName && log.operationName.value.includes("User")) {
+        userActivityCount++;
+      }
+      if (log.operationName && log.operationName.value.includes("System")) {
+        systemChangeCount++;
+      }
+    }
+
+    // Evaluate tracking status
+    if (userActivityCount > 0 && systemChangeCount > 0) {
+      return ControlStatus.Enum.FULLY_IMPLEMENTED;
+    } else if (userActivityCount > 0 || systemChangeCount > 0) {
+      return ControlStatus.Enum.PARTIALLY_IMPLEMENTED;
+    } else {
+      return ControlStatus.Enum.NOT_IMPLEMENTED;
+    }
+  } catch (error) {
+    throw error;
+  }
+}
 
 async function getSecurityIncidentLogs({
   controlName,
@@ -142,7 +170,6 @@ async function getSecurityIncidentLogs({
           statusCounts.partiallyImplemented++;
           break;
         default:
-          console.warn(`Unknown assessment status: ${assessment.status}`);
       }
     });
 
@@ -158,9 +185,6 @@ async function getSecurityIncidentLogs({
           statusCounts.partiallyImplemented++;
           break;
         default:
-          console.warn(
-            `Unknown sub-assessment status: ${subAssessment.status}`
-          );
       }
     });
 
@@ -170,7 +194,6 @@ async function getSecurityIncidentLogs({
       partiallyImplemented: statusCounts.partiallyImplemented,
     });
   } catch (error) {
-    console.error("Error while checking security incident logs:", error);
     throw error;
   }
 }
@@ -185,17 +208,27 @@ async function getRequirementEightStatus({
   const { credential, subscriptionId } = getCredentials(azureCloud);
   const monitorClient = new MonitorClient(credential, subscriptionId);
   const securityClient = new SecurityCenter(credential, subscriptionId);
-  return evaluate([
-    // () => getOperationAuditLogs(monitorClient),
-    () =>
-      getSecurityIncidentLogs({
-        controlName,
-        controlId,
-        organisationId,
-        subscriptionId,
-        securityClient,
-      }),
-  ]);
+  return evaluate(
+    [
+      () =>
+        getOperationAuditLogs({
+          controlName,
+          controlId,
+          organisationId,
+          subscriptionId,
+          monitorClient,
+        }),
+      () =>
+        getSecurityIncidentLogs({
+          controlName,
+          controlId,
+          organisationId,
+          subscriptionId,
+          securityClient,
+        }),
+    ],
+    [azureCloud.integrationId]
+  );
 }
 
 export { getRequirementEightStatus };

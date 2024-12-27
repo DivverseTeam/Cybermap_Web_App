@@ -93,7 +93,6 @@ async function getChangeLogStatus({
         },
       }
     );
-  console.log("getChangeLogStatus...", policyEventsIterator);
   await saveEvidence({
     fileName: `Azure-${controlName}-${evd_name}`,
     body: { evidence: policyEventsIterator },
@@ -140,25 +139,28 @@ async function getRequirementOneStatus({
     credential,
     subscriptionId
   );
-  return evaluate([
-    () =>
-      getPolicyStatusForSubscription({
-        subscriptionId,
-        resourceClient,
-        policyInsightsClient,
-        controlId,
-        controlName,
-        organisationId,
-      }),
-    () =>
-      getChangeLogStatus({
-        subscriptionId,
-        policyInsightsClient,
-        controlId,
-        controlName,
-        organisationId,
-      }),
-  ]);
+  return evaluate(
+    [
+      () =>
+        getPolicyStatusForSubscription({
+          subscriptionId,
+          resourceClient,
+          policyInsightsClient,
+          controlId,
+          controlName,
+          organisationId,
+        }),
+      () =>
+        getChangeLogStatus({
+          subscriptionId,
+          policyInsightsClient,
+          controlId,
+          controlName,
+          organisationId,
+        }),
+    ],
+    [azureCloud.integrationId]
+  );
 }
 
 export { getRequirementOneStatus };

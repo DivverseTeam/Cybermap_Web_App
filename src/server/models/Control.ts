@@ -11,7 +11,6 @@ export const OrganisationControl = z.object({
   code: z.string(),
   mapped: FrameworkName.array(),
   organisationId: z.string(),
-  status: ControlStatus,
 });
 
 export type OrganisationControl = z.infer<typeof OrganisationControl>;
@@ -22,15 +21,8 @@ const ControlSchema = new BaseSchema<ControlWithDocument>({
   name: { type: String, required: true },
   code: { type: String, required: true },
   mapped: { type: [String], required: true, enum: FRAMEWORK_NAMES },
-  organisationId: { type: String, required: true },
-  status: {
-    type: String,
-    enum: CONTROL_STATUSES,
-    required: false,
-    default: "NOT_IMPLEMENTED",
-  },
 });
 
 export default (mongoose.models
-  .Control as mongoose.Model<ControlWithDocument>) ||
-  mongoose.model("Control", ControlSchema);
+  .CybermapControl as mongoose.Model<ControlWithDocument>) ||
+  mongoose.model("CybermapControl", ControlSchema);

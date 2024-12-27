@@ -4,6 +4,7 @@ import { AZURE_CLOUD_SLUG } from "~/lib/types/integrations";
 import Control from "~/server/models/Control";
 import Integration from "~/server/models/Integration";
 import Organisation from "~/server/models/Organisation";
+import OrgControlMapping from "~/server/models/OrganizationControlMapping";
 import { getAzureRefreshToken } from "../../integrations/azure/init";
 import { AzureAUth } from "../../integrations/common";
 import { getBCM } from "./BCM";
@@ -20,8 +21,13 @@ import { getOrganizationOfInformationSecurity } from "./organizationofInformatio
 import { getPhysicalEnvironmentalSecurity } from "./physicalEnvironmentalSecurity";
 import { getSystemAcquisitionDevelopmentMaintenance } from "./systemAcquisitionDevelopmentMaintenance";
 
+interface StatusResponseDTO {
+  status: ControlStatus | null;
+  integrationIds: string[];
+}
+
 const ISO27001_FUNCTIONS: {
-  [key: string]: (auth: AzureAUth) => Promise<ControlStatus | undefined>;
+  [key: string]: (auth: AzureAUth) => Promise<StatusResponseDTO>;
 } = {
   ISP: (auth: AzureAUth) => getInformationSecurityPolicies(auth),
   OIS: (auth: AzureAUth) => getOrganizationOfInformationSecurity(auth),
@@ -81,13 +87,16 @@ export async function runIso27001() {
       await Promise.all(
         controls.map(async (control) => {
           if (ISO27001_FUNCTIONS[control.code]) {
-            const status = await ISO27001_FUNCTIONS[control.code]({
+            const { status, integrationIds } = await ISO27001_FUNCTIONS[
+              control.code
+            ]({
               azureCloud: azureCloudIntegration
                 ? {
                     token: azureCloudIntegration.authData.accessToken,
                     expiresOnTimestamp:
                       azureCloudIntegration.authData.expiry?.getTime(),
                     subscriptionId: azureCloudIntegration.subscriptionId,
+                    integrationId: azureCloudIntegration._id,
                   }
                 : null,
               azureAd: azureADIntegration
@@ -96,6 +105,7 @@ export async function runIso27001() {
                     expiresOnTimestamp:
                       azureADIntegration.authData.expiry?.getTime(),
                     subscriptionId: azureADIntegration.subscriptionId,
+                    integrationId: azureADIntegration._id,
                   }
                 : null,
               controlId: control._id,
@@ -103,9 +113,15 @@ export async function runIso27001() {
               organisationId: organization._id,
             });
 
-            await Control.findByIdAndUpdate(
-              control._id,
-              { status },
+            await OrgControlMapping.findOneAndUpdate(
+              {
+                controlId: control._id,
+                organisationId: organization._id,
+                integrationIds,
+              },
+              {
+                status,
+              },
               { upsert: true }
             );
             console.log(`${organization.name} - ${control.name} - ${status}`);

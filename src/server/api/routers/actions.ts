@@ -17,8 +17,8 @@ import { globalConfig } from "./integrations/aws/init";
 import type { SignInProps, SignUpProps } from "./user";
 
 // Abiola
-const cognitoClient = new CognitoIdentityProviderClient(globalConfig);
-// const cognitoClient = new CognitoIdentityProviderClient();
+// const cognitoClient = new CognitoIdentityProviderClient(globalConfig);
+const cognitoClient = new CognitoIdentityProviderClient();
 await mongoosePromise;
 
 export const signUp = async (props: SignUpProps) => {
@@ -88,8 +88,8 @@ export const signIn = async (props: SignInProps) => {
     const initiateAuthOutput = await cognitoClient.send(
       new InitiateAuthCommand({
         AuthFlow: "USER_PASSWORD_AUTH",
-        ClientId: "5935eo5ka6uqrnk46cq092htth",
-        // ClientId: Resource["user-client"].id,
+        // ClientId: "5935eo5ka6uqrnk46cq092htth",
+        ClientId: Resource["user-client"].id,
         AuthParameters: {
           USERNAME: email,
           PASSWORD: password,

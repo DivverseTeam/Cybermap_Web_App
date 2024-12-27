@@ -82,7 +82,6 @@ async function evaluateMFAStatus({
     .api("/policies/conditionalAccessPolicies")
     .get();
 
-  console.log("policies:", policies);
   await saveEvidence({
     fileName: `Azure-${controlName}-${evd_name}`,
     body: { evidence: policies.value },
@@ -102,7 +101,6 @@ async function evaluateMFAStatus({
       );
     }
   );
-  console.log("MFA policies:", mfaPolicies);
 
   if (mfaPolicies.length === 0) {
     return ControlStatus.Enum.NOT_IMPLEMENTED;
@@ -128,22 +126,25 @@ async function getAccessControlEvidence({
 }: AzureAUth) {
   if (!azureAd) throw new Error("Azure AD token is required");
   const azureClient = await initializeAzureClient(azureAd.token);
-  return evaluate([
-    () =>
-      evaluateAccessControlLogs({
-        azureClient,
-        controlName,
-        controlId,
-        organisationId,
-      }),
-    () =>
-      evaluateMFAStatus({
-        azureClient,
-        controlName,
-        controlId,
-        organisationId,
-      }),
-  ]);
+  return evaluate(
+    [
+      () =>
+        evaluateAccessControlLogs({
+          azureClient,
+          controlName,
+          controlId,
+          organisationId,
+        }),
+      () =>
+        evaluateMFAStatus({
+          azureClient,
+          controlName,
+          controlId,
+          organisationId,
+        }),
+    ],
+    [azureAd.integrationId]
+  );
 }
 
 export { getAccessControlEvidence };

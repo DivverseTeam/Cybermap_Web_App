@@ -1,14 +1,16 @@
 import {
+  ListObjectsV2Command,
   PutObjectCommand,
   S3Client,
-  ListObjectsV2Command,
 } from "@aws-sdk/client-s3";
 import { ControlStatus } from "~/lib/types/controls";
+import EvidenceLibrary from "~/server/models/EvidenceLibrary";
 
 export interface AzureToken {
   token: string;
   expiresOnTimestamp: number;
   subscriptionId: string;
+  integrationId: string;
 }
 
 export interface AzureAUth extends EvidenceMetaData {
@@ -25,11 +27,17 @@ export interface EvidenceMetaData {
 
 const bucket: string = "cybermap-dev-evidences-bbsvusex";
 
-async function evaluate(functions: (() => Promise<ControlStatus | null>)[]) {
+async function evaluate(
+  functions: (() => Promise<ControlStatus | null>)[],
+  integrationIds: string[]
+) {
   try {
     const statuses = await Promise.all(functions.map((fn) => fn()));
     if (!statuses || statuses.length === 0) {
-      return ControlStatus.Enum.NOT_IMPLEMENTED;
+      return {
+        status: ControlStatus.Enum.NOT_IMPLEMENTED,
+        integrationIds,
+      };
     }
 
     if (
@@ -37,16 +45,25 @@ async function evaluate(functions: (() => Promise<ControlStatus | null>)[]) {
         (status) => status === ControlStatus.Enum.FULLY_IMPLEMENTED
       )
     ) {
-      return ControlStatus.Enum.FULLY_IMPLEMENTED;
+      return {
+        status: ControlStatus.Enum.FULLY_IMPLEMENTED,
+        integrationIds,
+      };
     } else if (
       statuses.some((status) => status === ControlStatus.Enum.NOT_IMPLEMENTED)
     ) {
-      return ControlStatus.Enum.NOT_IMPLEMENTED;
+      return {
+        status: ControlStatus.Enum.NOT_IMPLEMENTED,
+        integrationIds,
+      };
     } else {
-      return ControlStatus.Enum.PARTIALLY_IMPLEMENTED;
+      return {
+        status: ControlStatus.Enum.PARTIALLY_IMPLEMENTED,
+        integrationIds,
+      };
     }
   } catch (error: any) {
-    // console.log("Error in evaluate...", error);
+    console.log("Error in evaluate...", error);
     if (
       error.code === "ExpiredAuthenticationToken" ||
       error.code === "InvalidAuthenticationToken"
@@ -80,6 +97,12 @@ async function saveEvidence(input: {
   try {
     const response = await client.send(command);
     // console.log("Upload successful:", response);
+    await EvidenceLibrary.create({
+      key,
+      linkedControls: [input.controlId],
+      organisationId: input.organisationId,
+      fileName: input.fileName,
+    });
     return { key, response };
   } catch (error) {
     console.error("Error uploading to S3:", error);
@@ -142,7 +165,7 @@ function getStatusByCount({
 
 export {
   evaluate,
+  getEvidencesForOrganization,
   getStatusByCount,
   saveEvidence,
-  getEvidencesForOrganization,
 };

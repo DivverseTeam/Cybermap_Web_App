@@ -26,7 +26,6 @@ async function getActivityLogsStatus({
     // Analyze the logs
     const logs = await asyncIteratorToArray(activityLogs);
     const logCount = logs.length;
-    // console.log("Activity logs", logs);
 
     await saveEvidence({
       fileName: `Azure-${controlName}-${evd_name}`,
@@ -57,15 +56,18 @@ async function getRequirementSevenStatus({
   const { credential, subscriptionId } = getCredentials(azureCloud);
   const monitorClient = new MonitorClient(credential, subscriptionId);
 
-  return evaluate([
-    () =>
-      getActivityLogsStatus({
-        controlId,
-        controlName,
-        monitorClient,
-        organisationId,
-      }),
-  ]);
+  return evaluate(
+    [
+      () =>
+        getActivityLogsStatus({
+          controlId,
+          controlName,
+          monitorClient,
+          organisationId,
+        }),
+    ],
+    [azureCloud.integrationId]
+  );
 }
 
 export { getRequirementSevenStatus };

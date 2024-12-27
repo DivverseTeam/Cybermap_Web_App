@@ -156,24 +156,27 @@ async function getRequirementFourStatus({
   );
   const resourceGraphClient = new ResourceGraphClient(credential);
   // PENDING - Asset inventory logs
-  return evaluate([
-    () =>
-      getEncryptionLogs({
-        credential,
-        controlName,
-        controlId,
-        organisationId,
-        keyVaultManagementClient,
-      }),
-    () =>
-      getAssetInventoryLogs({
-        subscriptionId,
-        controlName,
-        controlId,
-        organisationId,
-        resourceGraphClient,
-      }),
-  ]);
+  return evaluate(
+    [
+      () =>
+        getEncryptionLogs({
+          credential,
+          controlName,
+          controlId,
+          organisationId,
+          keyVaultManagementClient,
+        }),
+      () =>
+        getAssetInventoryLogs({
+          subscriptionId,
+          controlName,
+          controlId,
+          organisationId,
+          resourceGraphClient,
+        }),
+    ],
+    [azureCloud.integrationId]
+  );
 }
 
 export { getRequirementFourStatus };

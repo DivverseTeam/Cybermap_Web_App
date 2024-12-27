@@ -28,7 +28,7 @@ export const MICROSOFT_OAUTH_ARM_SCOPE =
   "https://management.azure.com/.default";
 
 export const MICROSOFT_OAUTH_SCOPE =
-  "offline_access User.Read User.Read.All Directory.Read.All AuditLog.Read.All UserAuthenticationMethod.Read.All Group.Read.All IdentityProvider.Read.All RoleManagement.Read.All RoleManagementAlert.Read.Directory Device.Read.All Policy.Read.All ServicePrincipalEndpoint.Read.All Subscription.Read.All";
+  "offline_access AuditLog.Read.All User.Read User.Read.All Directory.Read.All AuditLog.Read.All UserAuthenticationMethod.Read.All Group.Read.All IdentityProvider.Read.All RoleManagement.Read.All RoleManagementAlert.Read.Directory Device.Read.All Policy.Read.All ServicePrincipalEndpoint.Read.All Subscription.Read.All";
 
 export const getOauth2Config = (props: IntegrationOauth2Props) => {
   const { provider } = props;

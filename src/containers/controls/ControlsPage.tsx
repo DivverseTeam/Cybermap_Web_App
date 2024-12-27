@@ -30,8 +30,8 @@ import { NewControlSheet } from "./components/new-control-sheet";
 
 export default function ControlsPage() {
   const [frameworks] = api.frameworks.get.useSuspenseQuery();
-  const [controls] = api.controls.get.useSuspenseQuery();
-  // const [userControls] = api.controls.getUserControls.useSuspenseQuery();
+  // const [controls] = api.controls.get.useSuspenseQuery();
+  const [userControls] = api.controls.getUserControls.useSuspenseQuery();
 
   // const { data: userControlMappingData } = api.user.test.useQuery();
 
@@ -81,8 +81,8 @@ export default function ControlsPage() {
 
   const handleFilterUserControlMapping = async () => {
     const filteredData = statusFilter
-      ? controls.filter((control) => control.status === statusFilter)
-      : controls;
+      ? userControls.filter((control) => control.status === statusFilter)
+      : userControls;
 
     // Filter controls based on selected frameworks
     const filteredControlsData = filteredData.filter((control) => {
@@ -133,7 +133,7 @@ export default function ControlsPage() {
 
   useEffect(() => {
     handleFilterUserControlMapping();
-  }, [statusFilter, selectedFrameworks, controls]);
+  }, [statusFilter, selectedFrameworks, userControls]);
 
   // Show button when page is scrolled down
   useEffect(() => {
@@ -150,8 +150,8 @@ export default function ControlsPage() {
   }, []);
 
   useEffect(() => {
-    console.log("userControlMappingData", controls);
-  }, [controls]);
+    console.log("userControlMappingData", userControls);
+  }, [userControls]);
 
   return (
     <div className="flex flex-col gap-6">

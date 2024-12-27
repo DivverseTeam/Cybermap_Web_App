@@ -78,7 +78,6 @@ async function getNetworkEncryptionLogs({
       return ControlStatus.Enum.NOT_IMPLEMENTED;
     }
   } catch (error: any) {
-    console.error("Error fetching NSGs or security rules:", error.message);
     return null;
   }
 }
@@ -92,16 +91,19 @@ async function getRequirementNineStatus({
   if (!azureCloud) throw new Error("Azure cloud is required");
   const { credential, subscriptionId } = getCredentials(azureCloud);
   const networkClient = new NetworkManagementClient(credential, subscriptionId);
-  return evaluate([
-    () =>
-      getNetworkEncryptionLogs({
-        controlName,
-        controlId,
-        organisationId,
-        subscriptionId,
-        networkClient,
-      }),
-  ]);
+  return evaluate(
+    [
+      () =>
+        getNetworkEncryptionLogs({
+          controlName,
+          controlId,
+          organisationId,
+          subscriptionId,
+          networkClient,
+        }),
+    ],
+    [azureCloud.integrationId]
+  );
 }
 
 export { getRequirementNineStatus };

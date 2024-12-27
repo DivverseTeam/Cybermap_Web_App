@@ -1,9 +1,17 @@
-//@ts-nocheck
-import { KeyVaultManagementClient } from "@azure/arm-keyvault";
+import { KeyVaultManagementClient, Vault } from "@azure/arm-keyvault";
 // import { StorageManagementClient } from "@azure/arm-storage";
+import { ResourceGroup, ResourceManagementClient } from "@azure/arm-resources";
 import { KeyClient, KeyProperties } from "@azure/keyvault-keys";
-import { AzureAUth, evaluate, getStatusByCount } from "../../common";
+import { SecretClient, SecretProperties } from "@azure/keyvault-secrets";
+import { ControlStatus } from "~/lib/types/controls";
+import {
+  AzureAUth,
+  evaluate,
+  getStatusByCount,
+  saveEvidence,
+} from "../../common";
 import { StaticTokenCredential } from "../../common/azureTokenCredential";
+import { asyncIteratorToArray } from "../common";
 import { getCredentials } from "../init";
 
 async function getEncryptionLogs({
@@ -22,10 +30,11 @@ async function getEncryptionLogs({
   try {
     // List all Key Vaults in the subscription
     const evd_name = `Encryption logs`;
-    const evidence = {};
+    const evidence: any = {};
+
     const keyVaultsIterator = await keyVaultManagementClient.vaults.list();
     const keyVaults = await asyncIteratorToArray(keyVaultsIterator);
-    console.log("KeyVaults", keyVaults);
+
     let fullyImplemented = 0;
     let partiallyImplemented = 0;
     let notImplemented = 0;
@@ -47,6 +56,8 @@ async function getEncryptionLogs({
 
       // Check for describe key functionality (equivalent to AWS KMS DescribeKey)
       if (listKeysImplemented && valutKeys && valutKeys.length) {
+        if (!valutKeys[0]) continue;
+        if (!valutKeys[0].name) continue;
         const testKey = await keyClient.getKey(valutKeys[0].name);
         evidence[vault.name][valutKeys[0].name] = testKey;
         describeKeyImplemented = !!testKey;
@@ -78,75 +89,92 @@ async function getEncryptionLogs({
   }
 }
 
-// async function getKeyManagementLogs(
-//   storageManagementClient: StorageManagementClient
-// ) {
-//   try {
-//     // List all storage accounts in the subscription
-//     const storageAccounts =
-//       await storageManagementClient.storageAccounts.list();
-//     let hasNotImplemented = false;
-//     let hasPartiallyImplemented = false;
-//     let hasFullyImplemented = false;
+async function getKeyManagementLogs({
+  controlName,
+  controlId,
+  organisationId,
+  credential,
+  keyVaultManagementClient,
+  resourceClient,
+}: {
+  controlName: string;
+  organisationId: string;
+  controlId: string;
+  credential: StaticTokenCredential;
+  resourceClient: ResourceManagementClient;
+  keyVaultManagementClient: KeyVaultManagementClient;
+}) {
+  try {
+    const evd_name = `Key management logs`;
+    const evidence: any = [];
+    // Get all resource groups
+    const resourceGroupsIterator = await resourceClient.resourceGroups.list();
+    const resourceGroups: ResourceGroup[] = await asyncIteratorToArray(
+      resourceGroupsIterator
+    );
 
-//     for (const account of storageAccounts) {
-//       const resourceGroupName = account.id.split("/")[4];
-//       const accountName = account.name;
+    let rotationImplemented = false;
+    let keyUsageDetected = false;
 
-//       try {
-//         // Get the properties of the Blob service
-//         const blobServiceProperties =
-//           await storageManagementClient.blobServices.getServiceProperties(
-//             resourceGroupName,
-//             accountName,
-//             "default"
-//           );
+    for (const group of resourceGroups) {
+      // List Key Vaults in each resource group
+      if (!group.name) continue;
+      const keyVaultsIterator =
+        await keyVaultManagementClient.vaults.listByResourceGroup(group.name);
+      const keyVaults: Vault[] = await asyncIteratorToArray(keyVaultsIterator);
 
-//         // Check encryption settings
-//         const encryption = blobServiceProperties.encryption;
+      for (const vault of keyVaults) {
+        if (!vault.properties || !vault.properties.vaultUri) continue;
+        const keyVaultUrl = vault.properties.vaultUri;
+        const keyClient = new KeyClient(keyVaultUrl, credential);
+        const secretClient = new SecretClient(keyVaultUrl, credential);
 
-//         if (
-//           !encryption ||
-//           !encryption.services ||
-//           !encryption.services.blob ||
-//           !encryption.services.blob.enabled
-//         ) {
-//           hasNotImplemented = true;
-//           continue;
-//         }
+        // Check for key rotation policy
+        const keysIterator = await keyClient.listPropertiesOfKeys();
+        const keys: KeyProperties[] = await asyncIteratorToArray(keysIterator);
+        for (const keyProperties of keys) {
+          const rotationPolicy = await keyClient.getKeyRotationPolicy(
+            keyProperties.name
+          );
+          if (rotationPolicy) {
+            rotationImplemented = true;
+          }
+        }
 
-//         if (
-//           encryption.services.blob.enabled &&
-//           encryption.keySource === "Microsoft.Storage"
-//         ) {
-//           hasFullyImplemented = true;
-//         } else {
-//           hasPartiallyImplemented = true;
-//         }
-//       } catch (error: any) {
-//         console.error(
-//           `Error retrieving encryption status for ${accountName}:`,
-//           error.message
-//         );
-//         hasNotImplemented = true; // Treat errors as "Not Implemented"
-//       }
-//     }
+        // Check for key usage
+        const secretsIterator = await secretClient.listPropertiesOfSecrets();
+        const secrets: SecretProperties[] = await asyncIteratorToArray(
+          secretsIterator
+        );
+        for (const secretProperties of secrets) {
+          if (!secretProperties.name) continue;
+          if (!vault.name) continue;
+          const secret = await secretClient.getSecret(secretProperties.name);
+          if (!secret.value) continue;
+          if (secret.value.includes(vault.name)) {
+            keyUsageDetected = true;
+          }
+        }
+      }
+    }
 
-//     if (hasNotImplemented) {
-//       return "Not Implemented";
-//     } else if (hasPartiallyImplemented) {
-//       return "Partially Implemented";
-//     } else if (hasFullyImplemented) {
-//       return "Fully Implemented";
-//     }
-//   } catch (error) {
-//     return null;
-//   }
-// }
+    // Determine enforcement status
+    const implemented = rotationImplemented && keyUsageDetected;
+    const partiallyImplemented = rotationImplemented || keyUsageDetected;
+
+    if (implemented) return ControlStatus.Enum.FULLY_IMPLEMENTED;
+    if (partiallyImplemented) return ControlStatus.Enum.PARTIALLY_IMPLEMENTED;
+    return ControlStatus.Enum.NOT_IMPLEMENTED;
+  } catch (error) {
+    throw error;
+  }
+}
 
 async function getRequirementSixStatus({
   azureCloud,
+  controlId,
   organisationId,
+  controlName,
 }: AzureAUth) {
   if (!azureCloud) throw new Error("Azure cloud is required");
   const { credential, subscriptionId } = getCredentials(azureCloud);
@@ -154,21 +182,33 @@ async function getRequirementSixStatus({
     credential,
     subscriptionId
   );
-  //   const storageManagementClient = new StorageManagementClient(
-  //     credential,
-  //     subscriptionId
-  //   );
+  const resourceClient = new ResourceManagementClient(
+    credential,
+    subscriptionId
+  );
 
-  // PENDING - AKey management logs
-  return evaluate([
-    () =>
-      getEncryptionLogs({
-        credential,
-        organisationId,
-        keyVaultManagementClient,
-      }),
-    // () => getKeyManagementLogs(storageManagementClient),
-  ]);
+  return evaluate(
+    [
+      () =>
+        getEncryptionLogs({
+          credential,
+          controlId,
+          controlName,
+          organisationId,
+          keyVaultManagementClient,
+        }),
+      () =>
+        getKeyManagementLogs({
+          credential,
+          controlId,
+          controlName,
+          organisationId,
+          keyVaultManagementClient,
+          resourceClient,
+        }),
+    ],
+    [azureCloud.integrationId]
+  );
 }
 
 export { getRequirementSixStatus };

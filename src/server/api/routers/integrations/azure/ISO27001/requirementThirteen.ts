@@ -105,7 +105,6 @@ async function getComplianceReports({
       return ControlStatus.Enum.PARTIALLY_IMPLEMENTED;
     }
   } catch (error) {
-    console.error("Error checking compliance:", error);
     throw error;
   }
 }
@@ -170,10 +169,6 @@ async function getAuditLogs({
           }
         }
       } catch (error: any) {
-        console.error(
-          `Error checking diagnostics for resource ${resourceUri}:`,
-          error.message
-        );
       }
     }
 
@@ -193,7 +188,6 @@ async function getAuditLogs({
       return ControlStatus.Enum.PARTIALLY_IMPLEMENTED;
     }
   } catch (error: any) {
-    console.error("Error checking monitoring and audit status:", error.message);
     throw error;
   }
 }
@@ -217,27 +211,30 @@ async function getRequirementThirteenStatus({
   );
   const monitorClient = new MonitorClient(credential, subscriptionId);
 
-  return evaluate([
-    () =>
-      getComplianceReports({
-        controlName,
-        controlId,
-        organisationId,
-        subscriptionId,
-        policyClient,
-        policyInsightsClient,
-        resourceClient,
-      }),
-    () =>
-      getAuditLogs({
-        controlName,
-        controlId,
-        organisationId,
-        subscriptionId,
-        monitorClient,
-        resourceClient,
-      }),
-  ]);
+  return evaluate(
+    [
+      () =>
+        getComplianceReports({
+          controlName,
+          controlId,
+          organisationId,
+          subscriptionId,
+          policyClient,
+          policyInsightsClient,
+          resourceClient,
+        }),
+      () =>
+        getAuditLogs({
+          controlName,
+          controlId,
+          organisationId,
+          subscriptionId,
+          monitorClient,
+          resourceClient,
+        }),
+    ],
+    [azureCloud.integrationId]
+  );
 }
 
 export { getRequirementThirteenStatus };

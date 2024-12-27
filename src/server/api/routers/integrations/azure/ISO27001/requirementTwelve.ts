@@ -36,7 +36,6 @@ async function getBackupLogs({
     const vaultsIterator =
       await recoveryServicesClient.vaults.listBySubscriptionId();
     const vaults: Vault[] = await asyncIteratorToArray(vaultsIterator);
-    console.log("getBackupLogs", vaults);
 
     if (!vaults || vaults.length === 0) {
       return ControlStatus.Enum.NOT_IMPLEMENTED; // No vaults found
@@ -153,7 +152,6 @@ async function getBackupLogs({
       return ControlStatus.Enum.NOT_IMPLEMENTED;
     }
   } catch (error: any) {
-    console.error("Error checking backup status:", error.message);
     throw error;
   }
 }
@@ -235,7 +233,6 @@ async function getDisasterRecoveryTestResults({
       return ControlStatus.Enum.PARTIALLY_IMPLEMENTED;
     }
   } catch (error) {
-    console.error("Error checking disaster recovery status:", error);
     throw error;
   }
 }
@@ -261,26 +258,29 @@ async function getRequirementTwelveStatus({
     subscriptionId
   );
 
-  return evaluate([
-    () =>
-      getBackupLogs({
-        controlName,
-        controlId,
-        organisationId,
-        subscriptionId,
-        recoveryServicesClient,
-        backupClient,
-      }),
-    () =>
-      getDisasterRecoveryTestResults({
-        controlName,
-        controlId,
-        organisationId,
-        subscriptionId,
-        siteRecoveryClient,
-        recoveryServicesClient,
-      }),
-  ]);
+  return evaluate(
+    [
+      () =>
+        getBackupLogs({
+          controlName,
+          controlId,
+          organisationId,
+          subscriptionId,
+          recoveryServicesClient,
+          backupClient,
+        }),
+      () =>
+        getDisasterRecoveryTestResults({
+          controlName,
+          controlId,
+          organisationId,
+          subscriptionId,
+          siteRecoveryClient,
+          recoveryServicesClient,
+        }),
+    ],
+    [azureCloud.integrationId]
+  );
 }
 
 export { getRequirementTwelveStatus };

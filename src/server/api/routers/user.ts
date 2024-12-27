@@ -6,15 +6,6 @@ import {
   UserRole,
 } from "~/lib/types";
 
-import mongoose from "mongoose";
-import {
-  createTRPCRouter,
-  protectedProcedure,
-  publicProcedure,
-} from "~/server/api/trpc";
-import OrganisationModel from "~/server/models/Organisation";
-import UserModel from "~/server/models/User";
-import { signIn, signUp } from "./actions";
 import {
   CodeMismatchException,
   CognitoIdentityProviderClient,
@@ -23,10 +14,19 @@ import {
   ForgotPasswordCommand,
   UserNotFoundException,
 } from "@aws-sdk/client-cognito-identity-provider";
+import mongoose from "mongoose";
 import { Resource } from "sst";
 import { FrameworkName } from "~/lib/types";
-import { controls } from "~/lib/constants/controls";
-import Control from "~/server/models/Control";
+import {
+  createTRPCRouter,
+  protectedProcedure,
+  publicProcedure,
+} from "~/server/api/trpc";
+import OrganisationModel from "~/server/models/Organisation";
+import UserModel from "~/server/models/User";
+import { signIn, signUp } from "./actions";
+// import { controls } from "~/lib/constants/controls";
+// import Control from "~/server/models/Control";
 
 const cognitoClient = new CognitoIdentityProviderClient();
 
@@ -74,33 +74,9 @@ export const userRouter = createTRPCRouter({
           user: { id: userId },
         },
       } = ctx;
-      const { frameworks = [] } = input;
+      // const { frameworks = [] } = input;
 
       const organisationId = new mongoose.Types.ObjectId().toString();
-
-      const upsertControlsPromises: Array<Promise<unknown>> = [];
-
-      controls.forEach((control) => {
-        if (
-          control.mapped.some((framework) => frameworks.includes(framework))
-        ) {
-          upsertControlsPromises.push(
-            Control.updateOne(
-              {
-                code: control.code,
-              },
-              {
-                $set: {
-                  ...control,
-                  organisationId,
-                  status: "NOT_IMPLEMENTED",
-                },
-              },
-              { upsert: true },
-            ),
-          );
-        }
-      });
 
       const [_, updatedUser] = await Promise.all([
         OrganisationModel.create({
@@ -108,7 +84,7 @@ export const userRouter = createTRPCRouter({
           ...input,
         }),
         UserModel.findByIdAndUpdate(userId, { organisationId }, { new: true }),
-        ...upsertControlsPromises,
+        // ...upsertControlsPromises,
       ]);
 
       return updatedUser?.toObject();

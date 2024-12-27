@@ -32,12 +32,11 @@ async function evaluateRoleAssignmentLogs({
   azureClient: Client;
   controlName: string;
   controlId: string;
-   organisationId: string;
+  organisationId: string;
 }) {
   // Fetch role assignments from Graph API
   const evd_name = `Role assignment logs`;
   const roleAssignments = await getRoleAssignmentLogs(azureClient);
-  console.log("roleAssignments", roleAssignments);
   await saveEvidence({
     fileName: `Azure-${controlName}-${evd_name}`,
     body: { evidence: roleAssignments },
@@ -139,25 +138,27 @@ async function getOrganizationInformationSecurityEvidence({
   controlName,
   organisationId,
 }: AzureAUth) {
-  console.log("getOrganizationInformationSecurityEvidence...");
   if (!azureAd) throw new Error("Azure AD token is required");
   const azureClient = await initializeAzureClient(azureAd.token);
-  const status = await evaluate([
-    () =>
-      evaluateRoleAssignmentLogs({
-        azureClient,
-        controlId,
-        controlName,
-        organisationId,
-      }),
-    () =>
-      evaluateThirdPartySecurityDocumentation({
-        azureClient,
-        controlId,
-        controlName,
-        organisationId,
-      }),
-  ]);
+  const status = await evaluate(
+    [
+      () =>
+        evaluateRoleAssignmentLogs({
+          azureClient,
+          controlId,
+          controlName,
+          organisationId,
+        }),
+      () =>
+        evaluateThirdPartySecurityDocumentation({
+          azureClient,
+          controlId,
+          controlName,
+          organisationId,
+        }),
+    ],
+    [azureAd.integrationId]
+  );
   return status;
 }
 

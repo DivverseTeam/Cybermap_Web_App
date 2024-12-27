@@ -1,11 +1,7 @@
-import {
-  createTRPCRouter,
-  protectedProcedure,
-  publicProcedure,
-} from "~/server/api/trpc";
 import mongoose from "mongoose";
+import { ControlStatus } from "~/lib/types/controls";
+import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import Control, { OrganisationControl } from "~/server/models/Control";
-import UserControlMapping from "~/server/models/UserControlMapping";
 import { getEvidencesForOrganization } from "./integrations/common";
 
 export const controlsRouter = createTRPCRouter({
@@ -25,27 +21,42 @@ export const controlsRouter = createTRPCRouter({
     return OrganisationControl.array().parse(controls);
   }),
 
-  getUserControls: publicProcedure.query(async ({ ctx }) => {
+  getUserControls: protectedProcedure.query(async ({ ctx }) => {
+    const {
+      session: {
+        user: { organisationId },
+      },
+    } = ctx;
+
+    if (!organisationId) {
+      throw new Error("Organisation not found");
+    }
+
     const controls = await Control.aggregate([
       {
         $lookup: {
-          from: "usercontrolmappings",
+          from: "orgcontrolmappings",
           localField: "_id",
           foreignField: "controlId",
-          as: "userMapping",
+          as: "orgMapping",
         },
       },
       {
         $unwind: {
-          path: "$userMapping",
+          path: "$orgMapping",
           preserveNullAndEmptyArrays: true,
         },
       },
       {
         $match: {
-          "userMapping.organisationId": new mongoose.Types.ObjectId(
-            "674d8ad4151cbe0486eaf743"
-          ),
+          $or: [
+            {
+              "orgMapping.organisationId": new mongoose.Types.ObjectId(
+                organisationId
+              ),
+            },
+            { orgMapping: null },
+          ],
         },
       },
       {
@@ -54,12 +65,13 @@ export const controlsRouter = createTRPCRouter({
           name: 1,
           code: 1,
           mapped: 1,
-          organisationId: "$userMapping.organisationId",
-          status: "$userMapping.status",
+          organisationId: "$orgMapping.organisationId",
+          status: {
+            $ifNull: ["$orgMapping.status", ControlStatus.Enum.NOT_IMPLEMENTED],
+          },
         },
       },
     ]);
-    // console.log("controls", controls);
     return controls;
   }),
   getEvidences: protectedProcedure.query(async ({ ctx }) => {

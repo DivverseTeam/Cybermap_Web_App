@@ -101,7 +101,6 @@ async function getIncidentLogs({
       return ControlStatus.Enum.PARTIALLY_IMPLEMENTED;
     }
   } catch (error) {
-    console.error("Error checking security incident status:", error);
     throw error;
   }
 }
@@ -146,9 +145,6 @@ async function getIncidentResponseLogs({
             break;
           default:
             allImplemented = false;
-            console.warn(
-              `Unknown response status for alert ID: ${alert.systemAlertId}`
-            );
         }
       }
     }
@@ -172,7 +168,6 @@ async function getIncidentResponseLogs({
       return ControlStatus.Enum.PARTIALLY_IMPLEMENTED;
     }
   } catch (error: any) {
-    console.error("Error checking incident handling:", error.message);
     throw error;
   }
 }
@@ -191,25 +186,28 @@ async function getRequirementElevenStatus({
   );
   const resourceGraphClient = new ResourceGraphClient(credential);
   const securityClient = new SecurityCenter(credential, subscriptionId);
-  return evaluate([
-    () =>
-      getIncidentLogs({
-        controlName,
-        controlId,
-        organisationId,
-        subscriptionId,
-        securityInsightsClient,
-        resourceGraphClient,
-      }),
-    () =>
-      getIncidentResponseLogs({
-        controlName,
-        controlId,
-        organisationId,
-        subscriptionId,
-        securityClient,
-      }),
-  ]);
+  return evaluate(
+    [
+      () =>
+        getIncidentLogs({
+          controlName,
+          controlId,
+          organisationId,
+          subscriptionId,
+          securityInsightsClient,
+          resourceGraphClient,
+        }),
+      () =>
+        getIncidentResponseLogs({
+          controlName,
+          controlId,
+          organisationId,
+          subscriptionId,
+          securityClient,
+        }),
+    ],
+    [azureCloud.integrationId]
+  );
 }
 
 export { getRequirementElevenStatus };

@@ -70,10 +70,7 @@ async function getPatchingLogs({
           }
         }
       } catch (error: any) {
-        console.warn(
-          `Error fetching compliance for policy ${policy.displayName}:`,
-          error.message
-        );
+     
       }
     }
 
@@ -98,7 +95,6 @@ async function getPatchingLogs({
       return ControlStatus.Enum.PARTIALLY_IMPLEMENTED;
     }
   } catch (error) {
-    console.error("Error checking system updates compliance:", error);
     throw error;
   }
 }
@@ -129,7 +125,6 @@ async function getSecurityReviewLogs({
     });
 
     if (!workspacesIds.length) {
-      console.warn("No Log Analytics workspaces found.");
       await saveEvidence({
         fileName: `Azure-${controlName}-${evd_name}`,
         body: {
@@ -184,7 +179,6 @@ async function getSecurityReviewLogs({
       ? ControlStatus.Enum.FULLY_IMPLEMENTED
       : ControlStatus.Enum.NOT_IMPLEMENTED;
   } catch (error) {
-    console.error("Error fetching logs:", error);
     return null;
   }
 }
@@ -205,26 +199,29 @@ async function getRequirementTenStatus({
     subscriptionId
   );
 
-  return evaluate([
-    () =>
-      getPatchingLogs({
-        controlName,
-        controlId,
-        organisationId,
-        subscriptionId,
-        policyClient,
-        policyInsightsClient,
-      }),
-    () =>
-      getSecurityReviewLogs({
-        controlName,
-        controlId,
-        organisationId,
-        subscriptionId,
-        logsQueryClient,
-        credential,
-      }),
-  ]);
+  return evaluate(
+    [
+      () =>
+        getPatchingLogs({
+          controlName,
+          controlId,
+          organisationId,
+          subscriptionId,
+          policyClient,
+          policyInsightsClient,
+        }),
+      () =>
+        getSecurityReviewLogs({
+          controlName,
+          controlId,
+          organisationId,
+          subscriptionId,
+          logsQueryClient,
+          credential,
+        }),
+    ],
+    [azureCloud.integrationId]
+  );
 }
 
 export { getRequirementTenStatus };
