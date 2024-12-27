@@ -41,14 +41,15 @@ function getCredentials(azureCloud: AzureToken) {
 
 async function getAzureRefreshToken(integrations: OrganisationIntegration[]) {
   try {
+    console.log("getAzureRefreshToken:", integrations);
     if (!integrations.length) {
       throw new Error("No Azure integrations found.");
     }
 
     const tokens = await Promise.all(
       integrations.map(async (integration) => {
-        const authData = integration.authData;
-        const slug = integration.slug;
+        const authData = integration?.authData;
+        const slug = integration?.slug;
         if (slug === "azure-cloud" && authData) {
           const { accessToken, expiry } = authData;
           const client = new AuthorizationCode(
@@ -155,11 +156,12 @@ async function getAzureRefreshToken(integrations: OrganisationIntegration[]) {
     // }
     return tokens;
   } catch (error: any) {
-    console.error("Error refreshing access token:", {
-      message: error.message,
-      status: error.response?.status,
-      data: error.response?.data, // Log Azure's error response details
-    });
+    throw error;
+    // console.error("Error refreshing access token:", {
+    //   message: error.message,
+    //   status: error.response?.status,
+    //   data: error.response?.data, // Log Azure's error response details
+    // });
   }
 }
 

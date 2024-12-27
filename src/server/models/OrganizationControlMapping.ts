@@ -7,16 +7,11 @@ import { BaseSchema } from "./base";
 import { FrameworkName } from "~/lib/types";
 
 export const OrgControlMapping = z.object({
-  id: z.string(),
-  controlId: z.string().refine((id) => Types.ObjectId.isValid(id), {
-    message: "Invalid ObjectId for controlId",
-  }),
-  organisationId: z.string().refine((id) => Types.ObjectId.isValid(id), {
-    message: "Invalid ObjectId for organisationId",
-  }),
+  _id: z.string(),
+  controlId: z.string(),
+  organisationId: z.string(),
   integrationIds: z.array(z.string()),
   status: ControlStatus,
-  mapped: FrameworkName.array().optional(),
 });
 
 export type OrgControlMapping = z.infer<typeof OrgControlMapping>;

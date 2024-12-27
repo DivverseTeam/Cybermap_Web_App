@@ -53,7 +53,7 @@ export async function runIso27001() {
       "_id name"
     ).lean();
     if (!allOrganizations.length) {
-      console.log("No organizations found.");
+      console.log("No organizations found....");
       return;
     }
 
@@ -73,23 +73,16 @@ export async function runIso27001() {
       // console.log("Integrations", integrations);
 
       const [azureADIntegration, azureCloudIntegration] = integrations;
-      // console.log("Integrations", azureADIntegration, azureCloudIntegration);
-
       if (!azureADIntegration && !azureCloudIntegration) continue;
-      if (!azureADIntegration?.authData && !azureCloudIntegration?.authData)
+      if (!azureADIntegration?.authData && !azureCloudIntegration?.authData) {
         continue;
+      }
 
-      const controls = await Control.find(
-        { organisationId: organization._id },
-        "_id code name"
-      ).lean();
-
+      const controls = await Control.find({}).lean();
       await Promise.all(
         controls.map(async (control) => {
           if (ISO27001_FUNCTIONS[control.code]) {
-            const { status, integrationIds } = await ISO27001_FUNCTIONS[
-              control.code
-            ]({
+            const response = await ISO27001_FUNCTIONS[control.code]({
               azureCloud: azureCloudIntegration
                 ? {
                     token: azureCloudIntegration.authData.accessToken,
@@ -112,7 +105,14 @@ export async function runIso27001() {
               controlName: control.name,
               organisationId: organization._id,
             });
+            if (!response) return;
+            if (!response.status) return;
+            if (!response.integrationIds) return;
+            const { status, integrationIds } = response;
 
+            console.log(
+              `${organization.name} ---- ${control.name} - ${status}`
+            );
             await OrgControlMapping.findOneAndUpdate(
               {
                 controlId: control._id,
@@ -124,13 +124,12 @@ export async function runIso27001() {
               },
               { upsert: true }
             );
-            console.log(`${organization.name} - ${control.name} - ${status}`);
           }
         })
       );
     }
   } catch (error: any) {
-    console.error("Error during ISO27001 audit:...", error.code);
+    console.error("Error during ISO27001 audit:...", error);
     if (
       error.code === "ExpiredAuthenticationToken" ||
       error.code === "InvalidAuthenticationToken"

@@ -20,8 +20,10 @@ async function getTerminationLogs({
   try {
     const evd_name = `Termination logs`;
     // Fetch the audit logs for user lifecycle events
-    const auditLogs: DirectoryAudit[] = await azureClient
-      .api("/auditLogs/directoryAudits").get();
+    const auditLogs: { value: DirectoryAudit[] } = await azureClient
+      .api("/auditLogs/directoryAudits")
+      .get();
+    const { value } = auditLogs;
 
     await saveEvidence({
       fileName: `Azure-${controlName}-${evd_name}`,
@@ -35,8 +37,9 @@ async function getTerminationLogs({
     let accessRevokedCount = 0;
     let missingPoliciesCount = 0;
 
-    if (auditLogs) {
-      for (const log of auditLogs) {
+    if (value) {
+      console.log("auditLogs", value);
+      for (const log of value) {
         if (log.activityDisplayName === "Delete user") {
           if (log.result === "success") {
             accessRevokedCount++;

@@ -1,9 +1,11 @@
 import {
+  GetObjectCommand,
   ListObjectsV2Command,
   PutObjectCommand,
-  S3Client,
 } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { ControlStatus } from "~/lib/types/controls";
+import { s3Client as client } from "~/server/api/routers/integrations/aws/init";
 import EvidenceLibrary from "~/server/models/EvidenceLibrary";
 
 export interface AzureToken {
@@ -80,8 +82,6 @@ async function saveEvidence(input: {
   body: Object;
   controls: string[];
 }) {
-  const client = new S3Client({});
-
   const key: string = `evidence/${input.organisationId}/${input.fileName}`;
 
   const command = new PutObjectCommand({
@@ -97,20 +97,31 @@ async function saveEvidence(input: {
   try {
     const response = await client.send(command);
     // console.log("Upload successful:", response);
-    await EvidenceLibrary.create({
-      key,
-      linkedControls: [input.controlId],
-      organisationId: input.organisationId,
-      fileName: input.fileName,
-    });
+    await EvidenceLibrary.findOneAndUpdate(
+      {
+        fileName: input.fileName,
+        organisationId: input.organisationId,
+      },
+      {
+        key,
+        organisationId: input.organisationId,
+        linkedControls: [input.controlId],
+      },
+      { upsert: true }
+    );
     return { key, response };
   } catch (error) {
     console.error("Error uploading to S3:", error);
   }
 }
 
+async function generateEvidenceSignedUrl(key: string) {
+  const command = new GetObjectCommand({ Bucket: bucket, Key: key });
+  const signedUrl = await getSignedUrl(client, command, { expiresIn: 3600 }); // Expires in 1 hour
+  return signedUrl;
+}
+
 async function getEvidencesForOrganization(organisationId: string) {
-  const client = new S3Client({});
   const prefix: string = `evidence/${organisationId}/`;
 
   const command = new ListObjectsV2Command({

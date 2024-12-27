@@ -5,6 +5,7 @@ import { controlsRouter } from "~/server/api/routers/controls";
 import { integrationsRouter } from "~/server/api/routers/integrations";
 import { frameworksRouter } from "~/server/api/routers/frameworks";
 import { employeesRouter } from "~/server/api/routers/employees";
+import { evidenceLibraryRouter } from "~/server/api/routers/evidenceLibrary";
 
 export const appRouter = createTRPCRouter({
   user: userRouter,
@@ -13,6 +14,7 @@ export const appRouter = createTRPCRouter({
   frameworks: frameworksRouter,
   integrations: integrationsRouter,
   employees: employeesRouter,
+  evidenceLibrary: evidenceLibraryRouter,
 });
 
 // export type definition of API

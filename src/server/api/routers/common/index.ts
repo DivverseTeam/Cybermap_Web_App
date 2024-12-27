@@ -31,7 +31,7 @@ const OrgControlsMappingAggregation = (organisationId: string) => {
     },
     {
       $project: {
-        id: 1,
+        _id: 1,
         name: 1,
         code: 1,
         mapped: 1,
@@ -44,4 +44,57 @@ const OrgControlsMappingAggregation = (organisationId: string) => {
   ];
 };
 
-export { OrgControlsMappingAggregation };
+const OrgControlsMappingByIntegrationAggregation = ({
+  integrationId,
+  organisationId,
+}: {
+  integrationId: string;
+  organisationId: string;
+}) => {
+  return [
+    {
+      $lookup: {
+        from: "orgcontrolmappings",
+        localField: "_id",
+        foreignField: "controlId",
+        as: "orgMapping",
+      },
+    },
+    {
+      $unwind: {
+        path: "$orgMapping",
+      },
+    },
+    {
+      $match: {
+        $and: [
+          {
+            "orgMapping.organisationId": new mongoose.Types.ObjectId(
+              organisationId
+            ),
+          },
+          {
+            "orgMapping.integrationIds": {
+              $in: [new mongoose.Types.ObjectId(integrationId)],
+            },
+          },
+        ],
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        name: 1,
+        code: 1,
+        mapped: 1,
+        organisationId: "$orgMapping.organisationId",
+        status: "$orgMapping.status",
+      },
+    },
+  ];
+};
+
+export {
+  OrgControlsMappingAggregation,
+  OrgControlsMappingByIntegrationAggregation,
+};

@@ -5,7 +5,6 @@ import type { Course } from "~/lib/types/course";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import ControlModel, { OrganisationControl } from "~/server/models/Control";
 import OrganisationModel from "~/server/models/Organisation";
-import { OrgControlMapping } from "~/server/models/OrganizationControlMapping";
 import { OrgControlsMappingAggregation } from "./common";
 
 const feedbackWeights: Record<string, number> = {
@@ -79,6 +78,13 @@ export const frameworksRouter = createTRPCRouter({
         ControlModel.aggregate(aggregation),
       ]);
 
+      const transformedControls = controls.map((control) => ({
+        ...control,
+        _id: control._id.toString(),
+      }));
+
+      // console.log("organisation", transformedControls);
+
       if (!organisation) {
         throw new Error("Organisation not found");
       }
@@ -98,8 +104,8 @@ export const frameworksRouter = createTRPCRouter({
 
         return {
           ...framework,
-          controls: OrgControlMapping.array()
-            .parse(controls)
+          controls: OrganisationControl.array()
+            .parse(transformedControls)
             .filter(
               (control) =>
                 control?.mapped && control.mapped.includes(framework.name)
@@ -152,7 +158,7 @@ export const frameworksRouter = createTRPCRouter({
 
           return {
             ...framework,
-            controls: OrganisationControl.array().parse(controls),
+            controls: OrganisationControl.array().parse(transformedControls),
             completionLevel,
             complianceScore,
           };
