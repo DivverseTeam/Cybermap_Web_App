@@ -13,7 +13,7 @@ import {
   type AttributeType,
 } from "@aws-sdk/client-cognito-identity-provider";
 import { mongoosePromise } from "~/server/db";
-import { globalConfig } from "./integrations/aws/init";
+// import { globalConfig } from "./integrations/aws/init";
 import type { SignInProps, SignUpProps } from "./user";
 
 // Abiola
