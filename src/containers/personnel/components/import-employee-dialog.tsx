@@ -399,28 +399,33 @@ export function ImportEmployeeDialog({
           <div className="flex flex-col gap-2 text-secondary text-xs 2xl:text-md">
             <h3>AVAILABLE INTEGRATIONS</h3>
             <div className="flex flex-col">
-              {allIntegrations.map((integration, idx) => (
-                <div
-                  key={idx}
-                  className="flex justify-between border items-center p-3 rounded-lg mb-1"
-                >
-                  <div className="flex items-center gap-2">
-                    <Image
-                      src={integration.image}
-                      alt={`${integration.name} logo`}
-                      width={30}
-                      height={30}
-                      className="border rounded-sm p-1"
-                    />
-                    <span className="font-medium text-black text-sm">
-                      {integration.name}
-                    </span>
+              {allIntegrations
+                .filter(
+                  (integration) =>
+                    integration.category.toLowerCase() === "identity"
+                )
+                .map((integration, idx) => (
+                  <div
+                    key={idx}
+                    className="flex justify-between border items-center p-3 rounded-lg mb-1"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Image
+                        src={integration.image}
+                        alt={`${integration.name} logo`}
+                        width={30}
+                        height={30}
+                        className="border rounded-sm p-1"
+                      />
+                      <span className="font-medium text-black text-sm">
+                        {integration.name}
+                      </span>
+                    </div>
+                    <Button variant={"outline"} className="h-6 text-xs">
+                      Import data
+                    </Button>
                   </div>
-                  <Button variant={"outline"} className="h-6 text-xs">
-                    Import data
-                  </Button>
-                </div>
-              ))}
+                ))}
             </div>
           </div>
         </DialogContent>

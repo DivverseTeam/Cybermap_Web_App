@@ -8,20 +8,21 @@ const badgeVariants = cva(
   {
     variants: {
       variant: {
-        default: "border-transparent text-[#305EFF] bg-[#305EFF17]",
-        secondary: "border-transparent text-[#62636C] bg-[#6C849D17]",
+        default: "border-transparent font-medium text-[#305EFF] bg-[#305EFF17]",
+        secondary:
+          "border-transparent font-medium text-[#62636C] bg-[#6C849D17]",
         destructive:
-          "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
-        outline: "text-foreground",
-        success: "text-[#008743] bg-[#00A25117]",
-        warning: "text-[#C65C10] bg-[#E9690C17]",
-        muted: "text-[#243547] bg-[#6C849D17]",
+          "border-[#D92D20] font-medium text-[#D92D20] bg-[#D92D2017]",
+        outline: "text-foreground font-medium",
+        success: "text-[#008743] font-medium bg-[#00A25117]",
+        warning: "text-[#C65C10] font-medium bg-[#E9690C17]",
+        muted: "text-[#243547] font-medium bg-[#6C849D17]",
       },
     },
     defaultVariants: {
       variant: "default",
     },
-  },
+  }
 );
 
 export interface BadgeProps
