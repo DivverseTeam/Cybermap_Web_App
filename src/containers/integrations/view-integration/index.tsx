@@ -210,7 +210,9 @@ export default function IntegrationProfile({}: Props) {
                   <h1 className="font-semibold text-black">
                     Active connections
                   </h1>
-                  <p>Display and manage the active connections</p>
+                  <p className="text-[16px]">
+                    Display and manage the active connections
+                  </p>
                 </div>
                 {/* list of connections */}
                 <div className="flex flex-col gap-2">
@@ -262,7 +264,7 @@ export default function IntegrationProfile({}: Props) {
                   <h1 className="font-semibold text-black">
                     Active connections
                   </h1>
-                  <p>
+                  <p className="text-[16px]">
                     Removing this integration will delete all associated assets
                     and data
                   </p>

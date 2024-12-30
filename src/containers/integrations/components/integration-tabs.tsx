@@ -58,20 +58,10 @@ export function IntegrationTabs({
       })),
   ];
 
-  const integrationsContent = () => {
-    if (connected.length > 0) {
-      setActiveList("connected");
-      return "connected";
-    } else {
-      setActiveList("available");
-      return "available";
-    }
-  };
-
   return (
     <div className="bg-gray-100 p-1 h-max rounded-xl border border-neutral-2 border-solid">
       <Tabs
-        defaultValue={integrationsContent()}
+        defaultValue={`${connected.length > 0 ? "connected" : "available"}`}
         className="h-max w-[200px] 2xl:w-[22%] [@media(min-width:1400px)]:w-[270px]"
       >
         <TabsList className="z-10 flex w-full rounded-2xl rounded-b-none bg-muted">

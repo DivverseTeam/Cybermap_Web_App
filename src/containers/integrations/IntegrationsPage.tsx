@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PageTitle from "~/components/PageTitle";
 import { IntegrationTabs } from "./components/integration-tabs";
 import type {
@@ -27,6 +27,14 @@ export default function IntegrationsPage({}: Props) {
   const filteredConnected = activeCategory
     ? connected.filter((integration) => integration.category === activeCategory)
     : connected;
+
+  useEffect(() => {
+    if (connected.length > 0) {
+      setActiveList("connected");
+    } else {
+      setActiveList("available");
+    }
+  }, []);
 
   return (
     <div className="flex flex-col gap-4 [@media(min-width:1400px)]:gap-6 px-4 [@media(min-width:1400px)]:px-6">
