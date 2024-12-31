@@ -1,9 +1,10 @@
+
 name: Build, Push to ECR, and Deploy to Docker Compose - EC2
 
 on:
   push:
     branches:
-      - dev
+      - aws-deploy
 
 env:
   AWS_REGION: us-east-1
@@ -20,8 +21,8 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          aws-access-key-id: "${{ secrets.ACCESS_KEY }}"
-          aws-secret-access-key: "${{ secrets.SECRET_KEY }}"
+          aws-access-key-id: "${{ secrets.ACCESS_KEY }}" 
+          aws-secret-access-key: "${{ secrets.SECRET_KEY }}" 
           aws-region: "${{ env.AWS_REGION }}"
 
       - name: Login to Amazon ECR
@@ -64,28 +65,12 @@ jobs:
 
       - name: Deploy to server
         run: |
-          ssh -i /tmp/private_key -o StrictHostKeyChecking=no ubuntu@3.235.83.252 << EOF
-            # Install Docker Compose if not present
-            if ! [ -x "$(command -v docker-compose)" ]; then
-              sudo apt update && sudo apt install -y docker-compose
-            fi
-
-            # Export environment variables
-            export AWS_REGION="${{ env.AWS_REGION }}"
-            export CYBERMAP_ECR="${{ env.CYBERMAP_ECR }}"
-
-            # Login to ECR
-            aws ecr get-login-password --region "${AWS_REGION}" | docker login --username AWS --password-stdin "${CYBERMAP_ECR}"
-
-            # Prune old Docker images and pull the latest image
+          ssh -i /tmp/private_key -o StrictHostKeyChecking=no ubuntu@3.235.83.252 << 'EOF'
+            export AWS_REGION=${AWS_REGION}
+            export CYBERMAP_ECR=${CYBERMAP_ECR}
+            aws ecr get-login-password --region "${{ env.AWS_REGION }}" | docker login --username AWS --password-stdin "${{ env.CYBERMAP_ECR }}"
             docker image prune -a -f
-            docker pull "${CYBERMAP_ECR}:latest"
-
-            # Restart the Docker Compose service
+            docker pull "${{ env.CYBERMAP_ECR }}:latest"
             docker compose down
             docker compose up -d
           EOF
-
-      - name: Cleanup private key
-        run: |
-          rm -f /tmp/private_key

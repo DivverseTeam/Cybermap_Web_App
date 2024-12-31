@@ -1,5 +1,5 @@
 ##### DEPENDENCIES
-FROM --platform=linux/amd64 node:22-alpine AS deps
+FROM --platform=linux/amd64 node:18-alpine3.14 AS deps
 
 # Add necessary system packages
 RUN apk add --no-cache libc6-compat openssl bash
@@ -13,7 +13,7 @@ COPY package.json package-lock.json ./
 RUN npm cache clean --force && npm ci --verbose
 
 ##### BUILDER
-FROM --platform=linux/amd64 node:22-alpine AS builder
+FROM --platform=linux/amd64 node:18-alpine3.14 AS builder
 
 # Pass build-time arguments
 ARG DATABASE_URL
@@ -31,7 +31,7 @@ COPY . .
 RUN npm run build
 
 ##### RUNNER
-FROM --platform=linux/amd64 node:22-alpine AS runner
+FROM --platform=linux/amd64 node:18-alpine3.14 AS runner
 
 # Create a non-root user
 RUN addgroup --system --gid 1001 nodejs && \
