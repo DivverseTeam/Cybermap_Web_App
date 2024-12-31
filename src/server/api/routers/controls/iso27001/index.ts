@@ -1,4 +1,6 @@
 //@ts-nocheck
+'use server'
+
 import { ControlStatus } from "~/lib/types/controls";
 import { AZURE_CLOUD_SLUG } from "~/lib/types/integrations";
 import Control from "~/server/models/Control";
@@ -20,14 +22,10 @@ import { getOperationsSecurity } from "./operationsSecurity";
 import { getOrganizationOfInformationSecurity } from "./organizationofInformationSecurity";
 import { getPhysicalEnvironmentalSecurity } from "./physicalEnvironmentalSecurity";
 import { getSystemAcquisitionDevelopmentMaintenance } from "./systemAcquisitionDevelopmentMaintenance";
-
-interface StatusResponseDTO {
-  status: ControlStatus | null;
-  integrationIds: string[];
-}
+import { StatusResponseDTO } from "../types";
 
 const ISO27001_FUNCTIONS: {
-  [key: string]: (auth: AzureAUth) => Promise<StatusResponseDTO>;
+  [key: string]: (auth: AzureAUth) => Promise<StatusResponseDTO | undefined>;
 } = {
   ISP: (auth: AzureAUth) => getInformationSecurityPolicies(auth),
   OIS: (auth: AzureAUth) => getOrganizationOfInformationSecurity(auth),

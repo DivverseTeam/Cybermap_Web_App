@@ -7,6 +7,7 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { ControlStatus } from "~/lib/types/controls";
 import { s3Client as client } from "~/server/api/routers/integrations/aws/init";
 import EvidenceLibrary from "~/server/models/EvidenceLibrary";
+import { StatusResponseDTO } from "~/server/api/routers/controls/types";
 
 export interface AzureToken {
   token: string;
@@ -32,7 +33,7 @@ const bucket: string = "cybermap-dev-evidences-bbsvusex";
 async function evaluate(
   functions: (() => Promise<ControlStatus | null>)[],
   integrationIds: string[]
-) {
+): Promise<StatusResponseDTO | undefined> {
   try {
     const statuses = await Promise.all(functions.map((fn) => fn()));
     if (!statuses || statuses.length === 0) {

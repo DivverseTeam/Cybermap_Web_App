@@ -36,5 +36,5 @@ const ControlSchema = new BaseSchema<ControlWithDocument>(
 );
 
 export default (mongoose.models
-  .CybermapControl as mongoose.Model<ControlWithDocument>) ||
+  ?.CybermapControl as mongoose.Model<ControlWithDocument>) ||
   mongoose.model("CybermapControl", ControlSchema);
