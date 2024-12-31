@@ -15,7 +15,7 @@ export const Control = z.object({
 export type Control = z.infer<typeof Control>;
 
 export const OrganisationControl = z.object({
-  id: z.string(),
+  _id: z.string(),
   name: z.string(),
   code: z.string(),
   mapped: FrameworkName.array(),

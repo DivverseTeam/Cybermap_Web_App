@@ -13,7 +13,7 @@ const ComplianceControls: FunctionComponent<ComplianceModulesProps> = ({
   return (
     <div className="flex flex-col gap-2">
       {controls.map((control) => {
-        const { id, name, status } = control;
+        const { _id, name, status } = control;
 
         let badgeVariant: VariantProps<typeof badgeVariants>["variant"] =
           "warning";
@@ -24,7 +24,7 @@ const ComplianceControls: FunctionComponent<ComplianceModulesProps> = ({
 
         return (
           <div
-            key={id}
+            key={_id}
             className="flex items-center justify-between bg-gray-100 px-3 py-4 text-[#192839] text-sm"
           >
             <p>{name}</p>

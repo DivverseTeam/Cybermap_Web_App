@@ -36,6 +36,7 @@ export const controlsRouter = createTRPCRouter({
       return OrganisationControl.array().parse(transformedEmployees);
     } catch (error: any) {
       console.log("get controls error", error.message);
+      return []
     }
   }),
 

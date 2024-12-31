@@ -9,6 +9,9 @@ import { getServerAuthSession } from "~/server/auth";
 import { Toaster } from "./_components/ui/toaster";
 import { HydrateClient } from "~/trpc/server";
 import NextTopLoader from "nextjs-toploader";
+import { StartCron } from "~/server/cronJob";
+
+StartCron();
 
 export const metadata: Metadata = {
   title: "Create T3 App",

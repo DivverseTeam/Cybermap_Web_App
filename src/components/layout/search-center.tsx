@@ -1,6 +1,7 @@
 "use client";
 import { Search } from "lucide-react";
 
+import { Button } from "~/app/_components/ui/button";
 import {
   Command,
   CommandEmpty,
@@ -10,7 +11,6 @@ import {
   CommandList,
   CommandSeparator,
 } from "~/app/_components/ui/command";
-import { Button } from "~/app/_components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -20,17 +20,17 @@ import {
   DialogTrigger,
 } from "~/app/_components/ui/dialog";
 
-import { type ElementType, useEffect, useState } from "react";
+import { useEffect, useState, type ElementType } from "react";
 
 import {
   DocumentAttachmentIcon,
   FileValidationIcon,
   PolicyIcon,
 } from "hugeicons-react";
-import { api } from "~/trpc/react";
-import { Tabs, TabsList, TabsTrigger } from "~/app/_components/ui/tabs";
 import Link from "next/link";
+import { Tabs, TabsList, TabsTrigger } from "~/app/_components/ui/tabs";
 import { data as policiesList } from "~/containers/policies";
+import { api } from "~/trpc/react";
 
 type CommandItem = {
   title: string;
@@ -79,7 +79,7 @@ export function SearchCenter() {
     },
     {
       groupName: "Controls",
-      items: controls.map((control) => ({
+      items: controls?.map((control) => ({
         title: control.name,
         icon: FileValidationIcon,
         pathName: "controls",
