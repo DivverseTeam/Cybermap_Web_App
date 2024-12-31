@@ -117,10 +117,11 @@ export async function runIso27001() {
               {
                 controlId: control._id,
                 organisationId: organization._id,
-                integrationIds,
+                integrationIds: { $in: integrationIds },
               },
               {
                 status,
+                integrationIds,
               },
               { upsert: true }
             );
