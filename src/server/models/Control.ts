@@ -27,14 +27,12 @@ export type ControlType = z.infer<typeof ControlType>;
 
 type ControlWithDocument = ControlType & mongoose.Document;
 
-const ControlSchema = new BaseSchema<ControlWithDocument>(
-  {
-    name: { type: String, required: true },
-    code: { type: String, required: true },
-    mapped: { type: [String], required: true, enum: FRAMEWORK_NAMES },
-  },
-);
+const ControlSchema = new BaseSchema<ControlWithDocument>({
+  name: { type: String, required: true },
+  code: { type: String, required: true },
+  mapped: { type: [String], required: true, enum: FRAMEWORK_NAMES },
+});
 
 export default (mongoose.models
-  ?.CybermapControl as mongoose.Model<ControlWithDocument>) ||
+  .CybermapControl as mongoose.Model<ControlWithDocument>) ||
   mongoose.model("CybermapControl", ControlSchema);
