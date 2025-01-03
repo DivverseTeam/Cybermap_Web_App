@@ -9,6 +9,19 @@ on:
 env:
   AWS_REGION: us-east-1
   CYBERMAP_ECR: 442042540581.dkr.ecr.us-east-1.amazonaws.com/cybermap
+  DATABASE_URI: mongodb+srv://dbAdmin:UZkn2a7LY1QVflTs@cybermap.3sb8r.mongodb.net/cybermap?retryWrites=true&w=majority&appName=cybermap
+  NEXTAUTH_SECRET: "secret"
+  AUTH_TRUST_HOST: true
+  DISCORD_CLIENT_ID: "dsd"
+  DISCORD_CLIENT_SECRET: "dsd"
+  S3_REGION: "null"
+  S3_ACCESS_KEY: "null"
+  S3_SECRET_KEY: "null"
+  S3_BUCKET_NAME: "null"
+
+  REGION: us-east-1
+  APP_CLIENT_ID: 5935eo5ka6uqrnk46cq092htth
+  BASE_URL: http://localhost:3000
 
 jobs:
   build-and-push:
@@ -32,6 +45,24 @@ jobs:
 
       - name: Build Docker image
         run: |
+          echo "AWS_REGION=${AWS_REGION}" >> .env
+          echo "CYBERMAP_ECR=${CYBERMAP_ECR}" >> .env
+          echo "DATABASE_URI=${DATABASE_URI}" >> .env
+          echo "NEXTAUTH_SECRET=${NEXTAUTH_SECRET}" >> .env
+          echo "AUTH_TRUST_HOST=${AUTH_TRUST_HOST}" >> .env
+          echo "DISCORD_CLIENT_ID=${DISCORD_CLIENT_ID}" >> .env
+          echo "DISCORD_CLIENT_SECRET=${DISCORD_CLIENT_SECRET}" >> .env
+          echo "S3_REGION=${S3_REGION}" >> .env
+          echo "S3_ACCESS_KEY=${S3_ACCESS_KEY}" >> .env
+          echo "S3_SECRET_KEY=${S3_SECRET_KEY}" >> .env
+          echo "S3_BUCKET_NAME=${S3_BUCKET_NAME}" >> .env
+          echo "AZURE_CLIENT_ID=${{ secrets.AZURE_CLIENT_ID }}" >> .env
+          echo "AZURE_CLIENT_SECRET=${{ secrets.AZURE_CLIENT_SECRET }}" >> .env
+          echo "AZURE_AD_TENANT_ID=${AZURE_AD_TENANT_ID}" >> .env
+          echo "APP_CLIENT_ID=${{ secrets.APP_CLIENT_ID}}" >> .env
+          echo "BASE_URL=${BASE_URL}" >> .env
+          echo "ACCESS_KEY_ID=${{ secrets.ACCESS_KEY }}" >>.env
+          echo "SECRET_ACCESS_KEY=${{ secrets.SECRET_KEY }}" >>.env
           docker build -t cybermap .
 
       - name: Tag Docker image
