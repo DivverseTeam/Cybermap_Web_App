@@ -18,7 +18,7 @@ env:
   S3_ACCESS_KEY: "null"
   S3_SECRET_KEY: "null"
   S3_BUCKET_NAME: "null"
-
+  AZURE_AD_TENANT_ID: f4a03727-ab07-4ad6-851f-2e74675d9b0a
   REGION: us-east-1
   APP_CLIENT_ID: 5935eo5ka6uqrnk46cq092htth
   BASE_URL: http://localhost:3000
@@ -59,7 +59,7 @@ jobs:
           echo "AZURE_CLIENT_ID=${{ secrets.AZURE_CLIENT_ID }}" >> .env
           echo "AZURE_CLIENT_SECRET=${{ secrets.AZURE_CLIENT_SECRET }}" >> .env
           echo "AZURE_AD_TENANT_ID=${AZURE_AD_TENANT_ID}" >> .env
-          echo "APP_CLIENT_ID=${{ secrets.APP_CLIENT_ID}}" >> .env
+          echo "APP_CLIENT_ID=${APP_CLIENT_ID}" >> .env
           echo "BASE_URL=${BASE_URL}" >> .env
           echo "ACCESS_KEY_ID=${{ secrets.ACCESS_KEY }}" >>.env
           echo "SECRET_ACCESS_KEY=${{ secrets.SECRET_KEY }}" >>.env
