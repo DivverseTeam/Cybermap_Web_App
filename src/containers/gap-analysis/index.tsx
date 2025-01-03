@@ -13,7 +13,7 @@ import {
 } from '~/app/_components/ui/select';
 import { ISO27001Icon } from '~/components/svgs/gap-analysis/iso27001';
 import { ComplianceStatus } from './components/compliance-status';
-import ControlStatus from './components/controlstatus';
+import ControlStatus from './components/control-status';
 import { StatsOverview } from './components/stats-overview';
 
 export default function GapAnalysisPage() {

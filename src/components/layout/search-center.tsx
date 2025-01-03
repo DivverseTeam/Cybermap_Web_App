@@ -79,7 +79,7 @@ export function SearchCenter() {
     },
     {
       groupName: 'Controls',
-      items: controls.map((control) => ({
+      items: (controls ?? []).map((control) => ({
         title: control.name,
         icon: FileValidationIcon,
         pathName: 'controls',

@@ -4,9 +4,9 @@ import { GitlabIcon } from '~/components/svgs/gap-analysis/gitlabicon';
 import { GoogleIcon } from '~/components/svgs/gap-analysis/googleicon';
 import { SupabaseIcon } from '~/components/svgs/gap-analysis/supabaseicon';
 import { VercelIcon } from '~/components/svgs/gap-analysis/vercelicon';
-import { IntegrationStatusCard } from './integrationstatuscard';
+import { IntegrationStatusCard } from './integration-status-card';
 import EvidenceChart from './evidence-chart';
-import ControlsChart from './ControlsChart';
+import ControlsChart from './controls-chart';
 
 interface StatsOverviewProps {
   stats: {
