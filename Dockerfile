@@ -1,4 +1,5 @@
-FROM --platform=linux/amd64 node:18-alpine3.14
+FROM --platform=linux/amd64 node:18.18-alpine
+
 
 # Add necessary system packages
 RUN apk add --no-cache libc6-compat openssl bash
