@@ -63,6 +63,8 @@ jobs:
           echo "BASE_URL=${BASE_URL}" >> .env
           echo "ACCESS_KEY_ID=${{ secrets.ACCESS_KEY }}" >>.env
           echo "SECRET_ACCESS_KEY=${{ secrets.SECRET_KEY }}" >>.env
+          cat .env
+          ls -alh
           docker build -t cybermap .
 
       - name: Tag Docker image
