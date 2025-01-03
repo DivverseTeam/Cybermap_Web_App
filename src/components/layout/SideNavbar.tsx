@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import React, { type ElementType, type ReactNode } from "react";
+import React, { type ElementType, type ReactNode } from 'react';
 // import { Nav } from "~/app/_components/ui/nav";
 
 import {
@@ -15,13 +15,14 @@ import {
   OnlineLearning01Icon,
   PolicyIcon,
   UserMultipleIcon,
-} from "hugeicons-react";
+  Megaphone01Icon,
+} from 'hugeicons-react';
 
-import { signOut } from "next-auth/react";
-import { usePathname } from "next/navigation";
-import { Nav } from "~/app/_components/ui/nav";
-import { VerakosBrand } from "../svgs/VerakosBrand";
-import { SearchCenter } from "./search-center";
+import { signOut } from 'next-auth/react';
+import { usePathname } from 'next/navigation';
+import { Nav } from '~/app/_components/ui/nav';
+import { VerakosBrand } from '../svgs/VerakosBrand';
+import { SearchCenter } from './search-center';
 
 type Props = {};
 
@@ -30,7 +31,7 @@ type MenuItem = {
   label?: string;
   href?: string;
   icon?: ElementType;
-  variant: "white" | "ghost" | "default"; // Adjust to the allowed values
+  variant: 'white' | 'ghost' | 'default'; // Adjust to the allowed values
   onClick?: () => void;
 };
 
@@ -42,7 +43,7 @@ interface SidebarMenuItem {
 export default function SideNavbar({}: Props) {
   const handleLogout = () => {
     signOut({
-      callbackUrl: "/signin",
+      callbackUrl: '/signin',
     });
   };
 
@@ -50,26 +51,33 @@ export default function SideNavbar({}: Props) {
 
   const menuList: SidebarMenuItem[] = [
     {
-      groupName: "Home",
+      groupName: 'Home',
       items: [
         {
-          title: "Dashboard",
-          href: "/dashboard",
+          title: 'Dashboard',
+          href: '/dashboard',
 
           icon: Analytics01Icon,
-          variant: `${pathname === "/dashboard" ? "white" : "ghost"}`,
+          variant: `${pathname === '/dashboard' ? 'white' : 'ghost'}`,
         },
         {
-          title: "Compliance guide",
-          href: "/compliance-guide",
+          title: 'Compliance guide',
+          href: '/compliance-guide',
 
           icon: CurvyRightDirectionIcon,
-          variant: `${pathname === "/compliance-guide" ? "white" : "ghost"}`,
+          variant: `${pathname === '/compliance-guide' ? 'white' : 'ghost'}`,
+        },
+        {
+          title: 'Gap Analysis',
+          href: '/gap-analysis',
+
+          icon: Megaphone01Icon,
+          variant: `${pathname === '/gap-analysis' ? 'white' : 'ghost'}`,
         },
       ],
     },
     {
-      groupName: "Governance",
+      groupName: 'Complaince',
       items: [
         // {
         //   title: "Frameworks",
@@ -78,45 +86,45 @@ export default function SideNavbar({}: Props) {
         //   variant: `${pathname === "/frameworks" ? "white" : "ghost"}`,
         // },
         {
-          title: "Controls",
+          title: 'Controls',
           icon: FileValidationIcon,
-          href: "/controls",
-          variant: `${pathname === "/controls" ? "white" : "ghost"}`,
+          href: '/controls',
+          variant: `${pathname === '/controls' ? 'white' : 'ghost'}`,
         },
         // {
-        //   title: "Regulations",
+        //   title: 'Regulations',
         //   icon: PolicyIcon,
-        //   href: "/regulations",
-        //   variant: `${pathname === "/regulations" ? "white" : "ghost"}`,
+        //   href: '/regulations',
+        //   variant: `${pathname === '/regulations' ? 'white' : 'ghost'}`,
         // },
         {
-          title: "Evidence library",
+          title: 'Evidence library',
           icon: LibraryIcon,
-          href: "/evidence-library",
-          variant: `${pathname === "/evidence-library" ? "white" : "ghost"}`,
+          href: '/evidence-library',
+          variant: `${pathname === '/evidence-library' ? 'white' : 'ghost'}`,
         },
         {
-          title: "Policies",
+          title: 'Policies',
           icon: PolicyIcon,
-          href: "/policies",
-          variant: `${pathname === "/policies" ? "white" : "ghost"}`,
+          href: '/policies',
+          variant: `${pathname === '/policies' ? 'white' : 'ghost'}`,
         },
       ],
     },
     {
-      groupName: "Management",
+      groupName: 'Management',
       items: [
         {
-          title: "Employees",
+          title: 'Employees',
           icon: UserMultipleIcon,
-          href: "/employees",
-          variant: `${pathname === "/employees" ? "white" : "ghost"}`,
+          href: '/employees',
+          variant: `${pathname === '/employees' ? 'white' : 'ghost'}`,
         },
         {
-          title: "Integrations",
+          title: 'Integrations',
           icon: CurvyRightDirectionIcon,
-          href: "/integrations",
-          variant: `${pathname === "/integrations" ? "white" : "ghost"}`,
+          href: '/integrations',
+          variant: `${pathname === '/integrations' ? 'white' : 'ghost'}`,
         },
         // {
         //   title: "Training modules",
@@ -135,19 +143,19 @@ export default function SideNavbar({}: Props) {
       ],
     },
     {
-      groupName: "Actions",
+      groupName: 'Actions',
       items: [
         {
-          title: "Settings",
+          title: 'Settings',
           icon: AccountSetting02Icon,
-          href: "/settings",
+          href: '/settings',
 
-          variant: `${pathname === "/settings" ? "white" : "ghost"}`,
+          variant: `${pathname === '/settings' ? 'white' : 'ghost'}`,
         },
         {
-          title: "Logout",
+          title: 'Logout',
           icon: Logout02Icon,
-          variant: "ghost",
+          variant: 'ghost',
           onClick: handleLogout,
         },
       ],
@@ -155,7 +163,7 @@ export default function SideNavbar({}: Props) {
   ];
 
   return (
-    <aside className="fixed top-0 left-0 z-20 flex h-screen w-[246px] flex-grow flex-col justify-start overflow-y-auto bg-gray-50 text-[14px] leading-4 [@media(min-width:1400px)]:w-[280px] [@media(min-width:1400px)]:min-w-[280px]">
+    <aside className="fixed top-0 left-0 z-20 flex h-screen w-[246px] flex-grow flex-col justify-start overflow-y-auto bg-[#0F193A] text-[14px] leading-4 [@media(min-width:1400px)]:w-[280px] [@media(min-width:1400px)]:min-w-[280px]">
       <div className="mx-auto flex w-full items-center px-2 py-2 [@media(min-width:1400px)]:px-4 [@media(min-width:1400px)]:py-6 ">
         <VerakosBrand />
       </div>

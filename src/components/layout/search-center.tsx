@@ -1,5 +1,5 @@
-"use client";
-import { Search } from "lucide-react";
+'use client';
+import { Search } from 'lucide-react';
 
 import {
   Command,
@@ -9,8 +9,8 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
-} from "~/app/_components/ui/command";
-import { Button } from "~/app/_components/ui/button";
+} from '~/app/_components/ui/command';
+import { Button } from '~/app/_components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -18,19 +18,19 @@ import {
   DialogOverlay,
   DialogTitle,
   DialogTrigger,
-} from "~/app/_components/ui/dialog";
+} from '~/app/_components/ui/dialog';
 
-import { type ElementType, useEffect, useState } from "react";
+import { type ElementType, useEffect, useState } from 'react';
 
 import {
   DocumentAttachmentIcon,
   FileValidationIcon,
   PolicyIcon,
-} from "hugeicons-react";
-import { api } from "~/trpc/react";
-import { Tabs, TabsList, TabsTrigger } from "~/app/_components/ui/tabs";
-import Link from "next/link";
-import { data as policiesList } from "~/containers/policies";
+} from 'hugeicons-react';
+import { api } from '~/trpc/react';
+import { Tabs, TabsList, TabsTrigger } from '~/app/_components/ui/tabs';
+import Link from 'next/link';
+import { data as policiesList } from '~/containers/policies';
 
 type CommandItem = {
   title: string;
@@ -54,35 +54,35 @@ export function SearchCenter() {
   // const handleOpen = () => setIsOpen(true);
   const handleClose = () => setIsOpen(false);
 
-  const [groupFilter, setGroupFilter] = useState<string>("");
+  const [groupFilter, setGroupFilter] = useState<string>('');
 
   const [searchData, setSearchData] = useState<Array<SearchCenterItem>>([]);
 
   const menuList: SearchCenterItem[] = [
     {
-      groupName: "Documents",
+      groupName: 'Documents',
       items: [
         {
-          title: "Document",
+          title: 'Document',
           icon: DocumentAttachmentIcon,
-          pathName: "compliance-guide",
+          pathName: 'compliance-guide',
         },
       ],
     },
     {
-      groupName: "Policies",
+      groupName: 'Policies',
       items: policiesList.map((policy) => ({
         title: policy.name,
         icon: PolicyIcon,
-        pathName: `policies/${policy.name.split(" ").join("-").toLowerCase()}`,
+        pathName: `policies/${policy.name.split(' ').join('-').toLowerCase()}`,
       })),
     },
     {
-      groupName: "Controls",
+      groupName: 'Controls',
       items: controls.map((control) => ({
         title: control.name,
         icon: FileValidationIcon,
-        pathName: "controls",
+        pathName: 'controls',
       })),
     },
   ];
@@ -106,7 +106,7 @@ export function SearchCenter() {
       <DialogTrigger asChild>
         <Button
           variant="ghost"
-          className="flex justify-start bg-gray-100 w-56 mx-auto rounded-lg items-center gap-2"
+          className="flex justify-start bg-[#0F193A] border border-[#646464] text-[#B9BBC6] hover:bg-[#0F193A] hover:text-[#B9BBC6] w-56 mx-auto rounded-lg items-center gap-2"
         >
           <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
           <span>Search...</span>
@@ -114,10 +114,10 @@ export function SearchCenter() {
       </DialogTrigger>
       <DialogOverlay
         style={{
-          background: "none",
-          backdropFilter: "none",
+          background: 'none',
+          backdropFilter: 'none',
           opacity: 1,
-          boxShadow: "none",
+          boxShadow: 'none',
         }}
         className="fixed inset-0 overlay-clear"
       />
@@ -132,14 +132,14 @@ export function SearchCenter() {
               defaultValue="All"
               className="w-[100px]"
               onValueChange={(value) =>
-                setGroupFilter(value === "All" ? "" : value)
+                setGroupFilter(value === 'All' ? '' : value)
               }
             >
               <TabsList>
                 <TabsTrigger value="All">All</TabsTrigger>
-                <TabsTrigger value={"Documents"}>Documents</TabsTrigger>
-                <TabsTrigger value={"Policies"}>Policies</TabsTrigger>
-                <TabsTrigger value={"Controls"}>Controls</TabsTrigger>
+                <TabsTrigger value={'Documents'}>Documents</TabsTrigger>
+                <TabsTrigger value={'Policies'}>Policies</TabsTrigger>
+                <TabsTrigger value={'Controls'}>Controls</TabsTrigger>
               </TabsList>
             </Tabs>
           </div>
